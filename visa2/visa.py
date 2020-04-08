@@ -84,7 +84,7 @@ def main():
         s[n] = postprocess(result)
         print(n, s[n])
     merge('../visa/visa.json', s, cur)
-    t = np.random.randint(100, 2000)
+    t = np.random.randint(100, 1000)
     next_t = time.time() + t
     open('state', 'w').write('3')
     open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M', time.localtime(next_t)))

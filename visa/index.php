@@ -1,9 +1,3 @@
-<?php
-//$tm = time();
-//$handle = fopen('log/'.$tm, 'w');
-//fwrite($handle, $_SERVER['HTTP_REFERER']."\n".$_SERVER['HTTP_USER_AGENT']."\n".$_SERVER['REMOTE_ADDR']."\n".$_SERVER['REQUEST_URI']."\n");
-//fclose($handle);
-?>
 <html>
 <head>
 	<title>预约美签，防止失学</title>
