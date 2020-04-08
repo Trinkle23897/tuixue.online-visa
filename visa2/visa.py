@@ -74,7 +74,8 @@ def main():
     name = ['北京', '成都', '广州', '上海', '沈阳']
     s = {'time': time.strftime('%Y/%m/%d %H:%M', time.localtime())}
     cur = time.strftime('%m/%d', time.localtime())
-    print(cur)
+    print(s['time'])
+    flag = 0
     for i in range(len(name)):
         n = name[i] + '-' + cur
         driver.get('https://cgifederal.secure.force.com/SelectPost')
@@ -88,12 +89,19 @@ def main():
         if len(result):
             result = result[0].text.split()[1:]
         s[n] = postprocess(result)
+        if s[n] != '/':
+            flag += 1
         print(n, s[n])
     merge('../visa/visa.json', s, cur)
-    t = np.random.randint(100, 1000)
+    while True:
+        t = np.random.normal(500, 500)
+        if 100 <= t <= 2000:
+            break
+    if flag <= 1:
+        t += 3600
     next_t = time.time() + t
     open('state', 'w').write('3')
-    open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(next_t)))
+    open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(next_t)) + (' 被封ip了，等待解封中' if flag <= 1 else ''))
     print(3)
     time.sleep(t)
 

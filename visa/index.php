@@ -57,7 +57,7 @@ foreach ($index as $date) {
 		</div>
 	</div>
 <footer class="page-footer font-small blue pt-4">
-  <div class="footer-copyright text-center py-3">本网站一共见证了<span id="busuanzi_value_page_pv"></span>人次的失学。<a href="https://www.zhihu.com/question/318624725/answer/875527594">关于作者</a>
+  <div class="footer-copyright text-center py-3">本网站一共见证了<span id="busuanzi_value_page_pv"></span>人次的失学。<a href="https://www.zhihu.com/question/318624725/answer/875527594">关于可怜的差点被全聚德的作者</a>
   </div>
 </footer>
 
