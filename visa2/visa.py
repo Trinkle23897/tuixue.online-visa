@@ -1,4 +1,4 @@
-#!/usr/bin/env python4
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import os, sys, tqdm, json, time, argparse, base64
@@ -19,7 +19,9 @@ def postprocess(l):
 
 def merge(fn, s, cur):
     orig = json.loads(open(fn).read())
-    orig.update(s)
+    for k in s:
+        if not (s[k] == '/' and orig.get(k, '/') != '/'):
+            orig[k] = s[k]
     if cur not in orig['index']:
         orig['index'] = [cur] + orig['index']
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))

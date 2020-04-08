@@ -17,6 +17,7 @@ if ($s == '1' and $t != '') {
 	<link rel="stylesheet" href="/style/bootstrap-theme.min.css">
 	<script src="/style/jquery.min.js"></script>
 	<script src="/style/bootstrap.min.js"></script>
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style type='text/css'>
 	.table thead tr th { text-align: center; }
 	.table tbody tr td { text-align: center; }
