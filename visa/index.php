@@ -32,8 +32,7 @@ echo "上一次更新时间：$t";
 	<br>
 	<center><a href="/visa2">手动刷新入口</a></center>
 	<br>
-	<center>源代码在<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上，如果看到它挂了可以提issue……</center>
-	<br>
+<!--	<center>源代码在<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上，如果看到它挂了可以提issue……</center><br>-->
 	<table class="table table-hover table-striped">
 		<thead>
 			<tr>

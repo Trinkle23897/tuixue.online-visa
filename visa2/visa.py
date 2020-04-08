@@ -19,9 +19,12 @@ def postprocess(l):
 
 def merge(fn, s, cur):
     orig = json.loads(open(fn).read())
+    last = {'time': orig['time']}
     for k in s:
+        last[k] = orig.get(k, '/')
         if not (s[k] == '/' and orig.get(k, '/') != '/'):
             orig[k] = s[k]
+    open('last.json', 'w').write(json.dumps(last, ensure_ascii=False))
     if cur not in orig['index']:
         orig['index'] = [cur] + orig['index']
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))
@@ -71,6 +74,7 @@ def main():
     name = ['北京', '成都', '广州', '上海', '沈阳']
     s = {'time': time.strftime('%Y/%m/%d %H:%M', time.localtime())}
     cur = time.strftime('%m/%d', time.localtime())
+    print(cur)
     for i in range(len(name)):
         n = name[i] + '-' + cur
         driver.get('https://cgifederal.secure.force.com/SelectPost')
@@ -89,7 +93,7 @@ def main():
     t = np.random.randint(100, 1000)
     next_t = time.time() + t
     open('state', 'w').write('3')
-    open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M', time.localtime(next_t)))
+    open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(next_t)))
     print(3)
     time.sleep(t)
 
