@@ -19,12 +19,28 @@ def postprocess(l):
     y = l[3][:-1]
     return '{}/{}/{}'.format(y, m, d)
 
+def min_date(a, b):
+    if a == '/':
+        return b
+    if b == '/':
+        return a
+    i0, i1, i2 = a.split('/')
+    i0, i1, i2 = int(i0), int(i1), int(i2)
+    j0, j1, j2 = b.split('/')
+    j0, j1, j2 = int(j0), int(j1), int(j2)
+    if i0 > j0 or i0 == j0 and (i1 > j1 or i1 == j1 and i2 > j2):
+        return b
+    else:
+        return a
+
 def merge(fn, s, cur):
     orig = json.loads(open(fn).read())
     last = {'time': orig['time']}
     for k in s:
         last[k] = orig.get(k, '/')
-        if not (s[k] == '/' and orig.get(k, '/') != '/'):
+        if '2-' in k:
+            orig[k] = min_date(orig[k], s[k])
+        elif not (s[k] == '/' and orig.get(k, '/') != '/'):
             orig[k] = s[k]
     open('last.json', 'w').write(json.dumps(last, ensure_ascii=False))
     if cur not in orig['index']:
@@ -80,6 +96,7 @@ def main():
     flag = 0
     for i in range(len(name)):
         n = name[i] + '-' + cur
+        n2 = name[i] + '2-' + cur
         driver.get('https://cgifederal.secure.force.com/SelectPost')
         driver.find_element_by_id("j_id0:SiteTemplate:j_id112:j_id165:{}".format(i)).click()
         driver.find_element_by_name("j_id0:SiteTemplate:j_id112:j_id169").click()
@@ -90,7 +107,7 @@ def main():
         result = bs(driver.page_source, 'html.parser').findAll(class_='leftPanelText')
         if len(result):
             result = result[0].text.split()[1:]
-        s[n] = postprocess(result)
+        s[n] = s[n2] = postprocess(result)
         if s[n] != '/':
             flag += 1
         print(n, s[n])

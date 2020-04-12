@@ -57,7 +57,7 @@ $loc = ['北京', '成都', '广州', '上海', '沈阳'];
 echo '<table class="table table-hover table-striped"><thead><tr><th></th><th>'.$last['time'].'</th><th>'.$now['time'].'</th></tr></thead>';
 foreach ($loc as $l)
 foreach ($last as $k=>$v) {
-	if (strpos($k, $l) === 0)
+	if (strpos($k, $l.'-') === 0)
 		echo '<tr><td>'.$l.'</td><td>'.$v.'</td><td>'.$now[$k].'</td></tr>';
 }
 echo '</tbody></table>';
