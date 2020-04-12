@@ -24,7 +24,7 @@
 <?php
 $js = json_decode(file_get_contents("visa.json"), true);
 $t = $js['time'];
-$loc = ['北京', '成都', '广州', '上海', '沈阳'];
+$loc = ['北京', '北京2', '成都', '成都2', '广州', '广州2', '上海', '上海2', '沈阳', '沈阳2'];
 $index = $js['index'];
 echo "上一次更新时间：$t";
  ?>
@@ -35,10 +35,27 @@ echo "上一次更新时间：$t";
 <!--	<center>源代码在<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上，如果看到它挂了可以提issue……</center><br>-->
 	<table class="table table-hover table-striped">
 		<thead>
-			<tr>
-				<th>更新时间</th>
-<?php foreach ($loc as $name) echo "<th>$name</th>"; ?>
-			</tr>
+  <tr>
+    <th>地点</th>
+    <th colspan="2">北京</th>
+    <th colspan="2">成都</th>
+    <th colspan="2">广州</th>
+    <th colspan="2">上海</th>
+    <th colspan="2">沈阳</th>
+  </tr>
+  <tr>
+    <th>时间</th>
+    <th>当前</th>
+    <th>最早</th>
+    <th>当前</th>
+    <th>最早</th>
+    <th>当前</th>
+    <th>最早</th>
+    <th>当前</th>
+    <th>最早</th>
+    <th>当前</th>
+    <th>最早</th>
+  </tr>
 		</thead>
 		<tbody>
 <?php

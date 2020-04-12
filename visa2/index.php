@@ -32,7 +32,7 @@ if ($s == '1' and $t != '') {
 				</h1>
 	<center>
 	<br>
-	还在尝试怎么防止被封ip中……有可能会挂<br>（如果看到它连续两个小时没刷新的话可以去<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上提issue）
+	还在尝试怎么防止被封ip中……有可能会挂<br>（如果看到它连续两个小时没刷新的话，或者是有什么更好的防止封ip策略，可以去<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上提issue）
 	<br>
 	<br>
 <?php
@@ -44,7 +44,7 @@ if ($s == '1') {
 } else if ($s == '3') {
 	$t = file_get_contents('next');
 	echo "下一次更新时间：$t<br>";
-	echo '程序正在休息中（手动设置了两次拉取时间间隔必须是个[100, 2000]秒的随机数从Normal(500, 500)中采样，防止被拟合成一个线性函数，不然有可能会被封ip……如果被封ip的话则强制停1h）... <a href="/visa/">点击返回</a>';
+	echo '程序正在休息中（手动设置了两次拉取时间间隔轮流依次为[200s, 700s, 1500s]，防止相邻三次被拟合成一个线性函数，不然有可能会被封ip……如果被封ip的话则加停1h）... <a href="/visa/">点击返回</a>';
 } else if ($s == '2') {
 	echo '正在刷新拉取数据中 ... 大概要等一两分钟 <a href="/visa/">点击返回</a>';
 } else {

@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os, sys, tqdm, json, time, argparse, base64
+import os, sys, tqdm, json, time, argparse, base64, traceback
 from time import sleep
 import numpy as np
 from selenium import webdriver
 from bs4 import BeautifulSoup as bs
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
+
+last_t = 200
 
 def postprocess(l):
     if l == []:
@@ -93,13 +95,14 @@ def main():
             flag += 1
         print(n, s[n])
     merge('../visa/visa.json', s, cur)
-    while True:
-        t = np.random.normal(500, 500)
-        if 100 <= t <= 2000:
-            break
+    global last_t
+    if last_t >= 2000:
+        last_t -= 3600
+    t = {200: 700, 700: 1500, 1500: 200}[last_t]
     if flag <= 1:
         t += 3600
     next_t = time.time() + t
+    last_t = t
     open('state', 'w').write('3')
     open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(next_t)) + (' 被封ip了，等待解封中' if flag <= 1 else ''))
     print(3)
@@ -116,5 +119,6 @@ if __name__ == '__main__':
         try:
             main()
         except:
+            print(traceback.format_exc())
             continue
     driver.quit()
