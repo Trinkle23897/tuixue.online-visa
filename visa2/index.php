@@ -19,8 +19,8 @@ if ($s == '1' and $t != '') {
 	<script src="/style/bootstrap.min.js"></script>
 	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style type='text/css'>
-	.table thead tr th { text-align: center; }
-	.table tbody tr td { text-align: center; }
+	.table thead tr th { text-align: center; vertical-align: middle; }
+	.table tbody tr td { text-align: center; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -50,15 +50,26 @@ if ($s == '1') {
 } else {
 	echo '正在准备拉数据 ... 再等一会儿验证码窗口就出来了！<a href="/visa2/">点击刷新</a>';
 }
-echo '<br><br>最近两次的更新结果：<br>';
+echo '<br><br>最近两次的更新结果：<br><br>';
 $now = json_decode(file_get_contents("../visa/visa.json"), true);
 $last = json_decode(file_get_contents("last.json"), true);
 $loc = ['北京', '成都', '广州', '上海', '沈阳'];
-echo '<table class="table table-hover table-striped"><thead><tr><th></th><th>'.$last['time'].'</th><th>'.$now['time'].'</th></tr></thead>';
-foreach ($loc as $l)
-foreach ($last as $k=>$v) {
-	if (strpos($k, $l.'-') === 0)
-		echo '<tr><td>'.$l.'</td><td>'.$v.'</td><td>'.$now[$k].'</td></tr>';
+echo '<table class="table table-hover table-striped table-bordered"><thead><tr><th>地点</th><th>时间</th><th>'.$last['time'].'</th><th>'.$now['time'].'</th></tr></thead>';
+foreach ($loc as $l) {
+	echo '<tr><td rowspan="2">'.$l.'</td><td>当前</td>';
+	foreach ($last as $k=>$v) {
+		if (strpos($k, $l.'-') === 0) {
+			$tmp = $v != $now[$k] ? 'class="info"' : '';
+			echo '<td>'.$v.'</td><td '.$tmp.'>'.$now[$k].'</td></tr>';
+		}
+	}
+	echo '<tr><td>最早</td>';
+	foreach ($last as $k=>$v) {
+		if (strpos($k, $l.'2-') === 0) {
+			$tmp = $v != $now[$k] ? 'class="info"' : '';
+			echo '<td>'.$v.'</td><td '.$tmp.'>'.$now[$k].'</td></tr>';
+		}
+	}
 }
 echo '</tbody></table>';
 ?>

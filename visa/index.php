@@ -8,8 +8,8 @@
 	<script src="/style/bootstrap.min.js"></script>
 	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style type='text/css'>
-	.table thead tr th { text-align: center; }
-	.table tbody tr td { text-align: center; }
+	.table thead tr th { text-align: center; vertical-align: middle; }
+	.table tbody tr td { text-align: center; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -17,7 +17,7 @@
 		<div class="row">
 			<div class="span12">
 				<h1 class="text-center" id="title">
-					F/J签最早预约时间
+					F/J签证预约时间（实时刷新）
 				</h1>
 	<center>
 	<br>
@@ -33,7 +33,7 @@ echo "上一次更新时间：$t";
 	<center><a href="/visa2">手动刷新入口</a></center>
 	<br>
 <!--	<center>源代码在<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上，如果看到它挂了可以提issue……</center><br>-->
-	<table class="table table-hover table-striped">
+	<table class="table table-hover table-striped table-bordered">
 		<thead>
   <tr>
     <th>地点</th>
