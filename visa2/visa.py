@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup as bs
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 
-last_t = 200
+last_t = 3600
 
 def postprocess(l):
     if l == []:
@@ -39,7 +39,7 @@ def merge(fn, s, cur):
     for k in s:
         last[k] = orig.get(k, '/')
         if '2-' in k:
-            orig[k] = min_date(orig[k], s[k])
+            orig[k] = min_date(orig.get(k, '/'), s[k])
         elif not (s[k] == '/' and orig.get(k, '/') != '/'):
             orig[k] = s[k]
     open('last.json', 'w').write(json.dumps(last, ensure_ascii=False))
@@ -72,6 +72,7 @@ def main():
             break
         sleep(1)
     open('state', 'w').write('2')
+    captcha = ''.join(captcha.split()).lower()
     print(2, captcha)
     driver.find_element_by_id("Registration:SiteTemplate:theForm:recaptcha_response_field").send_keys(captcha)
     driver.find_element_by_id("Registration:SiteTemplate:theForm:submit").click()
@@ -91,9 +92,9 @@ def main():
     driver.find_element_by_name("j_id0:SiteTemplate:theForm:j_id176").click()
     name = ['北京', '成都', '广州', '上海', '沈阳']
     s = {'time': time.strftime('%Y/%m/%d %H:%M', time.localtime())}
-    cur = time.strftime('%m/%d', time.localtime())
-    print(s['time'])
+    cur = time.strftime('%Y/%m/%d', time.localtime())
     flag = 0
+    print(s['time'])
     for i in range(len(name)):
         n = name[i] + '-' + cur
         n2 = name[i] + '2-' + cur
@@ -110,18 +111,21 @@ def main():
         s[n] = s[n2] = postprocess(result)
         if s[n] != '/':
             flag += 1
+            path = n.replace('-', '/')
+            os.makedirs('/'.join(path.split('/')[:-1]), exist_ok=True)
+            open(path, 'a+').write(s['time'].split(' ')[-1] + ' ' + s[n] + '\n')
         print(n, s[n])
     merge('../visa/visa.json', s, cur)
     global last_t
-    if last_t >= 2000:
-        last_t -= 3600
-    t = {200: 700, 700: 1500, 1500: 200}[last_t]
+    if last_t == 3600:
+        last_t = 1500
+    t = {0: 700, 700: 701, 701: 1500, 1500: 0}[last_t]
     if flag <= 1:
-        t += 3600
+        t = 3600
     next_t = time.time() + t
     last_t = t
     open('state', 'w').write('3')
-    open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(next_t)) + (' 被封ip了，等待解封中' if flag <= 1 else ''))
+    open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(next_t)))# + (' 被封ip了，等待解封中' if flag <= 1 else ''))
     print(3)
     time.sleep(t)
 

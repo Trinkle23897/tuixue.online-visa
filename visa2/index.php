@@ -32,25 +32,25 @@ if ($s == '1' and $t != '') {
 				</h1>
 	<center>
 	<br>
-	还在尝试怎么防止被封ip中……有可能会挂<br>（如果看到它连续两个小时没刷新的话，或者是有什么更好的防止封ip策略，可以去<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上提issue）
+	（如果看到它连续两个小时没刷新的话，或者Feature Request，可以去<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上提issue）
 	<br>
 	<br>
 <?php
-if ($s == '1') {
+if ($s[0] == '1') {
 	echo '<img src="try.gif"><br><form action="/visa2" method="get" enctype="multipart/form-data"><table>
                 <tr><td>验证码（不对也没关系，可以交一个重来）：</td><td><input type="text" name="t" class="form-control"></td></table></tr><br>
 				<input type="submit" name="submit" value="提交" class="btn btn-info"/>
         </form>';
-} else if ($s == '3') {
+} else if ($s[0] == '3') {
 	$t = file_get_contents('next');
 	echo "下一次更新时间：$t<br>";
-	echo '程序正在休息中（手动设置了两次拉取时间间隔轮流依次为[200s, 700s, 1500s]，防止相邻三次被拟合成一个线性函数，不然有可能会被封ip……如果被封ip的话则加停1h）... <a href="/visa/">点击返回</a>';
-} else if ($s == '2') {
+	echo '程序正在休息中 ... <a href="/visa/">点击返回</a>';
+} else if ($s[0] == '2') {
 	echo '正在刷新拉取数据中 ... 大概要等一两分钟 <a href="/visa/">点击返回</a>';
 } else {
 	echo '正在准备拉数据 ... 再等一会儿验证码窗口就出来了！<a href="/visa2/">点击刷新</a>';
 }
-echo '<br><br>最近两次的更新结果：<br><br>';
+echo '<br><br>最近两次的更新结果：（蓝色标出的是有变化的）<br><br>';
 $now = json_decode(file_get_contents("../visa/visa.json"), true);
 $last = json_decode(file_get_contents("last.json"), true);
 $loc = ['北京', '成都', '广州', '上海', '沈阳'];
@@ -63,7 +63,7 @@ foreach ($loc as $l) {
 			echo '<td>'.$v.'</td><td '.$tmp.'>'.$now[$k].'</td></tr>';
 		}
 	}
-	echo '<tr><td>最早</td>';
+	echo '<tr><td>本日最早</td>';
 	foreach ($last as $k=>$v) {
 		if (strpos($k, $l.'2-') === 0) {
 			$tmp = $v != $now[$k] ? 'class="info"' : '';

@@ -17,7 +17,7 @@
 		<div class="row">
 			<div class="span12">
 				<h1 class="text-center" id="title">
-					F/J签证预约时间（实时刷新）
+					F/J签证预约时间
 				</h1>
 	<center>
 	<br>
@@ -29,10 +29,9 @@ $index = $js['index'];
 echo "上一次更新时间：$t";
  ?>
 	</center>
-	<br>
-	<center><a href="/visa2">手动刷新入口</a></center>
-	<br>
-<!--	<center>源代码在<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上，如果看到它挂了可以提issue……</center><br>-->
+	<br><center><a href="/visa2">手动刷新入口</a></center>
+	<br><center>“最早”指在该地点可以预约签证的日期，一天24h变化之中最早的一天 （可参考<a href="https://github.com/Trinkle23897/us-visa/issues/1">这里</a>和<a href="https://github.com/Trinkle23897/us-visa/issues/3">这里</a>）</center>
+	<br><center>点击左侧时间可以查看预约时间变化折线图表（还在开发中）</center><br>
 	<table class="table table-hover table-striped table-bordered">
 		<thead>
   <tr>
@@ -60,10 +59,12 @@ echo "上一次更新时间：$t";
 		<tbody>
 <?php
 foreach ($index as $date) {
-	echo "<tr><td>$date</td>";
+	$tmp = explode('/', $date);
+	echo "<tr><td><a href='/visa2/view/?y=".$tmp[0]."&m=".$tmp[1]."&d=".$tmp[2]."'>".substr($date, 5)."</a></td>";
 	foreach ($loc as $name) {
 		$n = $name.'-'.$date;
-		echo "<td>$js[$n]</td>";
+		if ($js[$n] == '/') echo "<td>/</td>";
+		else echo "<td>".substr($js[$n], 5)."</td>";
 	}
 	echo "</tr>\n";
 }
