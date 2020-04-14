@@ -33,14 +33,14 @@ def min_date(a, b):
     else:
         return a
 
-def merge(fn, s, cur):
+def merge(fn, s, cur, keep):
     orig = json.loads(open(fn).read())
     last = {'time': orig['time']}
     for k in s:
         last[k] = orig.get(k, '/')
         if '2-' in k:
             orig[k] = min_date(orig.get(k, '/'), s[k])
-        elif not (s[k] == '/' and orig.get(k, '/') != '/'):
+        elif not (not keep and s[k] == '/' and orig.get(k, '/') != '/'):
             orig[k] = s[k]
     open('last.json', 'w').write(json.dumps(last, ensure_ascii=False))
     if cur not in orig['index']:
@@ -115,19 +115,17 @@ def main():
             os.makedirs('/'.join(path.split('/')[:-1]), exist_ok=True)
             open(path, 'a+').write(s['time'].split(' ')[-1] + ' ' + s[n] + '\n')
         print(n, s[n])
-    merge('../visa/visa.json', s, cur)
+    merge('../visa/visa.json', s, cur, flag > 1)
     global last_t
     if last_t == 3600:
-        last_t = 1500
-    t = {0: 700, 700: 701, 701: 1500, 1500: 0}[last_t]
+        last_t = 200
     if flag <= 1:
-        t = 3600
-    next_t = time.time() + t
-    last_t = t
+        last_t = 3600
+    next_t = time.time() + last_t
     open('state', 'w').write('3')
     open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(next_t)))# + (' 被封ip了，等待解封中' if flag <= 1 else ''))
     print(3)
-    time.sleep(t)
+    time.sleep(last_t)
 
 if __name__ == '__main__':
     chrome_options = Options()
@@ -135,11 +133,11 @@ if __name__ == '__main__':
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--proxy-server=socks5://127.0.0.1:1080')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(chrome_options=chrome_options)
     while True:
         try:
+            driver = webdriver.Chrome(chrome_options=chrome_options)
             main()
+            driver.quit()
         except:
             print(traceback.format_exc())
-            continue
-    driver.quit()
+            driver.quit()

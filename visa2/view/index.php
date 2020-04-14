@@ -45,7 +45,8 @@ sort($x);
 $n = count($x);
 foreach ($loc as $name) {
 	$data[$name] = [];
-	for ($i = 0; $i < $n; ++$i) {
+	for ($i = 0; $i < $n; ++$i) $data[$name][$i] = $raw[$name][$x[$i]];
+	for ($i = $n - 1; $i >= 0; --$i) {
 		$j = $raw[$name][$x[$i]];
 		if ($j == null && $i > 0)
 			$j = $data[$name][$i - 1];
@@ -70,7 +71,7 @@ tooltip: {
 	}
 },
 legend: {data: <?php echo json_encode($loc); ?>},
-toolbox: {feature: {saveAsImage: {}}},
+//toolbox: {feature: {saveAsImage: {}}},
 xAxis: {type: 'category', boundaryGap: false, data: <?php echo json_encode($x); ?>},
 yAxis: {type: 'time'},
 series: [
@@ -87,6 +88,7 @@ c.setOption(o);
 $d = new Datetime($date);
 $pre = explode('/', $d->modify("-1 day")->format("Y/m/d"));
 echo '<a class="btn btn-info" role="button" href="/visa2/view/?y='.$pre[0].'&m='.$pre[1].'&d='.$pre[2].'">前一天</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+echo '<a class="btn btn-info" role="button" href="/visa">返回首页</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 $nxt = explode('/', $d->modify("+2 day")->format("Y/m/d"));
 echo '<a role="button" class="btn btn-info" href="/visa2/view/?y='.$nxt[0].'&m='.$nxt[1].'&d='.$nxt[2].'">后一天</a>';
 ?>

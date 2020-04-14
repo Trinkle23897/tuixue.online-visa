@@ -32,7 +32,7 @@ if ($s == '1' and $t != '') {
 				</h1>
 	<center>
 	<br>
-	（如果看到它连续两个小时没刷新的话，或者Feature Request，可以去<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上提issue）
+	（如果看到它连续两个小时没刷新的话，或者有新的Feature Request，可以去<a href="https://github.com/Trinkle23897/us-visa">GitHub</a>上提issue）
 	<br>
 	<br>
 <?php
