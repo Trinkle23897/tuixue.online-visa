@@ -18,6 +18,7 @@
         <div class="row">
             <div class="span12">
 <h1 class="text-center" id="title">预约时间变化单日统计图</h1><br>
+<center>看情况是每个小时的第49分钟左右会放出来名额</center><br>
 <?php
 $y = $_GET['y'];
 $m = $_GET['m'];
@@ -92,7 +93,19 @@ echo '<a class="btn btn-info" role="button" href="/visa">返回首页</a>&nbsp;&
 $nxt = explode('/', $d->modify("+2 day")->format("Y/m/d"));
 echo '<a role="button" class="btn btn-info" href="/visa2/view/?y='.$nxt[0].'&m='.$nxt[1].'&d='.$nxt[2].'">后一天</a>';
 ?>
+<br><br>广告位招租，详情咨询：<a href="https://trinkle23897.github.io/">https://trinkle23897.github.io/</a><br>
 				</center>
-</div></div></div>
+<br>
+<div id="disqus_thread"></div>
+<script>
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://tuixue-online.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div></div></div><br>
 </body>
 </html>

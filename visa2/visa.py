@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os, sys, tqdm, json, time, argparse, base64, traceback
+import os, sys, tqdm, json, time, uuid, argparse, base64, traceback
 from time import sleep
 import numpy as np
 from selenium import webdriver
 from bs4 import BeautifulSoup as bs
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
-
-last_t = 3600
 
 def postprocess(l):
     if l == []:
@@ -49,35 +47,39 @@ def merge(fn, s, cur, keep):
 
 def main():
     open('state', 'w').write('0')
-    print(0)
-    driver.get("https://cgifederal.secure.force.com/SiteRegister?country=&language=")
-    Select(driver.find_element_by_id("Registration:SiteTemplate:theForm:accountId")).select_by_visible_text("China")
-    driver.find_element_by_id("Registration:SiteTemplate:theForm:username").send_keys(''.join([chr(np.random.randint(26) + ord('a')) for _ in range(10)]) + "@gmail.com")
-    driver.find_element_by_id("Registration:SiteTemplate:theForm:firstname").send_keys("jy")
-    driver.find_element_by_id("Registration:SiteTemplate:theForm:lastname").send_keys("w")
-    driver.find_element_by_id("Registration:SiteTemplate:theForm:password").send_keys("1q2w3e4r5t")
-    driver.find_element_by_id("Registration:SiteTemplate:theForm:confirmPassword").send_keys("1q2w3e4r5t")
-    driver.find_element_by_name("Registration:SiteTemplate:theForm:j_id169").click()
     while True:
-        img = base64.b64decode(bs(driver.page_source, 'html.parser').find_all(id='Registration:SiteTemplate:theForm:theId')[0].attrs['src'].replace('data:image;base64,', ''))
-        if len(img) > 0:
+        print(0)
+        driver.get("https://cgifederal.secure.force.com/SiteRegister?country=&language=")
+        Select(driver.find_element_by_id("Registration:SiteTemplate:theForm:accountId")).select_by_visible_text("China")
+        driver.find_element_by_id("Registration:SiteTemplate:theForm:username").send_keys(''.join([chr(np.random.randint(26) + ord('a')) for _ in range(10)]) + "@gmail.com")
+        driver.find_element_by_id("Registration:SiteTemplate:theForm:firstname").send_keys(''.join(np.random.permutation(' '.join('abcdef').split())))
+        driver.find_element_by_id("Registration:SiteTemplate:theForm:lastname").send_keys(''.join(np.random.permutation(' '.join('qwerty').split())))
+        passwd = ''.join(np.random.permutation(' '.join('12345qwert').split()))
+        driver.find_element_by_id("Registration:SiteTemplate:theForm:password").send_keys(passwd)
+        driver.find_element_by_id("Registration:SiteTemplate:theForm:confirmPassword").send_keys(passwd)
+        driver.find_element_by_name("Registration:SiteTemplate:theForm:j_id169").click()
+        while True:
+            img = base64.b64decode(bs(driver.page_source, 'html.parser').find_all(id='Registration:SiteTemplate:theForm:theId')[0].attrs['src'].replace('data:image;base64,', ''))
+            if len(img) > 0:
+                break
+            time.sleep(0.1)
+        gifname = 'try/%s.gif' % (uuid.uuid1())
+        open(gifname, 'wb').write(img)
+        open('gifname', 'w').write(gifname)
+        open('state', 'w').write('1')
+        print(1)
+        while True:
+            captcha = open('state').read()
+            if captcha != '1':
+                break
+            sleep(1)
+        open('state', 'w').write('2')
+        captcha = ''.join(captcha.split()).lower()
+        print(2, captcha)
+        driver.find_element_by_id("Registration:SiteTemplate:theForm:recaptcha_response_field").send_keys(captcha)
+        driver.find_element_by_id("Registration:SiteTemplate:theForm:submit").click()
+        if driver.page_source.find('无法核实验证码') == -1:
             break
-        time.sleep(0.1)
-    open('try.gif', 'wb').write(img)
-    open('state', 'w').write('1')
-    print(1)
-    while True:
-        captcha = open('state').read()
-        if captcha != '1':
-            break
-        sleep(1)
-    open('state', 'w').write('2')
-    captcha = ''.join(captcha.split()).lower()
-    print(2, captcha)
-    driver.find_element_by_id("Registration:SiteTemplate:theForm:recaptcha_response_field").send_keys(captcha)
-    driver.find_element_by_id("Registration:SiteTemplate:theForm:submit").click()
-    if driver.page_source.find('无法核实验证码') != -1:
-        return
     Select(driver.find_element_by_name("j_id0:SiteTemplate:j_id14:j_id15:j_id26:j_id27:j_id28:j_id30")).select_by_visible_text("Chinese (Simplified)")
     driver.find_element_by_name("j_id0:SiteTemplate:j_id14:j_id15:j_id26:j_id27:j_id28:j_id30").click()
     while True:
@@ -86,7 +88,7 @@ def main():
             break
         except:
             time.sleep(1)
-    os.system('mv try.gif log/%s.gif' % captcha)
+    os.system('mv %s log/%s.gif' % (gifname, captcha))
     driver.find_element_by_id("j_id0:SiteTemplate:theForm:ttip:2").click()
     driver.find_element_by_xpath("//div[3]/div[3]/div/button/span").click()
     driver.find_element_by_name("j_id0:SiteTemplate:theForm:j_id176").click()
@@ -116,16 +118,16 @@ def main():
             open(path, 'a+').write(s['time'].split(' ')[-1] + ' ' + s[n] + '\n')
         print(n, s[n])
     merge('../visa/visa.json', s, cur, flag > 1)
-    global last_t
-    if last_t == 3600:
-        last_t = 200
     if flag <= 1:
-        last_t = 3600
-    next_t = time.time() + last_t
+        t = 3600
+    else:
+        t = float(open('time').read())
+    next_t = time.time() + t
     open('state', 'w').write('3')
     open('next', 'w').write(time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(next_t)))# + (' 被封ip了，等待解封中' if flag <= 1 else ''))
     print(3)
-    time.sleep(last_t)
+    driver.quit()
+    time.sleep(t)
 
 if __name__ == '__main__':
     chrome_options = Options()
@@ -137,7 +139,6 @@ if __name__ == '__main__':
         try:
             driver = webdriver.Chrome(chrome_options=chrome_options)
             main()
-            driver.quit()
         except:
             print(traceback.format_exc())
             driver.quit()

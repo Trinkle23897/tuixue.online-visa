@@ -17,7 +17,7 @@
 		<div class="row">
 			<div class="span12">
 				<h1 class="text-center" id="title">
-					F/J签证预约时间
+					美国F/J签证预约时间
 				</h1>
 	<center>
 	<br>
@@ -31,7 +31,7 @@ echo "上一次更新时间：$t";
 	</center>
 	<br><center><a href="/visa2">手动刷新入口</a></center>
 	<br><center>“最早”指在该地点可以预约签证的日期，一天24h变化之中最早的一天</center>
-	<br><center><b>新功能:</b> 点击左侧时间可以查看预约时间变化折线图表</center><br>
+	<br><center>点击左侧时间可以查看预约时间变化折线图表，<b>最下方有Disqus评论区可以玩耍（需要翻墙）</b></center><br>
 	<table class="table table-hover table-striped table-bordered">
 		<thead>
   <tr>
@@ -71,12 +71,23 @@ foreach ($index as $date) {
 ?>
 		</tbody>
 	</table>
+<center>
+广告位招租，详情咨询：<a href="https://trinkle23897.github.io/">https://trinkle23897.github.io/</a><br><br>
+  本网站一共见证了<span id="busuanzi_value_page_pv"></span>人次的失学。<a href="https://www.zhihu.com/question/318624725/answer/875527594">关于可怜的差点被全聚德的作者</a><br>
+</center>
+<br>
+<div id="disqus_thread"></div>
+<script>
+(function() { // DON'T EDIT BELOW THIS LINE
+	var d = document, s = d.createElement('script');
+	s.src = 'https://tuixue-online.disqus.com/embed.js';
+	s.setAttribute('data-timestamp', +new Date());
+	(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<br>
 			</div>
 		</div>
 	</div>
-<footer class="page-footer font-small blue pt-4">
-  <div class="footer-copyright text-center py-3">本网站一共见证了<span id="busuanzi_value_page_pv"></span>人次的失学。<a href="https://www.zhihu.com/question/318624725/answer/875527594">关于可怜的差点被全聚德的作者</a>
-  </div>
-</footer>
-
 </html>

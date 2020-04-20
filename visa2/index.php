@@ -1,8 +1,8 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-$t = $_GET["t"];
+$t = $_POST["t"];
 $s = file_get_contents('state');
-if ($s == '1' and $t != '') {
+if ($s == '1' and strlen($t) == 5) {
 	$handle = fopen('state', 'w');
 	fwrite($handle, $t);
 	fclose($handle);
@@ -37,8 +37,8 @@ if ($s == '1' and $t != '') {
 	<br>
 <?php
 if ($s[0] == '1') {
-	echo '<img src="try.gif"><br><form action="/visa2" method="get" enctype="multipart/form-data"><table>
-                <tr><td>验证码（不对也没关系，可以交一个重来）：</td><td><input type="text" name="t" class="form-control"></td></table></tr><br>
+	echo '<img src="'.file_get_contents('gifname').'"><br><form action="" method="post" enctype="multipart/form-data"><table>
+                <tr><td>验证码（五个英文字符）：</td><td><input type="text" name="t" class="form-control"></td></table></tr><br>
 				<input type="submit" name="submit" value="提交" class="btn btn-info"/>
         </form>';
 } else if ($s[0] == '3') {
@@ -73,7 +73,19 @@ foreach ($loc as $l) {
 }
 echo '</tbody></table>';
 ?>
+广告位招租，详情咨询：<a href="https://trinkle23897.github.io/">https://trinkle23897.github.io/</a><br><br>
 	</center>
+<div id="disqus_thread"></div>
+<script>
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://tuixue-online.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<br>
 			</div>
 		</div>
 	</div>
