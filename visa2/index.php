@@ -28,7 +28,7 @@ if ($s == '1' and strlen($t) == 5) {
 		<div class="row">
 			<div class="span12">
 				<h1 class="text-center" id="title">
-					预约签证的验证码，太穷买不起自动识别服务
+					爬虫状态
 				</h1>
 	<center>
 	<br>
@@ -36,42 +36,8 @@ if ($s == '1' and strlen($t) == 5) {
 	<br>
 	<br>
 <?php
-if ($s[0] == '1') {
-	echo '<img src="'.file_get_contents('gifname').'"><br><form action="" method="post" enctype="multipart/form-data"><table>
-                <tr><td>验证码（五个英文字符）：</td><td><input type="text" name="t" class="form-control"></td></table></tr><br>
-				<input type="submit" name="submit" value="提交" class="btn btn-info"/>
-        </form>';
-} else if ($s[0] == '3') {
-	$t = file_get_contents('next');
-	echo "下一次更新时间：$t<br>";
-	echo '程序正在休息中 ... <a href="/visa/">点击返回</a>';
-} else if ($s[0] == '2') {
-	echo '正在刷新拉取数据中 ... 大概要等一两分钟 <a href="/visa/">点击返回</a>';
-} else {
-	echo '正在准备拉数据 ... 再等一会儿验证码窗口就出来了！<a href="/visa2/">点击刷新</a>';
-}
-echo '<br><br>最近两次的更新结果：（蓝色标出的是有变化的）<br><br>';
-$now = json_decode(file_get_contents("../visa/visa.json"), true);
-$last = json_decode(file_get_contents("last.json"), true);
-$loc = ['北京', '成都', '广州', '上海', '沈阳'];
-echo '<table class="table table-hover table-striped table-bordered"><thead><tr><th>地点</th><th>时间</th><th>'.$last['time'].'</th><th>'.$now['time'].'</th></tr></thead>';
-foreach ($loc as $l) {
-	echo '<tr><td rowspan="2">'.$l.'</td><td>当前</td>';
-	foreach ($last as $k=>$v) {
-		if (strpos($k, $l.'-') === 0) {
-			$tmp = $v != $now[$k] ? 'class="info"' : '';
-			echo '<td>'.$v.'</td><td '.$tmp.'>'.$now[$k].'</td></tr>';
-		}
-	}
-	echo '<tr><td>本日最早</td>';
-	foreach ($last as $k=>$v) {
-		if (strpos($k, $l.'2-') === 0) {
-			$tmp = $v != $now[$k] ? 'class="info"' : '';
-			echo '<td>'.$v.'</td><td '.$tmp.'>'.$now[$k].'</td></tr>';
-		}
-	}
-}
-echo '</tbody></table>';
+echo "当前状态：".file_get_contents('state').'，<a href="/visa">点击返回</a><br><br>';
+echo '<table class="table table-hover table-striped table-bordered"><thead><tr><th>F1/J1</th><th>B1/B2</th><th>H1B</th></tr></thead><tbody><tr><td>'.json_decode(file_get_contents('../visa/visa.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-b.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-h.json'), true)['time'].'</td></tr></tbody></table>';
 ?>
 广告位招租，详情咨询：<a href="https://trinkle23897.github.io/">https://trinkle23897.github.io/</a><br><br>
 	</center>
