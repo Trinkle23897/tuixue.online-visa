@@ -45,6 +45,7 @@ def min_date(a, b):
 
 def merge(fn, s, cur):
     orig = json.loads(open(fn).read()) if os.path.exists(fn) else {}
+    open(fn.replace('.json', '-last.json'), 'w').write(json.dumps(orig, ensure_ascii=False))
     for k in s:
         if '2-' in k:
             orig[k] = min_date(orig.get(k, '/'), s[k])
@@ -298,16 +299,16 @@ def main(driver, driver2, cracker):
     open('state', 'w').write('F1/J1 Visa Status Sync')
     f_visa(driver, driver2)
     if os.path.exists('notify.py'):
-        os.system('python3 notify.py F &')
+        os.system('python3 notify.py --type F &')
     if np.random.rand() < float(open('b_prob').read()):
         open('state', 'w').write('B1/B2 Visa Status Sync')
         b_visa(driver, driver2)
         if os.path.exists('notify.py'):
-            os.system('python3 notify.py B &')
+            os.system('python3 notify.py --type B &')
     open('state', 'w').write('H1B Visa Status Sync')
     h_visa(driver, driver2)
     if os.path.exists('notify.py'):
-        os.system('python3 notify.py H &')
+        os.system('python3 notify.py --type H &')
     driver.quit()
     driver2.quit()
     time.sleep(int(open('time').read()))

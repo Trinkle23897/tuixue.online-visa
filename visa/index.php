@@ -3,10 +3,12 @@
     <title>预约美签，防止失学</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/style/bootstrap.min.css">
-    <link rel="stylesheet" href="/style/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/style/bootstrap-theme.min.css">
+<!--	<link rel="stylesheet" href="/style/iDisqus.min.css">-->
     <script src="/style/jquery.min.js"></script>
     <script src="/style/bootstrap.min.js"></script>
     <script src="/style/echarts.min.js"></script>
+<!--	<script src="/style/iDisqus.min.js"></script>-->
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style type='text/css'>
     .table thead tr th { text-align: center; vertical-align: middle; }
@@ -19,20 +21,19 @@
             if (location.hash == '#F') chartF();
             else if (location.hash == '#B') chartB();
             else if (location.hash == '#H') chartH();
-            console.log(location.hash, 'anchor');
+			else chartF();
         }
         else chartF();
         $(document.body).on("click", "a[data-toggle]", function(event) {
             location.hash = this.getAttribute("href");
+            if (location.hash == '#F') chartF();
+            else if (location.hash == '#B') chartB();
+            else if (location.hash == '#H') chartH();
         });
     });
     $(window).on('popstate', function() {
         var anchor = location.hash || $("a[data-toggle=tab]").first().attr("href");
         $('a[href=' + anchor + ']').tab('show');
-        if (anchor == '#F') chartF();
-        else if (anchor == '#B') chartB();
-        else if (anchor == '#H') chartH();
-        console.log(anchor, 'anchor');
     });
     </script>
 </head>
@@ -77,9 +78,9 @@ function get_table($type, $jsfn, $loc) {
     foreach ($full as $name) $mid = $mid.'{name: "'.$name.'", type: "line", data: '.json_encode($data[$name]).'},'."\n";
     $script = '<script type="text/javascript">
                 function chart'.$type.'() {
-                    console.log(".$type.");
                     var c = echarts.init(document.getElementById("chart"));
                     var o = {
+						title: {text: "'.substr($date, 5).' '.$type.'"},
                         tooltip: {
                             trigger: "axis",
                             formatter: function(data) {
@@ -98,7 +99,7 @@ function get_table($type, $jsfn, $loc) {
                     c.setOption(o);
                 }
                 </script>';
-    $table = $table.$script.'<table class="table table-hover table-striped table-bordered"><thead><tr><th>地点</th>';
+    $table = $table.$script.'<div class="table-responsive"><table class="table table-hover table-striped table-bordered"><thead><tr><th>地点</th>';
     foreach ($loc as $name)
         $table = $table.'<th colspan="2">'.$name.'</th>';
     $table = $table."</tr><tr><th>时间</th>";
@@ -127,7 +128,7 @@ function get_table($type, $jsfn, $loc) {
         if ($flag) $table = $table.$line;
 
     }
-    $table = $table."</tbody></table>";
+    $table = $table."</tbody></table></div>";
     return $table;
 }
 ?>
@@ -139,13 +140,14 @@ function get_table($type, $jsfn, $loc) {
                 <br><br>点击左侧时间可以查看预约时间变化折线图表，最下方有Disqus评论区可以玩耍（需要翻墙）
                 <br><br>
             </center>
-            <div id='chart' style='height: 400px; width: 100%'></div>
+            <div id='chart' style='height: 300px; width: 100%'></div>
             <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F1/J1签证</a></li>
                     <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B1/B2签证</a></li>
                     <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B签证</a></li>
-                <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false">邮件订阅通知</a></li>
+				    <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false"><b>(New!!!)</b> 邮件订阅通知</a></li>
+                    <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
                 </ul>
                 <div id="myTabContent" class="tab-content">
                     <div role="tabpanel" class="tab-pane fade active in" id="F" aria-labelledby="F-tab">
@@ -158,7 +160,37 @@ function get_table($type, $jsfn, $loc) {
                         <?php echo get_table("H", "visa-h.json", ['北京', '广州', '上海', '香港']);?>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
-                        <center><br>还在开发中，再等等<br><br></center>
+					<br>
+					<center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），国外的邮箱（比如gmail）实测延迟很大...<br><br>
+					如果没收到确认邮件，可以翻一翻垃圾箱，并且把*@tuixue.online加入白名单中；<br>或者可以重新在这里提交一次 or 换个邮箱试试</center><br>
+        <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
+                <center>
+                <table>
+                <tr><td>邮箱地址：&nbsp;</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
+				<tr><td>选项：&nbsp;</td><td><select class="form-control" name="s">
+					<option value="">取消订阅</option>
+					<option value="f">F1/J1</option>
+					<option value="b">B1/B2</option>
+					<option value="h">H1B</option>
+					<option value="fb">F+B</option>
+					<option value="fh">F+H</option>
+					<option value="bh">B+H</option>
+					<option value="fbh">F+B+H</option>
+				</select></td></tr>
+                </table><br>
+                <input type="submit" value="提交" class="btn btn-info"/>
+                </center>
+        </form>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="code" aria-labelledby="code-tab">
+					<br>
+					GitHub 项目地址：<a href="https://github.com/Trinkle23897/us-visa">https://github.com/Trinkle23897/us-visa</a>
+					<br><br>
+					作者GitHub：<a href="https://github.com/Trinkle23897/">https://github.com/Trinkle23897/</a>
+					<br><br>
+					写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏
+					<center><img src="/upload/39CB3AB2-FEFD-44EC-88D3-F6C4A4C7B2B7.jpeg" style="width: 30%"><img src="/upload/F293524B-8160-4FB0-8CEE-3803ED464D4D.jpeg" style="width: 30%"></center>
+					<br>
                     </div>
                 </div>
             </div>
@@ -167,16 +199,8 @@ function get_table($type, $jsfn, $loc) {
                 本网站一共见证了<span id="busuanzi_value_page_pv"></span>人次的失学。<a href="https://www.zhihu.com/question/318624725/answer/875527594">关于可怜的差点被全聚德的作者</a><br>
             </center>
             <br>
-            <div id="disqus_thread"></div>
-            <script>
-            (function() { // DON'T EDIT BELOW THIS LINE
-                var d = document, s = d.createElement('script');
-                s.src = 'https://tuixue-online.disqus.com/embed.js';
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-            })();
-            </script>
-            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+			<div id="disqus_thread"></div>
+			<script async src="https://tuixue-online.disqus.com/embed.js"></script>
             <br>
     </div>
 </body>

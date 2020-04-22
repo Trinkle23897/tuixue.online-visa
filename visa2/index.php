@@ -37,6 +37,7 @@ if ($s == '1' and strlen($t) == 5) {
 	<br>
 <?php
 echo "当前状态：".file_get_contents('state').'，<a href="/visa">点击返回</a><br><br>';
+echo "当前爬取B1/B2的概率：".file_get_contents('b_prob')."<br><br>";
 echo '<table class="table table-hover table-striped table-bordered"><thead><tr><th>F1/J1</th><th>B1/B2</th><th>H1B</th></tr></thead><tbody><tr><td>'.json_decode(file_get_contents('../visa/visa.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-b.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-h.json'), true)['time'].'</td></tr></tbody></table>';
 ?>
 广告位招租，详情咨询：<a href="https://trinkle23897.github.io/">https://trinkle23897.github.io/</a><br><br>
