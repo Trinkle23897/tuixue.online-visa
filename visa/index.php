@@ -161,7 +161,7 @@ function get_table($type, $jsfn, $loc) {
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
 					<br>
-					<center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），国外的邮箱（比如gmail）实测延迟很大...<br><br>
+					<center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s；国外的邮箱（比如gmail）实测延迟很大...<br><br>
 					如果没收到确认邮件，可以翻一翻垃圾箱，并且把*@tuixue.online加入白名单中；<br>或者可以重新在这里提交一次 or 换个邮箱试试</center><br>
         <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
                 <center>

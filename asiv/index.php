@@ -29,10 +29,13 @@ if (strpos($s, 'f') > -1) $t = $t.'f';
 if (strpos($s, 'b') > -1) $t = $t.'b';
 if (strpos($s, 'h') > -1) $t = $t.'h';
 if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
-	if (file_exists('email/tmp/'.$email))
+	if (file_exists('email/tmp/'.$email)) {
 		$result = update($email, 'f', strpos($t, 'f')).update($email, 'b', strpos($t, 'b')).update($email, 'h', strpos($t, 'h'));
+		if (strlen($result) > 0)
+			system("python3 ../visa2/notify.py --type confirm --email ".$email." > /dev/null", $ret);
+	}
 	else
-		$result = '不要老想着搞个大新闻！没有订阅成功，请重新在首页提交一次，或者把确认邮件转发给trinkle23897@gmail.com';
+		$result = '不要老想着搞个大新闻！没有订阅成功，请重新在首页提交一次，或者把确认邮件转发给trinkle23897@gmail.com让他debug';
 	echo $result;
 } else { // test
 	$email = $_REQUEST['email'];
