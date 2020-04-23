@@ -1,48 +1,59 @@
 <html>
 <head>
-<meta http-equiv="refresh" content="10;url=https://tuixue.online/visa"/>
+<meta http-equiv="refresh" content="10;url=/visa"/>
 </head>
 <body>
 <?php
-function update($email, $type, $todo) {
-	$fn = 'email/'.$type.'/'.$email;
-	if ($todo > -1) {
+function update_status($type, $city, $email, $todo, $out) {
+	$fn = 'email/'.$type.'/'.$city.'/'.$email;
+	if ($todo) {
 		if (file_exists($fn))
-			return $email." 之前已经订阅了".$type."签证状态了<br>";
+			return $email." 之前已经订阅了".$out."状态了<br>";
 		else {
 			$h = fopen($fn, 'w');
 			fwrite($h, ' ');
 			fclose($h);
-			return $email." 刚刚成功订阅了".$type."签证状态<br>";
+			return $email." 刚刚成功订阅了".$out."状态<br>";
 		}
 	} else {
 		if (file_exists($fn)) {
 			unlink($fn);
-			return $email." 刚刚成功取消订阅了".$type."签证状态<br>";
+			return $email." 刚刚成功取消订阅了".$out."状态<br>";
 		} else return "";
 	}
 }	
 $email = $_REQUEST['liame'];
-$s = $_REQUEST['s'];
-$t = '';
-if (strpos($s, 'f') > -1) $t = $t.'f';
-if (strpos($s, 'b') > -1) $t = $t.'b';
-if (strpos($s, 'h') > -1) $t = $t.'h';
-if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
+$t = $_REQUEST['visa'];
+$type = array('f' => 'F1/J1签证', 'b' => 'B1/B2签证', 'h' => 'H1B签证');
+$city = array('bj' => '北京', 'cd' => '成都', 'gz' => '广州', 'sh' => '上海', 'sy' => '沈阳', 'hk' => '香港');
+if (strlen($_REQUEST['s']) > 0) {
+	echo "旧的链接已失效，请在首页重新提交一份订阅请求。";
+}
+else if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 	if (file_exists('email/tmp/'.$email)) {
-		$result = update($email, 'f', strpos($t, 'f')).update($email, 'b', strpos($t, 'b')).update($email, 'h', strpos($t, 'h'));
+		$result = '';
+		foreach ($type as $i => $a)
+			foreach ($city as $j => $b)
+				$result = $result.update_status($i, $j, $email, in_array($i.$j, $t), $b.$a);
 		if (strlen($result) > 0)
 			system("python3 ../visa2/notify.py --type confirm --email ".$email." > /dev/null", $ret);
 	}
 	else
-		$result = '不要老想着搞个大新闻！没有订阅成功，请重新在首页提交一次，或者把确认邮件转发给trinkle23897@gmail.com让他debug';
+		$result = '不要老想着搞个大新闻！没有订阅成功，请重新在首页提交一次，或者把确认邮件转发给 <a href="mailto:trinkle23897@gmail.com">trinkle23897@gmail.com</a> 让他debug';
 	echo $result;
 } else { // test
 	$email = $_REQUEST['email'];
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-		if (file_exists($email)) echo "之前已经发送过了，正在重新发送确认邮件中<br>";
-		system("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$t."' > /dev/null", $ret);
-		echo "发送了确认邮件，请及时查收，<b>点击确认邮件中的链接之后才算正式订阅</b><br>";
+		if (file_exists('email/tmp/'.$email)) echo "之前已经发送过了，正在重新发送确认邮件中<br>";
+		$result = '';
+		foreach ($type as $i => $a)
+			foreach ($city as $j => $b)
+				if (in_array($i.$j, $t))
+					$result = $result.$i.$j.',';
+		$result = rtrim($result, ",");
+		// echo("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."'");
+		system("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' 2>log", $ret);
+		echo "<br>发送了确认邮件，请及时查收，<b>点击确认邮件中的链接之后才算正式订阅</b><br>";
 	} else {
 		echo "邮箱格式不合法，请仔细检查一下……？<br>";
 	}
@@ -51,3 +62,4 @@ if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 <br>
 十秒钟后自动跳转到首页......
 </body></html>
+

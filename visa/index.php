@@ -3,12 +3,10 @@
     <title>预约美签，防止失学</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/style/bootstrap.min.css">
-	<link rel="stylesheet" href="/style/bootstrap-theme.min.css">
-<!--	<link rel="stylesheet" href="/style/iDisqus.min.css">-->
+    <link rel="stylesheet" href="/style/bootstrap-theme.min.css">
     <script src="/style/jquery.min.js"></script>
     <script src="/style/bootstrap.min.js"></script>
     <script src="/style/echarts.min.js"></script>
-<!--	<script src="/style/iDisqus.min.js"></script>-->
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style type='text/css'>
     .table thead tr th { text-align: center; vertical-align: middle; }
@@ -21,7 +19,7 @@
             if (location.hash == '#F') chartF();
             else if (location.hash == '#B') chartB();
             else if (location.hash == '#H') chartH();
-			else chartF();
+            else chartF();
         }
         else chartF();
         $(document.body).on("click", "a[data-toggle]", function(event) {
@@ -80,7 +78,7 @@ function get_table($type, $jsfn, $loc) {
                 function chart'.$type.'() {
                     var c = echarts.init(document.getElementById("chart"));
                     var o = {
-						title: {text: "'.substr($date, 5).' '.$type.'"},
+                        title: {text: "'.substr($date, 5).' '.$type.'"},
                         tooltip: {
                             trigger: "axis",
                             formatter: function(data) {
@@ -146,7 +144,7 @@ function get_table($type, $jsfn, $loc) {
                     <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F1/J1签证</a></li>
                     <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B1/B2签证</a></li>
                     <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B签证</a></li>
-				    <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false"><b>(New!!!)</b> 邮件订阅通知</a></li>
+                    <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false"><b>(New!!!)</b> 邮件订阅通知</a></li>
                     <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
                 </ul>
                 <div id="myTabContent" class="tab-content">
@@ -160,37 +158,51 @@ function get_table($type, $jsfn, $loc) {
                         <?php echo get_table("H", "visa-h.json", ['北京', '广州', '上海', '香港']);?>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
-					<br>
-					<center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s；国外的邮箱（比如gmail）实测延迟很大...<br><br>
-					如果没收到确认邮件，可以翻一翻垃圾箱，并且把*@tuixue.online加入白名单中；<br>或者可以重新在这里提交一次 or 换个邮箱试试</center><br>
-        <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
-                <center>
-                <table>
-                <tr><td>邮箱地址：&nbsp;</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
-				<tr><td>选项：&nbsp;</td><td><select class="form-control" name="s">
-					<option value="">取消订阅</option>
-					<option value="f">F1/J1</option>
-					<option value="b">B1/B2</option>
-					<option value="h">H1B</option>
-					<option value="fb">F+B</option>
-					<option value="fh">F+H</option>
-					<option value="bh">B+H</option>
-					<option value="fbh">F+B+H</option>
-				</select></td></tr>
-                </table><br>
-                <input type="submit" value="提交" class="btn btn-info"/>
-                </center>
-        </form>
+                    <br>
+                    <center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s；国外的邮箱（比如gmail）实测延迟很大...<br><br>
+                    如果没收到确认邮件，可以翻一翻垃圾箱，并且把*@tuixue.online加入白名单中；<br>或者可以重新在这里提交一次 or 换个邮箱试试<br><br>
+                    即使能正常收到也不意味着一定不会进垃圾邮箱里面，建议白名单。</center><br>
+                    <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
+                            <center>
+                            <table>
+                            <tr><td>邮箱地址：&nbsp;</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
+                            <tr><td>F1/J1：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbj"> 北京</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcd"> 成都</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fgz"> 广州</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsh"> 上海</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsy"> 沈阳</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fhk"> 香港</label>
+                            </td></tr>
+                            <tr><td>B1/B2：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbj"> 北京</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcd"> 成都</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bgz"> 广州</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsh"> 上海</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsy"> 沈阳</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bhk"> 香港</label>
+                            </td></tr>
+                            <tr><td>H1B：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbj"> 北京</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hgz"> 广州</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsh"> 上海</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hhk"> 香港</label>
+                            </td></tr>
+                            <tr><td></td><td>如果要取消订阅的话，全不选然后提交就行了。</td></tr>
+                            </table><br>
+                            <input type="submit" value="提交" class="btn btn-info"/>
+                            </center>
+                    </form>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="code" aria-labelledby="code-tab">
-					<br>
-					GitHub 项目地址：<a href="https://github.com/Trinkle23897/us-visa">https://github.com/Trinkle23897/us-visa</a>
-					<br><br>
-					作者GitHub：<a href="https://github.com/Trinkle23897/">https://github.com/Trinkle23897/</a>
-					<br><br>
-					写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏
-					<center><img src="/upload/39CB3AB2-FEFD-44EC-88D3-F6C4A4C7B2B7.jpeg" style="width: 30%"><img src="/upload/F293524B-8160-4FB0-8CEE-3803ED464D4D.jpeg" style="width: 30%"></center>
-					<br>
+                    <br>
+                    GitHub 项目地址：<a href="https://github.com/Trinkle23897/us-visa">https://github.com/Trinkle23897/us-visa</a>
+                    <br><br>
+                    作者GitHub：<a href="https://github.com/Trinkle23897/">https://github.com/Trinkle23897/</a>
+                    <br><br>
+                    写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏
+                    <center><img src="/upload/39CB3AB2-FEFD-44EC-88D3-F6C4A4C7B2B7.jpeg" style="width: 30%"><img src="/upload/F293524B-8160-4FB0-8CEE-3803ED464D4D.jpeg" style="width: 30%"></center>
+                    <br>
                     </div>
                 </div>
             </div>
@@ -199,8 +211,8 @@ function get_table($type, $jsfn, $loc) {
                 本网站一共见证了<span id="busuanzi_value_page_pv"></span>人次的失学。<a href="https://www.zhihu.com/question/318624725/answer/875527594">关于可怜的差点被全聚德的作者</a><br>
             </center>
             <br>
-			<div id="disqus_thread"></div>
-			<script async src="https://tuixue-online.disqus.com/embed.js"></script>
+            <div id="disqus_thread"></div>
+            <script async src="https://tuixue-online.disqus.com/embed.js"></script>
             <br>
     </div>
 </body>

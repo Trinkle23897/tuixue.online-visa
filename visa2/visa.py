@@ -108,6 +108,8 @@ def login(driver, cracker, uri, info=''):
             if not os.path.exists('fail'):
                 os.makedirs('fail')
             os.system('mv %s fail/%s.gif' % (gifname, captcha))
+            if hasattr(cracker, 'wrong'):
+                cracker.wrong()
 
 
 def f_visa(driver, driver2):
