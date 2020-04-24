@@ -1,4 +1,5 @@
 import os
+import time
 import json
 import argparse
 import requests
@@ -88,7 +89,118 @@ def test(args):
          content, receivers)
 
 
+template = '''
+<center><br>“最早”指在该地预约日期24h变化中最早的一天<br>
+上一次更新时间：TIME</center><br><script type="text/javascript">
+function chartTYPE() {
+    var c = echarts.init(document.getElementById("chart"));
+    var o = {
+        title: {text: "TYPE"},
+        tooltip: {
+            trigger: "axis",
+            formatter: function(data) {
+                var result = data[0].name + "<br/>";
+                for (var i = 0, length = data.length; i < length; ++i)
+                    result += data[i].marker + data[i].seriesName + ": " + data[i].data + "<br>";
+                return result;
+            }
+        },
+        legend: {data: [LEGEND]},
+        xAxis: {type: "category", boundaryGap: false, data: [XAXIS]},
+        yAxis: {type: "time"},
+        series: [SERIES]
+    };
+    c.setOption(o);
+}
+</script>
+<div class="table-responsive">
+<table class="table table-hover table-striped table-bordered">
+TABLE
+</table>
+</div>
+'''
+
+
+def refresh_homepage():
+    html = open('../visa/template.php').read()
+    cur = time.strftime('%Y/%m/%d', time.localtime())
+    yy, mm, dd = cur.split('/')
+    for tp in "FBHO":
+        p = '' if tp == 'F' else ('-' + tp.lower())
+        js = json.loads(open('../visa/visa%s.json' % p).read())
+        result = template.replace("TYPE", tp).replace('TIME', js['time'])
+        info = {}
+        x = []
+        for city in translate:
+            p = '%s/%s/%s' % (tp, city, cur)
+            if os.path.exists(p):
+                info[city] = {}
+                raw = open(p).read().split('\n')[:-1]
+                for i in raw:
+                    k, v = i.split()
+                    x.append(k)
+                    info[city][k] = v
+            else:
+                info[city] = {}
+        x = sorted(list(set(x)))
+        # chart
+        if tp == 'H':
+            legend = '"北京","广州","上海","香港"'
+        else:
+            legend = '"北京","成都","广州","上海","沈阳","香港"'
+        result = result.replace('LEGEND', legend)
+        xaxis = ""
+        for i in x:
+            xaxis += '"' + i + '",'
+        result = result.replace('XAXIS', xaxis)
+        series = ''
+        legend = ["北京", "成都", "广州", "上海", "沈阳", "香港"]
+        for city in legend:
+            series += '{name: "%s", type: "line", data: [' % city
+            for t in x:
+                if info.get(city, None) is not None \
+                        and info[city].get(t, None) is not None:
+                    series += '"' + info[city][t] + '",'
+                else:
+                    series += 'null,'
+            series += ']},\n'
+        result = result.replace('SERIES', series)
+        # table
+        if tp == 'H':
+            legend = ["北京", "广州", "上海", "香港"]
+        else:
+            legend = ["北京", "成都", "广州", "上海", "沈阳", "香港"]
+        table = '<thead><tr><th>地点</th>'
+        for i in legend:
+            table += '<th colspan="2">' + i + '</th>'
+        table += '</tr><tr><th>时间</th>'
+        for i in legend:
+            table += '<th>当前</th><th>最早</th>'
+        table += '</tr></thead><tbody>'
+        for index in js['index']:
+            yy, mm, dd = index.split('/')
+            line = '<tr><td><a href="/visa2/view/' + \
+                '?y=%s&m=%s&d=%s&t=%s">%s/%s</a></td>' % (
+                    yy, mm, dd, tp, mm, dd)
+            for c in legend:
+                r = js.get(c + '-' + index, '')
+                if len(r) > 1:
+                    r = r[5:]
+                line += '<td>' + r + '</td>'
+                r = js.get(c + '2-' + index, '')
+                if len(r) > 1:
+                    r = r[5:]
+                line += '<td>' + r + '</td>'
+            table += line + '</tr>'
+        table += '</tbody>'
+        result = result.replace('TABLE', table)
+        source_place = 'TBD_' + tp
+        html = html.replace(source_place, result)
+    open('../visa/index.php', 'w').write(html)
+
+
 def main(args):
+    refresh_homepage()
     if args.type == 'F':
         js = json.loads(open('../visa/visa.json').read())
         last_js = json.loads(open('../visa/visa-last.json').read())
