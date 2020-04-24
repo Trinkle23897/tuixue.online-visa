@@ -30,7 +30,7 @@ if (is_numeric($y) && is_numeric($m) && is_numeric($d))
 else
     $date = date("Y/m/d", time());
 if ($type == 'J') $type = 'F';
-else if ($type != 'F' && $type != 'B' && $type != 'H')
+else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O')
     $type = 'F';
 $loc = ['北京', '成都', '广州', '上海', '沈阳', '香港'];
 $raw = [];

@@ -5,7 +5,7 @@ import requests
 import itertools
 
 
-detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2'}
+detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3'}
 translate = {'北京': 'Beijing', '上海': 'Shanghai', '成都': 'Chengdu',
              '广州': 'Guangzhou', '沈阳': 'Shenyang', '香港': 'HongKong'}
 full = {'bj': '北京', 'sh': '上海', 'cd': '成都', 'gz': '广州', 'sy': '沈阳', 'hk': '香港'}
@@ -49,7 +49,7 @@ def confirm(args):
     complete:<br><br>
     1. Whitelist *@tuixue.online, because your email provider may still
     randomly block the notification from tuixue.online.<br>
-    2. Donate the tuition fee (not necessary): this
+    2. Donate the tuition fee (not mandatory): this
     <a href="https://tuixue.online/visa/#code">link</a> provides some helpful
     information.<br>
     <br>
@@ -98,10 +98,14 @@ def main(args):
     elif args.type == 'H':
         js = json.loads(open('../visa/visa-h.json').read())
         last_js = json.loads(open('../visa/visa-h-last.json').read())
+    elif args.type == 'O':
+        js = json.loads(open('../visa/visa-o.json').read())
+        last_js = json.loads(open('../visa/visa-o-last.json').read())
     now_time, last_time = js['time'].split()[0], last_js['time'].split()[0]
     if now_time != last_time:
-        users = [os.listdir('../asiv/email/' + args.type.lower() + '/' + i)
-                 for i in full]
+        users = [
+            j for i in full
+            for j in os.listdir('../asiv/email/' + args.type.lower() + '/' + i)]
         users = list(set(users))
         a, b, c = last_time.split('/')
         url = 'https://tuixue.online/visa2/view/?y=%s&m=%s&d=%s&t=%s' % (
@@ -159,7 +163,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--type', type=str, choices=[
-        'F', 'B', 'H', 'test', 'confirm'])
+        'F', 'B', 'H', 'O', 'test', 'confirm'])
     parser.add_argument('--email', type=str, default='')
     parser.add_argument('--subscribe', type=str, default='')
     parser.add_argument('--secret', type=str, default='/var/www/mail')

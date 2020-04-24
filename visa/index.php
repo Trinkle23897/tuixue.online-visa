@@ -19,6 +19,7 @@
             if (location.hash == '#F') chartF();
             else if (location.hash == '#B') chartB();
             else if (location.hash == '#H') chartH();
+            else if (location.hash == '#O') chartO();
             else chartF();
         }
         else chartF();
@@ -27,6 +28,7 @@
             if (location.hash == '#F') chartF();
             else if (location.hash == '#B') chartB();
             else if (location.hash == '#H') chartH();
+            else if (location.hash == '#O') chartO();
         });
     });
     $(window).on('popstate', function() {
@@ -42,7 +44,7 @@ function get_table($type, $jsfn, $loc) {
     $t = $js['time'];
     $index = $js['index'];
     $date = date("Y/m/d", time());
-    $table = '<center><br>上一次更新时间：'.$t.'</center><br>';
+    $table = '<center><br>“最早”指在该地预约日期24h变化中最早的一天<br>上一次更新时间：'.$t.'</center><br>';
     // chart
     $raw = [];
     $data = [];
@@ -134,16 +136,16 @@ function get_table($type, $jsfn, $loc) {
         <h1 class="text-center" id="title">美国签证预约时间</h1>
             <center>
                 <br><a href="/visa2">爬虫当前状态</a>
-                <br><br>“最早”指在该地点可以预约签证的日期，一天24h变化之中最早的一天
-                <br><br>点击左侧时间可以查看预约时间变化折线图表，最下方有Disqus评论区可以玩耍（需要翻墙）
                 <br><br>
             </center>
-            <div id='chart' style='height: 300px; width: 100%'></div>
+            <div id='chart' style='height: 250px; width: 100%'></div>
+            <center>更多图表请点击表格左侧时间</center><br>
             <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F1/J1签证</a></li>
                     <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B1/B2签证</a></li>
                     <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B签证</a></li>
+                    <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O1/O2/O3签证</a></li>
                     <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false"><b>(New!!!)</b> 邮件订阅通知</a></li>
                     <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
                 </ul>
@@ -157,9 +159,12 @@ function get_table($type, $jsfn, $loc) {
                     <div role="tabpanel" class="tab-pane fade" id="H" aria-labelledby="H-tab">
                         <?php echo get_table("H", "visa-h.json", ['北京', '广州', '上海', '香港']);?>
                     </div>
+                    <div role="tabpanel" class="tab-pane fade" id="O" aria-labelledby="O-tab">
+                        <?php echo get_table("O", "visa-o.json", ['北京', '成都', '广州', '上海', '沈阳', '香港']);?>
+                    </div>
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
                     <br>
-                    <center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s；国外的邮箱（比如gmail）实测延迟很大...<br><br>
+                    <center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s；国外的邮箱（比如gmail）<s>实测延迟很大...</s>好像也没延时了<br><br>
                     如果没收到确认邮件，可以翻一翻垃圾箱，并且把*@tuixue.online加入白名单中；<br>或者可以重新在这里提交一次 or 换个邮箱试试<br><br>
                     即使能正常收到也不意味着一定不会进垃圾邮箱里面，建议白名单。</center><br>
                     <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
@@ -188,6 +193,14 @@ function get_table($type, $jsfn, $loc) {
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hhk"> 香港</label>
                             </td></tr>
+                            <tr><td>O1/O2/O3：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obj"> 北京</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocd"> 成都</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ogz"> 广州</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osh"> 上海</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osy"> 沈阳</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ohk"> 香港</label>
+                            </td></tr>
                             <tr><td></td><td>如果要取消订阅的话，全不选然后提交就行了。</td></tr>
                             </table><br>
                             <input type="submit" value="提交" class="btn btn-info"/>
@@ -200,9 +213,19 @@ function get_table($type, $jsfn, $loc) {
                     <br><br>
                     作者GitHub：<a href="https://github.com/Trinkle23897/">https://github.com/Trinkle23897/</a>
                     <br><br>
+                    作者个人主页：<a href="https://trinkle23897.github.io/cv/">https://trinkle23897.github.io/cv/</a>
+                    <br><br>
                     写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏
                     <center><img src="/upload/39CB3AB2-FEFD-44EC-88D3-F6C4A4C7B2B7.jpeg" style="width: 30%"><img src="/upload/F293524B-8160-4FB0-8CEE-3803ED464D4D.jpeg" style="width: 30%"></center>
-                    <br>
+					<br><br>
+                    如果您觉得 tuixue.online 很有帮助，可以在毕业论文中加入如下致谢：（贵学术圈不都这么搞的嘛（狗头））
+                    <br><br>
+                    <code>感谢翁家翌同学制作的 tuixue.online 网站帮助我在紧张的毕业设计过程中 [请自由发挥]。</code>
+					<br><br>
+                    If you find tuixue.online helpful and useful, please add the below acknowledgement in your publication:
+					<br><br>
+					<code>Thanks to Mr. Jiayi Weng's website tuixue.online for [blabla] in my graduation project.</code>
+                    <br><br>
                     </div>
                 </div>
             </div>

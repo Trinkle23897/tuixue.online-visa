@@ -26,8 +26,7 @@
     <br>
 <?php
 echo "当前状态：".file_get_contents('state').'，<a href="/visa">点击返回</a><br><br>';
-echo "当前爬取B1/B2的概率：".file_get_contents('b_prob')."<br><br>";
-echo '<table class="table table-hover table-striped table-bordered"><thead><tr><th>F1/J1</th><th>B1/B2</th><th>H1B</th></tr></thead><tbody><tr><td>'.json_decode(file_get_contents('../visa/visa.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-b.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-h.json'), true)['time'].'</td></tr></tbody></table>';
+echo '<table class="table table-hover table-striped table-bordered"><thead><tr><th>签证类型</th><th>F1/J1</th><th>B1/B2</th><th>H1B</th><th>O1/O2/O3</th></tr></thead><tbody><tr><td>更新时间</td><td>'.json_decode(file_get_contents('../visa/visa.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-b.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-h.json'), true)['time'].'</td><td>'.json_decode(file_get_contents('../visa/visa-o.json'), true)['time'].'</td></tr><tr><td>爬取概率</td><td>'.file_get_contents('f_prob').'</td><td>'.file_get_contents('b_prob').'</td><td>'.file_get_contents('h_prob').'</td><td>'.file_get_contents('o_prob').'</td></tr></tbody></table>';
 ?>
 广告位招租，详情咨询：<a href="https://trinkle23897.github.io/">https://trinkle23897.github.io/</a><br><br>
     </center>
