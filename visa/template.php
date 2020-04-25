@@ -76,8 +76,8 @@
                     <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
                             <center>
                             <table>
-                            <tr><td>邮箱地址：&nbsp;</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
-                            <tr><td>F1/J1：</td><td>
+                            <tr><td align='right'>邮箱地址：</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
+                            <tr><td align='right'>F1/J1：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcd"> 成都</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fgz"> 广州</label>
@@ -85,7 +85,7 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fhk"> 香港</label>
                             </td></tr>
-                            <tr><td>B1/B2：</td><td>
+                            <tr><td align='right'>B1/B2：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcd"> 成都</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bgz"> 广州</label>
@@ -93,13 +93,13 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bhk"> 香港</label>
                             </td></tr>
-                            <tr><td>H1B：</td><td>
+                            <tr><td align='right'>H1B：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hgz"> 广州</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hhk"> 香港</label>
                             </td></tr>
-                            <tr><td>O1/O2/O3：</td><td>
+                            <tr><td align='right'>O1/O2/O3：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocd"> 成都</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ogz"> 广州</label>
@@ -107,6 +107,11 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ohk"> 香港</label>
                             </td></tr>
+							<tr><td>当出现的时间早于该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td>
+<!--<div class="form-group"><input type="number" class="form-control" id="yy" placeholder="2020" min='2020'><label for="yy">年</label></div>
+<div class="form-group"><input type="number" class="form-control" id="mm" placeholder="9" min='1' max='12'><label for="mm">月</label></div>
+<div class="form-group"><input type="number" class="form-control" id="dd" placeholder="1" min='1' max='31'><label for="dd">日</label></div>-->
+                            </tr>
                             <tr><td></td><td>如果要取消订阅的话，全不选然后提交就行了。</td></tr>
                             </table><br>
                             <input type="submit" value="提交" class="btn btn-info"/>

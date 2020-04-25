@@ -84,7 +84,7 @@ def test(args):
     related online documents immediately for your records.<br>
     ''' % (args.email.split('@')[0], args.email, args.subscribe)
     receivers = [args.email]
-    open('../asiv/email/tmp/' + args.email, 'w').write('')
+    open('../asiv/email/tmp/' + args.email, 'w').write(args.time)
     send(args.api, 'Your Application Decision from tuixue.online',
          content, receivers)
 
@@ -178,7 +178,6 @@ def refresh_homepage():
             table += '<th>当前</th><th>最早</th>'
         table += '</tr></thead><tbody>'
         for index in js['index']:
-            yy, mm, dd = index.split('/')
             line = '<tr><td><a href="/visa2/view/' + \
                 '?y=%s&m=%s&d=%s&t=%s">%s/%s</a></td>' % (
                     yy, mm, dd, tp, mm, dd)
@@ -204,33 +203,30 @@ def main(args):
     if args.type == 'F':
         js = json.loads(open('../visa/visa.json').read())
         last_js = json.loads(open('../visa/visa-last.json').read())
-    elif args.type == 'B':
-        js = json.loads(open('../visa/visa-b.json').read())
-        last_js = json.loads(open('../visa/visa-b-last.json').read())
-    elif args.type == 'H':
-        js = json.loads(open('../visa/visa-h.json').read())
-        last_js = json.loads(open('../visa/visa-h-last.json').read())
-    elif args.type == 'O':
-        js = json.loads(open('../visa/visa-o.json').read())
-        last_js = json.loads(open('../visa/visa-o-last.json').read())
+    else:
+        js = json.loads(open(
+            '../visa/visa-%s.json' % args.type.lower()).read())
+        last_js = json.loads(open(
+            '../visa/visa-%s-last.json' % args.type.lower()).read())
     now_time, last_time = js['time'].split()[0], last_js['time'].split()[0]
     if now_time != last_time:
-        users = [
-            j for i in full
-            for j in os.listdir('../asiv/email/' + args.type.lower() + '/' + i)]
-        users = list(set(users))
-        a, b, c = last_time.split('/')
-        url = 'https://tuixue.online/visa2/view/?y=%s&m=%s&d=%s&t=%s' % (
-            a, b, c, args.type)
-        send(
-            args.api,
-            'Daily Stats for ' + detail[args.type] + ' Visa, ' + last_time,
-            'This is yesterday\'s visa status: <a href="%s">%s</a>' % (
-                url, url),
-            users,
-        )
+        # users = [
+        #     j for i in full
+        #     for j in os.listdir('../asiv/email/' + args.type.lower() + '/' + i)]
+        # users = list(set(users))
+        # a, b, c = last_time.split('/')
+        # url = 'https://tuixue.online/visa2/view/?y=%s&m=%s&d=%s&t=%s' % (
+        #     a, b, c, args.type)
+        # send(
+        #     args.api,
+        #     'Daily Stats for ' + detail[args.type] + ' Visa',
+        #     '%s<br>This is yesterday\'s visa status: <a href="%s">%s</a>' % (
+        #         last_time, url, url),
+        #     users,
+        # )
         return
     content = {}
+    upd_time = {}
     for k in js:
         if '2-' not in k and now_time in k:
             last = last_js.get(k, '/')
@@ -238,9 +234,10 @@ def main(args):
                 content[short[k.split('-')[0]]] = \
                     translate[k.split('-')[0]] + \
                     ' changes from ' + last + ' to ' + js[k] + '.<br>'
+                upd_time[short[k.split('-')[0]]] = js[k]
     if len(list(content.keys())) > 0:
         keys = sorted(list(content.keys()))
-        masks = list(itertools.product([0, 1], repeat=len(keys)))
+        masks = list(itertools.product([0, 1], repeat=len(keys)))[1:]
         users = {}
         alluser = []
         for k in keys:
@@ -250,7 +247,12 @@ def main(args):
         alluser = list(set(alluser))
         mask_stat = {}
         for u in alluser:
-            mask_stat[u] = [u in users[k] for k in keys]
+            tu = open('../asiv/email/tmp/' + u).read()
+            if '/' not in tu:
+                tu = '/'
+            mask_stat[u] = [
+                u in users[k] and min_date(tu, upd_time[k]) == upd_time[k]
+                for k in keys]
         for mask in masks:
             mask = list(mask)
             pending = [u for u in alluser if mask_stat[u] == mask]
@@ -279,6 +281,7 @@ if __name__ == '__main__':
     parser.add_argument('--email', type=str, default='')
     parser.add_argument('--subscribe', type=str, default='')
     parser.add_argument('--secret', type=str, default='/var/www/mail')
+    parser.add_argument('--time', type=str, default='')
     args = parser.parse_args()
     args.api = open(args.secret).read()
     args.subscribe = args.subscribe.split(',')

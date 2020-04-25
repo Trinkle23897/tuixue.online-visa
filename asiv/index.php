@@ -43,6 +43,15 @@ else if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 	echo $result;
 } else { // test
 	$email = $_REQUEST['email'];
+	$tmp = $_REQUEST['time'];
+	$yy = explode('-', $tmp)[0];
+	$mm = explode('-', $tmp)[1];
+	$dd = explode('-', $tmp)[2];
+	// echo $yy.'/'.$mm.'/'.$dd;
+	if (is_numeric($yy) && is_numeric($mm) && is_numeric($dd) && $yy[0] != '-' && $mm[0] != '-' && $dd[0] != '-')
+		$thres = $yy.'/'.$mm.'/'.$dd;
+	else
+		$thres = '';
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 		if (file_exists('email/tmp/'.$email)) echo "之前已经发送过了，正在重新发送确认邮件中<br>";
 		$result = '';
@@ -51,8 +60,8 @@ else if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 				if (in_array($i.$j, $t))
 					$result = $result.$i.$j.',';
 		$result = rtrim($result, ",");
-		// echo("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."'");
-		system("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' 2>log", $ret);
+		system("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' --time '".$thres."' 2>log", $ret);
+		//echo("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' --time '".$thres."' 2>log");
 		echo "<br>发送了确认邮件，请及时查收，<b>点击确认邮件中的链接之后才算正式订阅</b><br>";
 	} else {
 		echo "邮箱格式不合法，请仔细检查一下……？<br>";
