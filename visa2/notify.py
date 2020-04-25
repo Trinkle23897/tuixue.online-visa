@@ -46,13 +46,16 @@ def confirm(args):
     content = '''Dear %s:<br>
     <br>
     Welcome to tuixue.online! We are excited that you have
-    chosen to join the Subscribtion Program. There are two action items to
+    chosen to join the Subscribtion Program. There are three action items to
     complete:<br><br>
     1. Whitelist *@tuixue.online, because your email provider may still
     randomly block the notification from tuixue.online.<br>
     2. Donate the tuition fee (not mandatory): this
     <a href="https://tuixue.online/visa/#code">link</a> provides some helpful
     information.<br>
+    3. Share tuixue.online to your friends: many people need this website,
+    and if you share our Subscribtion Program to them, they would be very
+    grateful.<br>
     <br>
     Again, congratulations on your admission!<br>
     <br>
@@ -178,6 +181,7 @@ def refresh_homepage():
             table += '<th>当前</th><th>最早</th>'
         table += '</tr></thead><tbody>'
         for index in js['index']:
+            yy, mm, dd = index.split('/')
             line = '<tr><td><a href="/visa2/view/' + \
                 '?y=%s&m=%s&d=%s&t=%s">%s/%s</a></td>' % (
                     yy, mm, dd, tp, mm, dd)
