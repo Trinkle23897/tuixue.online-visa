@@ -108,6 +108,7 @@ class Captcha:
 if __name__ == '__main__':
     v = Captcha('/root/secret', 1080)
     v.query()
+    exit()
     img_data = open("fail/cwli.gif", "rb").read()
     r = v.solve(img_data)
     print(r)

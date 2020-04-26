@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import random
 import argparse
 import requests
 import itertools
@@ -93,6 +94,7 @@ def test(args):
 
 
 template = '''
+<div role="tabpanel" class="tab-pane fade IS_F" id="TYPE" aria-labelledby="TYPE-tab">
 <center><br>“最早”指在该地预约日期24h变化中最早的一天<br>
 上一次更新时间：TIME</center><br><script type="text/javascript">
 function chartTYPE() {
@@ -118,8 +120,10 @@ function chartTYPE() {
 </script>
 <div class="table-responsive">
 <table class="table table-hover table-striped table-bordered">
+<!-- 如果要爬取这个table，有更方便的方式（可一秒一次）：F签Json(https://tuixue.online/visa/visa.json)，B签Json(https://tuixue.online/visa/visa-b.json)，H签Json(https://tuixue.online/visa/visa-h.json)，O签Json(https://tuixue.online/visa/visa-o.json) -->
 TABLE
 </table>
+</div>
 </div>
 '''
 
@@ -128,10 +132,12 @@ def refresh_homepage():
     html = open('../visa/template.php').read()
     cur = time.strftime('%Y/%m/%d', time.localtime())
     yy, mm, dd = cur.split('/')
-    for tp in "FBHO":
+    alltype = {'F': '', 'B': '', 'H': '', 'O': ''}
+    for tp in alltype:
         p = '' if tp == 'F' else ('-' + tp.lower())
         js = json.loads(open('../visa/visa%s.json' % p).read())
         result = template.replace("TYPE", tp).replace('TIME', js['time'])
+        result = result.replace('IS_F', 'active in' if tp == 'F' else '')
         info = {}
         x = []
         for city in translate:
@@ -197,9 +203,13 @@ def refresh_homepage():
             table += line + '</tr>'
         table += '</tbody>'
         result = result.replace('TABLE', table)
-        source_place = 'TBD_' + tp
-        html = html.replace(source_place, result)
-    open('../visa/index.php', 'w').write(html)
+        alltype[tp] = result
+    summary = ''
+    keys = ['F', 'B', 'O', 'H']
+    random.shuffle(keys)
+    for i in keys:
+        summary += alltype[i]
+    open('../visa/index.php', 'w').write(html.replace('TBD_PANE', summary))
 
 
 def main(args):

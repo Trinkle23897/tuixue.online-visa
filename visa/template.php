@@ -8,32 +8,32 @@
     <script src="/style/bootstrap.min.js"></script>
     <script src="/style/echarts.min.js"></script>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <style type='text/css'>
+    <style type="text/css">
     .table thead tr th { text-align: center; vertical-align: middle; }
     .table tbody tr td { text-align: center; vertical-align: middle; }
     </style>
     <script>
     $(document).ready(function() {
         if(location.hash) {
-            $('a[href=' + location.hash + ']').tab('show');
-            if (location.hash == '#F') chartF();
-            else if (location.hash == '#B') chartB();
-            else if (location.hash == '#H') chartH();
-            else if (location.hash == '#O') chartO();
+            $("a[href=" + location.hash + "]").tab("show");
+            if (location.hash == "#F") chartF();
+            else if (location.hash == "#B") chartB();
+            else if (location.hash == "#H") chartH();
+            else if (location.hash == "#O") chartO();
             else chartF();
         }
         else chartF();
         $(document.body).on("click", "a[data-toggle]", function(event) {
             location.hash = this.getAttribute("href");
-            if (location.hash == '#F') chartF();
-            else if (location.hash == '#B') chartB();
-            else if (location.hash == '#H') chartH();
-            else if (location.hash == '#O') chartO();
+            if (location.hash == "#F") chartF();
+            else if (location.hash == "#B") chartB();
+            else if (location.hash == "#H") chartH();
+            else if (location.hash == "#O") chartO();
         });
     });
-    $(window).on('popstate', function() {
+    $(window).on("popstate", function() {
         var anchor = location.hash || $("a[data-toggle=tab]").first().attr("href");
-        $('a[href=' + anchor + ']').tab('show');
+        $("a[href=" + anchor + "]").tab("show");
     });
     </script>
 </head>
@@ -41,10 +41,10 @@
     <div class="container">
         <h1 class="text-center" id="title">美国签证预约时间</h1>
             <center>
-                <br><a href="/visa2">爬虫当前状态</a>
+                <br><a href="/visa2">系统当前状态</a>
                 <br><br>
             </center>
-            <div id='chart' style='height: 250px; width: 100%'></div>
+            <div id="chart" style="height: 250px; width: 100%"></div>
             <center>更多图表请点击表格左侧时间</center><br>
             <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
                 <ul class="nav nav-tabs" role="tablist">
@@ -56,18 +56,7 @@
                     <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
                 </ul>
                 <div id="myTabContent" class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade active in" id="F" aria-labelledby="F-tab">
-                        TBD_F
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="B" aria-labelledby="B-tab">
-                        TBD_B
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="H" aria-labelledby="H-tab">
-                        TBD_H
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="O" aria-labelledby="O-tab">
-                        TBD_O
-                    </div>
+                    TBD_PANE
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
                     <br>
                     <center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s；国外的邮箱（比如gmail）<s>实测延迟很大...</s>好像也没延时了<br><br>
@@ -76,8 +65,8 @@
                     <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
                             <center>
                             <table>
-                            <tr><td align='right'>邮箱地址：</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
-                            <tr><td align='right'>F1/J1：</td><td>
+                            <tr><td align="right">邮箱地址：</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
+                            <tr><td align="right">F1/J1：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcd"> 成都</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fgz"> 广州</label>
@@ -85,7 +74,7 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fhk"> 香港</label>
                             </td></tr>
-                            <tr><td align='right'>B1/B2：</td><td>
+                            <tr><td align="right">B1/B2：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcd"> 成都</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bgz"> 广州</label>
@@ -93,13 +82,13 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bhk"> 香港</label>
                             </td></tr>
-                            <tr><td align='right'>H1B：</td><td>
+                            <tr><td align="right">H1B：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hgz"> 广州</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hhk"> 香港</label>
                             </td></tr>
-                            <tr><td align='right'>O1/O2/O3：</td><td>
+                            <tr><td align="right">O1/O2/O3：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocd"> 成都</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ogz"> 广州</label>
@@ -107,11 +96,7 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ohk"> 香港</label>
                             </td></tr>
-							<tr><td>当出现的时间早于该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td>
-<!--<div class="form-group"><input type="number" class="form-control" id="yy" placeholder="2020" min='2020'><label for="yy">年</label></div>
-<div class="form-group"><input type="number" class="form-control" id="mm" placeholder="9" min='1' max='12'><label for="mm">月</label></div>
-<div class="form-group"><input type="number" class="form-control" id="dd" placeholder="1" min='1' max='31'><label for="dd">日</label></div>-->
-                            </tr>
+							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
                             <tr><td></td><td>如果要取消订阅的话，全不选然后提交就行了。</td></tr>
                             </table><br>
                             <input type="submit" value="提交" class="btn btn-info"/>
@@ -135,7 +120,7 @@
 					<br><br>
                     If you find tuixue.online helpful and useful, please add the following acknowledgement in your publication:
 					<br><br>
-					<code>Thanks to Mr. Jiayi Weng's website tuixue.online for [blabla] in my graduation project.</code>
+					<code>Thanks to Mr. Jiayi Weng"s website tuixue.online for [blabla] during my graduation project.</code>
                     <br><br>
                     </div>
                 </div>
