@@ -64,7 +64,7 @@
                     <br>
                     <center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s；国外的邮箱（比如gmail）<s>实测延迟很大...</s>好像也没延时了<br><br>
                     如果没收到确认邮件，可以翻一翻垃圾箱，并且把*@tuixue.online加入白名单中；<br>或者可以重新在这里提交一次 or 换个邮箱试试<br><br>
-                    即使能正常收到也不意味着一定不会进垃圾邮箱里面，建议白名单。</center><br>
+                    <b>即使能正常收到也不意味着一定不会进垃圾邮箱里面，建议白名单。</b></center><br>
                     <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
                             <center>
                             <table>

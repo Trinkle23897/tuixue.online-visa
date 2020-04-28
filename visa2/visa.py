@@ -404,28 +404,34 @@ def main(driver, driver2, cracker):
     open('state', 'w').write('Login China Mainland')
     login(driver, cracker,
           '/SiteRegister?country=China&language=zh_CN', 'China Mainland')
+    cnt = 0
     prob = float(open('f_prob').read()) if os.path.exists('f_prob') else 1
-    if np.random.rand() <= prob:
+    if np.random.rand() <= prob and cnt < 4:
+        cnt += 1
         open('state', 'w').write('F1/J1 Visa Status Sync')
         f_visa(driver, driver2)
         os.system('python3 notify.py --type F &')
     prob = float(open('b_prob').read()) if os.path.exists('b_prob') else 1
-    if np.random.rand() < prob:
+    if np.random.rand() < prob and cnt < 4:
+        cnt += 1
         open('state', 'w').write('B1/B2 Visa Status Sync')
         b_visa(driver, driver2)
         os.system('python3 notify.py --type B &')
     prob = float(open('h_prob').read()) if os.path.exists('h_prob') else 1
-    if np.random.rand() < prob:
+    if np.random.rand() < prob and cnt < 4:
+        cnt += 1
         open('state', 'w').write('H1B Visa Status Sync')
         h_visa(driver, driver2)
         os.system('python3 notify.py --type H &')
     prob = float(open('o_prob').read()) if os.path.exists('o_prob') else 1
-    if np.random.rand() <= prob:
+    if np.random.rand() <= prob and cnt < 4:
+        cnt += 1
         open('state', 'w').write('O1/O2/O3 Visa Status Sync')
         o_visa(driver, driver2)
         os.system('python3 notify.py --type O &')
     prob = float(open('l_prob').read()) if os.path.exists('l_prob') else 1
-    if np.random.rand() <= prob:
+    if np.random.rand() <= prob and cnt < 4:
+        cnt += 1
         open('state', 'w').write('L1/L2 Visa Status Sync')
         l_visa(driver, driver2)
         os.system('python3 notify.py --type L &')
