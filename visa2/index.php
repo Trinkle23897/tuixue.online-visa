@@ -41,20 +41,21 @@ echo '<table class="table table-hover table-striped table-bordered"><thead>
     <tr><td>F1/J1</td><td>'.json_decode(file_get_contents('../visa/visa.json'), true)['time'].'</td><td>'.file_get_contents('f_prob').'</td></tr>
     <tr><td>B1/B2</td><td>'.json_decode(file_get_contents('../visa/visa-b.json'), true)['time'].'</td><td>'.file_get_contents('b_prob').'</td></tr>
     <tr><td>H1B</td><td>'.json_decode(file_get_contents('../visa/visa-h.json'), true)['time'].'</td><td>'.file_get_contents('h_prob').'</td></tr>
-    <tr><td>O1/O2/O3</td><td>'.json_decode(file_get_contents('../visa/visa-o.json'), true)['time'].'</td><td>'.file_get_contents('o_prob').'</td></tr></tbody></table><br>';
+    <tr><td>O1/O2/O3</td><td>'.json_decode(file_get_contents('../visa/visa-o.json'), true)['time'].'</td><td>'.file_get_contents('o_prob').'</td></tr>
+    <tr><td>L1/L2</td><td>'.json_decode(file_get_contents('../visa/visa-l.json'), true)['time'].'</td><td>'.file_get_contents('l_prob').'</td></tr></tbody></table><br>';
 echo '<table class="table table-hover table-striped table-bordered"><thead>
-	<tr><th>订阅人数</th><th>F/J签</th><th>B签</th><th>H签</th><th>O签</th></tr></thead><tbody>
-<tr><td>北京</td><td>'.get('../asiv/email/f/bj/').'</td><td>'.get('../asiv/email/b/bj/').'</td><td>'.get('../asiv/email/h/bj/').'</td><td>'.get('../asiv/email/o/bj/').'</td></tr>
-<tr><td>成都</td><td>'.get('../asiv/email/f/cd/').'</td><td>'.get('../asiv/email/b/cd/').'</td><td>'.get('../asiv/email/h/cd/').'</td><td>'.get('../asiv/email/o/cd/').'</td></tr>
-<tr><td>广州</td><td>'.get('../asiv/email/f/gz/').'</td><td>'.get('../asiv/email/b/gz/').'</td><td>'.get('../asiv/email/h/gz/').'</td><td>'.get('../asiv/email/o/gz/').'</td></tr>
-<tr><td>上海</td><td>'.get('../asiv/email/f/sh/').'</td><td>'.get('../asiv/email/b/sh/').'</td><td>'.get('../asiv/email/h/sh/').'</td><td>'.get('../asiv/email/o/sh/').'</td></tr>
-<tr><td>沈阳</td><td>'.get('../asiv/email/f/sy/').'</td><td>'.get('../asiv/email/b/sy/').'</td><td>'.get('../asiv/email/h/sy/').'</td><td>'.get('../asiv/email/o/sy/').'</td></tr>
-<tr><td>香港</td><td>'.get('../asiv/email/f/hk/').'</td><td>'.get('../asiv/email/b/hk/').'</td><td>'.get('../asiv/email/h/hk/').'</td><td>'.get('../asiv/email/o/hk/').'</td></tr>
+	<tr><th>订阅人数</th><th>F/J签</th><th>B签</th><th>H签</th><th>O签</th><th>L签</th></tr></thead><tbody>
+<tr><td>北京</td><td>'.get('../asiv/email/f/bj/').'</td><td>'.get('../asiv/email/b/bj/').'</td><td>'.get('../asiv/email/h/bj/').'</td><td>'.get('../asiv/email/o/bj/').'</td><td>'.get('../asiv/email/l/bj/').'</td></tr>
+<tr><td>成都</td><td>'.get('../asiv/email/f/cd/').'</td><td>'.get('../asiv/email/b/cd/').'</td><td>'.get('../asiv/email/h/cd/').'</td><td>'.get('../asiv/email/o/cd/').'</td><td>'.get('../asiv/email/l/cd/').'</td></tr>
+<tr><td>广州</td><td>'.get('../asiv/email/f/gz/').'</td><td>'.get('../asiv/email/b/gz/').'</td><td>'.get('../asiv/email/h/gz/').'</td><td>'.get('../asiv/email/o/gz/').'</td><td>'.get('../asiv/email/l/gz/').'</td></tr>
+<tr><td>上海</td><td>'.get('../asiv/email/f/sh/').'</td><td>'.get('../asiv/email/b/sh/').'</td><td>'.get('../asiv/email/h/sh/').'</td><td>'.get('../asiv/email/o/sh/').'</td><td>'.get('../asiv/email/l/sh/').'</td></tr>
+<tr><td>沈阳</td><td>'.get('../asiv/email/f/sy/').'</td><td>'.get('../asiv/email/b/sy/').'</td><td>'.get('../asiv/email/h/sy/').'</td><td>'.get('../asiv/email/o/sy/').'</td><td>'.get('../asiv/email/l/sy/').'</td></tr>
+<tr><td>香港</td><td>'.get('../asiv/email/f/hk/').'</td><td>'.get('../asiv/email/b/hk/').'</td><td>'.get('../asiv/email/h/hk/').'</td><td>'.get('../asiv/email/o/hk/').'</td><td>'.get('../asiv/email/l/hk/').'</td></tr>
 </tbody></table>
 	';
 ?>
 <h1 class="text-center">爬本站的建议</h1>
-<center><br>其实没必要一直爬<code>/visa/</code>那个页面，研究研究代码会发现json格式存储的结果位于这四个url里面：<a href="https://tuixue.online/visa/visa.json">F签</a>，<a href="https://tuixue.online/visa/visa-b.json">B签</a>，<a href="https://tuixue.online/visa/visa-h.json">H签</a>，<a href="https://tuixue.online/visa/visa-o.json">O签</a>，这可以随便爬而且还好爬...<br><br>
+<center><br>其实没必要一直爬<code>/visa/</code>那个页面，研究研究代码会发现json格式存储的结果位于这五个url里面：<a href="https://tuixue.online/visa/visa.json">F签</a>，<a href="https://tuixue.online/visa/visa-b.json">B签</a>，<a href="https://tuixue.online/visa/visa-h.json">H签</a>，<a href="https://tuixue.online/visa/visa-o.json">O签</a>，<a href="https://tuixue.online/visa/visa-l.json">L签</a>，这可以随便爬而且还好爬...<br>（本站目前没有任何反爬措施，请各位大哥大姐下手轻点...）<br><br>
 </center>
 
 

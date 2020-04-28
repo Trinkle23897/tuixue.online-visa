@@ -7,7 +7,7 @@ import requests
 import itertools
 
 
-detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3'}
+detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
 translate = {'北京': 'Beijing', '上海': 'Shanghai', '成都': 'Chengdu',
              '广州': 'Guangzhou', '沈阳': 'Shenyang', '香港': 'HongKong'}
 full = {'bj': '北京', 'sh': '上海', 'cd': '成都', 'gz': '广州', 'sy': '沈阳', 'hk': '香港'}
@@ -49,12 +49,12 @@ def confirm(args):
     Welcome to tuixue.online! We are excited that you have
     chosen to join the Subscribtion Program. There are three action items to
     complete:<br><br>
-    1. Whitelist *@tuixue.online, because your email provider may still
+    1. <b>Whitelist *@tuixue.online</b>: your email provider may still
     randomly block the notification from tuixue.online.<br>
-    2. Donate the tuition fee (not mandatory): this
+    2. <b>Donate the tuition fee</b> (not mandatory): this
     <a href="https://tuixue.online/visa/#code">link</a> provides some helpful
     information.<br>
-    3. Share tuixue.online to your friends: many people need this website,
+    3. <b>Share tuixue.online to your friends</b>: many people need this website,
     and if you share our Subscribtion Program to them, they would be very
     grateful.<br>
     <br>
@@ -120,7 +120,7 @@ function chartTYPE() {
 </script>
 <div class="table-responsive">
 <table class="table table-hover table-striped table-bordered">
-<!-- 如果要爬取这个table，有更方便的方式（可一秒一次）：F签Json(https://tuixue.online/visa/visa.json)，B签Json(https://tuixue.online/visa/visa-b.json)，H签Json(https://tuixue.online/visa/visa-h.json)，O签Json(https://tuixue.online/visa/visa-o.json) -->
+<!-- 如果要爬取这个table，有更方便的方式（可一秒一次）：F签Json(https://tuixue.online/visa/visa.json)，B签Json(https://tuixue.online/visa/visa-b.json)，H签Json(https://tuixue.online/visa/visa-h.json)，O签Json(https://tuixue.online/visa/visa-o.json) ，L签Json(https://tuixue.online/visa/visa-l.json)-->
 TABLE
 </table>
 </div>
@@ -132,7 +132,7 @@ def refresh_homepage():
     html = open('../visa/template.php').read()
     cur = time.strftime('%Y/%m/%d', time.localtime())
     yy, mm, dd = cur.split('/')
-    alltype = {'F': '', 'B': '', 'H': '', 'O': ''}
+    alltype = {'F': '', 'B': '', 'H': '', 'O': '', 'L': ''}
     for tp in alltype:
         p = '' if tp == 'F' else ('-' + tp.lower())
         js = json.loads(open('../visa/visa%s.json' % p).read())
@@ -153,7 +153,7 @@ def refresh_homepage():
                 info[city] = {}
         x = sorted(list(set(x)))
         # chart
-        if tp == 'H':
+        if tp in 'HL':
             legend = '"北京","广州","上海","香港"'
         else:
             legend = '"北京","成都","广州","上海","沈阳","香港"'
@@ -175,7 +175,7 @@ def refresh_homepage():
             series += ']},\n'
         result = result.replace('SERIES', series)
         # table
-        if tp == 'H':
+        if tp in 'HL':
             legend = ["北京", "广州", "上海", "香港"]
         else:
             legend = ["北京", "成都", "广州", "上海", "沈阳", "香港"]
@@ -205,7 +205,7 @@ def refresh_homepage():
         result = result.replace('TABLE', table)
         alltype[tp] = result
     summary = ''
-    keys = ['F', 'B', 'O', 'H']
+    keys = ['F', 'B', 'O', 'H', 'L']
     random.shuffle(keys)
     for i in keys:
         summary += alltype[i]
@@ -247,7 +247,7 @@ def main(args):
             if js[k] != last and min_date(js[k], last) == js[k]:
                 content[short[k.split('-')[0]]] = \
                     translate[k.split('-')[0]] + \
-                    ' changes from ' + last + ' to ' + js[k] + '.<br>'
+                    ' changed from ' + last + ' to ' + js[k] + '.<br>'
                 upd_time[short[k.split('-')[0]]] = js[k]
     if len(list(content.keys())) > 0:
         keys = sorted(list(content.keys()))
@@ -291,7 +291,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--type', type=str, choices=[
-        'F', 'B', 'H', 'O', 'test', 'confirm'])
+        'F', 'B', 'H', 'O', 'L', 'test', 'confirm'])
     parser.add_argument('--email', type=str, default='')
     parser.add_argument('--subscribe', type=str, default='')
     parser.add_argument('--secret', type=str, default='/var/www/mail')

@@ -20,6 +20,7 @@
             else if (location.hash == "#B") chartB();
             else if (location.hash == "#H") chartH();
             else if (location.hash == "#O") chartO();
+            else if (location.hash == "#L") chartL();
             else chartF();
         }
         else chartF();
@@ -29,6 +30,7 @@
             else if (location.hash == "#B") chartB();
             else if (location.hash == "#H") chartH();
             else if (location.hash == "#O") chartO();
+            else if (location.hash == "#L") chartL();
         });
     });
     $(window).on("popstate", function() {
@@ -42,16 +44,17 @@
         <h1 class="text-center" id="title">美国签证预约时间</h1>
             <center>
                 <br><a href="/visa2">系统当前状态</a>
-                <br><br>
+                <p style="color: white">大学生图像信息采集网</p>
             </center>
             <div id="chart" style="height: 250px; width: 100%"></div>
             <center>更多图表请点击表格左侧时间</center><br>
             <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F1/J1签证</a></li>
-                    <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B1/B2签证</a></li>
-                    <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B签证</a></li>
-                    <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O1/O2/O3签证</a></li>
+                    <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F1/J1</a></li>
+                    <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B1/B2</a></li>
+                    <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B</a></li>
+                    <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O1/O2/O3</a></li>
+                    <li role="presentation" class=""><a href="#L" role="tab" id="L-tab" data-toggle="tab" aria-controls="L" aria-expanded="false">L1/L2</a></li>
                     <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false"><b>(New)</b> 邮件通知</a></li>
                     <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
                 </ul>
@@ -95,6 +98,12 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ohk"> 香港</label>
+                            </td></tr>
+                            <tr><td align="right">L1/L2：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbj"> 北京</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lgz"> 广州</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsh"> 上海</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lhk"> 香港</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
                             <tr><td></td><td>如果要取消订阅的话，全不选然后提交就行了。</td></tr>

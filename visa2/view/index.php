@@ -19,7 +19,7 @@
             <div class="span12">
                 <center>
                 <h1 class="text-center" id="title">预约时间变化单日统计图</h1><br>
-                看情况是每个小时的第49分钟左右会放出来名额<br><br>
+                看情况是每个小时的第48分钟左右会放出来名额<br><br>
 <?php
 $y = $_GET['y'];
 $m = $_GET['m'];
@@ -30,7 +30,7 @@ if (is_numeric($y) && is_numeric($m) && is_numeric($d))
 else
     $date = date("Y/m/d", time());
 if ($type == 'J') $type = 'F';
-else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O')
+else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O' && $type != 'L')
     $type = 'F';
 $loc = ['北京', '成都', '广州', '上海', '沈阳', '香港'];
 $raw = [];

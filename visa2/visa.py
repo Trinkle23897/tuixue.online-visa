@@ -330,6 +330,64 @@ def o_visa(driver, driver2):
     merge('../visa/visa-o.json', s, cur)
 
 
+def l_visa(driver, driver2):
+    driver.get(base_url + '/selectvisatype')
+    driver.find_element_by_id("j_id0:SiteTemplate:theForm:ttip:2").click()
+    driver.find_element_by_xpath("//div[3]/div[3]/div/button/span").click()
+    driver.find_element_by_name("j_id0:SiteTemplate:theForm:j_id176").click()
+    name = {'北京': [0, 3], '广州': [2, 2], '上海': [3, 3]}
+    s = {'time': time.strftime('%Y/%m/%d %H:%M', time.localtime())}
+    cur = time.strftime('%Y/%m/%d', time.localtime())
+    print(s['time'])
+    for k in name:
+        n = k + '-' + cur
+        n2 = k + '2-' + cur
+        driver.get(base_url + '/SelectPost')
+        driver.find_element_by_id(
+            "j_id0:SiteTemplate:j_id112:j_id165:{}".format(name[k][0])).click()
+        driver.find_element_by_name(
+            "j_id0:SiteTemplate:j_id112:j_id169").click()
+        driver.find_element_by_id(
+            "j_id0:SiteTemplate:j_id109:j_id162:{}".format(name[k][1])).click()
+        driver.find_element_by_name(
+            "j_id0:SiteTemplate:j_id109:j_id166").click()
+        driver.find_element_by_xpath(
+            "(//input[@id='selectedVisaClass'])[2]").click()
+        driver.find_element_by_name(
+            "j_id0:SiteTemplate:theForm:j_id178").click()
+        result = bs(driver.page_source, 'html.parser').findAll(
+            class_='leftPanelText')
+        if len(result):
+            result = result[0].text.split()[1:]
+        s[n] = s[n2] = postprocess(result)
+        if s[n] != '/':
+            path = 'L/' + n.replace('-', '/')
+            os.makedirs('/'.join(path.split('/')[:-1]), exist_ok=True)
+            open(path, 'a+').write(s['time'].split(' ')
+                                   [-1] + ' ' + s[n] + '\n')
+        print('L1', n, s[n])
+    driver2.get(base_url + '/SelectVisaCategory')
+    driver2.find_element_by_id("j_id0:SiteTemplate:j_id109:j_id162:3").click()
+    driver2.find_element_by_name("j_id0:SiteTemplate:j_id109:j_id166").click()
+    driver2.find_element_by_xpath(
+        "(//input[@id='selectedVisaClass'])[8]").click()
+    driver2.find_element_by_name("j_id0:SiteTemplate:theForm:j_id178").click()
+    n = '香港' + '-' + cur
+    n2 = '香港' + '2-' + cur
+    result = bs(driver2.page_source, 'html.parser').findAll(
+        class_='leftPanelText')
+    if len(result):
+        result = result[0].text.split()[1:]
+    s[n] = s[n2] = postprocess(result)
+    if s[n] != '/':
+        path = 'L/' + n.replace('-', '/')
+        os.makedirs('/'.join(path.split('/')[:-1]), exist_ok=True)
+        open(path, 'a+').write(s['time'].split(' ')
+                               [-1] + ' ' + s[n] + '\n')
+    print('L1', n, s[n])
+    merge('../visa/visa-l.json', s, cur)
+
+
 def main(driver, driver2, cracker):
     open('state', 'w').write('Login Hong Kong')
     login(driver2, cracker,
@@ -366,6 +424,11 @@ def main(driver, driver2, cracker):
         open('state', 'w').write('O1/O2/O3 Visa Status Sync')
         o_visa(driver, driver2)
         os.system('python3 notify.py --type O &')
+    prob = float(open('l_prob').read()) if os.path.exists('l_prob') else 1
+    if np.random.rand() <= prob:
+        open('state', 'w').write('L1/L2 Visa Status Sync')
+        l_visa(driver, driver2)
+        os.system('python3 notify.py --type L &')
     driver.quit()
     driver2.quit()
     time.sleep(int(open('time').read()))
@@ -396,4 +459,3 @@ if __name__ == '__main__':
             print(traceback.format_exc())
             driver.quit()
             driver2.quit()
-
