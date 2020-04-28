@@ -273,11 +273,11 @@ def main(args):
             if len(pending) == 0:
                 continue
             c = ''.join([content[k] for i, k in enumerate(keys) if mask[i]])
-            c = js['time'] + '<br>' + c + '''<br>See
+            c = js['time'] + '<br>' + c + '''See
                 <a href="https://tuixue.online/visa/#%s">
                 https://tuixue.online/visa/#%s</a> for more detail.
                 ''' % (args.type, args.type)
-            c += '''<br><br>If you want to change your subscribe option, please re-submit
+            c += '''<br>If you want to change your subscribe option, please re-submit
                 a request over <a href="https://tuixue.online/visa/#email">
                 https://tuixue.online/visa/#email</a>.'''
             send(

@@ -2,11 +2,11 @@
 <head>
     <title>预约美签，防止失学</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/style/bootstrap.min.css">
-    <link rel="stylesheet" href="/style/bootstrap-theme.min.css">
-    <script src="/style/jquery.min.js"></script>
-    <script src="/style/bootstrap.min.js"></script>
-    <script src="/style/echarts.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.7.0/dist/echarts.min.js"></script>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style type="text/css">
     .table thead tr th { text-align: center; vertical-align: middle; }
@@ -47,7 +47,7 @@
                 <p style="color: white">大学生图像信息采集网</p>
             </center>
             <div id="chart" style="height: 250px; width: 100%"></div>
-            <center>更多图表请点击表格左侧时间</center><br>
+            <center>更多图表请点击表格左侧时间，最下方有评论区（需要翻墙）</center><br>
             <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F1/J1</a></li>
@@ -62,8 +62,8 @@
                     TBD_PANE
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
                     <br>
-                    <center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s；国外的邮箱（比如gmail）<s>实测延迟很大...</s>好像也没延时了<br><br>
-                    如果没收到确认邮件，可以翻一翻垃圾箱，并且把*@tuixue.online加入白名单中；<br>或者可以重新在这里提交一次 or 换个邮箱试试<br><br>
+                    <center>每当时间变前的时候，tuixue.online就会向您发送邮件通知。<br>最好是国内邮箱比如qq（因为可以绑定微信，能第一时间看到），实测延时大概10s<br>国外的邮箱（比如gmail）<s>实测延迟很大...</s>好像也没延时了<br><br>
+                    如果没收到确认邮件，可以翻一翻垃圾箱，并且把*@tuixue.online加入白名单中；<br>或者可以重新在这里提交一次 or 换个邮箱试试<br>实在不行了就联系管理员吧<br><br>
                     <b>即使能正常收到也不意味着一定不会进垃圾邮箱里面，建议白名单。</b></center><br>
                     <form action="/asiv" method="get" enctype="multipart/form-data" id="notify-form">
                             <center>
@@ -106,8 +106,9 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lhk"> 香港</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
-                            <tr><td></td><td>如果要取消订阅的话，全不选然后提交就行了。</td></tr>
-                            </table><br>
+                            </table>
+                            <br><b>一般来说，每个小时的第48分会放出这个小时内被别人退掉的名额，不是很好抢到<br>但是如果邮件推送给您的时间不是48-53分，多半是这个地方放了一大波名额</b><br>
+                            <br>如果要取消订阅的话，全不选然后提交就行了。<br><br>
                             <input type="submit" value="提交" class="btn btn-info"/>
                             </center>
                     </form>
