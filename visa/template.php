@@ -1,11 +1,12 @@
 <html>
 <head>
     <title>预约美签，防止失学</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@4.7.0/dist/echarts.min.js"></script>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style type="text/css">
@@ -120,6 +121,8 @@
                     作者GitHub：<a href="https://github.com/Trinkle23897/">https://github.com/Trinkle23897/</a>
                     <br><br>
                     作者个人主页：<a href="https://trinkle23897.github.io/cv/">https://trinkle23897.github.io/cv/</a>
+                    <br><br>
+                    <b>感谢 <a href="https://github.com/z3dd1cu5">z3dd1cu5</a> 提供的改进版爬虫！</b>
                     <br><br>
                     写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏
                     <center><img src="/upload/39CB3AB2-FEFD-44EC-88D3-F6C4A4C7B2B7.jpeg" style="width: 30%"><img src="/upload/F293524B-8160-4FB0-8CEE-3803ED464D4D.jpeg" style="width: 30%"></center>
