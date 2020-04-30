@@ -12,7 +12,7 @@
 
 在visa2文件夹下起一个 `python3 visa.py --secret your_secret` 即可，其中your\_secret是一个文件，包含你的[斐斐打码平台](http://www.fateadm.com/)上的pd\_id和pd\_key。如果没有的话，bhys就只能手动命令行输入验证码
 
-Advanced Crawler: See #12
+改进版爬虫：详见 [#12](https://github.com/Trinkle23897/us-visa/pull/12)
 
 visa2/notify.py是更新的脚本，包含了邮件推送功能+主页刷新功能（主页手动做了下cache，直接php的话会有效率问题）。
 
