@@ -20,7 +20,7 @@ import global_var as g
 from fast_visa import get_date
 from bs4 import BeautifulSoup as bs
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("fast_visa")
 
 replace_items = queue.Queue(maxsize=30)
 
