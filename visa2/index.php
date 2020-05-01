@@ -2,10 +2,10 @@
 <head>
     <title>预约美签，防止失学</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style type='text/css'>
     .table thead tr th { text-align: center; vertical-align: middle; }
@@ -37,12 +37,12 @@ function get($dir) {
 }
 echo "爬虫当前状态：".file_get_contents('state').'，<a href="/visa">点击返回</a><br><br>';
 echo '<table class="table table-hover table-striped table-bordered"><thead>
-	<tr><th>签证类型</th><th>更新时间</th><th>爬取概率</th></tr></thead><tbody>
-    <tr><td>F1/J1</td><td>'.json_decode(file_get_contents('../visa/visa.json'), true)['time'].'</td><td>'.file_get_contents('f_prob').'</td></tr>
-    <tr><td>B1/B2</td><td>'.json_decode(file_get_contents('../visa/visa-b.json'), true)['time'].'</td><td>'.file_get_contents('b_prob').'</td></tr>
-    <tr><td>H1B</td><td>'.json_decode(file_get_contents('../visa/visa-h.json'), true)['time'].'</td><td>'.file_get_contents('h_prob').'</td></tr>
-    <tr><td>O1/O2/O3</td><td>'.json_decode(file_get_contents('../visa/visa-o.json'), true)['time'].'</td><td>'.file_get_contents('o_prob').'</td></tr>
-    <tr><td>L1/L2</td><td>'.json_decode(file_get_contents('../visa/visa-l.json'), true)['time'].'</td><td>'.file_get_contents('l_prob').'</td></tr></tbody></table><br>';
+	<tr><th>签证类型</th><th>更新时间</th><th>更新频率</th></tr></thead><tbody>
+    <tr><td>F1/J1</td><td>'.json_decode(file_get_contents('../visa/visa.json'), true)['time'].'</td><td>60s</td></tr>
+    <tr><td>B1/B2</td><td>'.json_decode(file_get_contents('../visa/visa-b.json'), true)['time'].'</td><td>120s</td></tr>
+    <tr><td>H1B</td><td>'.json_decode(file_get_contents('../visa/visa-h.json'), true)['time'].'</td><td>180s</td></tr>
+    <tr><td>O1/O2/O3</td><td>'.json_decode(file_get_contents('../visa/visa-o.json'), true)['time'].'</td><td>180s</td></tr>
+    <tr><td>L1/L2</td><td>'.json_decode(file_get_contents('../visa/visa-l.json'), true)['time'].'</td><td>180s</td></tr></tbody></table><br>';
 echo '<table class="table table-hover table-striped table-bordered"><thead>
 	<tr><th>订阅人数</th><th>F/J签</th><th>B签</th><th>H签</th><th>O签</th><th>L签</th></tr></thead><tbody>
 <tr><td>北京</td><td>'.get('../asiv/email/f/bj/').'</td><td>'.get('../asiv/email/b/bj/').'</td><td>'.get('../asiv/email/h/bj/').'</td><td>'.get('../asiv/email/o/bj/').'</td><td>'.get('../asiv/email/l/bj/').'</td></tr>
