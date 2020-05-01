@@ -61,7 +61,7 @@ def init():
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)
     log_path = os.path.join(args.log_dir, "fast_visa.log")
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("fast_visa")
     handler = TimedRotatingFileHandler(log_path, when="midnight", interval=1)
     handler.suffix = "%Y%m%d"
     formatter = logging.Formatter("%(asctime)s [%(filename)s:%(lineno)d] %(levelname)s - %(message)s")
@@ -77,8 +77,8 @@ def init():
     else:
         cracker = Captcha(args.secret, args.proxy)
     proxies=dict(
-        http='socks5://127.0.0.1:' + str(args.proxy),
-        https='socks5://127.0.0.1:' + str(args.proxy)
+        http='socks5h://127.0.0.1:' + str(args.proxy),
+        https='socks5h://127.0.0.1:' + str(args.proxy)
     ) if args.proxy else None
     g.assign("proxies", proxies)
     g.assign("cracker", cracker)
