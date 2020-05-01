@@ -5,6 +5,7 @@ import random
 import argparse
 import requests
 import itertools
+import importlib
 
 
 detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
@@ -41,6 +42,34 @@ def send(api, title, content, receivers,
     }
     r = requests.post(api, data=data)
     print(r.content.decode())
+
+
+def send_extra(visa_type, title, content):
+    if visa_type != "F" or not args.extra:
+        return
+    with open(args.extra, "r") as f:
+        extra = json.load(f)
+    content = "\n".join(content.values()).replace("<br>", "")
+
+    # send to QQ group
+    auth_key = extra["mirai_auth_key"]
+    qq_num = extra["qq_num"]
+    group_id = extra["qq_group_id"]
+    base_uri = extra["mirai_base_uri"]
+    r = requests.post(base_uri + "/auth", data=json.dumps({"authKey": auth_key})).json()
+    session = r["session"]
+    requests.post(base_uri + "/verify", data=json.dumps({"sessionKey": session, "qq": qq_num}))
+    requests.post(base_uri + "/sendGroupMessage", data=json.dumps({"sessionKey": session, "target": group_id, "messageChain": [{"type": "Plain", "text": content}]}))
+    requests.post(base_uri + "/release", data=json.dumps({"sessionKey": session, "qq": qq_num}))
+
+    # send to TG channel
+    bot_token = extra["tg_bot_token"]
+    chat_id = extra["tg_chat_id"]
+    proxies=dict(
+        http='socks5h://127.0.0.1:' + args.proxy,
+        https='socks5h://127.0.0.1:' + args.proxy
+    ) if args.proxy else None
+    requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, content), proxies=proxies)
 
 
 def confirm(args):
@@ -266,6 +295,8 @@ def main(args):
                     translate[k.split('-')[0]] + \
                     ' changed from ' + last + ' to ' + js[k] + '.<br>'
                 upd_time[short[k.split('-')[0]]] = js[k]
+    title = detail[args.type] + ' Visa Status Changed'
+    send_extra(args.type, title, content)
     if len(list(content.keys())) > 0:
         keys = sorted(list(content.keys()))
         masks = list(itertools.product([0, 1], repeat=len(keys)))[1:]
@@ -313,6 +344,8 @@ if __name__ == '__main__':
     parser.add_argument('--subscribe', type=str, default='')
     parser.add_argument('--secret', type=str, default='/var/www/mail')
     parser.add_argument('--time', type=str, default='')
+    parser.add_argument('--proxy', type=str, default="1080")
+    parser.add_argument('--extra', type=str)
     args = parser.parse_args()
     args.api = open(args.secret).read()
     args.subscribe = args.subscribe.split(',')
