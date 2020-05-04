@@ -45,11 +45,13 @@ def send(api, title, content, receivers,
 
 
 def send_extra(visa_type, title, content):
-    if visa_type != "F" or not args.extra:
+    if visa_type != "F" or not args.extra or len(content) == 0:
         return
     with open(args.extra, "r") as f:
         extra = json.load(f)
-    content = "\n".join(content.values()).replace("<br>", "")
+    content = "\n".join(content.values()).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('2020/', '').replace('.', '')
+    for zh, en in translate.items():
+        content = content.replace(en, zh)
 
     # send to QQ group
     auth_key = extra["mirai_auth_key"]
@@ -59,7 +61,8 @@ def send_extra(visa_type, title, content):
     r = requests.post(base_uri + "/auth", data=json.dumps({"authKey": auth_key})).json()
     session = r["session"]
     requests.post(base_uri + "/verify", data=json.dumps({"sessionKey": session, "qq": qq_num}))
-    requests.post(base_uri + "/sendGroupMessage", data=json.dumps({"sessionKey": session, "target": group_id, "messageChain": [{"type": "Plain", "text": content}]}))
+    for g in group_id:
+        requests.post(base_uri + "/sendGroupMessage", data=json.dumps({"sessionKey": session, "target": g, "messageChain": [{"type": "Plain", "text": content}]}))
     requests.post(base_uri + "/release", data=json.dumps({"sessionKey": session, "qq": qq_num}))
 
     # send to TG channel
@@ -321,7 +324,7 @@ def main(args):
             if len(pending) == 0:
                 continue
             c = ''.join([content[k] for i, k in enumerate(keys) if mask[i]])
-            c = js['time'] + '<br>' + c + '''See
+            c = js['time'] + '<br>' + c + '''<br>See
                 <a href="https://tuixue.online/visa/#%s">
                 https://tuixue.online/visa/#%s</a> for more detail.
                 ''' % (args.type, args.type)
@@ -344,8 +347,8 @@ if __name__ == '__main__':
     parser.add_argument('--subscribe', type=str, default='')
     parser.add_argument('--secret', type=str, default='/var/www/mail')
     parser.add_argument('--time', type=str, default='')
-    parser.add_argument('--proxy', type=str, default="1080")
-    parser.add_argument('--extra', type=str)
+    parser.add_argument('--proxy', type=str, default="1083")
+    parser.add_argument('--extra', type=str, default="/root/extra.json")
     args = parser.parse_args()
     args.api = open(args.secret).read()
     args.subscribe = args.subscribe.split(',')

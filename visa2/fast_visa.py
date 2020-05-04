@@ -43,6 +43,10 @@ def merge(fn, s, cur):
             orig[k] = s[k]
     if cur not in orig.get('index', []):
         orig['index'] = [cur] + orig.get('index', [])
+    orig['index'], o = orig['index'][:50], orig['index'][50:]
+    rmkeys = [i for i in orig if i.split('-')[-1] in o]
+    for r in rmkeys:
+        orig.pop(r)
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))
 
 
