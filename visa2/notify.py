@@ -6,6 +6,7 @@ import argparse
 import requests
 import itertools
 import importlib
+from datetime import datetime
 
 
 detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
@@ -44,16 +45,41 @@ def send(api, title, content, receivers,
     print(r.content.decode())
 
 
+def send_extra_on_change(visa_type, title, content):
+    if visa_type != "F" or not args.extra or len(content) == 0:
+        return
+    with open(args.extra, "r") as f:
+        extra = json.load(f)
+    bot_token = extra["tg_bot_token"]
+    chat_id = extra["tg_chat_id"]
+    proxies=dict(
+        http='socks5h://127.0.0.1:' + args.proxy,
+        https='socks5h://127.0.0.1:' + args.proxy
+    ) if args.proxy else None
+
+    year, month, day, msg_id = 0, 0, 0, 0
+    if os.path.exists("msg_id.txt"):
+        with open("msg_id.txt", "r") as f:
+            year, month, day, msg_id = list(map(int, f.read().split()))
+    now = datetime.now()
+    cyear, cmonth, cday = now.year, now.month, now.day
+    text = "%d/%d/%d 实时数据\n" % (cyear, cmonth, cday) + "\n".join(content)
+    if not (cyear == year and cmonth == month and cday == day):
+        r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, text), proxies=proxies).json()
+        msg_id = r["result"]["message_id"]
+        with open("msg_id.txt", "w") as f:
+            f.write("%d %d %d %d" % (cyear, cmonth, cday, msg_id))
+        requests.get("https://api.telegram.org/bot%s/pinChatMessage?chat_id=%s&message_id=%s" % (bot_token, chat_id, str(msg_id)), proxies=proxies)
+    else:
+        r = requests.get("https://api.telegram.org/bot%s/editMessageText?chat_id=%s&message_id=%s&text=%s" % (bot_token, chat_id, str(msg_id), text), proxies=proxies)
+
+
 def send_extra(visa_type, title, content):
     if visa_type != "F" or not args.extra or len(content) == 0:
         return
     with open(args.extra, "r") as f:
         extra = json.load(f)
-    if isinstance(content, dict):
-        content = content.values()
-        pin = False
-    else:
-        pin = True
+    content = content.values()
     content = "\n".join(content).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('2020/', '').replace('.', '')
     for zh, en in translate.items():
         content = content.replace(en, zh)
@@ -66,8 +92,6 @@ def send_extra(visa_type, title, content):
         https='socks5h://127.0.0.1:' + args.proxy
     ) if args.proxy else None
     r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, content), proxies=proxies).json()
-    if pin:
-        requests.get("https://api.telegram.org/bot%s/pinChatMessage?chat_id=%s&message_id=%d" % (bot_token, chat_id, r["result"]["message_id"]), proxies=proxies)
 
     # send to QQ group
     auth_key = extra["mirai_auth_key"]
@@ -279,7 +303,7 @@ def main(args):
         last_js = json.loads(open(
             '../visa/visa-%s-last.json' % args.type.lower()).read())
     now_time, last_time = js['time'].split()[0], last_js['time'].split()[0]
-    if now_time != last_time:
+    #if now_time != last_time:
         # users = [
         #     j for i in full
         #     for j in os.listdir('../asiv/email/' + args.type.lower() + '/' + i)]
@@ -294,9 +318,10 @@ def main(args):
         #         last_time, url, url),
         #     users,
         # )
-        content = sorted([k.split('-')[0] + ': ' + last_js[k] for k in last_js if last_time in k and '2-' not in k])
-        send_extra(args.type, 'Summary of ' + detail[args.type] + ' Visa, ' + last_time, content)
-        return
+    content = sorted([k.split('-')[0] + ': ' + js[k] for k in js if now_time in k and '2-' not in k])
+    content_last = sorted([k.split('-')[0] + ': ' + last_js[k] for k in last_js if last_time in k and '2-' not in k])
+    if content != content_last:
+        send_extra_on_change(args.type, 'Summary of ' + detail[args.type] + ' Visa, ' + now_time, content)
     content = {}
     upd_time = {}
     for k in js:
