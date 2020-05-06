@@ -49,9 +49,25 @@ def send_extra(visa_type, title, content):
         return
     with open(args.extra, "r") as f:
         extra = json.load(f)
-    content = "\n".join(content.values()).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('2020/', '').replace('.', '')
+    if isinstance(content, dict):
+        content = content.values()
+        pin = False
+    else:
+        pin = True
+    content = "\n".join(content).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('2020/', '').replace('.', '')
     for zh, en in translate.items():
         content = content.replace(en, zh)
+
+    # send to TG channel
+    bot_token = extra["tg_bot_token"]
+    chat_id = extra["tg_chat_id"]
+    proxies=dict(
+        http='socks5h://127.0.0.1:' + args.proxy,
+        https='socks5h://127.0.0.1:' + args.proxy
+    ) if args.proxy else None
+    r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, content), proxies=proxies).json()
+    if pin:
+        requests.get("https://api.telegram.org/bot%s/pinChatMessage?chat_id=%s&message_id=%d" % (bot_token, chat_id, r["result"]["message_id"]), proxies=proxies)
 
     # send to QQ group
     auth_key = extra["mirai_auth_key"]
@@ -64,15 +80,6 @@ def send_extra(visa_type, title, content):
     for g in group_id:
         requests.post(base_uri + "/sendGroupMessage", data=json.dumps({"sessionKey": session, "target": g, "messageChain": [{"type": "Plain", "text": content}]}))
     requests.post(base_uri + "/release", data=json.dumps({"sessionKey": session, "qq": qq_num}))
-
-    # send to TG channel
-    bot_token = extra["tg_bot_token"]
-    chat_id = extra["tg_chat_id"]
-    proxies=dict(
-        http='socks5h://127.0.0.1:' + args.proxy,
-        https='socks5h://127.0.0.1:' + args.proxy
-    ) if args.proxy else None
-    requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, content), proxies=proxies)
 
 
 def confirm(args):
@@ -287,6 +294,8 @@ def main(args):
         #         last_time, url, url),
         #     users,
         # )
+        content = sorted([k.split('-')[0] + ': ' + last_js[k] for k in last_js if last_time in k and '2-' not in k])
+        send_extra(args.type, 'Summary of ' + detail[args.type] + ' Visa, ' + last_time, content)
         return
     content = {}
     upd_time = {}
