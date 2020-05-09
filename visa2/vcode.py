@@ -25,6 +25,7 @@ class Captcha:
         return csign
 
     def solve(self, img_data, pred_type='20500'):
+        self.report_wrong = False
         f = np.array(open(self.secret).read().split())
         self.pd_id, self.pd_key = f[::2], f[1::2]
         next_id = [i for i in self.pd_id]
