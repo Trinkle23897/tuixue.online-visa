@@ -167,7 +167,7 @@ def crawler(visa_type, places):
                 last_status = g.value("status_%s_%s" % (visa_type, place), (0, 0, 0))
                 if last_status != (0, 0, 0):
                     session_op.replace_session(visa_type, place, sess)
-                elif random.random() < 0.05:
+                elif random.random() < float(open('miss_prob').read()) if os.path.exists('miss_prob') else 0.02:
                     session_op.replace_session(visa_type, place, sess)
                 continue
             logger.info("%s, %s, SUCCESS, %s" % (visa_type, place, date))

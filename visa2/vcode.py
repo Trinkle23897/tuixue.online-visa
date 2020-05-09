@@ -43,7 +43,7 @@ class Captcha:
             url = self.host + "/api/capreg"
             f = {'img_data': ('img_data', img_data)}
             proxy = {
-                "http": "socks5://127.0.0.1:%d" % self.proxy
+                "http": "socks5h://127.0.0.1:%d" % self.proxy
             } if self.proxy else None
             r = requests.post(
                 url,
