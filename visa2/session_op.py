@@ -179,7 +179,7 @@ def login(cracker, place):
         gifname = 'try.gif'
         open(gifname, 'wb').write(img)
         open('gifname', 'w').write(gifname)
-        captcha = cracker.solve(img).replace('1', 'l').lower()
+        captcha = cracker.solve(img)
         if len(captcha) == 0:
             open('state', 'w').write(
                 '自动识别服务挂掉了，请到<a href="https://github.com/Trinkle23897/'
@@ -209,16 +209,14 @@ def login(cracker, place):
             return None
         front_door_uri = r.text.split("'")[-2]
         if front_door_uri.startswith("https"):
+            os.system('mv %s log/%s.gif' % (gifname, captcha))
             break
         else:
-            if '无法核实验证码' not in r.text:
-                os.system('mv %s log/%s.gif' % (gifname, captcha))
-            else:
-                if not os.path.exists('fail'):
-                    os.makedirs('fail')
-                os.system('mv %s fail/%s.gif' % (gifname, captcha))
-                if hasattr(cracker, 'wrong'):
-                    cracker.wrong()
+            if not os.path.exists('fail'):
+                os.makedirs('fail')
+            os.system('mv %s fail/%s.gif' % (gifname, captcha))
+            if hasattr(cracker, 'wrong'):
+                cracker.wrong()
 
     # open front door
     r = requests.get(front_door_uri, cookies=cookies, proxies=proxies)
