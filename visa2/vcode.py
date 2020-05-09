@@ -12,6 +12,7 @@ class Captcha:
         self.headers = {"User-Agent": "Mozilla/5.0"}
         self.proxy = proxy
         self.record = None
+        self.report_wrong = False
 
     def sign(self, pd_id, passwd, timestamp):
         md5 = hashlib.md5()
@@ -24,6 +25,7 @@ class Captcha:
         return csign
 
     def solve(self, img_data, pred_type='20500'):
+        self.report_wrong = False
         f = np.array(open(self.secret).read().split())
         self.pd_id, self.pd_key = f[::2], f[1::2]
         next_id = [i for i in self.pd_id]
@@ -67,7 +69,7 @@ class Captcha:
                 self.pd_id, self.pd_key = np.array(next_id), np.array(next_key)
                 open(self.secret, 'w').write('\n'.join([self.pd_id[i] + ' ' + self.pd_key[i] for i in range(len(self.pd_id))]))
                 self.record = [id, key, res['RequestId']]
-                return json.loads(res["RspData"])["result"]
+                return self._valid(json.loads(res["RspData"])["result"])
         self.pd_id, self.pd_key = np.array(next_id), np.array(next_key)
         open(self.secret, 'w').write('\n'.join([self.pd_id[i] + ' ' + self.pd_key[i] for i in range(len(self.pd_id))]))
         return ''
@@ -90,6 +92,9 @@ class Captcha:
                 print(id, json.loads(res['RspData'])['cust_val'])
 
     def wrong(self):
+        if self.report_wrong:
+            return
+        self.report_wrong = True
         id, key, req_id = self.record
         if req_id == '':
             return
@@ -103,6 +108,33 @@ class Captcha:
         url = self.host + '/api/capjust'
         res = requests.post(url, data=data, headers=self.headers).json()
         print(res)
+
+    def _valid(self, code):
+        replace_digit = {
+            "1": "l", "2": "q", "3": "d", "4": "a", 
+            "5": "s", "6": "b", "7": "i", "8": "p", 
+            "9": "q", "0": "o"
+        }
+        if len(code) != 5:
+            self.wrong()
+            return code
+        new_code = ""
+        for c in code:
+            if c.isdigit():
+                self.wrong()
+                new_code += replace_digit[c]
+            elif c == "e":
+                self.wrong()
+                new_code += "c"
+            elif c == "g":
+                self.wrong()
+                new_code += "o"
+            elif c == "z":
+                self.wrong()
+                new_code += "s"
+            else:
+                new_code += c.lower()
+        return new_code
 
 
 if __name__ == '__main__':
