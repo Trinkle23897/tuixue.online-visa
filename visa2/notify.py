@@ -2,6 +2,7 @@ import os
 import time
 import json
 import random
+import base64
 import argparse
 import requests
 import itertools
@@ -289,7 +290,10 @@ def refresh_homepage():
     random.shuffle(keys)
     for i in keys:
         summary += alltype[i]
-    open('../visa/index.html', 'w').write(html.replace('TBD_PANE', summary))
+    captcha_list = ['/visa2/log/' + i for i in os.listdir('log')] + ['/visa2/fail/' + i for i in os.listdir('fail')] + ['/visa2/try/' + i for i in os.listdir('try')]
+    captcha = random.sample(captcha_list, 1)[0]
+    captcha = '<input type="text" name="orig" style="display: none" value="%s"><img src="%s">' % (base64.b64encode(captcha.encode()).decode(), captcha)
+    open('../visa/index.html', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
 
 
 def main(args):
@@ -303,7 +307,8 @@ def main(args):
         last_js = json.loads(open(
             '../visa/visa-%s-last.json' % args.type.lower()).read())
     now_time, last_time = js['time'].split()[0], last_js['time'].split()[0]
-    #if now_time != last_time:
+    if now_time != last_time:
+        return
         # users = [
         #     j for i in full
         #     for j in os.listdir('../asiv/email/' + args.type.lower() + '/' + i)]

@@ -300,8 +300,8 @@ def visa_select(visa_type, place, sid):
     contact_id = soup.find(id="j_id0:SiteTemplate:j_id109:contactId").get("value")
     prefix = "j_id0:SiteTemplate:j_id109:j_id162:"
     category2id = {
-        "B": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 0}, 
-        "F": {"北京": 1, "成都": 1, "广州": 1, "上海": 1, "沈阳": 1, "香港": 1}, 
+        "B": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 1}, 
+        "F": {"北京": 1, "成都": 1, "广州": 1, "上海": 1, "沈阳": 1, "香港": 0}, 
         "O": {"北京": 4, "成都": 2, "广州": 3, "上海": 4, "沈阳": 2, "香港": 3}, 
         "H": {"北京": 2, "广州": 3, "上海": 2, "香港": 3}, 
         "L": {"北京": 3, "广州": 2, "上海": 3, "香港": 3} 
@@ -335,8 +335,8 @@ def visa_select(visa_type, place, sid):
         "F": 0, 
         "B": 2, 
         "H": 0, 
-        "O": 11 if place == "香港" else (7 if place == "广州" else 0), 
-        "L": 8 if place == "香港" else 2
+        "O": 10 if place == "香港" else (6 if place == "广州" else 0), 
+        "L": 7 if place == "香港" else 1
     }
     inputs = soup.find_all("input")
     type_codes = [x.get("value") for x in inputs if x.get("name") == "selectedVisaClass"]
