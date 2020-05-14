@@ -2,6 +2,12 @@
 <head>
 <meta http-equiv="refresh" content="10;url=/visa"/>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-102409527-2');
+    </script>
 </head>
 <body>
 <?php
@@ -23,7 +29,9 @@ function update_status($type, $city, $email, $todo, $out) {
 		} else return "";
 	}
 }
-function check($c) {
+function check($c, $o) {
+	if (!file_exists('../'.$o))
+		return false;
 	if (strlen($c) != 5)
 		return false;
 	for ($i = 0; $i < 5; ++$i) {
@@ -74,7 +82,7 @@ else if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 		$thres = $yy.'/'.$mm.'/'.$dd;
 	else
 		$thres = '';
-	if (check($captcha)) {
+	if (check($captcha, $orig)) {
 		save($captcha, $orig);
 		if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			if (file_exists('email/tmp/'.$email)) echo "之前已经发送过了，正在重新发送确认邮件中<br>";

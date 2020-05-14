@@ -1,7 +1,7 @@
 import os
 
 a = open('../asiv/email/log').read().split('\n')[:-1]
-for i in a:
+for i in a[::-1]:
     t, p = i.split()
     if '..' in p or '/visa2' not in p:
         continue

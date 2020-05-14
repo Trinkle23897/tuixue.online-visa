@@ -64,7 +64,7 @@ def send_extra_on_change(visa_type, title, content):
             year, month, day, msg_id = list(map(int, f.read().split()))
     now = datetime.now()
     cyear, cmonth, cday = now.year, now.month, now.day
-    text = "%d/%d/%d 实时数据\n" % (cyear, cmonth, cday) + "\n".join(content)
+    text = "%d/%d/%d 实时数据\n" % (cyear, cmonth, cday) + "\n".join(content) + '\nhttps://tuixue.online/visa/'
     if not (cyear == year and cmonth == month and cday == day):
         r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, text), proxies=proxies).json()
         msg_id = r["result"]["message_id"]
@@ -94,6 +94,7 @@ def send_extra(visa_type, title, content):
     ) if args.proxy else None
     r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, content), proxies=proxies).json()
 
+    content += '\n详情: https://tuixue.online/visa/'
     # send to QQ group
     auth_key = extra["mirai_auth_key"]
     qq_num = extra["qq_num"]
@@ -115,12 +116,12 @@ def confirm(args):
     complete:<br><br>
     1. <b>Whitelist *@tuixue.online</b>: your email provider may still
     randomly block the notification from tuixue.online.<br>
-    2. <b>Donate the tuition fee</b> (not mandatory): this
-    <a href="https://tuixue.online/visa/#code">link</a> provides some helpful
-    information.<br>
-    3. <b>Share tuixue.online to your friends</b>: many people need this website,
+    2. <b>Share tuixue.online to your friends</b>: many people need this website,
     and if you share our Subscribtion Program to them, they would be very
     grateful.<br>
+    3. <b>Donate the tuition fee</b> (not mandatory): this
+    <a href="https://tuixue.online/visa/#code">link</a> provides some helpful
+    information.<br>
     <br>
     Again, congratulations on your admission!<br>
     <br>
@@ -137,8 +138,9 @@ def test(args):
     Dear %s:<br>
     <br>
         A faculty committee at tuixue.online has made a decision on your
-        application. <br>Please review your decision by logging back into
-        tuixue.online application status page at
+        application. <br>
+        Please review your decision by logging back into tuixue.online 
+        application status page at
         <a href="https://tuixue.online/asiv?liame=%s%s">this link</a>.<br>
     <br>
     Sincerely,<br>
@@ -146,9 +148,9 @@ def test(args):
     tuixue.online Graduate Division<br>
     Diversity, Inclusion and Admissions<br>
     <br>
-    Please note: This e-mail message was sent from a notification-only
-    address that cannot accept incoming e-mail. Please do not reply to
-    this message. Please save or print your decision letter and any
+    Please note: This e-mail message was sent from a notification-only<br>
+    address that cannot accept incoming e-mail. Please do not reply to<br>
+    this message. Please save or print your decision letter and any<br>
     related online documents immediately for your records.<br>
     ''' % (args.email.split('@')[0], args.email, args.subscribe)
     receivers = [args.email]
@@ -290,7 +292,7 @@ def refresh_homepage():
     random.shuffle(keys)
     for i in keys:
         summary += alltype[i]
-    captcha_list = ['/visa2/log/' + i for i in os.listdir('log')] + ['/visa2/fail/' + i for i in os.listdir('fail')] + ['/visa2/try/' + i for i in os.listdir('try')]
+    captcha_list = ['/visa2/log/' + i for i in os.listdir('log')][:10] + ['/visa2/fail/' + i for i in os.listdir('fail')] + ['/visa2/try/' + i for i in os.listdir('try')]
     captcha = random.sample(captcha_list, 1)[0]
     captcha = '<input type="text" name="orig" style="display: none" value="%s"><img src="%s">' % (base64.b64encode(captcha.encode()).decode(), captcha)
     open('../visa/index.html', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
@@ -338,7 +340,6 @@ def main(args):
                     ' changed from ' + last + ' to ' + js[k] + '.<br>'
                 upd_time[short[k.split('-')[0]]] = js[k]
     title = detail[args.type] + ' Visa Status Changed'
-    send_extra(args.type, title, content)
     if len(list(content.keys())) > 0:
         keys = sorted(list(content.keys()))
         masks = list(itertools.product([0, 1], repeat=len(keys)))[1:]
@@ -376,6 +377,7 @@ def main(args):
                 c,
                 pending,
             )
+    send_extra(args.type, title, content)
 
 
 if __name__ == '__main__':
