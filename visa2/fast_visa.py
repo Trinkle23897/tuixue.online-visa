@@ -134,46 +134,59 @@ def start_thread():
     set_interval(crawler, visa_type, places, 180, 0)
 
 
+def crawler_req(visa_type, place):
+    try:
+        # prepare session
+        sess = session_op.get_session(visa_type, place)
+        if not sess:
+            logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "No Session"))
+            return
+        cookies = copy.deepcopy(g.COOKIES)
+        cookies["sid"] = sess
+        # send request
+        r = requests.get(g.HOME_URI, headers=g.HEADERS, cookies=cookies, proxies=g.value("proxies", None))
+        if r.status_code != 200:
+            logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
+            session_op.replace_session(visa_type, place, sess)
+            return
+        # parse HTML
+        page = r.text
+        date = get_date(page)
+        if not date:
+            logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
+            session_op.replace_session(visa_type, place, sess)
+            return
+        elif date == (0, 0, 0):
+            logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Date Not Found"))
+            last_status = g.value("status_%s_%s" % (visa_type, place), (0, 0, 0))
+            if last_status != (0, 0, 0):
+                session_op.replace_session(visa_type, place, sess)
+            elif random.random() < (float(open('miss_prob').read()) if os.path.exists('miss_prob') else 0.02):
+                session_op.replace_session(visa_type, place, sess)
+                return
+        if date != (0, 0, 0):
+            logger.info("%s, %s, SUCCESS, %s" % (visa_type, place, date))
+        g.assign("status_%s_%s" % (visa_type, place), date)
+    except:
+        logger.error(traceback.format_exc())
+
+
 def crawler(visa_type, places):
     open(visa_type + '_state', 'w').write('1')
     localtime = time.localtime()
     s = {'time': time.strftime('%Y/%m/%d %H:%M', localtime)}
     second = localtime.tm_sec
     cur = time.strftime('%Y/%m/%d', time.localtime())
+    pool = []
     for place in places:
-        try:
-            # prepare session
-            sess = session_op.get_session(visa_type, place)
-            if not sess:
-                logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "No Session"))
-                continue
-            cookies = copy.deepcopy(g.COOKIES)
-            cookies["sid"] = sess
-            # send request
-            r = requests.get(g.HOME_URI, headers=g.HEADERS, cookies=cookies, proxies=g.value("proxies", None))
-            if r.status_code != 200:
-                logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
-                session_op.replace_session(visa_type, place, sess)
-                continue
-            # parse HTML
-            page = r.text
-            date = get_date(page)
-            if not date:
-                logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
-                session_op.replace_session(visa_type, place, sess)
-                continue
-            elif date == (0, 0, 0):
-                logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Date Not Found"))
-                last_status = g.value("status_%s_%s" % (visa_type, place), (0, 0, 0))
-                if last_status != (0, 0, 0):
-                    session_op.replace_session(visa_type, place, sess)
-                elif random.random() < float(open('miss_prob').read()):
-                    session_op.replace_session(visa_type, place, sess)
-                continue
-            logger.info("%s, %s, SUCCESS, %s" % (visa_type, place, date))
-            g.assign("status_%s_%s" % (visa_type, place), date)
-        except:
-            logger.error(traceback.format_exc())
+        t = threading.Thread(
+            target=crawler_req, 
+            args=(visa_type, place)
+        )
+        t.start()
+        pool.append(t)
+    for t in pool:
+        t.join()
 
     # write to file
     for place in places:
