@@ -55,7 +55,8 @@ function get_table($type, $jsfn, $loc) {
         foreach ($tmp as $info) {
             $tm = explode(' ', $info)[0];
             if ($tm != '') {
-                $raw[$name][$tm] = explode(' ', $info)[1];
+				if ($raw[$name][$tm] == null or $raw[$name][$tm] > explode(' ', $info)[1])
+					$raw[$name][$tm] = explode(' ', $info)[1];
                 if (!in_array($tm, $x)) array_push($x, $tm);
             }
         }

@@ -34,6 +34,7 @@ BASE_URI = "https://cgifederal.secure.force.com/"
 HOME_URI = "https://cgifederal.secure.force.com/ApplicantHome"
 REG_URI = "https://cgifederal.secure.force.com/SiteRegister?country=China&language=zh_CN"
 REG_HK_URI = "https://cgifederal.secure.force.com/SiteRegister?country=Hong%20Kong&language=zh_CN"
+CANCEL_URI = "https://cgifederal.secure.force.com/appointmentcancellation"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "Referer": "https://cgifederal.secure.force.com/apex/LoginLandingPage",

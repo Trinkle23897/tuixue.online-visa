@@ -16,6 +16,7 @@ import global_var as g
 from vcode import Captcha
 from bs4 import BeautifulSoup as bs
 from logging.handlers import TimedRotatingFileHandler
+from datetime import datetime
 
 
 def min_date(a, b):
@@ -93,11 +94,14 @@ def init():
 
 
 def set_interval(func, visa_type, places, interval, rand, first_run=True):
-    # just like setInterval() in JavaScript
     def func_wrapper():
         set_interval(func, visa_type, places, interval, rand, first_run=False)
         func(visa_type, places)
-    sec = interval + random.randint(0, rand)
+    now_minute = datetime.now().minute
+    if visa_type == "F" and now_minute >= 47 and now_minute <= 50:
+        sec = 5
+    else:
+        sec = interval + random.randint(0, rand)
     t = threading.Timer(sec, func_wrapper)
     t.start()
     if first_run:
@@ -144,7 +148,7 @@ def crawler_req(visa_type, place):
         cookies = copy.deepcopy(g.COOKIES)
         cookies["sid"] = sess
         # send request
-        r = requests.get(g.HOME_URI, headers=g.HEADERS, cookies=cookies, proxies=g.value("proxies", None))
+        r = requests.get(g.CANCEL_URI, headers=g.HEADERS, cookies=cookies, proxies=g.value("proxies", None))
         if r.status_code != 200:
             logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
             session_op.replace_session(visa_type, place, sess)
@@ -159,13 +163,13 @@ def crawler_req(visa_type, place):
         elif date == (0, 0, 0):
             logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Date Not Found"))
             last_status = g.value("status_%s_%s" % (visa_type, place), (0, 0, 0))
-            if last_status != (0, 0, 0):
+            if last_status != (0, 0, 0): 
                 session_op.replace_session(visa_type, place, sess)
-            elif random.random() < (float(open('miss_prob').read()) if os.path.exists('miss_prob') else 0.02):
+            elif not check_alive(page):
+                logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
                 session_op.replace_session(visa_type, place, sess)
-                return
-        if date != (0, 0, 0):
-            logger.info("%s, %s, SUCCESS, %s" % (visa_type, place, date))
+            return
+        logger.info("%s, %s, SUCCESS, %s" % (visa_type, place, date))
         g.assign("status_%s_%s" % (visa_type, place), date)
     except:
         logger.error(traceback.format_exc())
@@ -174,7 +178,7 @@ def crawler_req(visa_type, place):
 def crawler(visa_type, places):
     open(visa_type + '_state', 'w').write('1')
     localtime = time.localtime()
-    s = {'time': time.strftime('%Y/%m/%d %H:%M', localtime)}
+    s = {'time': time.strftime('%Y/%m/%d %H:%M:%S', localtime)}
     second = localtime.tm_sec
     cur = time.strftime('%Y/%m/%d', time.localtime())
     pool = []
@@ -197,7 +201,8 @@ def crawler(visa_type, places):
         if s[n] != '/':
             path = visa_type + '/' + n.replace('-', '/')
             os.makedirs('/'.join(path.split('/')[:-1]), exist_ok=True)
-            open(path, 'a+').write(s['time'].split(' ')[-1] + ' ' + s[n] + '\n')
+            time_hm = time.strftime('%H:%M', localtime)
+            open(path, 'a+').write(time_hm + ' ' + s[n] + '\n')
     merge('../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' % visa_type.lower(), s, cur)
     open(visa_type + '_state', 'w').write('0')
     os.system('python3 notify.py --type ' + visa_type + ' &')
@@ -216,6 +221,19 @@ def get_date(page):
             return (year, month, day)
     except:
         return (0, 0, 0)
+
+
+def check_alive(page):
+    try:
+        soup = bs(page, "html.parser")
+        error_box = soup.find("ul", class_="error")
+        if not error_box:
+            return False
+        if error_box.text.strip() == "List has no rows for assignment to SObject":
+            return True
+    except:
+        pass
+    return False
 
 
 def forever():
