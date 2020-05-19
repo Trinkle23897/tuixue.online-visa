@@ -42,7 +42,7 @@ function get($dir) {
 	if ($cnt == 0) $cnt = '/';
 	return $cnt;
 }
-echo "爬虫当前状态：".file_get_contents('state').'，<a href="/visa">点击返回</a><br><br>';
+echo "爬虫策略：48分-50分每5秒更新一次，其余时间每分钟更新一次<br>通知策略（按照先后顺序）：刷新网页，邮件，TG频道，QQ1234群<br>爬虫当前状态：".file_get_contents('state').'，<a href="/visa">点击返回</a><br><br>';
 echo '<table class="table table-hover table-striped table-bordered"><thead>
 	<tr><th>签证类型</th><th>更新时间</th><th>更新频率</th></tr></thead><tbody>
     <tr><td>F1/J1</td><td>'.json_decode(file_get_contents('../visa/visa.json'), true)['time'].'</td><td>60s</td></tr>
