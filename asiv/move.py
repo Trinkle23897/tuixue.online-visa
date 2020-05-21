@@ -8,7 +8,10 @@ for i in a[::-1]:
     p = '..' + p
     if os.path.exists(p):
         print(t + ' https://tuixue.online' + p[2:])
-        g = input('captcha: ')
+        if 'fail' in p:
+            g = t
+        else:
+            g = input('captcha: ')
         if len(g) == 5:
             t = g
         elif g == 'n':

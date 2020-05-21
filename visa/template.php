@@ -1,3 +1,9 @@
+<?php
+header("Access-Control-Allow-Origin: *");
+$f = $_REQUEST['from'];
+if (strlen($f) > 0)
+	echo '<meta http-equiv="refresh" content="0;url=/visa"/>';
+?>
 <html>
 <head>
     <title>预约美签，防止失学</title>
@@ -14,8 +20,8 @@
 	<script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag(){dataLayer.push(arguments);}
-		gtag('js', new Date());
-		gtag('config', 'UA-102409527-2');
+		gtag("js", new Date());
+		gtag("config", "UA-102409527-2");
 	</script>
     <style type="text/css">
     .table thead tr th { text-align: center; vertical-align: middle; }
@@ -56,7 +62,7 @@
                 <br>QQ通知<a href="javascript:alert(1104038280)">1群</a>/<a href="javascript:alert(672921682)">2群</a>/<a href="javascript:alert(1091934602)">3群</a>/<a href="javascript:alert(1076963772)">4群</a><!--/<a href="javascript:alert(722281429)">5群</a>-->，密码是本站网址（共13个字符<code>t***e</code>），四个群内容都一样
                 <br><span style="color:red">QQ邮箱把tuixue的邮件给扔进垃圾箱了，请大家注意一下，最好白名单</span>
                 <!--<br><span style="color: green">发现还有好多人不知道tuixue在问……求一个推广呜呜呜（比如微博、票圈之类的）</span>-->
-				<!--<br>加了割美帝资本主义韭菜的功能，不知道会在哪出现，不想割韭菜的话用AdBlock屏蔽掉就行（大雾-->
+				<br>加了割美帝资本主义韭菜的功能，不知道会在哪出现，不想割韭菜的话用AdBlock屏蔽掉就行（大雾
                 <br>
                 <br>
             </center>
@@ -164,7 +170,7 @@
 					<br><br>
                     If you find tuixue.online helpful and useful, please add the following acknowledgement in your publication:
 					<br><br>
-					<code>Thanks to Mr. Jiayi Weng's website tuixue.online for [blabla] during my graduation project.</code>
+					<code>Thanks to the website tuixue.online of Mr. Jiayi Weng for [blabla] during my graduation project.</code>
                     <br><br>
                     </div>
                 </div>

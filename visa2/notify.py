@@ -302,7 +302,7 @@ def refresh_homepage():
         captcha_list = ['/visa2/fail/' + i for i in os.listdir('fail')]
     captcha = random.sample(captcha_list, 1)[0]
     captcha = '<input type="text" name="orig" style="display: none" value="%s"><img src="%s">' % (base64.b64encode(captcha.encode()).decode(), captcha)
-    open('../visa/index.html', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
+    open('../visa/index.php', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
 
 
 def main(args):
