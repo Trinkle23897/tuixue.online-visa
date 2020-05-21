@@ -27,7 +27,7 @@ def min_date(a, b):
     i0, i1, i2 = int(i0), int(i1), int(i2)
     j0, j1, j2 = b.split('/')
     j0, j1, j2 = int(j0), int(j1), int(j2)
-    if i0 > j0 or i0 == j0 and (i1 > j1 or i1 == j1 and i2 > j2):
+    if i0 > j0 or i0 == j0 and (i1 > j1 or i1 == j1 and i2 >= j2):
         return b
     else:
         return a
@@ -42,8 +42,12 @@ def send(api, title, content, receivers,
         'sendfrom': sendfrom,
         'sendto': sendto
     }
-    r = requests.post(api, data=data)
-    print(r.content.decode())
+    while True:
+        r = requests.post(api, data=data).content.decode()
+        # print(r)
+        if 'successfully send emails' in r:
+            break
+    print(r)
 
 
 def send_extra_on_change(visa_type, title, content):
@@ -180,21 +184,21 @@ function chartTYPE() {
         xAxis: {type: "category", boundaryGap: false, data: [XAXIS]},
         yAxis: {type: "time"},
     dataZoom: [{
-        type: 'slider',
+        type: "slider",
         height: 8,
         bottom: 20,
-        borderColor: 'transparent',
-        backgroundColor: '#e2e2e2',
-        handleIcon: 'M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z', // jshint ignore:line
+        borderColor: "transparent",
+        backgroundColor: "#e2e2e2",
+        handleIcon: "M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z", // jshint ignore:line
         handleSize: 20,
         handleStyle: {
             shadowBlur: 6,
             shadowOffsetX: 1,
             shadowOffsetY: 2,
-            shadowColor: '#aaa'
+            shadowColor: "#aaa"
         }
     }, {
-        type: 'inside'
+        type: "inside"
     }],
         series: [SERIES]
     };
@@ -231,7 +235,7 @@ def refresh_homepage():
                 for i in raw:
                     k, v = i.split()
                     x.append(k)
-                    info[city][k] = v
+                    info[city][k] = min_date(v, info[city].get(k, '/'))
             else:
                 info[city] = {}
         x = sorted(list(set(x)))
@@ -264,7 +268,7 @@ def refresh_homepage():
             legend = ["北京", "成都", "广州", "上海", "沈阳", "香港"]
         table = '<thead><tr><th>地点</th>'
         for i in legend:
-            table += '<th colspan="2">' + i + '</th>'
+            table += '<th colspan="2"><a href="/visa2/'+tp+'/'+i+'/'+cur+'">' + i + '</a></th>'
         table += '</tr><tr><th>时间</th>'
         for i in legend:
             table += '<th>当前</th><th>最早</th>'
@@ -292,22 +296,25 @@ def refresh_homepage():
     random.shuffle(keys)
     for i in keys:
         summary += alltype[i]
-    captcha_list = ['/visa2/log/' + i for i in os.listdir('log')][:10] + ['/visa2/fail/' + i for i in os.listdir('fail')] + ['/visa2/try/' + i for i in os.listdir('try')]
+    if random.random() < 0.5: 
+        captcha_list = ['/visa2/log/' + i for i in os.listdir('log')]
+    else:
+        captcha_list = ['/visa2/fail/' + i for i in os.listdir('fail')]
     captcha = random.sample(captcha_list, 1)[0]
     captcha = '<input type="text" name="orig" style="display: none" value="%s"><img src="%s">' % (base64.b64encode(captcha.encode()).decode(), captcha)
-    open('../visa/index.html', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
+    open('../visa/index.php', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
 
 
 def main(args):
-    refresh_homepage()
     if args.type == 'F':
-        js = json.loads(open('../visa/visa.json').read())
         last_js = json.loads(open('../visa/visa-last.json').read())
+        js = json.loads(open('../visa/visa.json').read())
     else:
-        js = json.loads(open(
-            '../visa/visa-%s.json' % args.type.lower()).read())
         last_js = json.loads(open(
             '../visa/visa-%s-last.json' % args.type.lower()).read())
+        js = json.loads(open(
+            '../visa/visa-%s.json' % args.type.lower()).read())
+    refresh_homepage()
     now_time, last_time = js['time'].split()[0], last_js['time'].split()[0]
     if now_time != last_time:
         return

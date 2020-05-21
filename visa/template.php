@@ -1,4 +1,9 @@
-<html>
+<?php
+header("Access-Control-Allow-Origin: *");
+$f = $_REQUEST['from'];
+if (strlen($f) > 0)
+	echo '<meta http-equiv="refresh" content="0;url=/visa"/>';
+else echo '<html>
 <head>
     <title>预约美签，防止失学</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -14,8 +19,8 @@
 	<script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag(){dataLayer.push(arguments);}
-		gtag('js', new Date());
-		gtag('config', 'UA-102409527-2');
+		gtag("js", new Date());
+		gtag("config", "UA-102409527-2");
 	</script>
     <style type="text/css">
     .table thead tr th { text-align: center; vertical-align: middle; }
@@ -55,8 +60,8 @@
 				<br><a href="/visa2">系统当前状态</a> | <a href="https://t.me/f_visa">Telegram频道</a> | <a href="#email">个性化邮件通知</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
                 <br>QQ通知<a href="javascript:alert(1104038280)">1群</a>/<a href="javascript:alert(672921682)">2群</a>/<a href="javascript:alert(1091934602)">3群</a>/<a href="javascript:alert(1076963772)">4群</a><!--/<a href="javascript:alert(722281429)">5群</a>-->，密码是本站网址（共13个字符<code>t***e</code>），四个群内容都一样
                 <br><span style="color:red">QQ邮箱把tuixue的邮件给扔进垃圾箱了，请大家注意一下，最好白名单</span>
-                <br><span style="color: green">发现还有好多人不知道tuixue在问……求一个推广呜呜呜（比如微博、票圈之类的）</span>
-				<!--<br>加了割美帝资本主义韭菜的功能，不知道会在哪出现，不想割韭菜的话用AdBlock屏蔽掉就行（大雾-->
+                <!--<br><span style="color: green">发现还有好多人不知道tuixue在问……求一个推广呜呜呜（比如微博、票圈之类的）</span>-->
+				<br>加了割美帝资本主义韭菜的功能，不知道会在哪出现，不想割韭菜的话用AdBlock屏蔽掉就行（大雾
                 <br>
                 <br>
             </center>
@@ -80,6 +85,7 @@
 <p>这里总结了一些<a href="#disqus_thread">需要翻墙的评论区</a>中出现的约签证的技巧和注意事项</p>
 <p>目前测量结果是每个小时第48分04秒放名额，网站上的更新没法做到秒级别的更新，因此会稍稍慢于蹲点同学的获取时间（不过这些跳下来的尖峰都是几个人退出来的，不算批量放位置，没几分钟就被抢光了）</p>
 <p>记录在案的大批量放位置的时间：成都04/21 10:24，广州04/17 13:38、05/13 09:25，上海04/13 11:56、04/23 15:28、05/14 15:25，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
+<p>一般来说，大批量放位置之后会有人不停地退和选，因此在放位置之后的一两天都有很大概率能捡漏。</p>
 <p>(04.17) <a href="https://disqus.com/by/disqus_9Z3ojTbVFe/">TRMSCT</a><br>如果要多领馆申请的话还要提前把不同领事馆所用的DS-160准备好，这样可以有位置马上去选</p>
 <p>(04.18) <a href="https://disqus.com/by/disqus_rTmjxY4aqA/">YJX</a><br>成都领事馆目前只需要天府通健康码，非湖北只需要填两张表就可以了，以及使馆开门了</p>
 <p>(04.22) <a href="https://disqus.com/by/disqus_cEqiNLHBj5/">JJHunter</a> &amp; <a href="https://disqus.com/by/disqus_rTmjxY4aqA/">YJX</a><br>大使馆cgi账号在你频繁刷新面签时间的情况下会被冻结3天账号不能登录。没有任何办法提前解封，显示：Your account has been frozen for suspicious activity, and you will not be able to access it for up to 72 hours.</p>
@@ -135,7 +141,7 @@
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lhk"> 香港</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
-							<tr><td align="right">输入以下验证码：</td><td><input class="form-control" type="text" value="" name="captcha" maxlength=5></td></tr>
+							<tr><td align="right">输入以下验证码（五位小写英文字母）：</td><td><input class="form-control" type="text" value="" name="captcha" maxlength=5></td></tr>
                             </table>
                             TBD_CAPTCHA
                             <br><br><b>一般来说，每个小时的第48分会放出这个小时内被别人退掉的名额，不是很好抢到<br>但是如果邮件推送给您的时间不是48-53分，多半是这个地方放了一大波名额</b><br>
@@ -163,7 +169,7 @@
 					<br><br>
                     If you find tuixue.online helpful and useful, please add the following acknowledgement in your publication:
 					<br><br>
-					<code>Thanks to Mr. Jiayi Weng's website tuixue.online for [blabla] during my graduation project.</code>
+					<code>Thanks to the website tuixue.online of Mr. Jiayi Weng for [blabla] during my graduation project.</code>
                     <br><br>
                     </div>
                 </div>
@@ -178,4 +184,5 @@
             <br>
     </div>
 </body>
-</html>
+</html>';
+?>

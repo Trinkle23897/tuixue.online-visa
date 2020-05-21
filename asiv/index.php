@@ -86,7 +86,7 @@ else if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 		save($captcha, $orig);
 		if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			if (file_exists('email/tmp/'.$email)) echo "之前已经发送过了，正在重新发送确认邮件中<br>";
-			echo "您选择的订阅日期是：";
+			echo "您的邮箱是：".$email."<br>您选择的订阅日期是：";
 			if ($thres == '') echo '9999/12/31';
 			else echo $thres;
 			echo ' 及之前<br><br>';
@@ -99,7 +99,7 @@ else if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 			echo "发送确认邮件状态（空为没发出去）：";
 			system("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' --time '".$thres."' 2>log", $ret);
 			//echo("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' --time '".$thres."' 2>log");
-			echo "<br>发送了确认邮件，请及时查收，<b>点击确认邮件中的链接之后才算正式订阅</b><br>";
+			echo "<br>发送了确认邮件，请及时查收，<b>点击确认邮件中的链接之后才算正式订阅 / 取消订阅</b><br>";
 		} else {
 			echo "邮箱格式不合法，请仔细检查一下……？<br>";
 		}

@@ -17,7 +17,7 @@ from vcode import Captcha
 from bs4 import BeautifulSoup as bs
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
-
+import notify
 
 def min_date(a, b):
     if a == '/':
@@ -34,9 +34,10 @@ def min_date(a, b):
         return a
 
 
-def merge(fn, s, cur):
+def merge(fn, s, cur, visa_type):
     orig = json.loads(open(fn).read()) if os.path.exists(fn) else {}
     open(fn.replace('.json', '-last.json'), 'w').write(json.dumps(orig, ensure_ascii=False))
+    last = copy.deepcopy(orig)
     for k in s:
         if '2-' in k:
             orig[k] = min_date(orig.get(k, '/'), s[k])
@@ -49,6 +50,13 @@ def merge(fn, s, cur):
     for r in rmkeys:
         orig.pop(r)
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))
+    a = argparse.Namespace()
+    a.extra = '/root/extra.json'
+    a.secret = '/var/www/mail'
+    a.proxy = '1083'
+    a.type = visa_type
+    a.api = open(a.secret).read()
+    #notify.main(a)
 
 
 def init():
@@ -61,7 +69,7 @@ def init():
     parser.add_argument('--session', type=str, default="session.json", help="path to save sessions")
     parser.add_argument('--log_dir', type=str, default="./fast_visa", help="directory to save logs")
     args = parser.parse_args()
-
+ 
     # config logging
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)
@@ -98,7 +106,7 @@ def set_interval(func, visa_type, places, interval, rand, first_run=True):
         set_interval(func, visa_type, places, interval, rand, first_run=False)
         func(visa_type, places)
     now_minute = datetime.now().minute
-    if visa_type == "F" and now_minute >= 47 and now_minute <= 50:
+    if visa_type == "F" and now_minute >= 47 and now_minute <= 49:
         sec = 5
     else:
         sec = interval + random.randint(0, rand)
@@ -163,12 +171,12 @@ def crawler_req(visa_type, place):
         elif date == (0, 0, 0):
             logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Date Not Found"))
             last_status = g.value("status_%s_%s" % (visa_type, place), (0, 0, 0))
-            if last_status != (0, 0, 0): 
-                session_op.replace_session(visa_type, place, sess)
-            elif not check_alive(page):
+            # if last_status != (0, 0, 0): 
+            #    session_op.replace_session(visa_type, place, sess)
+            if not check_alive(page):
                 logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
                 session_op.replace_session(visa_type, place, sess)
-            return
+                return
         logger.info("%s, %s, SUCCESS, %s" % (visa_type, place, date))
         g.assign("status_%s_%s" % (visa_type, place), date)
     except:
@@ -203,7 +211,7 @@ def crawler(visa_type, places):
             os.makedirs('/'.join(path.split('/')[:-1]), exist_ok=True)
             time_hm = time.strftime('%H:%M', localtime)
             open(path, 'a+').write(time_hm + ' ' + s[n] + '\n')
-    merge('../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' % visa_type.lower(), s, cur)
+    merge('../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' % visa_type.lower(), s, cur, visa_type)
     open(visa_type + '_state', 'w').write('0')
     os.system('python3 notify.py --type ' + visa_type + ' &')
 

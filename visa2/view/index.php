@@ -43,13 +43,24 @@ $loc = ['北京', '成都', '广州', '上海', '沈阳', '香港'];
 $raw = [];
 $data = [];
 $x = [];
+function check($a, $b) {
+	if (explode('/', $a)[0] != explode('/', $b)[0])
+		return explode('/', $a)[0] > explode('/', $b)[0];
+	if (explode('/', $a)[1] != explode('/', $b)[1])
+		return explode('/', $a)[1] > explode('/', $b)[1];
+	if (explode('/', $a)[2] != explode('/', $b)[2])
+		return explode('/', $a)[2] > explode('/', $b)[2];
+	return false;
+}
 foreach ($loc as $name) {
     $tmp = explode("\n", file_get_contents('../'.$type.'/'.$name.'/'.$date));
     $raw[$name] = [];
     foreach ($tmp as $info) {
         $tm = explode(' ', $info)[0];
         if ($tm != '') {
-            $raw[$name][$tm] = explode(' ', $info)[1];
+			// $raw[$name][$tm] = explode(' ', $info)[1];
+			if ($raw[$name][$tm] == null || check($raw[$name][$tm], explode(' ', $info)[1]))
+				$raw[$name][$tm] = explode(' ', $info)[1];
             if (!in_array($tm, $x)) array_push($x, $tm);
         }
     }
