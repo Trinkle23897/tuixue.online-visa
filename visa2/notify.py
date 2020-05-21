@@ -184,21 +184,21 @@ function chartTYPE() {
         xAxis: {type: "category", boundaryGap: false, data: [XAXIS]},
         yAxis: {type: "time"},
     dataZoom: [{
-        type: 'slider',
+        type: "slider",
         height: 8,
         bottom: 20,
-        borderColor: 'transparent',
-        backgroundColor: '#e2e2e2',
-        handleIcon: 'M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z', // jshint ignore:line
+        borderColor: "transparent",
+        backgroundColor: "#e2e2e2",
+        handleIcon: "M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z", // jshint ignore:line
         handleSize: 20,
         handleStyle: {
             shadowBlur: 6,
             shadowOffsetX: 1,
             shadowOffsetY: 2,
-            shadowColor: '#aaa'
+            shadowColor: "#aaa"
         }
     }, {
-        type: 'inside'
+        type: "inside"
     }],
         series: [SERIES]
     };

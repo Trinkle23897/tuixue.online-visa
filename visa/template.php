@@ -3,8 +3,7 @@ header("Access-Control-Allow-Origin: *");
 $f = $_REQUEST['from'];
 if (strlen($f) > 0)
 	echo '<meta http-equiv="refresh" content="0;url=/visa"/>';
-?>
-<html>
+else echo '<html>
 <head>
     <title>预约美签，防止失学</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -185,4 +184,5 @@ if (strlen($f) > 0)
             <br>
     </div>
 </body>
-</html>
+</html>';
+?>
