@@ -13,7 +13,7 @@ import traceback
 import threading
 import session_op
 import global_var as g
-from vcode import Captcha
+from vcode2 import Captcha
 from bs4 import BeautifulSoup as bs
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
@@ -84,11 +84,12 @@ def init():
     logger.info("Initialization...")
 
     # config cracker
-    if len(args.secret) == 0:
-        cracker = args
-        cracker.solve = lambda x: input('Captcha: ')
-    else:
-        cracker = Captcha(args.secret, args.proxy)
+    #if len(args.secret) == 0:
+    #    cracker = args
+    #    cracker.solve = lambda x: input('Captcha: ')
+    #else:
+    #    cracker = Captcha(args.secret, args.proxy)
+    cracker = Captcha()
     proxies=dict(
         http='socks5h://127.0.0.1:' + str(args.proxy),
         https='socks5h://127.0.0.1:' + str(args.proxy)
@@ -99,6 +100,27 @@ def init():
     # read cached session pool (if any)
     g.assign("session_file", args.session)
     session_op.init_cache()
+
+    # restore previous data
+    for visa_type in ["F", "B", "H", "O", "L"]:
+        fn = '../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' % visa_type.lower()
+        orig = json.loads(open(fn).read()) if os.path.exists(fn) else {}
+        if not "time" in orig:
+            continue
+        date = orig["time"].split()[0]
+        data = {}
+        for k, v in orig.items():
+            if k.endswith("2-" + date):
+                continue
+            if k.endswith(date):
+                place = k.split("-")[0]
+                if v == "/":
+                    y, m, d = 0, 0, 0
+                else:
+                    y, m, d = list(map(int, v.split("/")))
+                data[place] = (y, m, d)
+                g.assign("status_%s_%s" % (visa_type, place), (y, m, d))
+        logger.info("%s, Restored date: %s" % (visa_type, str(data)))
 
 
 def set_interval(func, visa_type, places, interval, rand, first_run=True):
@@ -169,7 +191,7 @@ def crawler_req(visa_type, place):
             session_op.replace_session(visa_type, place, sess)
             return
         elif date == (0, 0, 0):
-            logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Date Not Found"))
+            # logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Date Not Found"))
             last_status = g.value("status_%s_%s" % (visa_type, place), (0, 0, 0))
             # if last_status != (0, 0, 0): 
             #    session_op.replace_session(visa_type, place, sess)
