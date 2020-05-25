@@ -11,6 +11,7 @@ import argparse
 import requests
 import traceback
 import threading
+import subprocess
 import session_op
 import global_var as g
 from vcode2 import Captcha
@@ -50,13 +51,8 @@ def merge(fn, s, cur, visa_type):
     for r in rmkeys:
         orig.pop(r)
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))
-    a = argparse.Namespace()
-    a.extra = '/root/extra.json'
-    a.secret = '/var/www/mail'
-    a.proxy = '1083'
-    a.type = visa_type
-    a.api = open(a.secret).read()
-    #notify.main(a)
+    subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
+    # os.system('python3 notify.py --type ' + visa_type + ' &')
 
 
 def init():
@@ -206,7 +202,6 @@ def crawler_req(visa_type, place):
 
 
 def crawler(visa_type, places):
-    open(visa_type + '_state', 'w').write('1')
     localtime = time.localtime()
     s = {'time': time.strftime('%Y/%m/%d %H:%M:%S', localtime)}
     second = localtime.tm_sec
@@ -234,8 +229,6 @@ def crawler(visa_type, places):
             time_hm = time.strftime('%H:%M', localtime)
             open(path, 'a+').write(time_hm + ' ' + s[n] + '\n')
     merge('../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' % visa_type.lower(), s, cur, visa_type)
-    open(visa_type + '_state', 'w').write('0')
-    os.system('python3 notify.py --type ' + visa_type + ' &')
 
 
 def get_date(page):

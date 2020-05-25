@@ -42,7 +42,7 @@ def send(api, title, content, receivers,
         'sendfrom': sendfrom,
         'sendto': sendto
     }
-    while True:
+    for i in range(10):
         r = requests.post(api, data=data).content.decode()
         # print(r)
         if 'successfully send emails' in r:
@@ -296,7 +296,7 @@ def refresh_homepage():
     random.shuffle(keys)
     for i in keys:
         summary += alltype[i]
-    if random.random() < 0.5: 
+    if random.random() < 0.1:
         captcha_list = ['/visa2/log/' + i for i in os.listdir('log')]
     else:
         captcha_list = ['/visa2/fail/' + i for i in os.listdir('fail')]
@@ -306,7 +306,9 @@ def refresh_homepage():
 
 
 def main(args):
-    if args.type == 'F':
+    if len(args.js) > 0:
+        last_js, js = json.loads(args.last_js), json.loads(args.js)
+    elif args.type == 'F':
         last_js = json.loads(open('../visa/visa-last.json').read())
         js = json.loads(open('../visa/visa.json').read())
     else:
@@ -347,6 +349,7 @@ def main(args):
                     ' changed from ' + last + ' to ' + js[k] + '.<br>'
                 upd_time[short[k.split('-')[0]]] = js[k]
     title = detail[args.type] + ' Visa Status Changed'
+    send_extra(args.type, title, content)
     if len(list(content.keys())) > 0:
         keys = sorted(list(content.keys()))
         masks = list(itertools.product([0, 1], repeat=len(keys)))[1:]
@@ -384,7 +387,6 @@ def main(args):
                 c,
                 pending,
             )
-    send_extra(args.type, title, content)
 
 
 if __name__ == '__main__':
@@ -397,6 +399,8 @@ if __name__ == '__main__':
     parser.add_argument('--time', type=str, default='')
     parser.add_argument('--proxy', type=str, default="1083")
     parser.add_argument('--extra', type=str, default="/root/extra.json")
+    parser.add_argument('--js', type=str, default='')
+    parser.add_argument('--last_js', type=str, default='')
     args = parser.parse_args()
     args.api = open(args.secret).read()
     args.subscribe = args.subscribe.split(',')
