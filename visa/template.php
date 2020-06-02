@@ -1,7 +1,6 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-$f = $_REQUEST['from'];
-if (strlen($f) > 0)
+if (!empty($_REQUEST))
 	echo '<meta http-equiv="refresh" content="0;url=/visa"/>';
 else echo '<html>
 <head>
@@ -14,7 +13,7 @@ else echo '<html>
     <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@4.7.0/dist/echarts.min.js"></script>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <script data-ad-client="ca-pub-5419513334556516" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!--<script data-ad-client="ca-pub-5419513334556516" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-102409527-2"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
@@ -58,10 +57,10 @@ else echo '<html>
         <h1 class="text-center" id="title">美国签证预约时间</h1>
             <center>
 				<br><a href="/visa2">系统当前状态</a> | <a href="https://t.me/f_visa">Telegram频道</a> | <a href="#email">个性化邮件通知</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
-                <br>QQ通知<a href="javascript:alert(1104038280)">1群</a>/<a href="javascript:alert(672921682)">2群</a>/<a href="javascript:alert(1091934602)">3群</a>/<a href="javascript:alert(1076963772)">4群</a><!--/<a href="javascript:alert(722281429)">5群</a>-->，密码是本站网址（共13个字符<code>t***e</code>），四个群内容都一样
-                <br><span style="color:red">QQ邮箱把tuixue的邮件给扔进垃圾箱了，请大家注意一下，最好白名单</span>
+				<br>QQ通知<a href="javascript:alert(672921682)">2群</a>/<a href="javascript:alert(1091934602)">3群</a>/<a href="javascript:alert(1076963772)"><s>4群</s></a>/<a href="javascript:alert(1104038280)"><s>1群</s></a>/<!--/<a href="javascript:alert(722281429)">5群</a>-->，密码是本站网址（共13个字符<code>t***e</code>），四个群内容都一样
+                <!--<br><span style="color:red">QQ邮箱把tuixue的邮件给扔进垃圾箱了，请大家注意一下，最好白名单</span>-->
                 <!--<br><span style="color: green">发现还有好多人不知道tuixue在问……求一个推广呜呜呜（比如微博、票圈之类的）</span>-->
-				<br>加了割美帝资本主义韭菜的功能，不知道会在哪出现，不想割韭菜的话用AdBlock屏蔽掉就行（大雾
+				<!--<br>加了割美帝资本主义韭菜的功能，已调低展示比例并排除垃圾内容，不想割韭菜的话用AdBlock屏蔽掉就行（大雾-->
                 <br>
                 <br>
             </center>
@@ -86,14 +85,18 @@ else echo '<html>
 <p>目前测量结果是每个小时第48分04秒放名额，网站上的更新没法做到秒级别的更新，因此会稍稍慢于蹲点同学的获取时间（不过这些跳下来的尖峰都是几个人退出来的，不算批量放位置，没几分钟就被抢光了）</p>
 <p>记录在案的大批量放位置的时间：成都04/21 10:24，广州04/17 13:38、05/13 09:25，上海04/13 11:56、04/23 15:28、05/14 15:25，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
 <p>一般来说，大批量放位置之后会有人不停地退和选，因此在放位置之后的一两天都有很大概率能捡漏。</p>
-<p>(04.17) <a href="https://disqus.com/by/disqus_9Z3ojTbVFe/">TRMSCT</a><br>如果要多领馆申请的话还要提前把不同领事馆所用的DS-160准备好，这样可以有位置马上去选</p>
-<p>(04.18) <a href="https://disqus.com/by/disqus_rTmjxY4aqA/">YJX</a><br>成都领事馆目前只需要天府通健康码，非湖北只需要填两张表就可以了，以及使馆开门了</p>
-<p>(04.22) <a href="https://disqus.com/by/disqus_cEqiNLHBj5/">JJHunter</a> &amp; <a href="https://disqus.com/by/disqus_rTmjxY4aqA/">YJX</a><br>大使馆cgi账号在你频繁刷新面签时间的情况下会被冻结3天账号不能登录。没有任何办法提前解封，显示：Your account has been frozen for suspicious activity, and you will not be able to access it for up to 72 hours.</p>
-<p>(04.24 / 05.14) <a href="https://disqus.com/by/disqus_4onFXIu7jE/">尤大师</a> &amp; <a href="https://disqus.com/by/billzhaox/">Billzhaox</a><br>注意一个美签收据只能约三次，即使约了早了但到时候领馆没开（譬如之前广州可以约3月4月），被动取消竟然也算在次数里..可怜了160刀<br>问过领馆穿红衣的那些小姐姐们，是说只能约三次（也就是取消两次），担心160刀没了所以没试过<br>
-肉身测试了一波重新预约的次数限制，重新约了3次，加上最开始的一次也就是总共约过4次，都是同一领馆只是更改时间，现在点进重新预约后出现“如果取消本次预约，您将超出取消预约的许可上限，您必须重新缴纳可机读签证申请费，才能继续预约。“字样，说明现在只剩最后一次修改机会。但我感觉这个次数限制并不是永久固定的，具体是多少次官方也没有一个说法，一切还是以系统提示为准吧。</p>
-<p>(04.29) <a href="https://disqus.com/by/disqus_5Ptsb5Joj1/">qwezxc</a><br>香港入境更新：检疫政策持续到6.7，大家要是想来香港签还是再好好考虑一下吧。最简单的理解适用于大部分关注香港办签证的人： 内地游客身份从内地来港 或者 目前身在海外想来香港以过境签来香港。 这两种都不可以来香港。即便从内地出发，游客的签证只有7天，打不到14天，会被拒绝入境。过境签更不可能</p>
-<p>(05.04) <a href="https://disqus.com/by/disqus_VFB75p0HHb/">Rishi</a> &amp; <a href="https://disqus.com/by/disqus_wz5ihrotlj/">Claire</a><br>Q: 请问我之前预约了一个地方，ds160然后费用也交了。现在想换个地方重新填了个ds160，那我要再重新缴费换一个receipt number吗？<br>A: 不用重新缴费，在profile那儿改一下DS160号码就行，DS160可以填很多个的<br>Q: 那再请问下如果已经约上了一个地方， reschedule appointment是会回到开始的界面重新填写ds160这些信息，还是直接只能回到那个已经约上了的地方选时间那里？<br>A: reschedule只能改时间不能改地址，想要换地方的话，只能取消再预约。DS160在profile那儿可以随时改的，你预约时候用的哪个不是很重要，只要最后面试前保持一致就行<br>Q: 那reschedule会有风险吗？比如既没有选到新的更早的时间的，旧的预约也没了:(<br>A: 其实你自己试一试就知道了。。。你选择了新的时间，以前的才会作废，你没有选新的时间，以前的就当然还有效。。。</p>
-<p><br></p>
+<p>(04.18) <a href="http://disq.us/p/28otmp6">YJX</a><br>成都领事馆目前只需要天府通健康码，非湖北只需要填两张表就可以了，以及使馆开门了</p>
+<p>(04.22) <a href="http://disq.us/p/28sd6fs">JJHunter &amp; YJX</a><br>大使馆cgi账号在你频繁刷新面签时间的情况下会被冻结3天账号不能登录。没有任何办法提前解封，显示：Your account has been frozen for suspicious activity, and you will not be able to access it for up to 72 hours.<br>一个被封前兆是在首页上出现"You are approaching the maximum number of times you may view this page. Please complete your transaction at this time."</p>
+<p>(04.24) <a href="http://disq.us/p/28u3jmx">尤大师</a><br>注意一个美签收据只能约三次，即使约了早了但到时候领馆没开（譬如之前广州可以约3月4月），被动取消竟然也算在次数里..可怜了160刀<br>问过领馆穿红衣的那些小姐姐们，是说只能约三次（也就是取消两次），担心160刀没了所以没试过<br>
+<p>(04.29) <a href="http://disq.us/p/28x22pg">qwezxc</a><br>香港入境更新：检疫政策持续到6.7，大家要是想来香港签还是再好好考虑一下吧。最简单的理解适用于大部分关注香港办签证的人： 内地游客身份从内地来港 或者 目前身在海外想来香港以过境签来香港。 这两种都不可以来香港。即便从内地出发，游客的签证只有7天，打不到14天，会被拒绝入境。过境签更不可能</p>
+<p>(05.04) <a href="http://disq.us/p/2917d5l">Rishi &amp; Claire</a><br>Q: 请问我之前预约了一个地方，ds160然后费用也交了。现在想换个地方重新填了个ds160，那我要再重新缴费换一个receipt number吗？<br>A: 不用重新缴费，在profile那儿改一下DS160号码就行，DS160可以填很多个的<br>Q: 那再请问下如果已经约上了一个地方， reschedule appointment是会回到开始的界面重新填写ds160这些信息，还是直接只能回到那个已经约上了的地方选时间那里？<br>A: reschedule只能改时间不能改地址，想要换地方的话，只能取消再预约。DS160在profile那儿可以随时改的，你预约时候用的哪个不是很重要，只要最后面试前保持一致就行<br>Q: 那reschedule会有风险吗？比如既没有选到新的更早的时间的，旧的预约也没了:(<br>A: 其实你自己试一试就知道了。。。你选择了新的时间，以前的才会作废，你没有选新的时间，以前的就当然还有效。。。</p>
+<p>(05.14) <a href="http://disq.us/p/299bl3h">Billzhaox</a><br>肉身测试了一波重新预约的次数限制，重新约了3次，加上最开始的一次也就是总共约过4次，都是同一领馆只是更改时间，现在点进重新预约后出现“如果取消本次预约，您将超出取消预约的许可上限，您必须重新缴纳可机读签证申请费，才能继续预约。“字样，说明现在只剩最后一次修改机会。但我感觉这个次数限制并不是永久固定的，具体是多少次官方也没有一个说法，一切还是以系统提示为准吧。</p>
+<p>(05.21) <a href="http://disq.us/p/29e9frs">qtwzhz</a><br>大家可以申请加急，通过以后可以预约7月8月的。前天申请的，今天预约到了7月6号。<br>沈阳的，陈述理由就是说“我收到了某某学校的offer,开学日前是9月8号，但是可以预约的时间只有9月25号，非常希望能赶上开学，希望能得到加急” 差不多这样。要用英文写。附件附上了i20和offer</p>
+<p>(05.21) <a href="http://disq.us/p/29ecgw9">脱氧和糖_SugarPlus</a><br>关于沈阳大使馆取消周三面签的衍生顾虑，我今晚打客服问了其他大使馆周三的开放情况，大使馆表示暂时没有收到其他领事馆周三面签会被取消的消息，并且他们也不知道沈阳周三面签被取消的原因。要是约上其他大使馆周三面签的小伙伴还是可以保持信心！</p>
+<p>(05.27) <a href="http://disq.us/p/29ip833">Jiayi</a><br>问了下大使馆，说DS160不同地方是可以通用的，比如写了北京也可以去广州（意味着蹲点可以不用开5个DS-160？）。但是只能内地5个通用
+<a href="https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/forms/ds-160-online-nonimmigrant-visa-application/ds-160-faqs.html">看这里</a><br>
+The U.S. Consulate in City Y is able to accept his DS-160 even though it lists the U.S. Embassy in City X as the location where he originally intended to submit his application.<br>
+尽管美国驻Y市的领事馆将他的DS-160申请表中的美国驻X市大使馆列为他最初打算提交申请的地点，但Y市的美国领事馆还是能够接受他的DS-160。</p>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
                     <br>
@@ -150,30 +153,29 @@ else echo '<html>
                             </center>
                     </form>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade" id="code" aria-labelledby="code-tab">
-                    <br>
-                    GitHub 项目地址：<a href="https://github.com/Trinkle23897/us-visa">https://github.com/Trinkle23897/us-visa</a>
-                    <br><br>
-                    作者GitHub：<a href="https://github.com/Trinkle23897/">https://github.com/Trinkle23897/</a>
-                    <br><br>
-                    作者个人主页：<a href="https://trinkle23897.github.io/cv/">https://trinkle23897.github.io/cv/</a>
-                    <br><br>
-                    <b>感谢 <a href="https://github.com/z3dd1cu5">z3dd1cu5</a> 提供的改进版爬虫！</b>
+                </div>
+            </div>
+            <hr>
+                    <div role="tabpanel" class="tab-pane" id="code" aria-labelledby="code-tab">
+<hline>
+                    项目信息：<a href="https://github.com/Trinkle23897/us-visa">GitHub 项目地址</a>，
+                    <a href="https://github.com/Trinkle23897/">作者GitHub</a>，
+                    <a href="https://trinkle23897.github.io/cv/">作者个人主页</a>，
+                    以及感谢 <a href="https://github.com/z3dd1cu5">z3dd1cu5</a> 提供的改进版爬虫！</b>
                     <br><br>
                     写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏
-                    <center><img src="/upload/39CB3AB2-FEFD-44EC-88D3-F6C4A4C7B2B7.jpeg" style="width: 30%"><img src="/upload/F293524B-8160-4FB0-8CEE-3803ED464D4D.jpeg" style="width: 30%"></center>
 					<br><br>
-                    如果您觉得 tuixue.online 很有帮助，可以在毕业论文中加入如下致谢：（贵学术圈不都这么搞的嘛（狗头））
+                    <center><img src="/upload/1515441540.jpg" style="width: 60%"></center>
+                    如果您觉得 tuixue.online 很有帮助，还可以在毕业论文中加入如下致谢：（贵学术圈不都这么搞的嘛（狗头
                     <br><br>
                     <code>感谢翁家翌同学制作的 tuixue.online 网站帮助我在紧张的毕业设计过程中 [请自由发挥]。</code>
-					<br><br>
+					<!--<br><br>
                     If you find tuixue.online helpful and useful, please add the following acknowledgement in your publication:
 					<br><br>
 					<code>Thanks to the website tuixue.online of Mr. Jiayi Weng for [blabla] during my graduation project.</code>
-                    <br><br>
-                    </div>
-                </div>
-            </div>
+                    <br><br>-->
+					</div>
+            <hr>
             <center>
                 广告位招租，详情咨询：<a href="https://trinkle23897.github.io/">https://trinkle23897.github.io/</a><br><br>
                 本网站一共见证了<span id="busuanzi_value_page_pv"></span>人次的失学。<a href="https://www.zhihu.com/question/318624725/answer/875527594">关于可怜的差点被全聚德的作者</a><br>

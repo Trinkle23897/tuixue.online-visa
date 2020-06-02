@@ -1,6 +1,7 @@
 <html>
 <head>
 <meta http-equiv="refresh" content="10;url=/visa"/>
+<!--<script data-ad-client="ca-pub-5419513334556516" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <script>
         window.dataLayer = window.dataLayer || [];

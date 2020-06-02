@@ -7,6 +7,7 @@ import argparse
 import requests
 import itertools
 import importlib
+import subprocess
 from datetime import datetime
 
 
@@ -42,11 +43,7 @@ def send(api, title, content, receivers,
         'sendfrom': sendfrom,
         'sendto': sendto
     }
-    for i in range(10):
-        r = requests.post(api, data=data).content.decode()
-        # print(r)
-        if 'successfully send emails' in r:
-            break
+    r = requests.post(api, data=data).content.decode()
     print(r)
 
 
@@ -82,13 +79,15 @@ def send_extra_on_change(visa_type, title, content):
 def send_extra(visa_type, title, content):
     if visa_type != "F" or not args.extra or len(content) == 0:
         return
-    with open(args.extra, "r") as f:
-        extra = json.load(f)
     content = content.values()
     content = "\n".join(content).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('2020/', '').replace('.', '')
     for zh, en in translate.items():
         content = content.replace(en, zh)
 
+    subprocess.Popen(['python3', 'send_extra.py', args.extra, content, args.proxy])
+    return
+    with open(args.extra, "r") as f:
+        extra = json.load(f)
     # send to TG channel
     bot_token = extra["tg_bot_token"]
     chat_id = extra["tg_chat_id"]
