@@ -129,11 +129,11 @@ def set_session_pool_size(visa_type, place, size):
 
 def login(cracker, place):
     proxies = g.value("proxies", None)
+    ref = {"北京": "China", "上海": "China", "广州": "China", "成都": "China", "沈阳": "China", "香港": "Hong%20Kong", "台湾": "Taiwan"}
 
     # get register page
-    REG_URI = "https://cgifederal.secure.force.com/SiteRegister?country=China&language=zh_CN"
-    REG_HK_URI = "https://cgifederal.secure.force.com/SiteRegister?country=Hong%20Kong&language=zh_CN"
-    r = requests.get(REG_HK_URI if place == "香港" else REG_URI, proxies=proxies)
+    REG_URI = "https://cgifederal.secure.force.com/SiteRegister?country=%s&language=zh_CN" % ref[place]
+    r = requests.get(REG_URI, proxies=proxies)
     if r.status_code != 200:
         return None
 
@@ -146,8 +146,7 @@ def login(cracker, place):
         cookies = r.cookies
 
         # get recaptcha
-        REG_CAPTCHA_URI = "https://cgifederal.secure.force.com/SiteRegister?refURL=https%3A%2F%2Fcgifederal.secure.force.com%2F%3Flanguage%3DChinese%2520%28Simplified%29%26country%3DChina"
-        REG_CAPTCHA_HK_URI = "https://cgifederal.secure.force.com/SiteRegister?refURL=https%3A%2F%2Fcgifederal.secure.force.com%2F%3Flanguage%3DChinese%2520%28Simplified%29%26country%3DHong%20Kong"
+        REG_CAPTCHA_URI = "https://cgifederal.secure.force.com/SiteRegister?refURL=https%3A%2F%2Fcgifederal.secure.force.com%2F%3Flanguage%3DChinese%2520%28Simplified%29%26country%3D" + ref[place]
         data = {
             "AJAXREQUEST": "_viewRoot",
             "Registration:SiteTemplate:theForm": "Registration:SiteTemplate:theForm",
@@ -163,7 +162,7 @@ def login(cracker, place):
             "com.salesforce.visualforce.ViewStateMAC": view_state_mac,
             "Registration:SiteTemplate:theForm:j_id177": "Registration:SiteTemplate:theForm:j_id177"
         }
-        r = requests.post(REG_CAPTCHA_HK_URI if place == "香港" else REG_CAPTCHA_URI, data=data, cookies=cookies, proxies=proxies)
+        r = requests.post(REG_CAPTCHA_URI, data=data, cookies=cookies, proxies=proxies)
         if r.status_code != 200:
             return None
 
@@ -204,7 +203,7 @@ def login(cracker, place):
             "com.salesforce.visualforce.ViewStateVersion": view_state_version,
             "com.salesforce.visualforce.ViewStateMAC": view_state_mac
         }
-        r = requests.post(REG_CAPTCHA_HK_URI if place == "香港" else REG_CAPTCHA_URI, data=data, cookies=cookies, proxies=proxies)
+        r = requests.post(REG_CAPTCHA_URI, data=data, cookies=cookies, proxies=proxies)
         if r.status_code != 200:
             return None
         front_door_uri = r.text.split("'")[-2]
@@ -252,7 +251,7 @@ def visa_select(visa_type, place, sid):
         return None
 
     # select place
-    if place != "香港":
+    if place != "香港" and place != "台湾":
         select_post_uri = "https://cgifederal.secure.force.com/selectpost"
         r = requests.get(select_post_uri, cookies=cookies, proxies=proxies)
         if r.status_code != 200:
@@ -298,11 +297,11 @@ def visa_select(visa_type, place, sid):
     contact_id = soup.find(id="j_id0:SiteTemplate:j_id109:contactId").get("value")
     prefix = "j_id0:SiteTemplate:j_id109:j_id162:"
     category2id = {
-        "B": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 1}, 
-        "F": {"北京": 1, "成都": 1, "广州": 1, "上海": 1, "沈阳": 1, "香港": 0}, 
-        "O": {"北京": 4, "成都": 2, "广州": 3, "上海": 4, "沈阳": 2, "香港": 3}, 
-        "H": {"北京": 2, "广州": 3, "上海": 2, "香港": 3}, 
-        "L": {"北京": 3, "广州": 2, "上海": 3, "香港": 3} 
+        "B": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 1, "台湾": 1}, 
+        "F": {"北京": 1, "成都": 1, "广州": 1, "上海": 1, "沈阳": 1, "香港": 0, "台湾": 0}, 
+        "O": {"北京": 4, "成都": 2, "广州": 3, "上海": 4, "沈阳": 2, "香港": 3, "台湾": 3}, 
+        "H": {"北京": 2, "广州": 3, "上海": 2, "香港": 3, "台湾": 3}, 
+        "L": {"北京": 3, "广州": 2, "上海": 3, "香港": 3, "台湾": 3} 
     }
     category_code = soup.find(id=prefix + str(category2id[visa_type][place])).get("value")
     data = {
@@ -333,8 +332,8 @@ def visa_select(visa_type, place, sid):
         "F": 0, 
         "B": 2, 
         "H": 0, 
-        "O": 10 if place == "香港" else (6 if place == "广州" else 0), 
-        "L": 7 if place == "香港" else 1
+        "O": 10 if place == "香港" or place == "台湾" else (6 if place == "广州" else 0), 
+        "L": 7 if place == "香港" or place == "台湾" else 1
     }
     inputs = soup.find_all("input")
     type_codes = [x.get("value") for x in inputs if x.get("name") == "selectedVisaClass"]
@@ -354,7 +353,7 @@ def visa_select(visa_type, place, sid):
 
     # update data
     update_data_uri = "https://cgifederal.secure.force.com/updatedata"
-    r = requests.get(select_visa_code_uri, cookies=cookies, proxies=proxies)
+    r = requests.get(update_data_uri, cookies=cookies, proxies=proxies)
     if r.status_code != 200:
         return None
     date = get_date(r.text)

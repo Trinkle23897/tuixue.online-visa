@@ -138,27 +138,27 @@ def set_interval(func, visa_type, places, interval, rand, first_run=True):
 def start_thread():
     logger.info("Start threads...")
     visa_type = "F"
-    places = ["沈阳", "成都", "广州", "上海", "北京", "香港"]
+    places = ["沈阳", "成都", "广州", "上海", "北京", "香港", "台湾"]
     for place in places:
         session_op.set_session_pool_size(visa_type, place, 10)
     set_interval(crawler, visa_type, places, 60, 0)
     visa_type = "B"
-    places = ["沈阳", "成都", "广州", "上海", "北京", "香港"]
+    places = ["沈阳", "成都", "广州", "上海", "北京", "香港", "台湾"]
     for place in places:
         session_op.set_session_pool_size(visa_type, place, 5)
     set_interval(crawler, visa_type, places, 120, 0)
     visa_type = "H"
-    places = ["广州", "上海", "北京", "香港"]
+    places = ["广州", "上海", "北京", "香港", "台湾"]
     for place in places:
         session_op.set_session_pool_size(visa_type, place, 5)
     set_interval(crawler, visa_type, places, 180, 0)
     visa_type = "O"
-    places = ["沈阳", "成都", "广州", "上海", "北京", "香港"]
+    places = ["沈阳", "成都", "广州", "上海", "北京", "香港", "台湾"]
     for place in places:
         session_op.set_session_pool_size(visa_type, place, 5)
     set_interval(crawler, visa_type, places, 180, 0)
     visa_type = "L"
-    places = ["广州", "上海", "北京", "香港"]
+    places = ["广州", "上海", "北京", "香港", "台湾"]
     for place in places:
         session_op.set_session_pool_size(visa_type, place, 5)
     set_interval(crawler, visa_type, places, 180, 0)
