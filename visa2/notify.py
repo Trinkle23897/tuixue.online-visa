@@ -7,6 +7,7 @@ import argparse
 import requests
 import itertools
 import importlib
+import subprocess
 from datetime import datetime
 
 
@@ -42,11 +43,7 @@ def send(api, title, content, receivers,
         'sendfrom': sendfrom,
         'sendto': sendto
     }
-    while True:
-        r = requests.post(api, data=data).content.decode()
-        # print(r)
-        if 'successfully send emails' in r:
-            break
+    r = requests.post(api, data=data).content.decode()
     print(r)
 
 
@@ -82,13 +79,15 @@ def send_extra_on_change(visa_type, title, content):
 def send_extra(visa_type, title, content):
     if visa_type != "F" or not args.extra or len(content) == 0:
         return
-    with open(args.extra, "r") as f:
-        extra = json.load(f)
     content = content.values()
     content = "\n".join(content).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('2020/', '').replace('.', '')
     for zh, en in translate.items():
         content = content.replace(en, zh)
 
+    subprocess.Popen(['python3', 'send_extra.py', args.extra, content, args.proxy])
+    return
+    with open(args.extra, "r") as f:
+        extra = json.load(f)
     # send to TG channel
     bot_token = extra["tg_bot_token"]
     chat_id = extra["tg_chat_id"]
@@ -296,7 +295,7 @@ def refresh_homepage():
     random.shuffle(keys)
     for i in keys:
         summary += alltype[i]
-    if random.random() < 0.5: 
+    if random.random() < 0.1:
         captcha_list = ['/visa2/log/' + i for i in os.listdir('log')]
     else:
         captcha_list = ['/visa2/fail/' + i for i in os.listdir('fail')]
@@ -306,7 +305,9 @@ def refresh_homepage():
 
 
 def main(args):
-    if args.type == 'F':
+    if len(args.js) > 0:
+        last_js, js = json.loads(args.last_js), json.loads(args.js)
+    elif args.type == 'F':
         last_js = json.loads(open('../visa/visa-last.json').read())
         js = json.loads(open('../visa/visa.json').read())
     else:
@@ -347,6 +348,7 @@ def main(args):
                     ' changed from ' + last + ' to ' + js[k] + '.<br>'
                 upd_time[short[k.split('-')[0]]] = js[k]
     title = detail[args.type] + ' Visa Status Changed'
+    send_extra(args.type, title, content)
     if len(list(content.keys())) > 0:
         keys = sorted(list(content.keys()))
         masks = list(itertools.product([0, 1], repeat=len(keys)))[1:]
@@ -384,7 +386,6 @@ def main(args):
                 c,
                 pending,
             )
-    send_extra(args.type, title, content)
 
 
 if __name__ == '__main__':
@@ -397,6 +398,8 @@ if __name__ == '__main__':
     parser.add_argument('--time', type=str, default='')
     parser.add_argument('--proxy', type=str, default="1083")
     parser.add_argument('--extra', type=str, default="/root/extra.json")
+    parser.add_argument('--js', type=str, default='')
+    parser.add_argument('--last_js', type=str, default='')
     args = parser.parse_args()
     args.api = open(args.secret).read()
     args.subscribe = args.subscribe.split(',')

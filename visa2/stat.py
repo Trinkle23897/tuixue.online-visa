@@ -2,6 +2,7 @@
 import os
 
 print('Captcha :', len(os.listdir('log')))
+print('Fail    :', len(os.listdir('fail')))
 print('Email   :', len(os.listdir('../asiv/email/tmp')))
 s = [] 
 for i in 'bfohl': 

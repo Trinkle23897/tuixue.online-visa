@@ -12,7 +12,7 @@
         .table thead tr th { text-align: center; vertical-align: middle; }
         .table tbody tr td { text-align: center; vertical-align: middle; }
     </style>
-    <script data-ad-client="ca-pub-5419513334556516" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!--<script data-ad-client="ca-pub-5419513334556516" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
