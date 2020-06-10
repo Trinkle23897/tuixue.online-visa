@@ -56,8 +56,8 @@ else echo '<html>
     <div class="container">
         <h1 class="text-center" id="title"><a href="https://cgifederal.secure.force.com/">美国签证</a>预约时间</h1>
             <center>
-				<br><a href="/visa2">系统当前状态</a> | <a href="https://t.me/f_visa">Telegram频道</a> | <a href="#email">个性化邮件通知</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
-				<br>QQ通知<!--a href="javascript:alert(1076963772)">4群</a--><a href="javascript:alert(1051175494)">5群</a><!--/<a href="javascript:alert(672921682)">2群</a>/<a href="javascript:alert(1091934602)">3群</a-->，密码是本站网址（共13个字符<code>t***e</code>），所有群内容都一样
+				<br><a href="/visa2">系统当前状态</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
+				<br><span style="color:red">第一时间接收名额变化通知：</span><a href="#email">个性化邮件通知</a> | <a href="https://t.me/f_visa">Telegram频道</a> | <a href="javascript: alert(\'入群密码是本站网址，共13个字符t***e，所有群内容一致\n1群：1104038280（~500）\n2群：672921682（~500）\n3群：1091934602（~500）\n4群：1076963772（~500）\n5群：1051175494\n\')">QQ通知群</a>
 <!--<a href="javascript:alert(646098814)">6群</a>/<a href="javascript:alert(739464328)">7群</a>/<a href="javascript:alert(1040436778)">8群</a>/<a href="javascript:alert(578968441)">9群</a>/<a href="javascript:alert(1044608829)">10群</a>/<a href="javascript:alert(921303937)">11群</a>-->
                 <!--<br><span style="color:red">QQ邮箱把tuixue的邮件给扔进垃圾箱了，请大家注意一下，最好白名单</span>-->
                 <!--<br><span style="color: green">发现还有好多人不知道tuixue在问……求一个推广呜呜呜（比如微博、票圈之类的）</span>-->
@@ -84,7 +84,7 @@ else echo '<html>
 <p></p>
 <p>这里总结了一些<a href="#disqus_thread">需要翻墙的评论区</a>中出现的约签证的技巧和注意事项</p>
 <p>目前测量结果是每个小时第48分04秒放（7-8个小时之前别人退掉的）名额，网站上的更新没法做到秒级别的更新，因此会稍稍慢于蹲点同学的获取时间（不过这些跳下来的尖峰都是几个人退出来的，不算批量放位置，没几分钟就被抢光了）</p>
-<p>记录在案的大批量放位置的时间：成都04/21 10:24，广州04/17 13:38、05/13 09:25、06/03 13:19，上海04/13 11:56、04/23 15:28、05/14 15:25、06/01 16:03、06/04 10:26，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
+<p>记录在案的大批量放位置的时间：成都04/21 10:24，广州04/17 13:38、05/13 09:25、06/03 13:19，上海04/13 11:56、04/23 15:28、05/14 15:25、06/01 16:03、06/04 10:26、06/09 11:53，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
 <p>一般来说，大批量放位置之后会有人不停地退和选，因此在放位置之后的一两天都有很大概率能捡漏。</p>
 <p>(04.22) <a href="http://disq.us/p/28sd6fs">JJHunter &amp; YJX</a><br>大使馆cgi账号在你频繁刷新面签时间的情况下会被冻结3天账号不能登录。没有任何办法提前解封，显示：Your account has been frozen for suspicious activity, and you will not be able to access it for up to 72 hours.<br>一个被封前兆是在首页上出现"You are approaching the maximum number of times you may view this page. Please complete your transaction at this time."</p>
 <p>(04.24) <a href="http://disq.us/p/28u3jmx">尤大师</a><br>注意一个美签收据只能约三次，即使约了早了但到时候领馆没开（譬如之前广州可以约3月4月），被动取消竟然也算在次数里..可怜了160刀<br>问过领馆穿红衣的那些小姐姐们，是说只能约三次（也就是取消两次），担心160刀没了所以没试过<br>
@@ -114,7 +114,7 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fhk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ftw"> 台湾</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ftp"> 台北</label>
                             </td></tr>
                             <tr><td align="right">B1/B2：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbj"> 北京</label>
@@ -123,14 +123,14 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bhk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="btw"> 台湾</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="btp"> 台北</label>
                             </td></tr>
                             <tr><td align="right">H1B：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hgz"> 广州</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hhk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="htw"> 台湾</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="htp"> 台北</label>
                             </td></tr>
                             <tr><td align="right">O1/O2/O3：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obj"> 北京</label>
@@ -139,21 +139,21 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osy"> 沈阳</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ohk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="otw"> 台湾</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="otp"> 台北</label>
                             </td></tr>
                             <tr><td align="right">L1/L2：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbj"> 北京</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lgz"> 广州</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsh"> 上海</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lhk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ltw"> 台湾</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ltp"> 台北</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
 							<tr><td align="right">输入以下验证码（五位小写英文字母）：</td><td><input class="form-control" type="text" value="" name="captcha" maxlength=5></td></tr>
                             </table>
                             TBD_CAPTCHA
                             <br><br><b>一般来说，每个小时的第48分会放出7-8小时前被别人退掉的名额，不是很好抢到<br>但是如果邮件推送给您的时间不是48分，多半是这个地方放了一大波名额</b><br>
-                            <br>如果要取消订阅的话，全不选然后提交，再重新戳确认邮件里面的链接就行了。<br><br>
+                            <br>如果要取消订阅的话，全不选然后提交，再<b>重新戳确认邮件里面的链接</b>就行了。<br><br>
                             <input type="submit" value="提交" class="btn btn-info"/>
                             </center>
                     </form>

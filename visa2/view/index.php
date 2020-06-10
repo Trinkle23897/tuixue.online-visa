@@ -39,7 +39,7 @@ else
 if ($type == 'J') $type = 'F';
 else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O' && $type != 'L')
     $type = 'F';
-$loc = ['北京', '成都', '广州', '上海', '沈阳', '香港', '台湾'];
+$loc = ['北京', '成都', '广州', '上海', '沈阳', '香港', '台北'];
 $raw = [];
 $data = [];
 $x = [];
@@ -77,12 +77,14 @@ foreach ($loc as $name) {
         $data[$name][$i] = $j;
     }
 }
+$show_tp = $type;
+if ($type == 'F') $show_tp = 'F/J';
  ?>
                 <div id="chart" style="height: 400px; width: '100%'"></div>
                 <script type="text/javascript">
                     var c = echarts.init(document.getElementById('chart'));
                     var o = {
-                        title: {text: "<?php echo substr($date, 5).' '.$type ?>"},
+                        title: {text: "<?php echo substr($date, 5).' '.$show_tp ?>"},
                         tooltip: {
                             trigger: 'axis',
                             formatter: function(data) {
@@ -123,7 +125,7 @@ foreach ($loc as $name) {
 $d = new Datetime($date);
 $pre = explode('/', $d->modify("-1 day")->format("Y/m/d"));
 echo '<a class="btn btn-info" role="button" href="/visa2/view/?y='.$pre[0].'&m='.$pre[1].'&d='.$pre[2].'&t='.$type.'">前一天</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-echo '<a class="btn btn-info" role="button" href="/visa">返回首页</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+echo '<a class="btn btn-info" role="button" href="/visa/#'.$type.'">返回首页</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 $nxt = explode('/', $d->modify("+2 day")->format("Y/m/d"));
 echo '<a class="btn btn-info" role="button" href="/visa2/view/?y='.$nxt[0].'&m='.$nxt[1].'&d='.$nxt[2].'&t='.$type.'">后一天</a>';
 ?>

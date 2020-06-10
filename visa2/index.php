@@ -59,7 +59,7 @@ echo '<table class="table table-hover table-striped table-bordered"><thead>
 <tr><td>上海</td><td>'.get('../asiv/email/f/sh/').'</td><td>'.get('../asiv/email/b/sh/').'</td><td>'.get('../asiv/email/h/sh/').'</td><td>'.get('../asiv/email/o/sh/').'</td><td>'.get('../asiv/email/l/sh/').'</td></tr>
 <tr><td>沈阳</td><td>'.get('../asiv/email/f/sy/').'</td><td>'.get('../asiv/email/b/sy/').'</td><td>'.get('../asiv/email/h/sy/').'</td><td>'.get('../asiv/email/o/sy/').'</td><td>'.get('../asiv/email/l/sy/').'</td></tr>
 <tr><td>香港</td><td>'.get('../asiv/email/f/hk/').'</td><td>'.get('../asiv/email/b/hk/').'</td><td>'.get('../asiv/email/h/hk/').'</td><td>'.get('../asiv/email/o/hk/').'</td><td>'.get('../asiv/email/l/hk/').'</td></tr>
-<tr><td>台湾</td><td>'.get('../asiv/email/f/tw/').'</td><td>'.get('../asiv/email/b/tw/').'</td><td>'.get('../asiv/email/h/tw/').'</td><td>'.get('../asiv/email/o/tw/').'</td><td>'.get('../asiv/email/l/tw/').'</td></tr>
+<tr><td>台北</td><td>'.get('../asiv/email/f/tp/').'</td><td>'.get('../asiv/email/b/tp/').'</td><td>'.get('../asiv/email/h/tp/').'</td><td>'.get('../asiv/email/o/tp/').'</td><td>'.get('../asiv/email/l/tp/').'</td></tr>
 </tbody></table>
 	';
 ?>

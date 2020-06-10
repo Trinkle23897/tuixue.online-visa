@@ -54,7 +54,7 @@ function save($c, $o) {
 $email = $_REQUEST['liame'];
 $t = $_REQUEST['visa'];
 $type = array('f' => 'F1/J1签证', 'b' => 'B1/B2签证', 'h' => 'H1B签证', 'o' => 'O1/O2/O3签证', 'l' => 'L1/L2签证');
-$city = array('bj' => '北京', 'cd' => '成都', 'gz' => '广州', 'sh' => '上海', 'sy' => '沈阳', 'hk' => '香港', 'tw' => '台湾');
+$city = array('bj' => '北京', 'cd' => '成都', 'gz' => '广州', 'sh' => '上海', 'sy' => '沈阳', 'hk' => '香港', 'tp' => '台北');
 if (strlen($_REQUEST['s']) > 0) {
 	echo "旧的链接已失效，请在首页重新提交一份订阅请求。";
 }

@@ -13,10 +13,10 @@ from datetime import datetime
 
 detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
 translate = {'北京': 'Beijing', '上海': 'Shanghai', '成都': 'Chengdu',
-        '广州': 'Guangzhou', '沈阳': 'Shenyang', '香港': 'HongKong', '台湾': 'Taiwan'}
-full = {'bj': '北京', 'sh': '上海', 'cd': '成都', 'gz': '广州', 'sy': '沈阳', 'hk': '香港', 'tw': '台湾'}
+        '广州': 'Guangzhou', '沈阳': 'Shenyang', '香港': 'HongKong', '台北': 'Taipei'}
+full = {'bj': '北京', 'sh': '上海', 'cd': '成都', 'gz': '广州', 'sy': '沈阳', 'hk': '香港', 'tp': '台北'}
 short = {'北京': 'bj', '上海': 'sh', '成都': 'cd',
-        '广州': 'gz', '沈阳': 'sy', '香港': 'hk', '台湾': 'tw'}
+        '广州': 'gz', '沈阳': 'sy', '香港': 'hk', '台北': 'tp'}
 
 
 def min_date(a, b):
@@ -169,7 +169,7 @@ template = '''
 function chartTYPE() {
     var c = echarts.init(document.getElementById("chart"));
     var o = {
-        title: {text: "TYPE"},
+        title: {text: "TYPE_TEXT"},
         tooltip: {
             trigger: "axis",
             formatter: function(data) {
@@ -222,7 +222,8 @@ def refresh_homepage():
     for tp in alltype:
         p = '' if tp == 'F' else ('-' + tp.lower())
         js = json.loads(open('../visa/visa%s.json' % p).read())
-        result = template.replace("TYPE", tp).replace('TIME', js['time'])
+        tptext = 'F/J' if tp == 'F' else tp
+        result = template.replace('TYPE_TEXT', tptext).replace("TYPE", tp).replace('TIME', js['time'])
         result = result.replace('IS_F', 'active in' if tp == 'F' else '')
         info = {}
         x = []
@@ -240,16 +241,16 @@ def refresh_homepage():
         x = sorted(list(set(x)))
         # chart
         if tp in 'HL':
-            legend = '"北京","广州","上海","香港","台湾"'
+            legend = '"北京","广州","上海","香港","台北"'
         else:
-            legend = '"北京","成都","广州","上海","沈阳","香港","台湾"'
+            legend = '"北京","成都","广州","上海","沈阳","香港","台北"'
         result = result.replace('LEGEND', legend)
         xaxis = ""
         for i in x:
             xaxis += '"' + i + '",'
         result = result.replace('XAXIS', xaxis)
         series = ''
-        legend = ["北京", "成都", "广州", "上海", "沈阳", "香港", "台湾"]
+        legend = ["北京", "成都", "广州", "上海", "沈阳", "香港", "台北"]
         for city in legend:
             series += '{name: "%s", type: "line", data: [' % city
             for t in x:
@@ -262,9 +263,9 @@ def refresh_homepage():
         result = result.replace('SERIES', series)
         # table
         if tp in 'HL':
-            legend = ["北京", "广州", "上海", "香港", "台湾"]
+            legend = ["北京", "广州", "上海", "香港", "台北"]
         else:
-            legend = ["北京", "成都", "广州", "上海", "沈阳", "香港", "台湾"]
+            legend = ["北京", "成都", "广州", "上海", "沈阳", "香港", "台北"]
         table = '<thead><tr><th>地点</th>'
         for i in legend:
             table += '<th colspan="2"><a href="/visa2/'+tp+'/'+i+'/'+cur+'">' + i + '</a></th>'
