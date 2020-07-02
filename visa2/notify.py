@@ -79,8 +79,7 @@ def send_extra_on_change(visa_type, title, content):
 def send_extra(visa_type, title, content):
     if visa_type != "F" or not args.extra or len(content) == 0:
         return
-    content = content.values()
-    content = "\n".join(content).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('2020/', '').replace('.', '')
+    content = "\n".join(content.values()).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('.', '').replace(time.asctime()[-4:] + '/', '')
     for zh, en in translate.items():
         content = content.replace(en, zh)
 
@@ -221,7 +220,11 @@ def refresh_homepage():
     alltype = {'F': '', 'B': '', 'H': '', 'O': '', 'L': ''}
     for tp in alltype:
         p = '' if tp == 'F' else ('-' + tp.lower())
-        js = json.loads(open('../visa/visa%s.json' % p).read())
+        try:
+            js = json.loads(open('../visa/visa%s.json' % p).read())
+        except:
+            print('err on homepage:', p)
+            return
         tptext = 'F/J' if tp == 'F' else tp
         result = template.replace('TYPE_TEXT', tptext).replace("TYPE", tp).replace('TIME', js['time'])
         result = result.replace('IS_F', 'active in' if tp == 'F' else '')
@@ -314,8 +317,11 @@ def main(args):
     else:
         last_js = json.loads(open(
             '../visa/visa-%s-last.json' % args.type.lower()).read())
-        js = json.loads(open(
-            '../visa/visa-%s.json' % args.type.lower()).read())
+        try:
+            js = json.loads(open(
+                '../visa/visa-%s.json' % args.type.lower()).read())
+        except:
+            js = last_js
     refresh_homepage()
     now_time, last_time = js['time'].split()[0], last_js['time'].split()[0]
     if now_time != last_time:

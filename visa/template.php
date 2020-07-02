@@ -57,7 +57,7 @@ else echo '<html>
         <h1 class="text-center" id="title"><a href="https://cgifederal.secure.force.com/">美国签证</a>预约时间</h1>
             <center>
 				<br><a href="/visa2">系统当前状态</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
-				<br><span style="color:red">第一时间接收名额变化通知：</span><a href="#email">个性化邮件通知</a> | <a href="https://t.me/f_visa">Telegram频道</a> | <a href="javascript: alert(\'入群密码是本站网址，共13个字符t***e，所有群内容一致\n1群：1104038280（~500）\n2群：672921682（~500）\n3群：1091934602（~500）\n4群：1076963772（~500）\n5群：1051175494\n\')">QQ通知群</a>
+				<br><span style="color:red">推送通知：</span><a href="#email">个性化邮件通知</a> | <a href="https://t.me/f_visa">Telegram频道</a> | <a href="javascript: alert(\'入群密码是本站网址，共13个字符t***e，所有群内容一致\n1群：1104038280（~500）\n2群：672921682（~500）\n3群：1091934602（~500）\n4群：1076963772（~500）\n5群：1051175494（~500）\n6群：646098814\n\')">QQ通知群</a>
 <!--<a href="javascript:alert(646098814)">6群</a>/<a href="javascript:alert(739464328)">7群</a>/<a href="javascript:alert(1040436778)">8群</a>/<a href="javascript:alert(578968441)">9群</a>/<a href="javascript:alert(1044608829)">10群</a>/<a href="javascript:alert(921303937)">11群</a>-->
                 <!--<br><span style="color:red">QQ邮箱把tuixue的邮件给扔进垃圾箱了，请大家注意一下，最好白名单</span>-->
                 <!--<br><span style="color: green">发现还有好多人不知道tuixue在问……求一个推广呜呜呜（比如微博、票圈之类的）</span>-->
@@ -97,6 +97,7 @@ else echo '<html>
 <a href="https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/forms/ds-160-online-nonimmigrant-visa-application/ds-160-faqs.html">看这里</a><br>
 The U.S. Consulate in City Y is able to accept his DS-160 even though it lists the U.S. Embassy in City X as the location where he originally intended to submit his application.<br>
 尽管美国驻Y市的领事馆将他的DS-160申请表中的美国驻X市大使馆列为他最初打算提交申请的地点，但Y市的美国领事馆还是能够接受他的DS-160。</p>
+<p>(06.17) <a href="http://disq.us/p/29zfwsu">Jason</a><br>国内的几个领馆应该是可以随便换的，取消后冷却个一天就可以换个使馆重新约时间了。如果想换去别的国家、或者港台地区的使馆，那需要填写“提交反馈”来变更面谈国家。似乎也不必重新交钱 </p>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
                     <br>
@@ -166,15 +167,16 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                     项目信息：<a href="https://github.com/Trinkle23897/us-visa">GitHub 项目地址</a>，
                     <a href="https://github.com/Trinkle23897/">作者GitHub</a>，
                     <a href="https://trinkle23897.github.io/cv/">作者个人主页</a>，
+                    <a href="https://www.zhihu.com/people/jiayi-weng">作者知乎主页</a>，
                     以及感谢 <a href="https://github.com/z3dd1cu5">z3dd1cu5</a> 提供的改进版爬虫！</b>
                     <br><br>
                     写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏
 					<br><br>
-                    <center><img src="/upload/1515441540.jpg" style="width: 60%"></center>
-                    如果您觉得 tuixue.online 很有帮助，还可以在毕业论文中加入如下致谢：（贵学术圈不都这么搞的嘛（狗头
+                    <center><img src="/files/pay.png" style="width: 60%"></center>
+                    <!--如果您觉得 tuixue.online 很有帮助，还可以在毕业论文中加入如下致谢：（贵学术圈不都这么搞的嘛（狗头
                     <br><br>
                     <code>感谢翁家翌同学制作的 tuixue.online 网站帮助我在紧张的毕业设计过程中 [请自由发挥]。</code>
-					<!--<br><br>
+					<br><br>
                     If you find tuixue.online helpful and useful, please add the following acknowledgement in your publication:
 					<br><br>
 					<code>Thanks to the website tuixue.online of Mr. Jiayi Weng for [blabla] during my graduation project.</code>
@@ -182,6 +184,8 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
 					</div>
             <hr>
             <center>
+                这里是广告：<br><br>
+                <img src="/upload/zlr.jpg" style="align: center; width: 60%"><br><br>
                 广告位招租，详情咨询：<a href="https://trinkle23897.github.io/">https://trinkle23897.github.io/</a><br><br>
                 本网站一共见证了<span id="busuanzi_value_page_pv"></span>人次的失学。<a href="https://www.zhihu.com/question/318624725/answer/875527594">关于可怜的差点被全聚德的作者</a><br>
             </center>
