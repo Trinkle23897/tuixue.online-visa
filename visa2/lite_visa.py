@@ -271,7 +271,7 @@ def start_thread():
     set_interval(crawler, visa_type, places, 180, 0)
 
 
-def crawler_req(visa_type, place, start_time):
+def crawler_req(visa_type, place, start_time, requests):
     try:
         # prepare session
         sess = session_op.get_session(visa_type, place)
@@ -308,10 +308,11 @@ def crawler(visa_type, places):
     cur = time.strftime('%Y/%m/%d', time.localtime())
     cur_time = time.strftime('%H:%M:%S', time.localtime())
     pool = []
+    req = g.value(visa_type + "_req", requests.Session())
     for place in places:
         t = threading.Thread(
             target=crawler_req, 
-            args=(visa_type, place, cur_time)
+            args=(visa_type, place, cur_time, req)
         )
         t.start()
         pool.append(t)
