@@ -10,8 +10,9 @@ from bs4 import BeautifulSoup as bs
 
 def do_register(visa_type, place):
     cracker = vcode2.Captcha()
-    username, passwd, sid = login(cracker, place)
-    date = visa_select(visa_type, place, sid)
+    req = requests.Session()
+    username, passwd, sid = login(cracker, place, req)
+    date = visa_select(visa_type, place, sid, req)
     return sid, date
 
 def get_date(page):
@@ -28,7 +29,7 @@ def get_date(page):
     except:
         return (0, 0, 0)
 
-def login(cracker, place):
+def login(cracker, place, requests):
     proxies = g.value("proxies", None)
     ref = {"北京": "China", "上海": "China", "广州": "China", "成都": "China", "沈阳": "China", "香港": "Hong%20Kong", "台北": "Taiwan"}
 
@@ -123,7 +124,7 @@ def login(cracker, place):
     cookies = r.cookies
     return username, passwd, cookies["sid"]
 
-def visa_select(visa_type, place, sid):
+def visa_select(visa_type, place, sid, requests):
     proxies = g.value("proxies", None)
     cookies = copy.deepcopy(g.COOKIES)
     cookies["sid"] = sid

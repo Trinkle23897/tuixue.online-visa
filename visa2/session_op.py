@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup as bs
 
 logger = logging.getLogger("fast_visa")
 
-replace_items = queue.Queue(maxsize=30)
+replace_items = queue.Queue()
 
 def init_cache():
     session_file = g.value("session_file", "session.json")

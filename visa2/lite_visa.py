@@ -20,7 +20,7 @@ from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
 import notify
 
-replace_items = queue.Queue(maxsize=30)
+replace_items = queue.Queue()
 
 def add_session():
     while True:
