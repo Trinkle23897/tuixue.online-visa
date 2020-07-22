@@ -164,7 +164,8 @@ class Net(nn.Module):
         return out
 
 model = Net()
-model.load_state_dict(torch.load("save.pth"))
+model.load_state_dict(torch.load("save.pth", map_location=torch.device('cpu')))
+model.to('cpu')
 model.eval()
 
 all_letters = "abcdfhijklmnopqrstuvwxy"
@@ -248,63 +249,6 @@ def bold():
                     filled[i][j + 1] = pixels[i][j]
 
 
-def position_adjust():
-    letter_base = []
-    for j in range(width):
-        top, bottom = 0, 0
-        for i in range(height):
-            if filled[i][j] == black_pixel:
-                bottom = i
-                if top == 0:
-                    top = i
-        if bottom - top >= 24 and bottom - top <= 26:
-            letter_base.append(bottom)
-        else:
-            letter_base.append(0)
-
-    l, r = 0, 0
-    while l < width:
-        while r < width and letter_base[r] == 0:
-            r += 1
-        if l == 0:
-            for p in range(l, r):
-                letter_base[p] = letter_base[r]
-        elif r >= width:
-            for p in range(l, r):
-                letter_base[p] = letter_base[l]
-        elif r - l > 1:
-            k = (letter_base[r] - letter_base[l]) / (r - l)
-            if k <= 0.5:
-                for p in range(l, r):
-                    letter_base[p] = int(letter_base[l] + k * (p - l))
-            else:
-                for p in range(l, r + 1):
-                    letter_base[p] = letter_base[l]
-        l, r = r, r + 1
-
-    for j in range(width):
-        delta = letter_base[j] - 50
-        if delta > 0:
-            filled[:-delta, j] = filled[delta:, j]
-            filled[-delta:, j] = white_pixel
-        elif delta < 0:
-            filled[-delta:, j] = filled[:delta, j]
-            filled[:-delta, j] = white_pixel
-
-
-def cosine_similarity(v1, v2, move=0):
-    v1_abs = np.sqrt(np.sum(v1 * v1))
-    v2_abs = np.sqrt(np.sum(v2 * v2))
-    m = 0
-    for d in range(-move, move + 1):
-        v1_v2 = np.sum(v1 * np.roll(v2, d))
-        if v1_v2 > m:
-            m = v1_v2
-    if m == 0:
-        return 0
-    return m / (v1_abs * v2_abs)
-
-
 def inspect(img_data):
     global width, height, pixels, blank_pixel
     stream = io.BytesIO(img_data)
@@ -316,7 +260,6 @@ def inspect(img_data):
     delete_curve()
     eliminate_noise()
     bold()
-    position_adjust()
     left = 0
     while np.sum(filled[:, left] == black_pixel) == 0:
         left += 1
@@ -336,18 +279,6 @@ def check(left):
         result += letter
 
         ref, adjust_l = 0., left
-        for w_l in range(left - 1, left + 4):
-            width = config[letter]["width"]
-            matrix = filled[:, w_l: w_l + width]
-            w_hist = np.sum(matrix == black_pixel, axis=0)
-            h_hist = np.sum(matrix == black_pixel, axis=1)
-            w_conf = cosine_similarity(w_hist, np.array(config[letter]["w_hist"]))
-            h_conf = cosine_similarity(h_hist, np.array(config[letter]["h_hist"]), move=2)
-            confidence = (w_conf + h_conf) / 2
-            if confidence > ref:
-                ref = confidence
-                adjust_l = w_l
-
         left = adjust_l + config[letter]["width"]
     print(result)
     return result
