@@ -12,11 +12,9 @@ from datetime import datetime
 
 
 detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
-translate = {'北京': 'Beijing', '上海': 'Shanghai', '成都': 'Chengdu',
-        '广州': 'Guangzhou', '沈阳': 'Shenyang', '香港': 'HongKong', '台北': 'Taipei'}
-full = {'bj': '北京', 'sh': '上海', 'cd': '成都', 'gz': '广州', 'sy': '沈阳', 'hk': '香港', 'tp': '台北'}
-short = {'北京': 'bj', '上海': 'sh', '成都': 'cd',
-        '广州': 'gz', '沈阳': 'sy', '香港': 'hk', '台北': 'tp'}
+translate = {'金边': 'Phnom Penh'}
+full = {'pp': '金边'}
+short = {'金边': 'pp'}
 
 
 def min_date(a, b):
@@ -136,8 +134,6 @@ def confirm(args):
 def test(args):
     args.subscribe = [''] + args.subscribe
     args.subscribe = '&visa[]='.join(args.subscribe)
-    if args.glob:
-        args.subscribe += '&glob=1'
     content = '''
     Dear %s:<br>
     <br>
@@ -216,16 +212,15 @@ TABLE
 
 
 def refresh_homepage():
-    html = open('../visa/template.php').read()
+    html = open('../template.php').read()
     cur = time.strftime('%Y/%m/%d', time.localtime())
     yy, mm, dd = cur.split('/')
     alltype = {'F': '', 'B': '', 'H': '', 'O': '', 'L': ''}
     for tp in alltype:
-        p = '' if tp == 'F' else ('-' + tp.lower())
         try:
-            js = json.loads(open('../visa/visa%s.json' % p).read())
+            js = json.loads(open('../visa-%s.json' % tp.lower()).read())
         except:
-            print('err on homepage:', p)
+            print('err on homepage:', tp)
             return
         tptext = 'F/J' if tp == 'F' else tp
         result = template.replace('TYPE_TEXT', tptext).replace("TYPE", tp).replace('TIME', js['time'])
@@ -246,16 +241,16 @@ def refresh_homepage():
         x = sorted(list(set(x)))
         # chart
         if tp in 'HL':
-            legend = '"北京","广州","上海","香港","台北"'
+            legend = '"金边"'
         else:
-            legend = '"北京","成都","广州","上海","沈阳","香港","台北"'
+            legend = '"金边"'
         result = result.replace('LEGEND', legend)
         xaxis = ""
         for i in x:
             xaxis += '"' + i + '",'
         result = result.replace('XAXIS', xaxis)
         series = ''
-        legend = ["北京", "成都", "广州", "上海", "沈阳", "香港", "台北"]
+        legend = ["金边"]
         for city in legend:
             series += '{name: "%s", type: "line", data: [' % city
             for t in x:
@@ -268,19 +263,19 @@ def refresh_homepage():
         result = result.replace('SERIES', series)
         # table
         if tp in 'HL':
-            legend = ["北京", "广州", "上海", "香港", "台北"]
+            legend = ["金边"]
         else:
-            legend = ["北京", "成都", "广州", "上海", "沈阳", "香港", "台北"]
+            legend = ["金边"]
         table = '<thead><tr><th>地点</th>'
         for i in legend:
-            table += '<th colspan="2"><a href="/visa2/'+tp+'/'+i+'/'+cur+'">' + i + '</a></th>'
+            table += '<th colspan="2"><a href="/global/crawler/'+tp+'/'+i+'/'+cur+'">' + i + '</a></th>'
         table += '</tr><tr><th>时间</th>'
         for i in legend:
             table += '<th>当前</th><th>最早</th>'
         table += '</tr></thead><tbody>'
         for index in js['index']:
             yy, mm, dd = index.split('/')
-            line = '<tr><td><a href="/visa2/view/' + \
+            line = '<tr><td><a href="crawler/view/' + \
                 '?y=%s&m=%s&d=%s&t=%s">%s/%s</a></td>' % (
                     yy, mm, dd, tp, mm, dd)
             for c in legend:
@@ -302,26 +297,23 @@ def refresh_homepage():
     for i in keys:
         summary += alltype[i]
     if random.random() < 0.1:
-        captcha_list = ['/visa2/log/' + i for i in os.listdir('log')]
+        captcha_list = ['/visa2/log/' + i for i in os.listdir('../../visa2/log')]
     else:
-        captcha_list = ['/visa2/fail/' + i for i in os.listdir('fail')]
+        captcha_list = ['/visa2/fail/' + i for i in os.listdir('../../visa2/fail')]
     captcha = random.sample(captcha_list, 1)[0]
     captcha = '<input type="text" name="orig" style="display: none" value="%s"><img src="%s">' % (base64.b64encode(captcha.encode()).decode(), captcha)
-    open('../visa/index.php', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
+    open('../index.php', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
 
 
 def main(args):
     if len(args.js) > 0:
         last_js, js = json.loads(args.last_js), json.loads(args.js)
-    elif args.type == 'F':
-        last_js = json.loads(open('../visa/visa-last.json').read())
-        js = json.loads(open('../visa/visa.json').read())
     else:
         last_js = json.loads(open(
-            '../visa/visa-%s-last.json' % args.type.lower()).read())
+            '../visa-%s-last.json' % args.type.lower()).read())
         try:
             js = json.loads(open(
-                '../visa/visa-%s.json' % args.type.lower()).read())
+                '../visa-%s.json' % args.type.lower()).read())
         except:
             js = last_js
     refresh_homepage()
@@ -365,12 +357,12 @@ def main(args):
         alluser = []
         for k in keys:
             users[k] = os.listdir(
-                '../asiv/email/' + args.type.lower() + '/' + k)
+                '../../asiv/email/' + args.type.lower() + '/' + k)
             alluser += users[k]
         alluser = list(set(alluser))
         mask_stat = {}
         for u in alluser:
-            tu = open('../asiv/email/tmp/' + u).read()
+            tu = open('../../asiv/email/tmp/' + u).read()
             if '/' not in tu:
                 tu = '/'
             mask_stat[u] = [
@@ -407,7 +399,6 @@ if __name__ == '__main__':
     parser.add_argument('--time', type=str, default='')
     parser.add_argument('--proxy', type=str, default="1083")
     parser.add_argument('--extra', type=str, default="/root/extra.json")
-    parser.add_argument('--glob', type=str, default='')
     parser.add_argument('--js', type=str, default='')
     parser.add_argument('--last_js', type=str, default='')
     args = parser.parse_args()

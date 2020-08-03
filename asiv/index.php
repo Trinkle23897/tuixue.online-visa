@@ -1,6 +1,17 @@
 <html>
 <head>
-<meta http-equiv="refresh" content="10;url=/visa"/>
+<?php
+if (strlen($_REQUEST['glob']) == 0) {
+	$glob = '';
+	$city = array('bj' => '北京', 'cd' => '成都', 'gz' => '广州', 'sh' => '上海', 'sy' => '沈阳', 'hk' => '香港', 'tp' => '台北');
+    echo '<meta http-equiv="refresh" content="10;url=/visa"/>';
+}
+else {
+    $glob = ' --glob 1 ';
+	$city = array('pp' => '金边');
+    echo '<meta http-equiv="refresh" content="10;url=/global"/>';
+}
+ ?>
 <!--<script data-ad-client="ca-pub-5419513334556516" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <script>
@@ -53,8 +64,8 @@ function save($c, $o) {
 }
 $email = $_REQUEST['liame'];
 $t = $_REQUEST['visa'];
+$gt = $_REQUEST['global'];
 $type = array('f' => 'F1/J1签证', 'b' => 'B1/B2签证', 'h' => 'H1B签证', 'o' => 'O1/O2/O3签证', 'l' => 'L1/L2签证');
-$city = array('bj' => '北京', 'cd' => '成都', 'gz' => '广州', 'sh' => '上海', 'sy' => '沈阳', 'hk' => '香港', 'tp' => '台北');
 if (strlen($_REQUEST['s']) > 0) {
 	echo "旧的链接已失效，请在首页重新提交一份订阅请求。";
 }
@@ -65,7 +76,7 @@ else if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 			foreach ($city as $j => $b)
 				$result = $result.update_status($i, $j, $email, in_array($i.$j, $t), $b.$a);
 		if (strlen($result) > 0)
-			system("python3 ../visa2/notify.py --type confirm --email ".$email." > /dev/null", $ret);
+			system("python3 ../visa2/notify.py --type confirm --email ".$email.$glob." > /dev/null", $ret);
 	}
 	else
 		$result = '不要老想着搞个大新闻！没有订阅成功，请重新在首页提交一次，或者把确认邮件转发给 <a href="mailto:trinkle23897@gmail.com">trinkle23897@gmail.com</a> 让他debug';
@@ -98,7 +109,7 @@ else if (filter_var($email, FILTER_VALIDATE_EMAIL)) { // confirm
 						$result = $result.$i.$j.',';
 			$result = rtrim($result, ",");
 			echo "发送确认邮件状态（空为没发出去）：";
-			system("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' --time '".$thres."' 2>log", $ret);
+			system("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' --time '".$thres."'".$glob." 2>log", $ret);
 			//echo("python3 ../visa2/notify.py --type test --email ".$email." --subscribe '".$result."' --time '".$thres."' 2>log");
 			echo "<br>发送了确认邮件，请及时查收，<b>点击确认邮件中的链接之后才算正式订阅 / 取消订阅</b><br>";
 		} else {
