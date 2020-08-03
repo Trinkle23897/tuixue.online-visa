@@ -31,7 +31,7 @@ def get_date(page):
 
 def login(cracker, place, requests):
     proxies = g.value("proxies", None)
-    ref = {"北京": "China", "上海": "China", "广州": "China", "成都": "China", "沈阳": "China", "香港": "Hong%20Kong", "台北": "Taiwan", "柬埔寨": "Cambodia"}
+    ref = {"北京": "China", "上海": "China", "广州": "China", "成都": "China", "沈阳": "China", "香港": "Hong%20Kong", "台北": "Taiwan", "金边": "Cambodia"}
 
     # get register page
     REG_URI = "https://cgifederal.secure.force.com/SiteRegister?country=%s&language=zh_CN" % ref[place]
@@ -153,7 +153,7 @@ def visa_select(visa_type, place, sid, requests):
         return None
 
     # select place
-    if place != "香港" and place != "台北" and place != "柬埔寨":
+    if place != "香港" and place != "台北" and place != "金边":
         select_post_uri = "https://cgifederal.secure.force.com/selectpost"
         r = requests.get(select_post_uri, cookies=cookies, proxies=proxies)
         if r.status_code != 200:
@@ -199,11 +199,11 @@ def visa_select(visa_type, place, sid, requests):
     contact_id = soup.find(id="j_id0:SiteTemplate:j_id109:contactId").get("value")
     prefix = "j_id0:SiteTemplate:j_id109:j_id162:"
     category2id = {
-        "B": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 1, "台北": 1, "柬埔寨": 0},
-        "F": {"北京": 1, "成都": 1, "广州": 1, "上海": 1, "沈阳": 1, "香港": 0, "台北": 0, "柬埔寨": 1},
-        "O": {"北京": 4, "成都": 2, "广州": 3, "上海": 4, "沈阳": 2, "香港": 3, "台北": 3, "柬埔寨": 2},
-        "H": {"北京": 2, "广州": 3, "上海": 2, "香港": 3, "台北": 3, "柬埔寨": 2},
-        "L": {"北京": 3, "广州": 2, "上海": 3, "香港": 3, "台北": 3, "柬埔寨": 2}
+        "B": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 1, "台北": 1, "金边": 0},
+        "F": {"北京": 1, "成都": 1, "广州": 1, "上海": 1, "沈阳": 1, "香港": 0, "台北": 0, "金边": 1},
+        "O": {"北京": 4, "成都": 2, "广州": 3, "上海": 4, "沈阳": 2, "香港": 3, "台北": 3, "金边": 2},
+        "H": {"北京": 2, "广州": 3, "上海": 2, "香港": 3, "台北": 3, "金边": 2},
+        "L": {"北京": 3, "广州": 2, "上海": 3, "香港": 3, "台北": 3, "金边": 2}
     }
     category_code = soup.find(id=prefix + str(category2id[visa_type][place])).get("value")
     data = {
@@ -234,8 +234,8 @@ def visa_select(visa_type, place, sid, requests):
         "F": 0, 
         "B": 2, 
         "H": 0, 
-        "O": 10 if place == "香港" or place == "台北" or place == "柬埔寨" else (6 if place == "广州" else 0),
-        "L": 7 if place == "香港" or place == "台北" or place == "柬埔寨" else 1
+        "O": 10 if place == "香港" or place == "台北" or place == "金边" else (6 if place == "广州" else 0),
+        "L": 7 if place == "香港" or place == "台北" or place == "金边" else 1
     }
     inputs = soup.find_all("input")
     type_codes = [x.get("value") for x in inputs if x.get("name") == "selectedVisaClass"]
