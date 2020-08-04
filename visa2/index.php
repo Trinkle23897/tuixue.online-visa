@@ -60,6 +60,7 @@ echo '<table class="table table-hover table-striped table-bordered"><thead>
 <tr><td>沈阳</td><td>'.get('../asiv/email/f/sy/').'</td><td>'.get('../asiv/email/b/sy/').'</td><td>'.get('../asiv/email/h/sy/').'</td><td>'.get('../asiv/email/o/sy/').'</td><td>'.get('../asiv/email/l/sy/').'</td></tr>
 <tr><td>香港</td><td>'.get('../asiv/email/f/hk/').'</td><td>'.get('../asiv/email/b/hk/').'</td><td>'.get('../asiv/email/h/hk/').'</td><td>'.get('../asiv/email/o/hk/').'</td><td>'.get('../asiv/email/l/hk/').'</td></tr>
 <tr><td>台北</td><td>'.get('../asiv/email/f/tp/').'</td><td>'.get('../asiv/email/b/tp/').'</td><td>'.get('../asiv/email/h/tp/').'</td><td>'.get('../asiv/email/o/tp/').'</td><td>'.get('../asiv/email/l/tp/').'</td></tr>
+<tr><td>金边</td><td>'.get('../asiv/email/f/pp/').'</td><td>'.get('../asiv/email/b/pp/').'</td><td>'.get('../asiv/email/h/pp/').'</td><td>'.get('../asiv/email/o/pp/').'</td><td>'.get('../asiv/email/l/pp/').'</td></tr>
 </tbody></table>
 	';
 ?>

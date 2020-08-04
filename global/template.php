@@ -54,10 +54,10 @@ else echo '<html>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center" id="title"><a href="https://cgifederal.secure.force.com/">美国签证</a>预约时间（国内版）</h1>
+        <h1 class="text-center" id="title"><a href="https://cgifederal.secure.force.com/">美国签证</a>预约时间（国际版）</h1>
             <center>
-				<br><a href="/global">国际版</a> | <a href="/visa2">系统当前状态</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
-				<br><span style="color:red">推送通知：</span><a href="#email">个性化邮件通知</a> | <a href="https://t.me/f_visa">Telegram频道</a> | <a href="javascript: alert(\'入群密码是本站网址，共13个字符t***e，所有群内容一致\n1群：1104038280（~500）\n2群：672921682（~500）\n3群：1091934602（~500）\n4群：1076963772（~500）\n5群：1051175494（~500）\n6群：646098814（~500）\n7群：739464328\n\')">QQ通知群</a>
+				<br><a href="/visa/">国内版</a> | <a href="/visa2">系统当前状态</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
+				<br><span style="color:red">推送通知：</span><a href="#email">个性化邮件通知</a> | <a href="https://t.me/f_visa">Telegram频道</a>
 <!--<a href="javascript:alert(646098814)">6群</a>/<a href="javascript:alert(739464328)">7群</a>/<a href="javascript:alert(1040436778)">8群</a>/<a href="javascript:alert(578968441)">9群</a>/<a href="javascript:alert(1044608829)">10群</a>/<a href="javascript:alert(921303937)">11群</a>-->
                 <!--<br><span style="color:red">QQ邮箱把tuixue的邮件给扔进垃圾箱了，请大家注意一下，最好白名单</span>-->
                 <!--<br><span style="color: green">发现还有好多人不知道tuixue在问……求一个推广呜呜呜（比如微博、票圈之类的）</span>-->
@@ -109,45 +109,19 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                             <table>
                             <tr><td align="right">邮箱地址：</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
                             <tr><td align="right">F1/J1：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbj"> 北京</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcd"> 成都</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fgz"> 广州</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsh"> 上海</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsy"> 沈阳</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fhk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ftp"> 台北</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fpp"> 金边</label>
                             </td></tr>
                             <tr><td align="right">B1/B2：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbj"> 北京</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcd"> 成都</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bgz"> 广州</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsh"> 上海</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsy"> 沈阳</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bhk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="btp"> 台北</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bpp"> 金边</label>
                             </td></tr>
                             <tr><td align="right">H1B：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbj"> 北京</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hgz"> 广州</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsh"> 上海</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hhk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="htp"> 台北</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hpp"> 金边</label>
                             </td></tr>
                             <tr><td align="right">O1/O2/O3：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obj"> 北京</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocd"> 成都</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ogz"> 广州</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osh"> 上海</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osy"> 沈阳</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ohk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="otp"> 台北</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="opp"> 金边</label>
                             </td></tr>
                             <tr><td align="right">L1/L2：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbj"> 北京</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lgz"> 广州</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsh"> 上海</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lhk"> 香港</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ltp"> 台北</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lpp"> 金边</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
 							<tr><td align="right">输入以下验证码（五位小写英文字母）：</td><td><input class="form-control" type="text" value="" name="captcha" maxlength=5></td></tr>
@@ -155,6 +129,7 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                             TBD_CAPTCHA
                             <br><br><b>一般来说，每个小时的第48分会放出7-8小时前被别人退掉的名额，不是很好抢到<br>但是如果邮件推送给您的时间不是48分，多半是这个地方放了一大波名额</b><br>
                             <br>如果要取消订阅的话，全不选然后提交，再<b>重新戳确认邮件里面的链接</b>就行了。<br><br>
+                            <input type="text" name="glob" style="display: none" value="1">
                             <input type="submit" value="提交" class="btn btn-info"/>
                             </center>
                     </form>
