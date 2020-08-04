@@ -46,8 +46,7 @@ def send(api, title, content, receivers,
 
 
 def send_extra_on_change(visa_type, title, content):
-    if visa_type != "F" or not args.extra or len(content) == 0:
-        return
+    return
     with open(args.extra, "r") as f:
         extra = json.load(f)
     bot_token = extra["tg_bot_token"]
@@ -203,7 +202,7 @@ function chartTYPE() {
 </script>
 <div class="table-responsive">
 <table class="table table-hover table-striped table-bordered">
-<!-- 如果要爬取这个table，有更方便的方式（可一秒一次）：F签Json(https://tuixue.online/visa/visa.json)，B签Json(https://tuixue.online/visa/visa-b.json)，H签Json(https://tuixue.online/visa/visa-h.json)，O签Json(https://tuixue.online/visa/visa-o.json) ，L签Json(https://tuixue.online/visa/visa-l.json)-->
+<!-- 如果要爬取这个table，有更方便的方式（可一秒一次）：F签Json(https://tuixue.online/global/visa-f.json)，B签Json(https://tuixue.online/global/visa-b.json)，H签Json(https://tuixue.online/global/visa-h.json)，O签Json(https://tuixue.online/global/visa-o.json) ，L签Json(https://tuixue.online/global/visa-l.json)-->
 TABLE
 </table>
 </div>
