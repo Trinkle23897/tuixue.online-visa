@@ -39,7 +39,7 @@ else
 if ($type == 'J') $type = 'F';
 else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O' && $type != 'L')
     $type = 'F';
-$loc = ['金边'];
+$loc = ['金边', '新加坡', '墨尔本', '珀斯', '悉尼'];
 $raw = [];
 $data = [];
 $x = [];
