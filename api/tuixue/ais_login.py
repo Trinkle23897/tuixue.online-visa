@@ -14,21 +14,21 @@ def refresh(country_code, schedule_id, session):
         print("Error")
     soup = BeautifulSoup(r.text, "html.parser")
     time_table = soup.find("table", {"class": "for-layout"})
-    trs = time_table.find_all("tr")
 
     result = []
-    for tr in trs:
-        tds = tr.find_all("td")
-        if not len(tds) == 2:
-            continue
-        place = tds[0].text
-        date_str = tds[1].text
-        s = date_str.split()
-        year, month, day = 0, 0, 0
-        if len(s) >= 3:
-            day_str, month_str, year_str = s[-3], s[-2].replace(",", ""), s[-1]
-            year, month, day = int(year_str), g.MONTH[month_str], int(day_str)
-        result.append([place, (year, month, day)])
+    if time_table:
+        for tr in time_table.find_all("tr"):
+            tds = tr.find_all("td")
+            if not len(tds) == 2:
+                continue
+            place = tds[0].text
+            date_str = tds[1].text
+            s = date_str.split()
+            year, month, day = 0, 0, 0
+            if len(s) >= 3:
+                day_str, month_str, year_str = s[-3], s[-2].replace(",", ""), s[-1]
+                year, month, day = int(year_str), g.MONTH[month_str], int(day_str)
+            result.append([place, (year, month, day)])
 
     session = r.cookies["_yatri_session"]
     return result, session

@@ -57,6 +57,8 @@ def ais_refresh(request):
         return HttpResponse('{"code": 401, "msg": "Invalid Parameters"}')
 
     result, new_session = ais_login.refresh(country_code, schecule_id, session)
+    if result == []:
+        return HttpResponse('{"code": 402, "msg": "Session Expired"}')
     obj = {
         "code": 0,
         "msg": result,

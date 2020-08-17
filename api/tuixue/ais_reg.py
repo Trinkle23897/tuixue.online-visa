@@ -58,20 +58,21 @@ def register(country_code, email, password):
     title_xpath = "//h2[contains(text(), 'MRV Fee Details')]"
     wait_loading(title_xpath)
     time_table = driver.find_element_by_class_name('for-layout')
-    trs = time_table.find_elements_by_tag_name('tr')
     result = []
-    for tr in trs:
-        tds = tr.find_elements_by_tag_name('td')
-        if not len(tds) == 2:
-            continue
-        place = tds[0].text
-        date_str = tds[1].text
-        s = date_str.split()
-        year, month, day = 0, 0, 0
-        if len(s) >= 3:
-            day_str, month_str, year_str = s[-3], s[-2].replace(",", ""), s[-1]
-            year, month, day = int(year_str), g.MONTH[month_str], int(day_str)
-        result.append([place, (year, month, day)])
+    if time_table:
+        trs = time_table.find_elements_by_tag_name('tr')
+        for tr in trs:
+            tds = tr.find_elements_by_tag_name('td')
+            if not len(tds) == 2:
+                continue
+            place = tds[0].text
+            date_str = tds[1].text
+            s = date_str.split()
+            year, month, day = 0, 0, 0
+            if len(s) >= 3 and s[0] != "No":
+                day_str, month_str, year_str = s[-3], s[-2].replace(",", ""), s[-1]
+                year, month, day = int(year_str), g.MONTH[month_str], int(day_str)
+            result.append([place, (year, month, day)])
 
     current_url = driver.current_url
     schedule_id = current_url.split("/")[-2]
