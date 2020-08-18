@@ -12,9 +12,9 @@ from datetime import datetime
 
 
 detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
-translate = {'金边': 'Phnom Penh'}
-full = {'pp': '金边'}
-short = {'金边': 'pp'}
+translate = {'金边': 'Phnom Penh', '新加坡': 'Singapore', '墨尔本': 'Melbourne', '珀斯': 'Perth', '悉尼': 'Sydney'}
+full = {'pp': '金边', 'sg': '新加坡', 'mel': '墨尔本', 'per': '珀斯', 'syd': '悉尼'}
+short = {'金边': 'pp', '新加坡': 'sg', '墨尔本': 'mel', '珀斯': 'per', '悉尼': 'syd'}
 
 
 def min_date(a, b):
@@ -46,7 +46,8 @@ def send(api, title, content, receivers,
 
 
 def send_extra_on_change(visa_type, title, content):
-    return
+    if visa_type != "F" or not args.extra or len(content) == 0:
+        return
     with open(args.extra, "r") as f:
         extra = json.load(f)
     bot_token = extra["tg_bot_token"]
@@ -240,16 +241,16 @@ def refresh_homepage():
         x = sorted(list(set(x)))
         # chart
         if tp in 'HL':
-            legend = '"金边"'
+            legend = '"金边","新加坡","墨尔本","珀斯","悉尼"'
         else:
-            legend = '"金边"'
+            legend = '"金边","新加坡","墨尔本","珀斯","悉尼"'
         result = result.replace('LEGEND', legend)
         xaxis = ""
         for i in x:
             xaxis += '"' + i + '",'
         result = result.replace('XAXIS', xaxis)
         series = ''
-        legend = ["金边"]
+        legend = ["金边", "新加坡", "墨尔本", "珀斯", "悉尼"]
         for city in legend:
             series += '{name: "%s", type: "line", data: [' % city
             for t in x:
@@ -262,9 +263,9 @@ def refresh_homepage():
         result = result.replace('SERIES', series)
         # table
         if tp in 'HL':
-            legend = ["金边"]
+            legend = ["金边", "新加坡", "墨尔本", "珀斯", "悉尼"]
         else:
-            legend = ["金边"]
+            legend = ["金边", "新加坡", "墨尔本", "珀斯", "悉尼"]
         table = '<thead><tr><th>地点</th>'
         for i in legend:
             table += '<th colspan="2"><a href="/global/crawler/'+tp+'/'+i+'/'+cur+'">' + i + '</a></th>'
@@ -397,7 +398,7 @@ if __name__ == '__main__':
     parser.add_argument('--secret', type=str, default='/var/www/mail')
     parser.add_argument('--time', type=str, default='')
     parser.add_argument('--proxy', type=str, default="1083")
-    parser.add_argument('--extra', type=str, default="/root/extra.json")
+    parser.add_argument('--extra', type=str, default="/root/extra-global.json")
     parser.add_argument('--js', type=str, default='')
     parser.add_argument('--last_js', type=str, default='')
     args = parser.parse_args()
