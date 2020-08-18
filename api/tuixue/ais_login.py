@@ -25,7 +25,7 @@ def refresh(country_code, schedule_id, session):
             date_str = tds[1].text
             s = date_str.split()
             year, month, day = 0, 0, 0
-            if len(s) >= 3:
+            if len(s) >= 3 and s[0] != "No":
                 day_str, month_str, year_str = s[-3], s[-2].replace(",", ""), s[-1]
                 year, month, day = int(year_str), g.MONTH[month_str], int(day_str)
             result.append([place, (year, month, day)])
