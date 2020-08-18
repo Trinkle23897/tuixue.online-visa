@@ -1,6 +1,7 @@
+import json
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
 from . import login, reg
+from . import ais_reg, ais_login
 
 def index(request):
     return HttpResponse('{"code": 0, "msg": "OK"}')
@@ -40,3 +41,56 @@ def register(request):
     if not sess or not date:
         return HttpResponse('{"code": 402, "msg": "Network Error"}')
     return HttpResponse('{"code": 0, "msg": "%d-%d-%d", "session": "%s"}' % (date[0], date[1], date[2], sess))
+
+def ais_refresh(request):
+    if request.method == "GET":
+        country_code = request.GET.get('code', default='')
+        schecule_id = request.GET.get('id', default='')
+        session = request.GET.get('session', default='')
+    elif requests.method == "POST":
+        country_code = request.POST.get('code', default='')
+        schecule_id = request.POST.get('id', default='')
+        session = request.POST.get('session', default='')
+    else:
+        return HttpResponse('{"code": 400, "msg": "Malform Request"}')
+    if len(country_code) == 0 or len(schecule_id) == 0 or len(session) == 0:
+        return HttpResponse('{"code": 401, "msg": "Invalid Parameters"}')
+
+    result, new_session = ais_login.refresh(country_code, schecule_id, session)
+    if result == []:
+        return HttpResponse('{"code": 402, "msg": "Session Expired"}')
+    obj = {
+        "code": 0,
+        "msg": result,
+        "session": new_session
+    }
+    return HttpResponse(json.dumps(obj, ensure_ascii=False))
+
+def ais_register(request):
+    if request.method == "GET":
+        country_code = request.GET.get('code', default='')
+        email = request.GET.get('email', default='')
+        pswd = request.GET.get('pswd', default='')
+    elif requests.method == "POST":
+        country_code = request.POST.get('code', default='')
+        email = request.POST.get('email', default='')
+        pswd = request.POST.get('pswd', default='')
+    else:
+        return HttpResponse('{"code": 400, "msg": "Malform Request"}')
+    if len(country_code) == 0 or len(email) == 0 or len(pswd) == 0:
+        return HttpResponse('{"code": 401, "msg": "Missing parameters"}')
+
+    result = session = schedule_id = None
+    try:
+        result, session, schedule_id = ais_reg.register(country_code, email, pswd)
+    except Exception as e:
+        print(e)
+    if not result or not session or not schedule_id:
+        return HttpResponse('{"code": 402, "msg": "Network Error"}')
+    obj = {
+        "code": 0,
+        "msg": result,
+        "session": session,
+        "id": schedule_id
+    }
+    return HttpResponse(json.dumps(obj, ensure_ascii=False))

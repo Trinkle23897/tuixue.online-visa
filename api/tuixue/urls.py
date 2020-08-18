@@ -21,4 +21,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('refresh/', views.refresh, name='refresh'),
     path('register/', views.register, name='register'),
+    path('ais/refresh/', views.ais_refresh, name='ais_refresh'),
+    path('ais/register/', views.ais_register, name='ais_register'),
 ]
