@@ -101,6 +101,30 @@ class SessionOp():
         replace_items.put((visa_type, place, sess))
 
 
+    def replace_session_immediate(self, visa_type, place, sess, new_sess):
+        ais = "-" in place
+        session_list = g.value("session", {})
+        if not visa_type in session_list:
+            session_list[visa_type] = {}
+        if not place in session_list[visa_type]:
+            session_list[visa_type][place] = []
+        if ais and not sess in [x[0] for x in session_list[visa_type][place]]:
+            return
+        if not ais and not sess in session_list[visa_type][place]:
+            return
+
+        if ais:
+            idx = [x[0] for x in session_list[visa_type][place]].index(sess)
+            session_list[visa_type][place][idx][0] = new_sess
+        else:
+            idx = session_list[visa_type][place].index(replace)
+            session_list[visa_type][place][idx] = new_sess
+
+        session_file = g.value("session_file", "session.json")
+        with open(session_file, "w") as f:
+            f.write(json.dumps(session_list, ensure_ascii=False))
+
+
     def get_session(self, visa_type, place):
         # get a session given visa type and place. return None if failed.
         session = g.value("session", {})
@@ -179,7 +203,7 @@ def merge(fn, s, cur, visa_type):
         orig.pop(r)
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))
     g.assign("merge_lock" + visa_type, 0)
-    #subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
+    subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
     # os.system('python3 notify.py --type ' + visa_type + ' &')
 
 
@@ -331,6 +355,8 @@ def crawler_req_ais(visa_type, code, places, start_time, requests):
             session_op.replace_session(visa_type, code, sess)
             return
         date_list = result["msg"]
+        new_sess = result["session"]
+        session_op.replace_session_immediate(visa_type, code, sess, new_sess)
         for place, date in date_list:
             if place not in places:
                 continue
