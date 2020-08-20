@@ -33,7 +33,9 @@ def add_session():
                 session_list[visa_type] = {}
             if not place in session_list[visa_type]:
                 session_list[visa_type][place] = []
-            if not replace in session_list[visa_type][place]:
+            if ais and not replace in [x[0] for x in session_list[visa_type][place]]:
+                continue
+            if not ais and not replace in session_list[visa_type][place]:
                 continue
             logger.info("Update session " + replace)
         try:
@@ -59,7 +61,10 @@ def add_session():
                 if not place in session_list[visa_type]:
                     session_list[visa_type][place] = []
                 if replace:
-                    idx = session_list[visa_type][place].index(replace)
+                    if ais:
+                        idx = [x[0] for x in session_list[visa_type][place]].index(replace)
+                    else:
+                        idx = session_list[visa_type][place].index(replace)
                     session_list[visa_type][place][idx] = (sid, schedule_id if ais else sid)
                 else:
                     session_list[visa_type][place].append((sid, schedule_id if ais else sid))
@@ -106,7 +111,7 @@ class SessionOp():
         if len(sess_list) == 0:
             return None
         sess = sess_list[idx % len(sess_list)]
-        logger.debug("session: " + sess)
+        logger.debug("session: " + str(sess))
         g.assign("idx_%s_%s" % (visa_type, place), idx + 1)
         return sess
 
@@ -174,7 +179,7 @@ def merge(fn, s, cur, visa_type):
         orig.pop(r)
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))
     g.assign("merge_lock" + visa_type, 0)
-    subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
+    #subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
     # os.system('python3 notify.py --type ' + visa_type + ' &')
 
 
@@ -313,17 +318,17 @@ def crawler_req_ais(visa_type, code, places, start_time, requests):
         try:
             r = requests.get(refresh_endpoint, timeout=7, proxies=g.value("proxies", None))
         except:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, place, "Endpoint Timeout"))
+            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Endpoint Timeout"))
             check_crawler_node()
             return
         if r.status_code != 200:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, place, "Endpoint Inaccessible"))
+            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Endpoint Inaccessible"))
             check_crawler_node()
             return
         result = r.json()
         if result["code"] > 0:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, place, "Session Expired"))
-            session_op.replace_session(visa_type, place, sess, ais=True)
+            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Session Expired"))
+            session_op.replace_session(visa_type, code, sess)
             return
         date_list = result["msg"]
         for place, date in date_list:
