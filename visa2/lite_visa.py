@@ -65,9 +65,9 @@ def add_session():
                         idx = [x[0] for x in session_list[visa_type][place]].index(replace)
                     else:
                         idx = session_list[visa_type][place].index(replace)
-                    session_list[visa_type][place][idx] = (sid, schedule_id if ais else sid)
+                    session_list[visa_type][place][idx] = ([sid, schedule_id] if ais else sid)
                 else:
-                    session_list[visa_type][place].append((sid, schedule_id if ais else sid))
+                    session_list[visa_type][place].append(([sid, schedule_id] if ais else sid))
                 session_file = g.value("session_file", "session.json")
                 with open(session_file, "w") as f:
                     f.write(json.dumps(session_list, ensure_ascii=False))
@@ -149,7 +149,7 @@ class SessionOp():
         return len(session_list[visa_type][place])
 
 
-    def set_session_pool_size(self, visa_type, place, size, ais=True):
+    def set_session_pool_size(self, visa_type, place, size, ais=False):
         session_list = g.value("session", {})
         if not visa_type in session_list:
             session_list[visa_type] = {}
@@ -285,11 +285,11 @@ def set_interval(func, visa_type, places, interval, rand, first_run=True, codes=
 
 def start_thread():
     logger.info("Start threads...")
-    #visa_type = "F"
-    #places = ["上海", "北京", "香港"]
-    #for place in places:
-    #    session_op.set_session_pool_size(visa_type, place, 1)
-    #set_interval(crawler, visa_type, places, 60, 0)
+    visa_type = "F"
+    places = ["上海", "北京", "香港"]
+    for place in places:
+        session_op.set_session_pool_size(visa_type, place, 1)
+    set_interval(crawler, visa_type, places, 60, 0)
 
     visa_type = "F"
     g.assign("ais_email_F", "")
@@ -366,7 +366,7 @@ def crawler_req_ais(visa_type, code, places, start_time, requests):
         logger.error(traceback.format_exc())
 
 
-def crawler(visa_type, places):
+def crawler(visa_type, places, codes=None):
     localtime = time.localtime()
     s = {'time': time.strftime('%Y/%m/%d %H:%M:%S', localtime)}
     second = localtime.tm_sec
