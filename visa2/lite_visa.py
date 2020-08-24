@@ -25,7 +25,6 @@ replace_items = queue.Queue()
 def add_session():
     while True:
         visa_type, place, replace = replace_items.get()
-        ais = "-" in place
         # check if replaced
         if replace:
             session_list = g.value("session", {})
@@ -33,25 +32,15 @@ def add_session():
                 session_list[visa_type] = {}
             if not place in session_list[visa_type]:
                 session_list[visa_type][place] = []
-            if ais and not replace in [x[0] for x in session_list[visa_type][place]]:
-                continue
-            if not ais and not replace in session_list[visa_type][place]:
+            if not replace in session_list[visa_type][place]:
                 continue
             logger.info("Update session " + replace)
         try:
-            if ais:
-                endpoint = g.value("crawler_node", "") + "/ais/register/?code=%s&email=%s&pswd=%s" % (place, g.value("ais_email_" + visa_type, None), g.value("ais_pswd_" + visa_type, None))
-            else:
-                endpoint = g.value("crawler_node", "") + "/register/?type=%s&place=%s" % (visa_type, place)
+            endpoint = g.value("crawler_node", "") + "/register/?type=%s&place=%s" % (visa_type, place)
             r = requests.get(endpoint, timeout=40, proxies=g.value("proxies", None))
             result = r.json()
-            if ais:
-                schedule_id = result["id"]
-                date = 1 if len(result["msg"]) > 0 else None
-                sid = result["session"]
-            else:
-                date = tuple(map(int, result["msg"].split("-")))
-                sid = result["session"]
+            date = tuple(map(int, result["msg"].split("-")))
+            sid = result["session"]
             if not date:
                 continue
             try:
@@ -61,13 +50,10 @@ def add_session():
                 if not place in session_list[visa_type]:
                     session_list[visa_type][place] = []
                 if replace:
-                    if ais:
-                        idx = [x[0] for x in session_list[visa_type][place]].index(replace)
-                    else:
-                        idx = session_list[visa_type][place].index(replace)
-                    session_list[visa_type][place][idx] = ([sid, schedule_id] if ais else sid)
+                    idx = session_list[visa_type][place].index(replace)
+                    session_list[visa_type][place][idx] = sid
                 else:
-                    session_list[visa_type][place].append(([sid, schedule_id] if ais else sid))
+                    session_list[visa_type][place].append(sid)
                 session_file = g.value("session_file", "session.json")
                 with open(session_file, "w") as f:
                     f.write(json.dumps(session_list, ensure_ascii=False))
@@ -101,30 +87,6 @@ class SessionOp():
         replace_items.put((visa_type, place, sess))
 
 
-    def replace_session_immediate(self, visa_type, place, sess, new_sess):
-        ais = "-" in place
-        session_list = g.value("session", {})
-        if not visa_type in session_list:
-            session_list[visa_type] = {}
-        if not place in session_list[visa_type]:
-            session_list[visa_type][place] = []
-        if ais and not sess in [x[0] for x in session_list[visa_type][place]]:
-            return
-        if not ais and not sess in session_list[visa_type][place]:
-            return
-
-        if ais:
-            idx = [x[0] for x in session_list[visa_type][place]].index(sess)
-            session_list[visa_type][place][idx][0] = new_sess
-        else:
-            idx = session_list[visa_type][place].index(replace)
-            session_list[visa_type][place][idx] = new_sess
-
-        session_file = g.value("session_file", "session.json")
-        with open(session_file, "w") as f:
-            f.write(json.dumps(session_list, ensure_ascii=False))
-
-
     def get_session(self, visa_type, place):
         # get a session given visa type and place. return None if failed.
         session = g.value("session", {})
@@ -135,7 +97,7 @@ class SessionOp():
         if len(sess_list) == 0:
             return None
         sess = sess_list[idx % len(sess_list)]
-        logger.debug("session: " + str(sess))
+        logger.debug("session: " + sess)
         g.assign("idx_%s_%s" % (visa_type, place), idx + 1)
         return sess
 
@@ -149,7 +111,7 @@ class SessionOp():
         return len(session_list[visa_type][place])
 
 
-    def set_session_pool_size(self, visa_type, place, size, ais=False):
+    def set_session_pool_size(self, visa_type, place, size):
         session_list = g.value("session", {})
         if not visa_type in session_list:
             session_list[visa_type] = {}
@@ -159,10 +121,7 @@ class SessionOp():
         if cnt < size:
             for _ in range(size - cnt):
                 rand_str = "".join([chr(np.random.randint(26) + ord('a')) for _ in range(15)])
-                if ais:
-                    session_list[visa_type][place].append(["placeholder_" + rand_str, "114514"])
-                else:
-                    session_list[visa_type][place].append("placeholder_" + rand_str)
+                session_list[visa_type][place].append("placeholder_" + rand_str)
         elif cnt > size:
             session_list[visa_type][place] = session_list[visa_type][place][:size]
 
@@ -267,38 +226,49 @@ def init():
         logger.info("%s, Restored date: %s" % (visa_type, str(data)))
 
 
-def set_interval(func, visa_type, places, interval, rand, first_run=True, codes=None):
+def set_interval(func, visa_type, places, interval, rand, first_run=True):
     def func_wrapper():
-        set_interval(func, visa_type, places, interval, rand, first_run=False, codes=codes)
-        func(visa_type, places, codes=codes)
+        set_interval(func, visa_type, places, interval, rand, first_run=False)
+        func(visa_type, places)
     now_minute = datetime.now().minute
-    if not codes and visa_type == "F" and now_minute >= 47 and now_minute <= 49:
+    if visa_type == "F" and now_minute >= 47 and now_minute <= 49:
         sec = 5
     else:
         sec = interval + random.randint(0, rand)
     t = threading.Timer(sec, func_wrapper)
     t.start()
     if first_run:
-        func(visa_type, places, codes=codes)
+        func(visa_type, places)
     return t
 
 
 def start_thread():
     logger.info("Start threads...")
     visa_type = "F"
-    places = ["上海", "北京", "香港"]
+    places = ["沈阳", "成都", "广州", "上海", "北京", "香港", "台北"]
     for place in places:
-        session_op.set_session_pool_size(visa_type, place, 1)
+        session_op.set_session_pool_size(visa_type, place, 10)
     set_interval(crawler, visa_type, places, 60, 0)
-
-    visa_type = "F"
-    g.assign("ais_email_F", "")
-    g.assign("ais_pswd_F", "")
-    codes = ["en-gb", "en-ca"]
-    places = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver"]
-    for code in codes:
-        session_op.set_session_pool_size(visa_type, code, 1, ais=True)
-    set_interval(crawler_ais, visa_type, places, 60, 0, codes=codes)
+    visa_type = "B"
+    places = ["沈阳", "成都", "广州", "上海", "北京", "香港", "台北"]
+    for place in places:
+        session_op.set_session_pool_size(visa_type, place, 5)
+    set_interval(crawler, visa_type, places, 120, 0)
+    visa_type = "H"
+    places = ["广州", "上海", "北京", "香港", "台北"]
+    for place in places:
+        session_op.set_session_pool_size(visa_type, place, 5)
+    set_interval(crawler, visa_type, places, 180, 0)
+    visa_type = "O"
+    places = ["沈阳", "成都", "广州", "上海", "北京", "香港", "台北"]
+    for place in places:
+        session_op.set_session_pool_size(visa_type, place, 5)
+    set_interval(crawler, visa_type, places, 180, 0)
+    visa_type = "L"
+    places = ["广州", "上海", "北京", "香港", "台北"]
+    for place in places:
+        session_op.set_session_pool_size(visa_type, place, 5)
+    set_interval(crawler, visa_type, places, 180, 0)
 
 
 def crawler_req(visa_type, place, start_time, requests):
@@ -331,42 +301,7 @@ def crawler_req(visa_type, place, start_time, requests):
         logger.error(traceback.format_exc())
 
 
-def crawler_req_ais(visa_type, code, places, start_time, requests):
-    try:
-        # prepare session
-        sess, scedule_id = session_op.get_session(visa_type, code)
-        if not sess:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "No Session"))
-            return
-        refresh_endpoint = g.value("crawler_node", "") + "/ais/refresh/?code=%s&id=%s&session=%s" % (code, scedule_id, sess)
-        try:
-            r = requests.get(refresh_endpoint, timeout=7, proxies=g.value("proxies", None))
-        except:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Endpoint Timeout"))
-            check_crawler_node()
-            return
-        if r.status_code != 200:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Endpoint Inaccessible"))
-            check_crawler_node()
-            return
-        result = r.json()
-        if result["code"] > 0:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Session Expired"))
-            session_op.replace_session(visa_type, code, sess)
-            return
-        date_list = result["msg"]
-        new_sess = result["session"]
-        session_op.replace_session_immediate(visa_type, code, sess, new_sess)
-        for place, date in date_list:
-            if place not in places:
-                continue
-            logger.info("%s, %s, %s, %s, SUCCESS, %s" % (start_time, visa_type, code, place, date))
-            g.assign("status_%s_%s" % (visa_type, place), date)
-    except:
-        logger.error(traceback.format_exc())
-
-
-def crawler(visa_type, places, codes=None):
+def crawler(visa_type, places):
     localtime = time.localtime()
     s = {'time': time.strftime('%Y/%m/%d %H:%M:%S', localtime)}
     second = localtime.tm_sec
@@ -378,38 +313,6 @@ def crawler(visa_type, places, codes=None):
         t = threading.Thread(
             target=crawler_req, 
             args=(visa_type, place, cur_time, req)
-        )
-        t.start()
-        pool.append(t)
-    for t in pool:
-        t.join()
-
-    # write to file
-    for place in places:
-        n = place + '-' + cur
-        n2 = place + '2-' + cur
-        y, m, d = g.value("status_%s_%s" % (visa_type, place), (0, 0, 0))
-        s[n] = s[n2] = '{}/{}/{}'.format(y, m, d) if y > 0 else "/"
-        if s[n] != '/':
-            path = visa_type + '/' + n.replace('-', '/')
-            os.makedirs('/'.join(path.split('/')[:-1]), exist_ok=True)
-            time_hm = time.strftime('%H:%M', localtime)
-            open(path, 'a+').write(time_hm + ' ' + s[n] + '\n')
-    merge('../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' % visa_type.lower(), s, cur, visa_type)
-
-
-def crawler_ais(visa_type, places, codes=[]):
-    localtime = time.localtime()
-    s = {'time': time.strftime('%Y/%m/%d %H:%M:%S', localtime)}
-    second = localtime.tm_sec
-    cur = time.strftime('%Y/%m/%d', time.localtime())
-    cur_time = time.strftime('%H:%M:%S', time.localtime())
-    pool = []
-    req = g.value(visa_type + "_req", requests.Session())
-    for code in codes:
-        t = threading.Thread(
-            target=crawler_req_ais, 
-            args=(visa_type, code, places, cur_time, req)
         )
         t.start()
         pool.append(t)
