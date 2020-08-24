@@ -12,9 +12,10 @@ from datetime import datetime
 
 
 detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
-translate = {'金边': 'Phnom Penh', '新加坡': 'Singapore', '墨尔本': 'Melbourne', '珀斯': 'Perth', '悉尼': 'Sydney'}
-full = {'pp': '金边', 'sg': '新加坡', 'mel': '墨尔本', 'per': '珀斯', 'syd': '悉尼'}
-short = {'金边': 'pp', '新加坡': 'sg', '墨尔本': 'mel', '珀斯': 'per', '悉尼': 'syd'}
+translate = {'金边': 'Phnom Penh', '新加坡': 'Singapore', '首尔': 'Seoul', '墨尔本': 'Melbourne', '珀斯': 'Perth', '悉尼': 'Sydney', '伯尔尼': 'Bern',
+'Belfast': 'Belfast', 'London': 'London', 'Calgary': 'Calgary', 'Halifax': 'Halifax', 'Montreal': 'Montreal', 'Ottawa': 'Ottawa', 'Quebec City': 'Quebec City', 'Toronto': 'Toronto', 'Vancouver': 'Vancouver', 'Abu Dhabi': 'Abu Dhabi', 'Dubai': 'Dubai'}
+full = {'pp': '金边', 'sg': '新加坡', 'sel': '首尔', 'mel': '墨尔本', 'per': '珀斯', 'syd': '悉尼', 'brn': '伯尔尼'}
+short = {'金边': 'pp', '新加坡': 'sg', '首尔': 'sel', '墨尔本': 'mel', '珀斯': 'per', '悉尼': 'syd', '伯尔尼': 'brn'}
 
 
 def min_date(a, b):
@@ -63,7 +64,7 @@ def send_extra_on_change(visa_type, title, content):
             year, month, day, msg_id = list(map(int, f.read().split()))
     now = datetime.now()
     cyear, cmonth, cday = now.year, now.month, now.day
-    text = "%d/%d/%d 实时数据\n" % (cyear, cmonth, cday) + "\n".join(content) + '\nhttps://tuixue.online/visa/'
+    text = "%d/%d/%d 实时数据\n" % (cyear, cmonth, cday) + "\n".join(content) + '\nhttps://tuixue.online/global/'
     if not (cyear == year and cmonth == month and cday == day):
         r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, text), proxies=proxies).json()
         msg_id = r["result"]["message_id"]
@@ -94,7 +95,7 @@ def send_extra(visa_type, title, content):
     ) if args.proxy else None
     r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, content), proxies=proxies).json()
 
-    content += '\n详情: https://tuixue.online/visa/'
+    content += '\n详情: https://tuixue.online/global/'
     # send to QQ group
     auth_key = extra["mirai_auth_key"]
     qq_num = extra["qq_num"]
@@ -120,7 +121,7 @@ def confirm(args):
     and if you share our Subscribtion Program to them, they would be very
     grateful.<br>
     3. <b>Donate the tuition fee</b> (not mandatory): this
-    <a href="https://tuixue.online/visa/#code">link</a> provides some helpful
+    <a href="https://tuixue.online/global/#code">link</a> provides some helpful
     information.<br>
     <br>
     Again, congratulations on your admission!<br>
@@ -215,20 +216,24 @@ def refresh_homepage():
     html = open('../template.php').read()
     cur = time.strftime('%Y/%m/%d', time.localtime())
     yy, mm, dd = cur.split('/')
-    alltype = {'F': '', 'B': '', 'H': '', 'O': '', 'L': ''}
+    alltype = {'F': '', 'B': '', 'H': '', 'O': '', 'L': '', 'Fais': '', 'Bais': '', 'Hais': '', 'Oais': '', 'Lais': ''}
     for tp in alltype:
         try:
-            js = json.loads(open('../visa-%s.json' % tp.lower()).read())
+            js = json.loads(open('../visa-%s.json' % tp[0].lower()).read())
         except:
-            print('err on homepage:', tp)
+            print('err on homepage:', tp[0])
             return
-        tptext = 'F/J' if tp == 'F' else tp
+        tptext = 'F/J' if tp[0] == 'F' else tp[0]
         result = template.replace('TYPE_TEXT', tptext).replace("TYPE", tp).replace('TIME', js['time'])
         result = result.replace('IS_F', 'active in' if tp == 'F' else '')
         info = {}
         x = []
-        for city in translate:
-            p = '%s/%s/%s' % (tp, city, cur)
+        if 'ais' in tp:
+            legend = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"]
+        else:
+            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
+        for city in legend:
+            p = '%s/%s/%s' % (tp[0], city, cur)
             if os.path.exists(p):
                 info[city] = {}
                 raw = open(p).read().split('\n')[:-1]
@@ -240,17 +245,20 @@ def refresh_homepage():
                 info[city] = {}
         x = sorted(list(set(x)))
         # chart
-        if tp in 'HL':
-            legend = '"金边","新加坡","墨尔本","珀斯","悉尼"'
+        if 'ais' in tp:
+            legend = '"Belfast","London","Calgary","Halifax","Montreal","Ottawa","Quebec City","Toronto","Vancouver","Abu Dhabi","Dubai"'
         else:
-            legend = '"金边","新加坡","墨尔本","珀斯","悉尼"'
+            legend = '"金边","新加坡","首尔","墨尔本","珀斯","悉尼","伯尔尼"'
         result = result.replace('LEGEND', legend)
         xaxis = ""
         for i in x:
             xaxis += '"' + i + '",'
         result = result.replace('XAXIS', xaxis)
         series = ''
-        legend = ["金边", "新加坡", "墨尔本", "珀斯", "悉尼"]
+        if 'ais' in tp:
+            legend = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"]
+        else:
+            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
         for city in legend:
             series += '{name: "%s", type: "line", data: [' % city
             for t in x:
@@ -262,37 +270,41 @@ def refresh_homepage():
             series += ']},\n'
         result = result.replace('SERIES', series)
         # table
-        if tp in 'HL':
-            legend = ["金边", "新加坡", "墨尔本", "珀斯", "悉尼"]
+        if 'ais' in tp:
+            legend = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"]
         else:
-            legend = ["金边", "新加坡", "墨尔本", "珀斯", "悉尼"]
+            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
         table = '<thead><tr><th>地点</th>'
         for i in legend:
-            table += '<th colspan="2"><a href="/global/crawler/'+tp+'/'+i+'/'+cur+'">' + i + '</a></th>'
+            table += '<th colspan="2"><a href="/global/crawler/'+tp[0]+'/'+i+'/'+cur+'">' + i + '</a></th>'
         table += '</tr><tr><th>时间</th>'
         for i in legend:
             table += '<th>当前</th><th>最早</th>'
         table += '</tr></thead><tbody>'
         for index in js['index']:
             yy, mm, dd = index.split('/')
-            line = '<tr><td><a href="crawler/view/' + \
+            line = '<tr><td><a href="crawler/view/' + ('ais.php' if 'ais' in tp else '') + \
                 '?y=%s&m=%s&d=%s&t=%s">%s/%s</a></td>' % (
                     yy, mm, dd, tp, mm, dd)
+            flag = False
             for c in legend:
                 r = js.get(c + '-' + index, '')
                 if len(r) > 1:
                     r = r[5:]
+                    flag = True
                 line += '<td>' + r + '</td>'
                 r = js.get(c + '2-' + index, '')
                 if len(r) > 1:
                     r = r[5:]
+                    flag = True
                 line += '<td>' + r + '</td>'
-            table += line + '</tr>'
+            if flag:
+                table += line + '</tr>'
         table += '</tbody>'
         result = result.replace('TABLE', table)
         alltype[tp] = result
     summary = ''
-    keys = ['F', 'B', 'O', 'H', 'L']
+    keys = ['F', 'B', 'O', 'H', 'L', 'Fais', 'Bais', 'Hais', 'Oais', 'Lais']
     random.shuffle(keys)
     for i in keys:
         summary += alltype[i]
@@ -375,12 +387,12 @@ def main(args):
                 continue
             c = ''.join([content[k] for i, k in enumerate(keys) if mask[i]])
             c = js['time'] + '<br>' + c + '''<br>See
-                <a href="https://tuixue.online/visa/#%s">
-                https://tuixue.online/visa/#%s</a> for more detail.
+                <a href="https://tuixue.online/global/#%s">
+                https://tuixue.online/global/#%s</a> for more detail.
                 ''' % (args.type, args.type)
             c += '''<br>If you want to change your subscribe option, please re-submit
-                a request over <a href="https://tuixue.online/visa/#email">
-                https://tuixue.online/visa/#email</a>.'''
+                a request over <a href="https://tuixue.online/global/#email">
+                https://tuixue.online/global/#email</a>.'''
             send(
                 args.api,
                 detail[args.type] + ' Visa Status Changed',

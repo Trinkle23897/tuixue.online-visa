@@ -8,7 +8,7 @@ if (strlen($_REQUEST['glob']) == 0) {
 }
 else {
     $glob = ' --glob 1 ';
-	$city = array('pp' => '金边', 'sg' => '新加坡', 'mel' => '墨尔本', 'per' => '珀斯', 'syd' => '悉尼');
+	$city = array('pp' => '金边', 'sg' => '新加坡', 'mel' => '墨尔本', 'per' => '珀斯', 'syd' => '悉尼', 'sel' => '首尔', 'brn' => '伯尔尼');
     echo '<meta http-equiv="refresh" content="10;url=/global"/>';
 }
  ?>

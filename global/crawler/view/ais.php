@@ -26,7 +26,7 @@
             <div class="span12">
                 <center>
                 <h1 class="text-center" id="title">预约时间变化单日统计图</h1><br>
-                看情况是每个小时的第48分04秒会放出来7-8小时前别人退掉的名额<br><br>
+<!--				看情况是每个小时的01/11/21/31/41/51分钟放出来名额<br><br>-->
 <?php
 $y = $_GET['y'];
 $m = $_GET['m'];
@@ -39,7 +39,7 @@ else
 if ($type == 'J') $type = 'F';
 else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O' && $type != 'L')
     $type = 'F';
-$loc = ['金边', '新加坡', '首尔', '墨尔本', '珀斯', '悉尼', '伯尔尼'];
+$loc = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"];
 $raw = [];
 $data = [];
 $x = [];

@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 if (!empty($_REQUEST))
-	echo '<meta http-equiv="refresh" content="0;url=/visa"/>';
+	echo '<meta http-equiv="refresh" content="0;url=/global"/>';
 else echo '<html>
 <head>
     <title>预约美签，防止失学</title>
@@ -34,9 +34,14 @@ else echo '<html>
             else if (location.hash == "#H") chartH();
             else if (location.hash == "#O") chartO();
             else if (location.hash == "#L") chartL();
-            else chartF();
+			else if (location.hash == "#Fais") chartFais();
+            else if (location.hash == "#Bais") chartBais();
+            else if (location.hash == "#Hais") chartHais();
+            else if (location.hash == "#Oais") chartOais();
+            else if (location.hash == "#Lais") chartLais();
+            else chartFcgi();
         }
-        else chartF();
+        else chartFcgi();
         $(document.body).on("click", "a[data-toggle]", function(event) {
             location.hash = this.getAttribute("href");
             if (location.hash == "#F") chartF();
@@ -44,6 +49,11 @@ else echo '<html>
             else if (location.hash == "#H") chartH();
             else if (location.hash == "#O") chartO();
             else if (location.hash == "#L") chartL();
+			else if (location.hash == "#Fais") chartFais();
+            else if (location.hash == "#Bais") chartBais();
+            else if (location.hash == "#Hais") chartHais();
+            else if (location.hash == "#Oais") chartOais();
+            else if (location.hash == "#Lais") chartLais();
         });
     });
     $(window).on("popstate", function() {
@@ -69,11 +79,16 @@ else echo '<html>
             <center>更多图表请点击表格左侧时间</center><br>
             <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F1/J1</a></li>
-                    <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B1/B2</a></li>
-                    <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B</a></li>
-                    <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O1/O2/O3</a></li>
-                    <li role="presentation" class=""><a href="#L" role="tab" id="L-tab" data-toggle="tab" aria-controls="L" aria-expanded="false">L1/L2</a></li>
+                    <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F/J-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Fais" role="tab" id="Fais-tab" data-toggle="tab" aria-controls="Fais" aria-expanded="false">F/J-ais</a></li>
+                    <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Bais" role="tab" id="Bais-tab" data-toggle="tab" aria-controls="Bais" aria-expanded="false">B-ais</a></li>
+                    <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Hais" role="tab" id="Hais-tab" data-toggle="tab" aria-controls="Hais" aria-expanded="false">H1B-ais</a></li>
+                    <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Oais" role="tab" id="Oais-tab" data-toggle="tab" aria-controls="Oais" aria-expanded="false">O-ais</a></li>
+                    <li role="presentation" class=""><a href="#L" role="tab" id="L-tab" data-toggle="tab" aria-controls="L" aria-expanded="false">L1-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Lais" role="tab" id="Lais-tab" data-toggle="tab" aria-controls="Lais" aria-expanded="false">L-ais</a></li>
                     <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false">邮件通知</a></li>
                     <li role="presentation" class=""><a href="#notes" role="tab" id="notes-tab" data-toggle="tab" aria-controls="notes" aria-expanded="false">注意事项</a></li>
                     <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
@@ -84,7 +99,7 @@ else echo '<html>
 <p></p>
 <p>这里总结了一些<a href="#disqus_thread">需要翻墙的评论区</a>中出现的约签证的技巧和注意事项</p>
 <p>目前测量结果是每个小时第48分04秒放（7-8个小时之前别人退掉的）名额，网站上的更新没法做到秒级别的更新，因此会稍稍慢于蹲点同学的获取时间（不过这些跳下来的尖峰都是几个人退出来的，不算批量放位置，没几分钟就被抢光了）</p>
-<p>记录在案的大批量放位置的时间：北京07/07 15:31、07/08 16:15，成都04/21 10:24、07/17 10:39，广州04/17 13:38、05/13 09:25、06/03 13:19、06/17 11:26、06/24 09:07、07/01 09:33，上海04/13 11:56、04/23 15:28、05/14 15:25、06/01 16:03、06/04 10:26、06/09 11:53，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
+<p>记录在案的大批量放位置的时间：北京07/07 15:31、07/08 16:15、08/12 08:49，成都04/21 10:24、07/17 10:39，广州04/17 13:38、05/13 09:25、06/03 13:19、06/17 11:26、06/24 09:07、07/01 09:33，上海04/13 11:56、04/23 15:28、05/14 15:25、06/01 16:03、06/04 10:26、06/09 11:53，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
 <p>一般来说，大批量放位置之后会有人不停地退和选，因此在放位置之后的一两天都有很大概率能捡漏。</p>
 <p>(04.22) <a href="http://disq.us/p/28sd6fs">JJHunter &amp; YJX</a><br>大使馆cgi账号在你频繁刷新面签时间的情况下会被冻结3天账号不能登录。没有任何办法提前解封，显示：Your account has been frozen for suspicious activity, and you will not be able to access it for up to 72 hours.<br>一个被封前兆是在首页上出现"You are approaching the maximum number of times you may view this page. Please complete your transaction at this time."</p>
 <p>(04.24) <a href="http://disq.us/p/28u3jmx">尤大师</a><br>注意一个美签收据只能约三次，即使约了早了但到时候领馆没开（譬如之前广州可以约3月4月），被动取消竟然也算在次数里..可怜了160刀<br>问过领馆穿红衣的那些小姐姐们，是说只能约三次（也就是取消两次），担心160刀没了所以没试过<br>
@@ -111,37 +126,47 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                             <tr><td align="right">F1/J1：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fpp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsg"> 新加坡</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsel"> 首尔</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmel"> 墨尔本</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fper"> 珀斯</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsyd"> 悉尼</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbrn"> 伯尔尼</label>
                             </td></tr>
                             <tr><td align="right">B1/B2：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bpp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsg"> 新加坡</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsel"> 首尔</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmel"> 墨尔本</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bper"> 珀斯</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsyd"> 悉尼</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbrn"> 伯尔尼</label>
                             </td></tr>
                             <tr><td align="right">H1B：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hpp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsg"> 新加坡</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsel"> 首尔</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmel"> 墨尔本</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hper"> 珀斯</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsyd"> 悉尼</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbrn"> 伯尔尼</label>
                             </td></tr>
                             <tr><td align="right">O1/O2/O3：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="opp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osg"> 新加坡</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osel"> 首尔</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omel"> 墨尔本</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oper"> 珀斯</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osyd"> 悉尼</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obrn"> 伯尔尼</label>
                             </td></tr>
                             <tr><td align="right">L1/L2：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lpp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsg"> 新加坡</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsel"> 首尔</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmel"> 墨尔本</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lper"> 珀斯</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsyd"> 悉尼</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbrn"> 伯尔尼</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
 							<tr><td align="right">输入以下验证码（五位小写英文字母）：</td><td><input class="form-control" type="text" value="" name="captcha" maxlength=5></td></tr>

@@ -62,9 +62,11 @@ echo '<table class="table table-hover table-striped table-bordered"><thead>
 <tr><td>台北</td><td>'.get('../asiv/email/f/tp/').'</td><td>'.get('../asiv/email/b/tp/').'</td><td>'.get('../asiv/email/h/tp/').'</td><td>'.get('../asiv/email/o/tp/').'</td><td>'.get('../asiv/email/l/tp/').'</td></tr>
 <tr><td>金边</td><td>'.get('../asiv/email/f/pp/').'</td><td>'.get('../asiv/email/b/pp/').'</td><td>'.get('../asiv/email/h/pp/').'</td><td>'.get('../asiv/email/o/pp/').'</td><td>'.get('../asiv/email/l/pp/').'</td></tr>
 <tr><td>新加坡</td><td>'.get('../asiv/email/f/sg/').'</td><td>'.get('../asiv/email/b/sg/').'</td><td>'.get('../asiv/email/h/sg/').'</td><td>'.get('../asiv/email/o/sg/').'</td><td>'.get('../asiv/email/l/sg/').'</td></tr>
+<tr><td>首尔</td><td>'.get('../asiv/email/f/sel/').'</td><td>'.get('../asiv/email/b/sel/').'</td><td>'.get('../asiv/email/h/sel/').'</td><td>'.get('../asiv/email/o/sel/').'</td><td>'.get('../asiv/email/l/sel/').'</td></tr>
 <tr><td>墨尔本</td><td>'.get('../asiv/email/f/mel/').'</td><td>'.get('../asiv/email/b/mel/').'</td><td>'.get('../asiv/email/h/mel/').'</td><td>'.get('../asiv/email/o/mel/').'</td><td>'.get('../asiv/email/l/mel/').'</td></tr>
 <tr><td>珀斯</td><td>'.get('../asiv/email/f/per/').'</td><td>'.get('../asiv/email/b/per/').'</td><td>'.get('../asiv/email/h/per/').'</td><td>'.get('../asiv/email/o/per/').'</td><td>'.get('../asiv/email/l/per/').'</td></tr>
 <tr><td>悉尼</td><td>'.get('../asiv/email/f/syd/').'</td><td>'.get('../asiv/email/b/syd/').'</td><td>'.get('../asiv/email/h/syd/').'</td><td>'.get('../asiv/email/o/syd/').'</td><td>'.get('../asiv/email/l/syd/').'</td></tr>
+<tr><td>伯尔尼</td><td>'.get('../asiv/email/f/brn/').'</td><td>'.get('../asiv/email/b/brn/').'</td><td>'.get('../asiv/email/h/brn/').'</td><td>'.get('../asiv/email/o/brn/').'</td><td>'.get('../asiv/email/l/brn/').'</td></tr>
 </tbody></table>
 	';
 ?>
