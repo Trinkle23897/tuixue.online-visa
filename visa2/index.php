@@ -67,6 +67,17 @@ echo '<table class="table table-hover table-striped table-bordered"><thead>
 <tr><td>珀斯</td><td>'.get('../asiv/email/f/per/').'</td><td>'.get('../asiv/email/b/per/').'</td><td>'.get('../asiv/email/h/per/').'</td><td>'.get('../asiv/email/o/per/').'</td><td>'.get('../asiv/email/l/per/').'</td></tr>
 <tr><td>悉尼</td><td>'.get('../asiv/email/f/syd/').'</td><td>'.get('../asiv/email/b/syd/').'</td><td>'.get('../asiv/email/h/syd/').'</td><td>'.get('../asiv/email/o/syd/').'</td><td>'.get('../asiv/email/l/syd/').'</td></tr>
 <tr><td>伯尔尼</td><td>'.get('../asiv/email/f/brn/').'</td><td>'.get('../asiv/email/b/brn/').'</td><td>'.get('../asiv/email/h/brn/').'</td><td>'.get('../asiv/email/o/brn/').'</td><td>'.get('../asiv/email/l/brn/').'</td></tr>
+<tr><td>贝尔法斯特</td><td>'.get('../asiv/email/f/bfs/').'</td><td>'.get('../asiv/email/b/bfs/').'</td><td>'.get('../asiv/email/h/bfs/').'</td><td>'.get('../asiv/email/o/bfs/').'</td><td>'.get('../asiv/email/l/bfs/').'</td></tr>
+<tr><td>伦敦</td><td>'.get('../asiv/email/f/lcy/').'</td><td>'.get('../asiv/email/b/lcy/').'</td><td>'.get('../asiv/email/h/lcy/').'</td><td>'.get('../asiv/email/o/lcy/').'</td><td>'.get('../asiv/email/l/lcy/').'</td></tr>
+<tr><td>卡尔加里</td><td>'.get('../asiv/email/f/yyc/').'</td><td>'.get('../asiv/email/b/yyc/').'</td><td>'.get('../asiv/email/h/yyc/').'</td><td>'.get('../asiv/email/o/yyc/').'</td><td>'.get('../asiv/email/l/yyc/').'</td></tr>
+<tr><td>哈利法克斯</td><td>'.get('../asiv/email/f/yhz/').'</td><td>'.get('../asiv/email/b/yhz/').'</td><td>'.get('../asiv/email/h/yhz/').'</td><td>'.get('../asiv/email/o/yhz/').'</td><td>'.get('../asiv/email/l/yhz/').'</td></tr>
+<tr><td>蒙特利尔</td><td>'.get('../asiv/email/f/yul/').'</td><td>'.get('../asiv/email/b/yul/').'</td><td>'.get('../asiv/email/h/yul/').'</td><td>'.get('../asiv/email/o/yul/').'</td><td>'.get('../asiv/email/l/yul/').'</td></tr>
+<tr><td>渥太华</td><td>'.get('../asiv/email/f/yow/').'</td><td>'.get('../asiv/email/b/yow/').'</td><td>'.get('../asiv/email/h/yow/').'</td><td>'.get('../asiv/email/o/yow/').'</td><td>'.get('../asiv/email/l/yow/').'</td></tr>
+<tr><td>魁北克城</td><td>'.get('../asiv/email/f/yqb/').'</td><td>'.get('../asiv/email/b/yqb/').'</td><td>'.get('../asiv/email/h/yqb/').'</td><td>'.get('../asiv/email/o/yqb/').'</td><td>'.get('../asiv/email/l/yqb/').'</td></tr>
+<tr><td>多伦多</td><td>'.get('../asiv/email/f/yyz/').'</td><td>'.get('../asiv/email/b/yyz/').'</td><td>'.get('../asiv/email/h/yyz/').'</td><td>'.get('../asiv/email/o/yyz/').'</td><td>'.get('../asiv/email/l/yyz/').'</td></tr>
+<tr><td>温哥华</td><td>'.get('../asiv/email/f/yvr/').'</td><td>'.get('../asiv/email/b/yvr/').'</td><td>'.get('../asiv/email/h/yvr/').'</td><td>'.get('../asiv/email/o/yvr/').'</td><td>'.get('../asiv/email/l/yvr/').'</td></tr>
+<tr><td>阿布扎比</td><td>'.get('../asiv/email/f/auh/').'</td><td>'.get('../asiv/email/b/auh/').'</td><td>'.get('../asiv/email/h/auh/').'</td><td>'.get('../asiv/email/o/auh/').'</td><td>'.get('../asiv/email/l/auh/').'</td></tr>
+<tr><td>迪拜</td><td>'.get('../asiv/email/f/dxb/').'</td><td>'.get('../asiv/email/b/dxb/').'</td><td>'.get('../asiv/email/h/dxb/').'</td><td>'.get('../asiv/email/o/dxb/').'</td><td>'.get('../asiv/email/l/dxb/').'</td></tr>
 </tbody></table>
 	';
 ?>

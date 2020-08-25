@@ -123,7 +123,7 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                             <center>
                             <table>
                             <tr><td align="right">邮箱地址：</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
-                            <tr><td align="right">F1/J1：</td><td>
+                            <tr><td align="right">F1/J1（cgi系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fpp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsg"> 新加坡</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsel"> 首尔</label>
@@ -132,7 +132,7 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsyd"> 悉尼</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbrn"> 伯尔尼</label>
                             </td></tr>
-                            <tr><td align="right">B1/B2：</td><td>
+                            <tr><td align="right">B1/B2（cgi系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bpp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsg"> 新加坡</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsel"> 首尔</label>
@@ -141,7 +141,7 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsyd"> 悉尼</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbrn"> 伯尔尼</label>
                             </td></tr>
-                            <tr><td align="right">H1B：</td><td>
+                            <tr><td align="right">H1B（cgi系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hpp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsg"> 新加坡</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsel"> 首尔</label>
@@ -150,7 +150,7 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsyd"> 悉尼</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbrn"> 伯尔尼</label>
                             </td></tr>
-                            <tr><td align="right">O1/O2/O3：</td><td>
+                            <tr><td align="right">O1/O2/O3（cgi系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="opp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osg"> 新加坡</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osel"> 首尔</label>
@@ -159,7 +159,7 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osyd"> 悉尼</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obrn"> 伯尔尼</label>
                             </td></tr>
-                            <tr><td align="right">L1/L2：</td><td>
+                            <tr><td align="right">L1/L2（cgi系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lpp"> 金边</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsg"> 新加坡</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsel"> 首尔</label>
@@ -167,6 +167,71 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lper"> 珀斯</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsyd"> 悉尼</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbrn"> 伯尔尼</label>
+                            </td></tr>
+                            <tr><td align="right">F1/J1（ais系统）：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbfs"> 贝尔法斯特</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="flcy"> 伦敦</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyyc"> 卡尔加里</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyhz"> 哈利法克斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyul"> 蒙特利尔</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyow"> 渥太华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyqb"> 魁北克城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyyz"> 多伦多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyvr"> 温哥华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fauh"> 阿布扎比</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fdxb"> 迪拜</label>
+                            </td></tr>
+                            <tr><td align="right">B1/B2（ais系统）：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbfs"> 贝尔法斯特</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="blcy"> 伦敦</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byyc"> 卡尔加里</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byhz"> 哈利法克斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byul"> 蒙特利尔</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byow"> 渥太华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byqb"> 魁北克城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byyz"> 多伦多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byvr"> 温哥华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bauh"> 阿布扎比</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bdxb"> 迪拜</label>
+                            </td></tr>
+                            <tr><td align="right">H1B（ais系统）：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbfs"> 贝尔法斯特</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hlcy"> 伦敦</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyyc"> 卡尔加里</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyhz"> 哈利法克斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyul"> 蒙特利尔</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyow"> 渥太华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyqb"> 魁北克城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyyz"> 多伦多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyvr"> 温哥华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hauh"> 阿布扎比</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hdxb"> 迪拜</label>
+                            </td></tr>
+                            <tr><td align="right">O1/O2/O3（ais系统）：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obfs"> 贝尔法斯特</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="olcy"> 伦敦</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyyc"> 卡尔加里</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyhz"> 哈利法克斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyul"> 蒙特利尔</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyow"> 渥太华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyqb"> 魁北克城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyyz"> 多伦多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyvr"> 温哥华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oauh"> 阿布扎比</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="odxb"> 迪拜</label>
+                            </td></tr>
+                            <tr><td align="right">L1/L2（ais系统）：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbfs"> 贝尔法斯特</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="llcy"> 伦敦</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyyc"> 卡尔加里</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyhz"> 哈利法克斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyul"> 蒙特利尔</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyow"> 渥太华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyqb"> 魁北克城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyyz"> 多伦多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyvr"> 温哥华</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lauh"> 阿布扎比</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ldxb"> 迪拜</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
 							<tr><td align="right">输入以下验证码（五位小写英文字母）：</td><td><input class="form-control" type="text" value="" name="captcha" maxlength=5></td></tr>
