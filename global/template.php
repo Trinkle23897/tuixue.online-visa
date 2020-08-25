@@ -39,9 +39,9 @@ else echo '<html>
             else if (location.hash == "#Hais") chartHais();
             else if (location.hash == "#Oais") chartOais();
             else if (location.hash == "#Lais") chartLais();
-            else chartFcgi();
+            else chartF();
         }
-        else chartFcgi();
+        else chartF();
         $(document.body).on("click", "a[data-toggle]", function(event) {
             location.hash = this.getAttribute("href");
             if (location.hash == "#F") chartF();
@@ -87,7 +87,7 @@ else echo '<html>
                     <li role="presentation" class=""><a href="#Hais" role="tab" id="Hais-tab" data-toggle="tab" aria-controls="Hais" aria-expanded="false">H1B-ais</a></li>
                     <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O-cgi</a></li>
                     <li role="presentation" class=""><a href="#Oais" role="tab" id="Oais-tab" data-toggle="tab" aria-controls="Oais" aria-expanded="false">O-ais</a></li>
-                    <li role="presentation" class=""><a href="#L" role="tab" id="L-tab" data-toggle="tab" aria-controls="L" aria-expanded="false">L1-cgi</a></li>
+                    <li role="presentation" class=""><a href="#L" role="tab" id="L-tab" data-toggle="tab" aria-controls="L" aria-expanded="false">L-cgi</a></li>
                     <li role="presentation" class=""><a href="#Lais" role="tab" id="Lais-tab" data-toggle="tab" aria-controls="Lais" aria-expanded="false">L-ais</a></li>
                     <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false">邮件通知</a></li>
                     <li role="presentation" class=""><a href="#notes" role="tab" id="notes-tab" data-toggle="tab" aria-controls="notes" aria-expanded="false">注意事项</a></li>

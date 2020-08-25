@@ -10,14 +10,15 @@ import subprocess
 from datetime import datetime
 
 
-detail = {'F': 'F1/J1', 'H': 'H1B',
-          'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
+detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
 translate = {'金边': 'Phnom Penh', '新加坡': 'Singapore', '首尔': 'Seoul', '墨尔本': 'Melbourne', '珀斯': 'Perth', '悉尼': 'Sydney', '伯尔尼': 'Bern',
              'Belfast': 'Belfast', 'London': 'London', 'Calgary': 'Calgary', 'Halifax': 'Halifax', 'Montreal': 'Montreal', 'Ottawa': 'Ottawa', 'Quebec City': 'Quebec City', 'Toronto': 'Toronto', 'Vancouver': 'Vancouver', 'Abu Dhabi': 'Abu Dhabi', 'Dubai': 'Dubai'}
-full = {'pp': '金边', 'sg': '新加坡', 'sel': '首尔',
-        'mel': '墨尔本', 'per': '珀斯', 'syd': '悉尼', 'brn': '伯尔尼'}
-short = {'金边': 'pp', '新加坡': 'sg', '首尔': 'sel',
-         '墨尔本': 'mel', '珀斯': 'per', '悉尼': 'syd', '伯尔尼': 'brn'}
+translate2chn = {'金边': '金边', '新加坡': '新加坡', '首尔': '首尔', '墨尔本': '墨尔本', '珀斯': '珀斯', '悉尼': '悉尼', '伯尔尼': '伯尔尼',
+                 'Phnom Penh': '金边', 'Singapore': '新加坡', 'Seoul': '首尔', 'Melbourne': '墨尔本', 'Perth': '珀斯', 'Sydney': '悉尼', 'Bern': '伯尔尼',
+                 'Belfast': '贝尔法斯特', 'London': '伦敦', 'Calgary': '卡尔加里', 'Halifax': '哈利法克斯', 'Montreal': '蒙特利尔', 'Ottawa': '渥太华', 'Quebec City': '魁北克城', 'Toronto': '多伦多', 'Vancouver': '温哥华', 'Abu Dhabi': '阿布扎比', 'Dubai': '迪拜'}
+short = {'金边': 'pp', '新加坡': 'sg', '首尔': 'sel', '墨尔本': 'mel', '珀斯': 'per', '悉尼': 'syd', '伯尔尼': 'brn',
+         '贝尔法斯特': 'bfs', '伦敦': 'lcy', '卡尔加里': 'yyc', '哈利法克斯': 'yhz', '蒙特利尔': 'yul', '渥太华': 'yow', '魁北克城': 'yqb', '多伦多': 'yyz', '温哥华': 'yvr', '阿布扎比': 'auh', '迪拜': 'dxb',
+         'Belfast': 'bfs', 'London': 'lcy', 'Calgary': 'yyc', 'Halifax': 'yhz', 'Montreal': 'yul', 'Ottawa': 'yow', 'Quebec City': 'yqb', 'Toronto': 'yyz', 'Vancouver': 'yvr', 'Abu Dhabi': 'auh', 'Dubai': 'dxb'}
 
 
 def min_date(a, b):
@@ -86,9 +87,8 @@ def send_extra(visa_type, title, content):
         return
     content = "\n".join(content.values()).replace("<br>", "").replace(
         ' to ', ' -> ').replace(' changed from ', ': ').replace('.', '').replace(time.asctime()[-4:] + '/', '')
-    for zh, en in translate.items():
+    for en, zh in translate2chn.items():
         content = content.replace(en, zh)
-
     subprocess.Popen(['python3', 'send_extra.py',
                       args.extra, content, args.proxy])
     return
@@ -262,9 +262,11 @@ def refresh_homepage():
         x = sorted(list(set(x)))
         # chart
         if 'ais' in tp:
-            legend = '"Belfast","London","Calgary","Halifax","Montreal","Ottawa","Quebec City","Toronto","Vancouver","Abu Dhabi","Dubai"'
+            legend = ["Belfast", "London", "Calgary", "Halifax", "Montreal",
+                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"]
         else:
-            legend = '"金边","新加坡","首尔","墨尔本","珀斯","悉尼","伯尔尼"'
+            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
+        legend = '"' + '","'.join([translate2chn[i] for i in legend]) + '"'
         result = result.replace('LEGEND', legend)
         xaxis = ""
         for i in x:
@@ -277,7 +279,7 @@ def refresh_homepage():
         else:
             legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
         for city in legend:
-            series += '{name: "%s", type: "line", data: [' % city
+            series += '{name: "%s", type: "line", data: [' % translate2chn[city]
             for t in x:
                 if info.get(city, None) is not None \
                         and info[city].get(t, None) is not None:
@@ -295,7 +297,7 @@ def refresh_homepage():
         table = '<thead><tr><th>地点</th>'
         for i in legend:
             table += '<th colspan="2"><a href="/global/crawler/' + \
-                tp[0] + '/' + i + '/' + cur + '">' + i + '</a></th>'
+                tp[0] + '/' + i + '/' + cur + '">' + translate2chn[i] + '</a></th>'
         table += '</tr><tr><th>时间</th>'
         for i in legend:
             table += '<th>当前</th><th>最早</th>'
@@ -369,13 +371,17 @@ def main(args):
         #         last_time, url, url),
         #     users,
         # )
-    content = sorted([k.split('-')[0] + ': ' + js[k]
+    # change english to chinese
+    content = sorted([translate2chn[k.split('-')[0]] + ': ' + js[k]
                       for k in js if now_time in k and '2-' not in k])
-    content_last = sorted([k.split('-')[0] + ': ' + last_js[k]
+    content_last = sorted([translate2chn[k.split('-')[0]] + ': ' + last_js[k]
                            for k in last_js if last_time in k and '2-' not in k])
     if content != content_last:
-        send_extra_on_change(args.type, 'Summary of ' +
-                             detail[args.type] + ' Visa, ' + now_time, content)
+        try:
+            send_extra_on_change(args.type, 'Summary of ' +
+                                 detail[args.type] + ' Visa, ' + now_time, content)
+        except Exception as e:
+            print(e)
     content = {}
     upd_time = {}
     for k in js:
@@ -387,7 +393,10 @@ def main(args):
                     ' changed from ' + last + ' to ' + js[k] + '.<br>'
                 upd_time[short[k.split('-')[0]]] = js[k]
     title = detail[args.type] + ' Visa Status Changed'
-    send_extra(args.type, title, content)
+    try:
+        send_extra(args.type, title, content)
+    except Exception as e:
+        print(e)
     if len(list(content.keys())) > 0:
         keys = sorted(list(content.keys()))
         masks = list(itertools.product([0, 1], repeat=len(keys)))[1:]
