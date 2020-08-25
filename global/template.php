@@ -34,11 +34,16 @@ else echo '<html>
             else if (location.hash == "#H") chartH();
             else if (location.hash == "#O") chartO();
             else if (location.hash == "#L") chartL();
-			else if (location.hash == "#Fais") chartFais();
+            else if (location.hash == "#Fais") chartFais();
             else if (location.hash == "#Bais") chartBais();
             else if (location.hash == "#Hais") chartHais();
             else if (location.hash == "#Oais") chartOais();
             else if (location.hash == "#Lais") chartLais();
+            else if (location.hash == "#Fmx") chartFmx();
+            else if (location.hash == "#Bmx") chartBmx();
+            else if (location.hash == "#Hmx") chartHmx();
+            else if (location.hash == "#Omx") chartOmx();
+            else if (location.hash == "#Lmx") chartLmx();
             else chartF();
         }
         else chartF();
@@ -54,6 +59,11 @@ else echo '<html>
             else if (location.hash == "#Hais") chartHais();
             else if (location.hash == "#Oais") chartOais();
             else if (location.hash == "#Lais") chartLais();
+            else if (location.hash == "#Fmx") chartFmx();
+            else if (location.hash == "#Bmx") chartBmx();
+            else if (location.hash == "#Hmx") chartHmx();
+            else if (location.hash == "#Omx") chartOmx();
+            else if (location.hash == "#Lmx") chartLmx();
         });
     });
     $(window).on("popstate", function() {
@@ -81,14 +91,19 @@ else echo '<html>
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F/J-cgi</a></li>
                     <li role="presentation" class=""><a href="#Fais" role="tab" id="Fais-tab" data-toggle="tab" aria-controls="Fais" aria-expanded="false">F/J-ais</a></li>
+                    <li role="presentation" class=""><a href="#Fmx" role="tab" id="Fmx-tab" data-toggle="tab" aria-controls="Fmx" aria-expanded="false">F/J-mx</a></li>
                     <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B-cgi</a></li>
                     <li role="presentation" class=""><a href="#Bais" role="tab" id="Bais-tab" data-toggle="tab" aria-controls="Bais" aria-expanded="false">B-ais</a></li>
+                    <li role="presentation" class=""><a href="#Bmx" role="tab" id="Bmx-tab" data-toggle="tab" aria-controls="Bmx" aria-expanded="false">B-mx</a></li>
                     <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B-cgi</a></li>
                     <li role="presentation" class=""><a href="#Hais" role="tab" id="Hais-tab" data-toggle="tab" aria-controls="Hais" aria-expanded="false">H1B-ais</a></li>
+                    <li role="presentation" class=""><a href="#Hmx" role="tab" id="Hmx-tab" data-toggle="tab" aria-controls="Hmx" aria-expanded="false">H1B-mx</a></li>
                     <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O-cgi</a></li>
                     <li role="presentation" class=""><a href="#Oais" role="tab" id="Oais-tab" data-toggle="tab" aria-controls="Oais" aria-expanded="false">O-ais</a></li>
+                    <li role="presentation" class=""><a href="#Omx" role="tab" id="Omx-tab" data-toggle="tab" aria-controls="Omx" aria-expanded="false">O-mx</a></li>
                     <li role="presentation" class=""><a href="#L" role="tab" id="L-tab" data-toggle="tab" aria-controls="L" aria-expanded="false">L-cgi</a></li>
                     <li role="presentation" class=""><a href="#Lais" role="tab" id="Lais-tab" data-toggle="tab" aria-controls="Lais" aria-expanded="false">L-ais</a></li>
+                    <li role="presentation" class=""><a href="#Lmx" role="tab" id="Lmx-tab" data-toggle="tab" aria-controls="Lmx" aria-expanded="false">L-mx</a></li>
                     <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false">邮件通知</a></li>
                     <li role="presentation" class=""><a href="#notes" role="tab" id="notes-tab" data-toggle="tab" aria-controls="notes" aria-expanded="false">注意事项</a></li>
                     <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
@@ -180,6 +195,16 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyvr"> 温哥华</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fauh"> 阿布扎比</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fdxb"> 迪拜</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcjs"> 华雷斯城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fgdl"> 瓜达拉哈拉</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fhmo"> 埃莫西约</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcvj"> 马塔莫罗斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmid"> 梅里达</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmex"> 墨西哥城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmty"> 蒙特雷</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fols"> 诺加莱斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fnld"> 新拉雷多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ftij"> 蒂华纳</label>
                             </td></tr>
                             <tr><td align="right">B1/B2（ais系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbfs"> 贝尔法斯特</label>
@@ -193,6 +218,16 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byvr"> 温哥华</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bauh"> 阿布扎比</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bdxb"> 迪拜</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcjs"> 华雷斯城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bgdl"> 瓜达拉哈拉</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bhmo"> 埃莫西约</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcvj"> 马塔莫罗斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmid"> 梅里达</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmex"> 墨西哥城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmty"> 蒙特雷</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bols"> 诺加莱斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bnld"> 新拉雷多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="btij"> 蒂华纳</label>
                             </td></tr>
                             <tr><td align="right">H1B（ais系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbfs"> 贝尔法斯特</label>
@@ -206,6 +241,16 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyvr"> 温哥华</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hauh"> 阿布扎比</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hdxb"> 迪拜</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hcjs"> 华雷斯城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hgdl"> 瓜达拉哈拉</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hhmo"> 埃莫西约</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hcvj"> 马塔莫罗斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmid"> 梅里达</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmex"> 墨西哥城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmty"> 蒙特雷</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hols"> 诺加莱斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hnld"> 新拉雷多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="htij"> 蒂华纳</label>
                             </td></tr>
                             <tr><td align="right">O1/O2/O3（ais系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obfs"> 贝尔法斯特</label>
@@ -219,6 +264,16 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyvr"> 温哥华</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oauh"> 阿布扎比</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="odxb"> 迪拜</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocjs"> 华雷斯城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ogdl"> 瓜达拉哈拉</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ohmo"> 埃莫西约</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocvj"> 马塔莫罗斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omid"> 梅里达</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omex"> 墨西哥城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omty"> 蒙特雷</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ools"> 诺加莱斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="onld"> 新拉雷多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="otij"> 蒂华纳</label>
                             </td></tr>
                             <tr><td align="right">L1/L2（ais系统）：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbfs"> 贝尔法斯特</label>
@@ -232,6 +287,16 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyvr"> 温哥华</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lauh"> 阿布扎比</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ldxb"> 迪拜</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lcjs"> 华雷斯城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lgdl"> 瓜达拉哈拉</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lhmo"> 埃莫西约</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lcvj"> 马塔莫罗斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmid"> 梅里达</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmex"> 墨西哥城</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmty"> 蒙特雷</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lols"> 诺加莱斯</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lnld"> 新拉雷多</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ltij"> 蒂华纳</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
 							<tr><td align="right">输入以下验证码（五位小写英文字母）：</td><td><input class="form-control" type="text" value="" name="captcha" maxlength=5></td></tr>
