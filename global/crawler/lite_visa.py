@@ -15,12 +15,11 @@ import threading
 import subprocess
 import numpy as np
 import global_var as g
-from bs4 import BeautifulSoup as bs
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
-import notify
 
 replace_items = queue.Queue()
+
 
 def add_session():
     while True:
@@ -29,21 +28,24 @@ def add_session():
         # check if replaced
         if replace:
             session_list = g.value("session", {})
-            if not visa_type in session_list:
+            if visa_type not in session_list:
                 session_list[visa_type] = {}
-            if not place in session_list[visa_type]:
+            if place not in session_list[visa_type]:
                 session_list[visa_type][place] = []
-            if ais and not replace in [x[0] for x in session_list[visa_type][place]]:
+            if ais and replace not in [x[0] for x in session_list[visa_type][place]]:
                 continue
-            if not ais and not replace in session_list[visa_type][place]:
+            if not ais and replace not in session_list[visa_type][place]:
                 continue
             logger.info("Update session " + replace)
         try:
             if ais:
-                endpoint = g.value("crawler_node", "") + "/ais/register/?code=%s&email=%s&pswd=%s" % (place, g.value("ais_email_" + visa_type, None), g.value("ais_pswd_" + visa_type, None))
+                endpoint = g.value("crawler_node", "") + "/ais/register/?code=%s&email=%s&pswd=%s" % (
+                    place, g.value("ais_email_" + visa_type, None), g.value("ais_pswd_" + visa_type, None))
             else:
-                endpoint = g.value("crawler_node", "") + "/register/?type=%s&place=%s" % (visa_type, place)
-            r = requests.get(endpoint, timeout=40, proxies=g.value("proxies", None))
+                endpoint = g.value("crawler_node", "") + \
+                    "/register/?type=%s&place=%s" % (visa_type, place)
+            r = requests.get(endpoint, timeout=40,
+                             proxies=g.value("proxies", None))
             result = r.json()
             if ais:
                 schedule_id = result["id"]
@@ -56,18 +58,21 @@ def add_session():
                 continue
             try:
                 session_list = g.value("session", {})
-                if not visa_type in session_list:
+                if visa_type not in session_list:
                     session_list[visa_type] = {}
-                if not place in session_list[visa_type]:
+                if place not in session_list[visa_type]:
                     session_list[visa_type][place] = []
                 if replace:
                     if ais:
-                        idx = [x[0] for x in session_list[visa_type][place]].index(replace)
+                        idx = [x[0] for x in session_list[visa_type]
+                               [place]].index(replace)
                     else:
                         idx = session_list[visa_type][place].index(replace)
-                    session_list[visa_type][place][idx] = ([sid, schedule_id] if ais else sid)
+                    session_list[visa_type][place][idx] = (
+                        [sid, schedule_id] if ais else sid)
                 else:
-                    session_list[visa_type][place].append(([sid, schedule_id] if ais else sid))
+                    session_list[visa_type][place].append(
+                        ([sid, schedule_id] if ais else sid))
                 session_file = g.value("session_file", "session.json")
                 with open(session_file, "w") as f:
                     f.write(json.dumps(session_list, ensure_ascii=False))
@@ -78,10 +83,11 @@ def add_session():
 
 
 t = threading.Thread(
-    target=add_session, 
+    target=add_session,
     args=()
 )
 t.start()
+
 
 class SessionOp():
     def init_cache(self):
@@ -100,15 +106,14 @@ class SessionOp():
         logger.debug("replace session: %s, %s, %s" % (visa_type, place, sess))
         replace_items.put((visa_type, place, sess))
 
-
     def replace_session_immediate(self, visa_type, place, sess, new_sess):
         ais = "-" in place
         session_list = g.value("session", {})
-        if not visa_type in session_list:
+        if visa_type not in session_list:
             session_list[visa_type] = {}
-        if not place in session_list[visa_type]:
+        if place not in session_list[visa_type]:
             session_list[visa_type][place] = []
-        if ais and not sess in [x[0] for x in session_list[visa_type][place]]:
+        if ais and sess not in [x[0] for x in session_list[visa_type][place]]:
             return
         if not ais and not sess in session_list[visa_type][place]:
             return
@@ -117,18 +122,17 @@ class SessionOp():
             idx = [x[0] for x in session_list[visa_type][place]].index(sess)
             session_list[visa_type][place][idx][0] = new_sess
         else:
-            idx = session_list[visa_type][place].index(replace)
+            idx = session_list[visa_type][place].index(sess)
             session_list[visa_type][place][idx] = new_sess
 
         session_file = g.value("session_file", "session.json")
         with open(session_file, "w") as f:
             f.write(json.dumps(session_list, ensure_ascii=False))
 
-
     def get_session(self, visa_type, place):
         # get a session given visa type and place. return None if failed.
         session = g.value("session", {})
-        if not visa_type in session or not place in session[visa_type]:
+        if visa_type not in session or place not in session[visa_type]:
             return None
         idx = g.value("idx_%s_%s" % (visa_type, place), 0)
         sess_list = session[visa_type][place]
@@ -139,30 +143,31 @@ class SessionOp():
         g.assign("idx_%s_%s" % (visa_type, place), idx + 1)
         return sess
 
-
     def get_session_count(self, visa_type, place):
         session_list = g.value("session", {})
-        if not visa_type in session_list:
+        if visa_type not in session_list:
             session_list[visa_type] = {}
-        if not place in session_list[visa_type]:
+        if place not in session_list[visa_type]:
             session_list[visa_type][place] = []
         return len(session_list[visa_type][place])
 
-
     def set_session_pool_size(self, visa_type, place, size, ais=False):
         session_list = g.value("session", {})
-        if not visa_type in session_list:
+        if visa_type not in session_list:
             session_list[visa_type] = {}
-        if not place in session_list[visa_type]:
+        if place not in session_list[visa_type]:
             session_list[visa_type][place] = []
         cnt = len(session_list[visa_type][place])
         if cnt < size:
             for _ in range(size - cnt):
-                rand_str = "".join([chr(np.random.randint(26) + ord('a')) for _ in range(15)])
+                rand_str = "".join(
+                    [chr(np.random.randint(26) + ord('a')) for _ in range(15)])
                 if ais:
-                    session_list[visa_type][place].append(["placeholder_" + rand_str, "114514"])
+                    session_list[visa_type][place].append(
+                        ["placeholder_" + rand_str, "114514"])
                 else:
-                    session_list[visa_type][place].append("placeholder_" + rand_str)
+                    session_list[visa_type][place].append(
+                        "placeholder_" + rand_str)
         elif cnt > size:
             session_list[visa_type][place] = session_list[visa_type][place][:size]
 
@@ -188,7 +193,8 @@ def merge(fn, s, cur, visa_type):
         return
     g.assign("merge_lock" + visa_type, 1)
     orig = json.loads(open(fn).read()) if os.path.exists(fn) else {}
-    open(fn.replace('.json', '-last.json'), 'w').write(json.dumps(orig, ensure_ascii=False))
+    open(fn.replace('.json', '-last.json'),
+         'w').write(json.dumps(orig, ensure_ascii=False))
     last = copy.deepcopy(orig)
     for k in s:
         if '2-' in k:
@@ -203,21 +209,26 @@ def merge(fn, s, cur, visa_type):
         orig.pop(r)
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))
     g.assign("merge_lock" + visa_type, 0)
-    subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
+    subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(
+        orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
     # os.system('python3 notify.py --type ' + visa_type + ' &')
 
 
 def init():
     global logger
     global session_op
-    
+
     # get secret and proxy config
     parser = argparse.ArgumentParser()
     parser.add_argument('--proxy', type=int, help="local proxy port")
-    parser.add_argument('--session', type=str, default="session.json", help="path to save sessions")
-    parser.add_argument('--crawler', type=str, default="crawler.txt", help="crawler api list")
-    parser.add_argument('--ais', type=str, default="ais.json", help="ais account in json format")
-    parser.add_argument('--log_dir', type=str, default="./lite_visa", help="directory to save logs")
+    parser.add_argument('--session', type=str,
+                        default="session.json", help="path to save sessions")
+    parser.add_argument('--crawler', type=str,
+                        default="crawler.txt", help="crawler api list")
+    parser.add_argument('--ais', type=str, default="ais.json",
+                        help="ais account in json format")
+    parser.add_argument('--log_dir', type=str,
+                        default="./lite_visa", help="directory to save logs")
     args = parser.parse_args()
 
     ais_account = json.loads(open(args.ais, 'r').read())
@@ -230,13 +241,14 @@ def init():
     logger = logging.getLogger("lite_visa")
     handler = TimedRotatingFileHandler(log_path, when="midnight", interval=1)
     handler.suffix = "%Y%m%d"
-    formatter = logging.Formatter("%(asctime)s [%(filename)s:%(lineno)d] %(levelname)s - %(message)s")
+    formatter = logging.Formatter(
+        "%(asctime)s [%(filename)s:%(lineno)d] %(levelname)s - %(message)s")
     handler.setFormatter(formatter)
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     logger.info("Initialization...")
 
-    proxies=dict(
+    proxies = dict(
         http='socks5h://127.0.0.1:' + str(args.proxy),
         https='socks5h://127.0.0.1:' + str(args.proxy)
     ) if args.proxy else None
@@ -253,7 +265,7 @@ def init():
     for visa_type in ["F", "B", "H", "O", "L"]:
         fn = '../visa-%s.json' % visa_type.lower()
         orig = json.loads(open(fn).read()) if os.path.exists(fn) else {}
-        if not "time" in orig:
+        if "time" not in orig:
             continue
         date = orig["time"].split()[0]
         data = {}
@@ -273,7 +285,8 @@ def init():
 
 def set_interval(func, visa_type, places, interval, rand, first_run=True, codes=None):
     def func_wrapper():
-        set_interval(func, visa_type, places, interval, rand, first_run=False, codes=codes)
+        set_interval(func, visa_type, places, interval,
+                     rand, first_run=False, codes=codes)
         func(visa_type, places, codes=codes)
     now_minute = datetime.now().minute
     if not codes and visa_type == "F" and now_minute >= 47 and now_minute <= 49:
@@ -291,7 +304,8 @@ def start_thread():
     logger.info("Start threads...")
 
     places = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
-    cgi_config = {'F': (10, 60), 'B': (5, 120), 'H': (5, 180), 'O': (5, 180), 'L': (5, 180)}
+    cgi_config = {'F': (10, 60), 'B': (5, 120), 'H': (
+        5, 180), 'O': (5, 180), 'L': (5, 180)}
     for visa_type, (number, interval) in cgi_config.items():
         for place in places:
             session_op.set_session_pool_size(visa_type, place, number)
@@ -313,26 +327,33 @@ def crawler_req(visa_type, place, start_time, requests):
         # prepare session
         sess = session_op.get_session(visa_type, place)
         if not sess:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, place, "No Session"))
+            logger.warning("%s, %s, %s, FAILED, %s" %
+                           (start_time, visa_type, place, "No Session"))
             return
-        refresh_endpoint = g.value("crawler_node", "") + "/refresh/?session=" + sess
+        refresh_endpoint = g.value(
+            "crawler_node", "") + "/refresh/?session=" + sess
         try:
-            r = requests.get(refresh_endpoint, timeout=7, proxies=g.value("proxies", None))
+            r = requests.get(refresh_endpoint, timeout=7,
+                             proxies=g.value("proxies", None))
         except:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, place, "Endpoint Timeout"))
+            logger.warning("%s, %s, %s, FAILED, %s" %
+                           (start_time, visa_type, place, "Endpoint Timeout"))
             check_crawler_node()
             return
         if r.status_code != 200:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, place, "Endpoint Inaccessible"))
+            logger.warning("%s, %s, %s, FAILED, %s" % (
+                start_time, visa_type, place, "Endpoint Inaccessible"))
             check_crawler_node()
             return
         result = r.json()
         if result["code"] > 0:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, place, "Session Expired"))
+            logger.warning("%s, %s, %s, FAILED, %s" %
+                           (start_time, visa_type, place, "Session Expired"))
             session_op.replace_session(visa_type, place, sess)
             return
         date = tuple(map(int, result["msg"].split("-")))
-        logger.info("%s, %s, %s, SUCCESS, %s" % (start_time, visa_type, place, date))
+        logger.info("%s, %s, %s, SUCCESS, %s" %
+                    (start_time, visa_type, place, date))
         g.assign("status_%s_%s" % (visa_type, place), date)
     except:
         logger.error(traceback.format_exc())
@@ -343,22 +364,28 @@ def crawler_req_ais(visa_type, code, places, start_time, requests):
         # prepare session
         sess, scedule_id = session_op.get_session(visa_type, code)
         if not sess:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "No Session"))
+            logger.warning("%s, %s, %s, FAILED, %s" %
+                           (start_time, visa_type, code, "No Session"))
             return
-        refresh_endpoint = g.value("crawler_node", "") + "/ais/refresh/?code=%s&id=%s&session=%s" % (code, scedule_id, sess)
+        refresh_endpoint = g.value(
+            "crawler_node", "") + "/ais/refresh/?code=%s&id=%s&session=%s" % (code, scedule_id, sess)
         try:
-            r = requests.get(refresh_endpoint, timeout=7, proxies=g.value("proxies", None))
+            r = requests.get(refresh_endpoint, timeout=7,
+                             proxies=g.value("proxies", None))
         except:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Endpoint Timeout"))
+            logger.warning("%s, %s, %s, FAILED, %s" %
+                           (start_time, visa_type, code, "Endpoint Timeout"))
             check_crawler_node()
             return
         if r.status_code != 200:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Endpoint Inaccessible"))
+            logger.warning("%s, %s, %s, FAILED, %s" % (
+                start_time, visa_type, code, "Endpoint Inaccessible"))
             check_crawler_node()
             return
         result = r.json()
         if result["code"] > 0:
-            logger.warning("%s, %s, %s, FAILED, %s" % (start_time, visa_type, code, "Session Expired"))
+            logger.warning("%s, %s, %s, FAILED, %s" %
+                           (start_time, visa_type, code, "Session Expired"))
             session_op.replace_session(visa_type, code, sess)
             return
         date_list = result["msg"]
@@ -367,7 +394,8 @@ def crawler_req_ais(visa_type, code, places, start_time, requests):
         for place, date in date_list:
             if place not in places:
                 continue
-            logger.info("%s, %s, %s, %s, SUCCESS, %s" % (start_time, visa_type, code, place, date))
+            logger.info("%s, %s, %s, %s, SUCCESS, %s" %
+                        (start_time, visa_type, code, place, date))
             g.assign("status_%s_%s" % (visa_type, place), date)
     except:
         logger.error(traceback.format_exc())
@@ -376,14 +404,13 @@ def crawler_req_ais(visa_type, code, places, start_time, requests):
 def crawler(visa_type, places, codes=None):
     localtime = time.localtime()
     s = {'time': time.strftime('%Y/%m/%d %H:%M:%S', localtime)}
-    second = localtime.tm_sec
     cur = time.strftime('%Y/%m/%d', time.localtime())
     cur_time = time.strftime('%H:%M:%S', time.localtime())
     pool = []
     req = g.value(visa_type + "_req", requests.Session())
     for place in places:
         t = threading.Thread(
-            target=crawler_req, 
+            target=crawler_req,
             args=(visa_type, place, cur_time, req)
         )
         t.start()
@@ -408,14 +435,13 @@ def crawler(visa_type, places, codes=None):
 def crawler_ais(visa_type, places, codes=[]):
     localtime = time.localtime()
     s = {'time': time.strftime('%Y/%m/%d %H:%M:%S', localtime)}
-    second = localtime.tm_sec
     cur = time.strftime('%Y/%m/%d', time.localtime())
     cur_time = time.strftime('%H:%M:%S', time.localtime())
     pool = []
     req = g.value(visa_type + "_req", requests.Session())
     for code in codes:
         t = threading.Thread(
-            target=crawler_req_ais, 
+            target=crawler_req_ais,
             args=(visa_type, code, places, cur_time, req)
         )
         t.start()

@@ -31,7 +31,8 @@ def postprocess(raw):
 
 def merge(fn, s, cur):
     orig = json.loads(open(fn).read()) if os.path.exists(fn) else {}
-    open(fn.replace('.json', '-last.json'), 'w').write(json.dumps(orig, ensure_ascii=False))
+    open(fn.replace('.json', '-last.json'),
+         'w').write(json.dumps(orig, ensure_ascii=False))
     for k in s:
         if '2-' in k:
             orig[k] = min_date(orig.get(k, '/'), s[k])
@@ -194,7 +195,8 @@ def b_visa(driver, driver2):
     driver2.get(base_url + '/SelectVisaCategory')
     driver2.find_element_by_id("j_id0:SiteTemplate:j_id109:j_id162:1").click()
     driver2.find_element_by_name("j_id0:SiteTemplate:j_id109:j_id166").click()
-    driver2.find_element_by_xpath("(//input[@id='selectedVisaClass'])[2]").click()
+    driver2.find_element_by_xpath(
+        "(//input[@id='selectedVisaClass'])[2]").click()
     driver2.find_element_by_name("j_id0:SiteTemplate:theForm:j_id178").click()
     n = '香港' + '-' + cur
     n2 = '香港' + '2-' + cur

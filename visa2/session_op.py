@@ -8,7 +8,6 @@ Session operation
 import os
 import copy
 import json
-import time
 import queue
 import base64
 import logging
@@ -23,6 +22,7 @@ from bs4 import BeautifulSoup as bs
 logger = logging.getLogger("fast_visa")
 
 replace_items = queue.Queue()
+
 
 def init_cache():
     session_file = g.value("session_file", "session.json")
@@ -42,11 +42,11 @@ def add_session():
         # check if replaced
         if replace:
             session_list = g.value("session", {})
-            if not visa_type in session_list:
+            if visa_type not in session_list:
                 session_list[visa_type] = {}
-            if not place in session_list[visa_type]:
+            if place not in session_list[visa_type]:
                 session_list[visa_type][place] = []
-            if not replace in session_list[visa_type][place]:
+            if replace not in session_list[visa_type][place]:
                 continue
             logger.info("Update session " + replace)
         try:
@@ -57,9 +57,9 @@ def add_session():
                 continue
             try:
                 session_list = g.value("session", {})
-                if not visa_type in session_list:
+                if visa_type not in session_list:
                     session_list[visa_type] = {}
-                if not place in session_list[visa_type]:
+                if place not in session_list[visa_type]:
                     session_list[visa_type][place] = []
                 if replace:
                     idx = session_list[visa_type][place].index(replace)
@@ -76,7 +76,7 @@ def add_session():
 
 
 t = threading.Thread(
-    target=add_session, 
+    target=add_session,
     args=()
 )
 t.start()
@@ -91,7 +91,7 @@ def replace_session(visa_type, place, sess):
 def get_session(visa_type, place):
     # get a session given visa type and place. return None if failed.
     session = g.value("session", {})
-    if not visa_type in session or not place in session[visa_type]:
+    if visa_type not in session or place not in session[visa_type]:
         return None
     idx = g.value("idx_%s_%s" % (visa_type, place), 0)
     sess_list = session[visa_type][place]
@@ -105,23 +105,24 @@ def get_session(visa_type, place):
 
 def get_session_count(visa_type, place):
     session_list = g.value("session", {})
-    if not visa_type in session_list:
+    if visa_type not in session_list:
         session_list[visa_type] = {}
-    if not place in session_list[visa_type]:
+    if place not in session_list[visa_type]:
         session_list[visa_type][place] = []
     return len(session_list[visa_type][place])
 
 
 def set_session_pool_size(visa_type, place, size):
     session_list = g.value("session", {})
-    if not visa_type in session_list:
+    if visa_type not in session_list:
         session_list[visa_type] = {}
-    if not place in session_list[visa_type]:
+    if place not in session_list[visa_type]:
         session_list[visa_type][place] = []
     cnt = len(session_list[visa_type][place])
     if cnt < size:
         for _ in range(size - cnt):
-            rand_str = "".join([chr(np.random.randint(26) + ord('a')) for _ in range(15)])
+            rand_str = "".join(
+                [chr(np.random.randint(26) + ord('a')) for _ in range(15)])
             session_list[visa_type][place].append("placeholder_" + rand_str)
     elif cnt > size:
         session_list[visa_type][place] = session_list[visa_type][place][:size]
@@ -129,7 +130,8 @@ def set_session_pool_size(visa_type, place, size):
 
 def login(cracker, place):
     proxies = g.value("proxies", None)
-    ref = {"北京": "China", "上海": "China", "广州": "China", "成都": "China", "沈阳": "China", "香港": "Hong%20Kong", "台北": "Taiwan"}
+    ref = {"北京": "China", "上海": "China", "广州": "China", "成都": "China",
+           "沈阳": "China", "香港": "Hong%20Kong", "台北": "Taiwan"}
 
     # get register page
     REG_URI = "https://cgifederal.secure.force.com/SiteRegister?country=%s&language=zh_CN" % ref[place]
@@ -140,13 +142,17 @@ def login(cracker, place):
     # In case of failure
     while True:
         soup = bs(r.text, "html.parser")
-        view_state = soup.find(id="com.salesforce.visualforce.ViewState").get("value")
-        view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
-        view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
+        view_state = soup.find(
+            id="com.salesforce.visualforce.ViewState").get("value")
+        view_state_version = soup.find(
+            id="com.salesforce.visualforce.ViewStateVersion").get("value")
+        view_state_mac = soup.find(
+            id="com.salesforce.visualforce.ViewStateMAC").get("value")
         cookies = r.cookies
 
         # get recaptcha
-        REG_CAPTCHA_URI = "https://cgifederal.secure.force.com/SiteRegister?refURL=https%3A%2F%2Fcgifederal.secure.force.com%2F%3Flanguage%3DChinese%2520%28Simplified%29%26country%3D" + ref[place]
+        REG_CAPTCHA_URI = "https://cgifederal.secure.force.com/SiteRegister?refURL=https%3A%2F%2Fcgifederal.secure.force.com%2F%3Flanguage%3DChinese%2520%28Simplified%29%26country%3D" + \
+            ref[place]
         data = {
             "AJAXREQUEST": "_viewRoot",
             "Registration:SiteTemplate:theForm": "Registration:SiteTemplate:theForm",
@@ -162,14 +168,18 @@ def login(cracker, place):
             "com.salesforce.visualforce.ViewStateMAC": view_state_mac,
             "Registration:SiteTemplate:theForm:j_id177": "Registration:SiteTemplate:theForm:j_id177"
         }
-        r = requests.post(REG_CAPTCHA_URI, data=data, cookies=cookies, proxies=proxies)
+        r = requests.post(REG_CAPTCHA_URI, data=data,
+                          cookies=cookies, proxies=proxies)
         if r.status_code != 200:
             return None
 
         soup = bs(r.text, "html.parser")
-        view_state = soup.find(id="com.salesforce.visualforce.ViewState").get("value")
-        view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
-        view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
+        view_state = soup.find(
+            id="com.salesforce.visualforce.ViewState").get("value")
+        view_state_version = soup.find(
+            id="com.salesforce.visualforce.ViewStateVersion").get("value")
+        view_state_mac = soup.find(
+            id="com.salesforce.visualforce.ViewStateMAC").get("value")
         cookies = r.cookies
 
         raw = soup.find_all(id='Registration:SiteTemplate:theForm:theId')
@@ -186,7 +196,8 @@ def login(cracker, place):
             return None
 
         # click and register
-        username = ''.join([chr(np.random.randint(26) + ord('a')) for _ in range(15)]) + "@gmail.com"
+        username = ''.join([chr(np.random.randint(26) + ord('a'))
+                            for _ in range(15)]) + "@gmail.com"
         passwd = ''.join(np.random.permutation(' '.join('12345qwert').split()))
         data = {
             "Registration:SiteTemplate:theForm": "Registration:SiteTemplate:theForm",
@@ -203,7 +214,8 @@ def login(cracker, place):
             "com.salesforce.visualforce.ViewStateVersion": view_state_version,
             "com.salesforce.visualforce.ViewStateMAC": view_state_mac
         }
-        r = requests.post(REG_CAPTCHA_URI, data=data, cookies=cookies, proxies=proxies)
+        r = requests.post(REG_CAPTCHA_URI, data=data,
+                          cookies=cookies, proxies=proxies)
         if r.status_code != 200:
             return None
         front_door_uri = r.text.split("'")[-2]
@@ -222,6 +234,7 @@ def login(cracker, place):
     cookies = r.cookies
     return username, passwd, cookies["sid"]
 
+
 def visa_select(visa_type, place, sid):
     proxies = g.value("proxies", None)
     cookies = copy.deepcopy(g.COOKIES)
@@ -233,10 +246,14 @@ def visa_select(visa_type, place, sid):
     if r.status_code != 200:
         return None
     soup = bs(r.text, "html.parser")
-    view_state = soup.find(id="com.salesforce.visualforce.ViewState").get("value")
-    view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
-    view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
-    view_state_csrf = soup.find(id="com.salesforce.visualforce.ViewStateCSRF").get("value")
+    view_state = soup.find(
+        id="com.salesforce.visualforce.ViewState").get("value")
+    view_state_version = soup.find(
+        id="com.salesforce.visualforce.ViewStateVersion").get("value")
+    view_state_mac = soup.find(
+        id="com.salesforce.visualforce.ViewStateMAC").get("value")
+    view_state_csrf = soup.find(
+        id="com.salesforce.visualforce.ViewStateCSRF").get("value")
     data = {
         "j_id0:SiteTemplate:theForm": "j_id0:SiteTemplate:theForm",
         "j_id0:SiteTemplate:theForm:ttip": "Nonimmigrant Visa",
@@ -246,7 +263,8 @@ def visa_select(visa_type, place, sid):
         "com.salesforce.visualforce.ViewStateMAC": view_state_mac,
         "com.salesforce.visualforce.ViewStateCSRF": view_state_csrf
     }
-    r = requests.post(select_visa_type_uri, data=data, cookies=cookies, proxies=proxies)
+    r = requests.post(select_visa_type_uri, data=data,
+                      cookies=cookies, proxies=proxies)
     if r.status_code != 200:
         return None
 
@@ -257,16 +275,21 @@ def visa_select(visa_type, place, sid):
         if r.status_code != 200:
             return None
         soup = bs(r.text, "html.parser")
-        view_state = soup.find(id="com.salesforce.visualforce.ViewState").get("value")
-        view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
-        view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
-        view_state_csrf = soup.find(id="com.salesforce.visualforce.ViewStateCSRF").get("value")
-        contact_id = soup.find(id="j_id0:SiteTemplate:j_id112:contactId").get("value")
+        view_state = soup.find(
+            id="com.salesforce.visualforce.ViewState").get("value")
+        view_state_version = soup.find(
+            id="com.salesforce.visualforce.ViewStateVersion").get("value")
+        view_state_mac = soup.find(
+            id="com.salesforce.visualforce.ViewStateMAC").get("value")
+        view_state_csrf = soup.find(
+            id="com.salesforce.visualforce.ViewStateCSRF").get("value")
+        contact_id = soup.find(
+            id="j_id0:SiteTemplate:j_id112:contactId").get("value")
         place2id = {
-            "北京": "j_id0:SiteTemplate:j_id112:j_id165:0", 
-            "成都": "j_id0:SiteTemplate:j_id112:j_id165:1", 
-            "广州": "j_id0:SiteTemplate:j_id112:j_id165:2", 
-            "上海": "j_id0:SiteTemplate:j_id112:j_id165:3", 
+            "北京": "j_id0:SiteTemplate:j_id112:j_id165:0",
+            "成都": "j_id0:SiteTemplate:j_id112:j_id165:1",
+            "广州": "j_id0:SiteTemplate:j_id112:j_id165:2",
+            "上海": "j_id0:SiteTemplate:j_id112:j_id165:3",
             "沈阳": "j_id0:SiteTemplate:j_id112:j_id165:4"
         }
         place_code = soup.find(id=place2id[place]).get("value")
@@ -280,21 +303,28 @@ def visa_select(visa_type, place, sid):
             "com.salesforce.visualforce.ViewStateMAC": view_state_mac,
             "com.salesforce.visualforce.ViewStateCSRF": view_state_csrf
         }
-        r = requests.post(select_post_uri, data=data, cookies=cookies, proxies=proxies)
+        r = requests.post(select_post_uri, data=data,
+                          cookies=cookies, proxies=proxies)
         if r.status_code != 200:
             return None
 
     # select visa category
     select_visa_category_uri = "https://cgifederal.secure.force.com/selectvisacategory"
-    r = requests.get(select_visa_category_uri, cookies=cookies, proxies=proxies)
+    r = requests.get(select_visa_category_uri,
+                     cookies=cookies, proxies=proxies)
     if r.status_code != 200:
         return None
     soup = bs(r.text, "html.parser")
-    view_state = soup.find(id="com.salesforce.visualforce.ViewState").get("value")
-    view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
-    view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
-    view_state_csrf = soup.find(id="com.salesforce.visualforce.ViewStateCSRF").get("value")
-    contact_id = soup.find(id="j_id0:SiteTemplate:j_id109:contactId").get("value")
+    view_state = soup.find(
+        id="com.salesforce.visualforce.ViewState").get("value")
+    view_state_version = soup.find(
+        id="com.salesforce.visualforce.ViewStateVersion").get("value")
+    view_state_mac = soup.find(
+        id="com.salesforce.visualforce.ViewStateMAC").get("value")
+    view_state_csrf = soup.find(
+        id="com.salesforce.visualforce.ViewStateCSRF").get("value")
+    contact_id = soup.find(
+        id="j_id0:SiteTemplate:j_id109:contactId").get("value")
     prefix = "j_id0:SiteTemplate:j_id109:j_id162:"
     category2id = {
         "B": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 1, "台北": 1},
@@ -303,7 +333,8 @@ def visa_select(visa_type, place, sid):
         "H": {"北京": 2, "广州": 3, "上海": 2, "香港": 3, "台北": 3},
         "L": {"北京": 3, "广州": 2, "上海": 3, "香港": 3, "台北": 3}
     }
-    category_code = soup.find(id=prefix + str(category2id[visa_type][place])).get("value")
+    category_code = soup.find(
+        id=prefix + str(category2id[visa_type][place])).get("value")
     data = {
         "j_id0:SiteTemplate:j_id109": "j_id0:SiteTemplate:j_id109",
         "j_id0:SiteTemplate:j_id109:j_id162": category_code,
@@ -314,7 +345,8 @@ def visa_select(visa_type, place, sid):
         "com.salesforce.visualforce.ViewStateMAC": view_state_mac,
         "com.salesforce.visualforce.ViewStateCSRF": view_state_csrf
     }
-    r = requests.post(select_visa_category_uri, data=data, cookies=cookies, proxies=proxies)
+    r = requests.post(select_visa_category_uri, data=data,
+                      cookies=cookies, proxies=proxies)
     if r.status_code != 200:
         return None
 
@@ -324,19 +356,24 @@ def visa_select(visa_type, place, sid):
     if r.status_code != 200:
         return None
     soup = bs(r.text, "html.parser")
-    view_state = soup.find(id="com.salesforce.visualforce.ViewState").get("value")
-    view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
-    view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
-    view_state_csrf = soup.find(id="com.salesforce.visualforce.ViewStateCSRF").get("value")
+    view_state = soup.find(
+        id="com.salesforce.visualforce.ViewState").get("value")
+    view_state_version = soup.find(
+        id="com.salesforce.visualforce.ViewStateVersion").get("value")
+    view_state_mac = soup.find(
+        id="com.salesforce.visualforce.ViewStateMAC").get("value")
+    view_state_csrf = soup.find(
+        id="com.salesforce.visualforce.ViewStateCSRF").get("value")
     type2id = {
-        "F": 0, 
-        "B": 2, 
-        "H": 0, 
+        "F": 0,
+        "B": 2,
+        "H": 0,
         "O": 10 if place == "香港" or place == "台北" else (6 if place == "广州" else 0),
         "L": 7 if place == "香港" or place == "台北" else 1
     }
     inputs = soup.find_all("input")
-    type_codes = [x.get("value") for x in inputs if x.get("name") == "selectedVisaClass"]
+    type_codes = [x.get("value")
+                  for x in inputs if x.get("name") == "selectedVisaClass"]
     type_code = type_codes[type2id[visa_type]]
     data = {
         "j_id0:SiteTemplate:theForm": "j_id0:SiteTemplate:theForm",
@@ -347,7 +384,8 @@ def visa_select(visa_type, place, sid):
         "com.salesforce.visualforce.ViewStateMAC": view_state_mac,
         "com.salesforce.visualforce.ViewStateCSRF": view_state_csrf
     }
-    r = requests.post(select_visa_code_uri, data=data, cookies=cookies, proxies=proxies)
+    r = requests.post(select_visa_code_uri, data=data,
+                      cookies=cookies, proxies=proxies)
     if r.status_code != 200:
         return None
 

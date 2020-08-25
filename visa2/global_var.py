@@ -9,22 +9,26 @@ from threading import Lock
 
 lock = Lock()
 
+
 class GlobalVar:
     var_set = {}
+
 
 def assign(var_name, var_value):
     lock.acquire()
     GlobalVar.var_set[var_name] = var_value
     lock.release()
 
+
 def value(var_name, default_value):
     lock.acquire()
-    if not var_name in GlobalVar.var_set:
+    if var_name not in GlobalVar.var_set:
         GlobalVar.var_set[var_name] = default_value
         lock.release()
         return default_value
     lock.release()
     return GlobalVar.var_set[var_name]
+
 
 """
 Some constants
