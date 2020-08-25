@@ -317,7 +317,7 @@ def refresh_homepage():
         table += '</tr></thead><tbody>'
         for index in js['index']:
             yy, mm, dd = index.split('/')
-            line = '<tr><td><a href="crawler/view/' + ('ais.php' if 'ais' in tp else '') + \
+            line = '<tr><td><a href="crawler/view/' + ('' if len(tp) == 1 else 'ais.php') + \
                 '?y=%s&m=%s&d=%s&t=%s">%s/%s</a></td>' % (
                     yy, mm, dd, tp, mm, dd)
             flag = False

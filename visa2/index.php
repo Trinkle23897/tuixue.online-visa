@@ -78,6 +78,16 @@ echo '<table class="table table-hover table-striped table-bordered"><thead>
 <tr><td>温哥华</td><td>'.get('../asiv/email/f/yvr/').'</td><td>'.get('../asiv/email/b/yvr/').'</td><td>'.get('../asiv/email/h/yvr/').'</td><td>'.get('../asiv/email/o/yvr/').'</td><td>'.get('../asiv/email/l/yvr/').'</td></tr>
 <tr><td>阿布扎比</td><td>'.get('../asiv/email/f/auh/').'</td><td>'.get('../asiv/email/b/auh/').'</td><td>'.get('../asiv/email/h/auh/').'</td><td>'.get('../asiv/email/o/auh/').'</td><td>'.get('../asiv/email/l/auh/').'</td></tr>
 <tr><td>迪拜</td><td>'.get('../asiv/email/f/dxb/').'</td><td>'.get('../asiv/email/b/dxb/').'</td><td>'.get('../asiv/email/h/dxb/').'</td><td>'.get('../asiv/email/o/dxb/').'</td><td>'.get('../asiv/email/l/dxb/').'</td></tr>
+<tr><td>华雷斯城</td><td>'.get('../asiv/email/f/cjs/').'</td><td>'.get('../asiv/email/b/cjs/').'</td><td>'.get('../asiv/email/h/cjs/').'</td><td>'.get('../asiv/email/o/cjs/').'</td><td>'.get('../asiv/email/l/cjs/').'</td></tr>
+<tr><td>瓜达拉哈拉</td><td>'.get('../asiv/email/f/gdl/').'</td><td>'.get('../asiv/email/b/gdl/').'</td><td>'.get('../asiv/email/h/gdl/').'</td><td>'.get('../asiv/email/o/gdl/').'</td><td>'.get('../asiv/email/l/gdl/').'</td></tr>
+<tr><td>埃莫西约</td><td>'.get('../asiv/email/f/hmo/').'</td><td>'.get('../asiv/email/b/hmo/').'</td><td>'.get('../asiv/email/h/hmo/').'</td><td>'.get('../asiv/email/o/hmo/').'</td><td>'.get('../asiv/email/l/hmo/').'</td></tr>
+<tr><td>马塔莫罗斯</td><td>'.get('../asiv/email/f/cvj/').'</td><td>'.get('../asiv/email/b/cvj/').'</td><td>'.get('../asiv/email/h/cvj/').'</td><td>'.get('../asiv/email/o/cvj/').'</td><td>'.get('../asiv/email/l/cvj/').'</td></tr>
+<tr><td>梅里达</td><td>'.get('../asiv/email/f/mid/').'</td><td>'.get('../asiv/email/b/mid/').'</td><td>'.get('../asiv/email/h/mid/').'</td><td>'.get('../asiv/email/o/mid/').'</td><td>'.get('../asiv/email/l/mid/').'</td></tr>
+<tr><td>墨西哥城</td><td>'.get('../asiv/email/f/mex/').'</td><td>'.get('../asiv/email/b/mex/').'</td><td>'.get('../asiv/email/h/mex/').'</td><td>'.get('../asiv/email/o/mex/').'</td><td>'.get('../asiv/email/l/mex/').'</td></tr>
+<tr><td>蒙特雷</td><td>'.get('../asiv/email/f/mty/').'</td><td>'.get('../asiv/email/b/mty/').'</td><td>'.get('../asiv/email/h/mty/').'</td><td>'.get('../asiv/email/o/mty/').'</td><td>'.get('../asiv/email/l/mty/').'</td></tr>
+<tr><td>诺加莱斯</td><td>'.get('../asiv/email/f/ols/').'</td><td>'.get('../asiv/email/b/ols/').'</td><td>'.get('../asiv/email/h/ols/').'</td><td>'.get('../asiv/email/o/ols/').'</td><td>'.get('../asiv/email/l/ols/').'</td></tr>
+<tr><td>新拉雷多</td><td>'.get('../asiv/email/f/nld/').'</td><td>'.get('../asiv/email/b/nld/').'</td><td>'.get('../asiv/email/h/nld/').'</td><td>'.get('../asiv/email/o/nld/').'</td><td>'.get('../asiv/email/l/nld/').'</td></tr>
+<tr><td>蒂华纳</td><td>'.get('../asiv/email/f/tij/').'</td><td>'.get('../asiv/email/b/tij/').'</td><td>'.get('../asiv/email/h/tij/').'</td><td>'.get('../asiv/email/o/tij/').'</td><td>'.get('../asiv/email/l/tij/').'</td></tr>
 </tbody></table>
 	';
 ?>

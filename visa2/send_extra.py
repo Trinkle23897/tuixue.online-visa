@@ -22,7 +22,6 @@ def send_extra(js, content, proxy=None):
             pass
 
     content += '\n详情: https://tuixue.online/visa/'
-    return
     # send to QQ group
     auth_key = extra["mirai_auth_key"]
     qq_num = extra["qq_num"]
