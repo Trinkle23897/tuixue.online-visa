@@ -312,11 +312,12 @@ def start_thread():
         set_interval(crawler, visa_type, places, interval, 0)
 
     # ais-account: {'ais_email_F": xxx, "ais_pswd_F": xxx}
-    codes = ["en-gb", "en-ca", "en-ae", "en-mx"]
+    codes = ["en-gb", "en-ca", "en-ae", "en-rs", "en-mx"]
     places = ["Belfast", "London",
               "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver",
-              "Abu Dhabi", "Dubai",
-              "Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
+              "Abu Dhabi", "Dubai", "Belgrade",
+              "Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana",
+              "Belgrade"]
     for visa_type in "FBHOL":
         for code in codes:
             session_op.set_session_pool_size(visa_type, code, 1, ais=True)

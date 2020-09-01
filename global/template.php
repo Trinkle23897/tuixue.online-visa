@@ -74,7 +74,7 @@ else echo '<html>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center" id="title"><a href="https://cgifederal.secure.force.com/">美国签证</a>预约时间（国际版）</h1>
+        <h1 class="text-center" id="title"><a href="javascript:alert(\'CGI系统：https://cgifederal.secure.force.com/ \nAIS系统：https://ais.usvisa-info.com/ \n\')">美国签证</a>预约时间（国际版）</h1>
             <center>
 				<br><a href="/visa/">国内版</a> | <a href="/visa2">系统当前状态</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
 				<br><span style="color:red">推送通知：</span><a href="#email">个性化邮件通知</a> | <a href="https://t.me/f_visa_global">Telegram频道</a>
@@ -263,6 +263,13 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hdxb"> H1B</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="odxb"> O1/O2/O3</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ldxb"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">贝尔格莱德：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbeg"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbeg"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbeg"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obeg"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbeg"> L1/L2</label>
                             </td></tr>
                             <tr><td align="right">华雷斯城：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcjs"> F1/J1</label>

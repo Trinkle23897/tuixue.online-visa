@@ -12,15 +12,15 @@ from datetime import datetime
 
 detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
 translate = {'金边': 'Phnom Penh', '新加坡': 'Singapore', '首尔': 'Seoul', '墨尔本': 'Melbourne', '珀斯': 'Perth', '悉尼': 'Sydney', '伯尔尼': 'Bern',
-             'Belfast': 'Belfast', 'London': 'London', 'Calgary': 'Calgary', 'Halifax': 'Halifax', 'Montreal': 'Montreal', 'Ottawa': 'Ottawa', 'Quebec City': 'Quebec City', 'Toronto': 'Toronto', 'Vancouver': 'Vancouver', 'Abu Dhabi': 'Abu Dhabi', 'Dubai': 'Dubai',
+             'Belfast': 'Belfast', 'London': 'London', 'Calgary': 'Calgary', 'Halifax': 'Halifax', 'Montreal': 'Montreal', 'Ottawa': 'Ottawa', 'Quebec City': 'Quebec City', 'Toronto': 'Toronto', 'Vancouver': 'Vancouver', 'Abu Dhabi': 'Abu Dhabi', 'Dubai': 'Dubai', 'Belgrade': 'Belgrade',
              'Ciudad Juarez': 'Ciudad Juarez', 'Guadalajara': 'Guadalajara', 'Hermosillo': 'Hermosillo', 'Matamoros': 'Matamoros', 'Merida': 'Merida', 'Mexico City': 'Mexico City', 'Monterrey': 'Monterrey', 'Nogales': 'Nogales', 'Nuevo Laredo': 'Nuevo Laredo', 'Tijuana': 'Tijuana'}
 translate2chn = {'金边': '金边', '新加坡': '新加坡', '首尔': '首尔', '墨尔本': '墨尔本', '珀斯': '珀斯', '悉尼': '悉尼', '伯尔尼': '伯尔尼',
                  'Phnom Penh': '金边', 'Singapore': '新加坡', 'Seoul': '首尔', 'Melbourne': '墨尔本', 'Perth': '珀斯', 'Sydney': '悉尼', 'Bern': '伯尔尼',
-                 'Belfast': '贝尔法斯特', 'London': '伦敦', 'Calgary': '卡尔加里', 'Halifax': '哈利法克斯', 'Montreal': '蒙特利尔', 'Ottawa': '渥太华', 'Quebec City': '魁北克城', 'Toronto': '多伦多', 'Vancouver': '温哥华', 'Abu Dhabi': '阿布扎比', 'Dubai': '迪拜',
+                 'Belfast': '贝尔法斯特', 'London': '伦敦', 'Calgary': '卡尔加里', 'Halifax': '哈利法克斯', 'Montreal': '蒙特利尔', 'Ottawa': '渥太华', 'Quebec City': '魁北克城', 'Toronto': '多伦多', 'Vancouver': '温哥华', 'Abu Dhabi': '阿布扎比', 'Dubai': '迪拜', 'Belgrade': '贝尔格莱德',
                  'Ciudad Juarez': '华雷斯城', 'Guadalajara': '瓜达拉哈拉', 'Hermosillo': '埃莫西约', 'Matamoros': '马塔莫罗斯', 'Merida': '梅里达', 'Mexico City': '墨西哥城', 'Monterrey': '蒙特雷', 'Nogales': '诺加莱斯', 'Nuevo Laredo': '新拉雷多', 'Tijuana': '蒂华纳'}
 short = {'金边': 'pp', '新加坡': 'sg', '首尔': 'sel', '墨尔本': 'mel', '珀斯': 'per', '悉尼': 'syd', '伯尔尼': 'brn',
-         '贝尔法斯特': 'bfs', '伦敦': 'lcy', '卡尔加里': 'yyc', '哈利法克斯': 'yhz', '蒙特利尔': 'yul', '渥太华': 'yow', '魁北克城': 'yqb', '多伦多': 'yyz', '温哥华': 'yvr', '阿布扎比': 'auh', '迪拜': 'dxb',
-         'Belfast': 'bfs', 'London': 'lcy', 'Calgary': 'yyc', 'Halifax': 'yhz', 'Montreal': 'yul', 'Ottawa': 'yow', 'Quebec City': 'yqb', 'Toronto': 'yyz', 'Vancouver': 'yvr', 'Abu Dhabi': 'auh', 'Dubai': 'dxb',
+        '贝尔法斯特': 'bfs', '伦敦': 'lcy', '卡尔加里': 'yyc', '哈利法克斯': 'yhz', '蒙特利尔': 'yul', '渥太华': 'yow', '魁北克城': 'yqb', '多伦多': 'yyz', '温哥华': 'yvr', '阿布扎比': 'auh', '迪拜': 'dxb', '贝尔格莱德': 'beg',
+        'Belfast': 'bfs', 'London': 'lcy', 'Calgary': 'yyc', 'Halifax': 'yhz', 'Montreal': 'yul', 'Ottawa': 'yow', 'Quebec City': 'yqb', 'Toronto': 'yyz', 'Vancouver': 'yvr', 'Abu Dhabi': 'auh', 'Dubai': 'dxb', 'Belgrade': 'beg',
          '华雷斯城': 'cjs', '瓜达拉哈拉': 'gdl', '埃莫西约': 'hmo', '马塔莫罗斯': 'cvj', '梅里达': 'mid', '墨西哥城': 'mex', '蒙特雷': 'mty', '诺加莱斯': 'ols', '新拉雷多': 'nld', '蒂华纳': 'tij',
          'Ciudad Juarez': 'cjs', 'Guadalajara': 'gdl', 'Hermosillo': 'hmo', 'Matamoros': 'cvj', 'Merida': 'mid', 'Mexico City': 'mex', 'Monterrey': 'mty', 'Nogales': 'ols', 'Nuevo Laredo': 'nld', 'Tijuana': 'tij'}
 
@@ -250,7 +250,7 @@ def refresh_homepage():
         x = []
         if 'ais' in tp:
             legend = ["Belfast", "London", "Calgary", "Halifax", "Montreal",
-                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"]
+                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Belgrade"]
         elif 'mx' in tp:
             legend = ["Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
         else:
@@ -270,7 +270,7 @@ def refresh_homepage():
         # chart
         if 'ais' in tp:
             legend = ["Belfast", "London", "Calgary", "Halifax", "Montreal",
-                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"]
+                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Belgrade"]
         elif 'mx' in tp:
             legend = ["Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
         else:
@@ -284,7 +284,7 @@ def refresh_homepage():
         series = ''
         if 'ais' in tp:
             legend = ["Belfast", "London", "Calgary", "Halifax", "Montreal",
-                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"]
+                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Belgrade"]
         elif 'mx' in tp:
             legend = ["Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
         else:
@@ -302,7 +302,7 @@ def refresh_homepage():
         # table
         if 'ais' in tp:
             legend = ["Belfast", "London", "Calgary", "Halifax", "Montreal",
-                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai"]
+                      "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Belgrade"]
         elif 'mx' in tp:
             legend = ["Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
         else:
@@ -398,7 +398,7 @@ def main(args):
     content = {}
     upd_time = {}
     for k in js:
-        if '2-' not in k and now_time in k:
+        if '2-' not in k and now_time in k and k in last_js:
             last = last_js.get(k, '/')
             if js[k] != last and min_date(js[k], last) == js[k]:
                 content[short[k.split('-')[0]]] = \
