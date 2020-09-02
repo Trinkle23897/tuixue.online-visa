@@ -264,6 +264,13 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="odxb"> O1/O2/O3</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ldxb"> L1/L2</label>
                             </td></tr>
+                            <tr><td align="right">巴黎：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcdg"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcdg"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hcdg"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocdg"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lcdg"> L1/L2</label>
+                            </td></tr>
                             <tr><td align="right">贝尔格莱德：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbeg"> F1/J1</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbeg"> B1/B2</label>
