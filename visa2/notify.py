@@ -6,17 +6,18 @@ import base64
 import argparse
 import requests
 import itertools
-import importlib
 import subprocess
 from datetime import datetime
 
 
-detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
+detail = {'F': 'F1/J1', 'H': 'H1B',
+          'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
 translate = {'北京': 'Beijing', '上海': 'Shanghai', '成都': 'Chengdu',
-        '广州': 'Guangzhou', '沈阳': 'Shenyang', '香港': 'HongKong', '台北': 'Taipei'}
-full = {'bj': '北京', 'sh': '上海', 'cd': '成都', 'gz': '广州', 'sy': '沈阳', 'hk': '香港', 'tp': '台北'}
+             '广州': 'Guangzhou', '沈阳': 'Shenyang', '香港': 'HongKong', '台北': 'Taipei'}
+full = {'bj': '北京', 'sh': '上海', 'cd': '成都',
+        'gz': '广州', 'sy': '沈阳', 'hk': '香港', 'tp': '台北'}
 short = {'北京': 'bj', '上海': 'sh', '成都': 'cd',
-        '广州': 'gz', '沈阳': 'sy', '香港': 'hk', '台北': 'tp'}
+         '广州': 'gz', '沈阳': 'sy', '香港': 'hk', '台北': 'tp'}
 
 
 def min_date(a, b):
@@ -54,7 +55,7 @@ def send_extra_on_change(visa_type, title, content):
         extra = json.load(f)
     bot_token = extra["tg_bot_token"]
     chat_id = extra["tg_chat_id"]
-    proxies=dict(
+    proxies = dict(
         http='socks5h://127.0.0.1:' + args.proxy,
         https='socks5h://127.0.0.1:' + args.proxy
     ) if args.proxy else None
@@ -65,36 +66,43 @@ def send_extra_on_change(visa_type, title, content):
             year, month, day, msg_id = list(map(int, f.read().split()))
     now = datetime.now()
     cyear, cmonth, cday = now.year, now.month, now.day
-    text = "%d/%d/%d 实时数据\n" % (cyear, cmonth, cday) + "\n".join(content) + '\nhttps://tuixue.online/visa/'
+    text = "%d/%d/%d 实时数据\n" % (cyear, cmonth, cday) + \
+        "\n".join(content) + '\nhttps://tuixue.online/visa/'
     if not (cyear == year and cmonth == month and cday == day):
-        r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, text), proxies=proxies).json()
+        r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" %
+                         (bot_token, chat_id, text), proxies=proxies).json()
         msg_id = r["result"]["message_id"]
         with open("msg_id.txt", "w") as f:
             f.write("%d %d %d %d" % (cyear, cmonth, cday, msg_id))
-        requests.get("https://api.telegram.org/bot%s/pinChatMessage?chat_id=%s&message_id=%s" % (bot_token, chat_id, str(msg_id)), proxies=proxies)
+        requests.get("https://api.telegram.org/bot%s/pinChatMessage?chat_id=%s&message_id=%s" %
+                     (bot_token, chat_id, str(msg_id)), proxies=proxies)
     else:
-        r = requests.get("https://api.telegram.org/bot%s/editMessageText?chat_id=%s&message_id=%s&text=%s" % (bot_token, chat_id, str(msg_id), text), proxies=proxies)
+        r = requests.get("https://api.telegram.org/bot%s/editMessageText?chat_id=%s&message_id=%s&text=%s" %
+                         (bot_token, chat_id, str(msg_id), text), proxies=proxies)
 
 
 def send_extra(visa_type, title, content):
     if visa_type != "F" or not args.extra or len(content) == 0:
         return
-    content = "\n".join(content.values()).replace("<br>", "").replace(' to ', ' -> ').replace(' changed from ', ': ').replace('.', '').replace(time.asctime()[-4:] + '/', '')
+    content = "\n".join(content.values()).replace("<br>", "").replace(
+        ' to ', ' -> ').replace(' changed from ', ': ').replace('.', '').replace(time.asctime()[-4:] + '/', '')
     for zh, en in translate.items():
         content = content.replace(en, zh)
 
-    subprocess.Popen(['python3', 'send_extra.py', args.extra, content, args.proxy])
+    subprocess.Popen(['python3', 'send_extra.py',
+                      args.extra, content, args.proxy])
     return
     with open(args.extra, "r") as f:
         extra = json.load(f)
     # send to TG channel
     bot_token = extra["tg_bot_token"]
     chat_id = extra["tg_chat_id"]
-    proxies=dict(
+    proxies = dict(
         http='socks5h://127.0.0.1:' + args.proxy,
         https='socks5h://127.0.0.1:' + args.proxy
     ) if args.proxy else None
-    r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" % (bot_token, chat_id, content), proxies=proxies).json()
+    r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" %
+                     (bot_token, chat_id, content), proxies=proxies).json()
 
     content += '\n详情: https://tuixue.online/visa/'
     # send to QQ group
@@ -102,12 +110,16 @@ def send_extra(visa_type, title, content):
     qq_num = extra["qq_num"]
     group_id = extra["qq_group_id"]
     base_uri = extra["mirai_base_uri"]
-    r = requests.post(base_uri + "/auth", data=json.dumps({"authKey": auth_key})).json()
+    r = requests.post(base_uri + "/auth",
+                      data=json.dumps({"authKey": auth_key})).json()
     session = r["session"]
-    requests.post(base_uri + "/verify", data=json.dumps({"sessionKey": session, "qq": qq_num}))
+    requests.post(base_uri + "/verify",
+                  data=json.dumps({"sessionKey": session, "qq": qq_num}))
     for g in group_id:
-        requests.post(base_uri + "/sendGroupMessage", data=json.dumps({"sessionKey": session, "target": g, "messageChain": [{"type": "Plain", "text": content}]}))
-    requests.post(base_uri + "/release", data=json.dumps({"sessionKey": session, "qq": qq_num}))
+        requests.post(base_uri + "/sendGroupMessage", data=json.dumps(
+            {"sessionKey": session, "target": g, "messageChain": [{"type": "Plain", "text": content}]}))
+    requests.post(base_uri + "/release",
+                  data=json.dumps({"sessionKey": session, "qq": qq_num}))
 
 
 def confirm(args):
@@ -228,7 +240,8 @@ def refresh_homepage():
             print('err on homepage:', p)
             return
         tptext = 'F/J' if tp == 'F' else tp
-        result = template.replace('TYPE_TEXT', tptext).replace("TYPE", tp).replace('TIME', js['time'])
+        result = template.replace('TYPE_TEXT', tptext).replace(
+            "TYPE", tp).replace('TIME', js['time'])
         result = result.replace('IS_F', 'active in' if tp == 'F' else '')
         info = {}
         x = []
@@ -273,7 +286,8 @@ def refresh_homepage():
             legend = ["北京", "成都", "广州", "上海", "沈阳", "香港", "台北"]
         table = '<thead><tr><th>地点</th>'
         for i in legend:
-            table += '<th colspan="2"><a href="/visa2/'+tp+'/'+i+'/'+cur+'">' + i + '</a></th>'
+            table += '<th colspan="2"><a href="/visa2/' + tp + \
+                '/' + i + '/' + cur + '">' + i + '</a></th>'
         table += '</tr><tr><th>时间</th>'
         for i in legend:
             table += '<th>当前</th><th>最早</th>'
@@ -306,8 +320,10 @@ def refresh_homepage():
     else:
         captcha_list = ['/visa2/fail/' + i for i in os.listdir('fail')]
     captcha = random.sample(captcha_list, 1)[0]
-    captcha = '<input type="text" name="orig" style="display: none" value="%s"><img src="%s">' % (base64.b64encode(captcha.encode()).decode(), captcha)
-    open('../visa/index.php', 'w').write(html.replace('TBD_PANE', summary).replace('TBD_CAPTCHA', captcha))
+    captcha = '<input type="text" name="orig" style="display: none" value="%s"><img src="%s">' % (
+        base64.b64encode(captcha.encode()).decode(), captcha)
+    open('../visa/index.php', 'w').write(html.replace('TBD_PANE',
+                                                      summary).replace('TBD_CAPTCHA', captcha))
 
 
 def main(args):
@@ -342,10 +358,13 @@ def main(args):
         #         last_time, url, url),
         #     users,
         # )
-    content = sorted([k.split('-')[0] + ': ' + js[k] for k in js if now_time in k and '2-' not in k])
-    content_last = sorted([k.split('-')[0] + ': ' + last_js[k] for k in last_js if last_time in k and '2-' not in k])
+    content = sorted([k.split('-')[0] + ': ' + js[k]
+                      for k in js if now_time in k and '2-' not in k])
+    content_last = sorted([k.split('-')[0] + ': ' + last_js[k]
+                           for k in last_js if last_time in k and '2-' not in k])
     if content != content_last:
-        send_extra_on_change(args.type, 'Summary of ' + detail[args.type] + ' Visa, ' + now_time, content)
+        send_extra_on_change(args.type, 'Summary of ' +
+                             detail[args.type] + ' Visa, ' + now_time, content)
     content = {}
     upd_time = {}
     for k in js:

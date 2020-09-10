@@ -25,8 +25,8 @@
         <div class="row">
             <div class="span12">
                 <center>
-                <h1 class="text-center" id="title">预约时间变化单日统计图</h1><br>
-                看情况是每个小时的第48分04秒会放出来7-8小时前别人退掉的名额<br><br>
+                <h1 class="text-center" id="title">预约时间变化单日统计图</h1><br><br><br><br><br><br>
+<!--				看情况是每个小时的01/11/21/31/41/51分钟放出来名额<br><br>-->
 <?php
 $y = $_GET['y'];
 $m = $_GET['m'];
@@ -39,7 +39,7 @@ else
 if ($type == 'J') $type = 'F';
 else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O' && $type != 'L')
     $type = 'F';
-$loc = ['金边', '新加坡', '首尔', '墨尔本', '珀斯', '悉尼', '伯尔尼'];
+$loc = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Paris", "Belgrade", "Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"];
 $raw = [];
 $data = [];
 $x = [];
@@ -125,7 +125,7 @@ if ($type == 'F') $show_tp = 'F/J';
 $d = new Datetime($date);
 $pre = explode('/', $d->modify("-1 day")->format("Y/m/d"));
 echo '<a class="btn btn-info" role="button" href="?y='.$pre[0].'&m='.$pre[1].'&d='.$pre[2].'&t='.$type.'">前一天</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-echo '<a class="btn btn-info" role="button" href="/global/#'.$type.'">返回首页</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+echo '<a class="btn btn-info" role="button" href="/global/#'.$type.'ais">返回首页</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 $nxt = explode('/', $d->modify("+2 day")->format("Y/m/d"));
 echo '<a class="btn btn-info" role="button" href="?y='.$nxt[0].'&m='.$nxt[1].'&d='.$nxt[2].'&t='.$type.'">后一天</a>';
 ?>

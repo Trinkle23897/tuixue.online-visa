@@ -18,7 +18,7 @@ from vcode2 import Captcha
 from bs4 import BeautifulSoup as bs
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
-import notify
+
 
 def min_date(a, b):
     if a == '/':
@@ -37,7 +37,8 @@ def min_date(a, b):
 
 def merge(fn, s, cur, visa_type):
     orig = json.loads(open(fn).read()) if os.path.exists(fn) else {}
-    open(fn.replace('.json', '-last.json'), 'w').write(json.dumps(orig, ensure_ascii=False))
+    open(fn.replace('.json', '-last.json'),
+         'w').write(json.dumps(orig, ensure_ascii=False))
     last = copy.deepcopy(orig)
     for k in s:
         if '2-' in k:
@@ -51,21 +52,25 @@ def merge(fn, s, cur, visa_type):
     for r in rmkeys:
         orig.pop(r)
     open(fn, 'w').write(json.dumps(orig, ensure_ascii=False))
-    subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
+    subprocess.check_call(['python3', 'notify.py', '--type', visa_type, '--js', json.dumps(
+        orig, ensure_ascii=False), '--last_js', json.dumps(last, ensure_ascii=False)])
     # os.system('python3 notify.py --type ' + visa_type + ' &')
 
 
 def init():
     global logger
-    
+
     # get secret and proxy config
     parser = argparse.ArgumentParser()
-    parser.add_argument('--secret', type=str, default='', help="Fateadm secret file")
+    parser.add_argument('--secret', type=str, default='',
+                        help="Fateadm secret file")
     parser.add_argument('--proxy', type=int, help="local proxy port")
-    parser.add_argument('--session', type=str, default="session.json", help="path to save sessions")
-    parser.add_argument('--log_dir', type=str, default="./fast_visa", help="directory to save logs")
+    parser.add_argument('--session', type=str,
+                        default="session.json", help="path to save sessions")
+    parser.add_argument('--log_dir', type=str,
+                        default="./fast_visa", help="directory to save logs")
     args = parser.parse_args()
- 
+
     # config logging
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)
@@ -73,20 +78,21 @@ def init():
     logger = logging.getLogger("fast_visa")
     handler = TimedRotatingFileHandler(log_path, when="midnight", interval=1)
     handler.suffix = "%Y%m%d"
-    formatter = logging.Formatter("%(asctime)s [%(filename)s:%(lineno)d] %(levelname)s - %(message)s")
+    formatter = logging.Formatter(
+        "%(asctime)s [%(filename)s:%(lineno)d] %(levelname)s - %(message)s")
     handler.setFormatter(formatter)
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     logger.info("Initialization...")
 
     # config cracker
-    #if len(args.secret) == 0:
+    # if len(args.secret) == 0:
     #    cracker = args
     #    cracker.solve = lambda x: input('Captcha: ')
-    #else:
+    # else:
     #    cracker = Captcha(args.secret, args.proxy)
     cracker = Captcha()
-    proxies=dict(
+    proxies = dict(
         http='socks5h://127.0.0.1:' + str(args.proxy),
         https='socks5h://127.0.0.1:' + str(args.proxy)
     ) if args.proxy else None
@@ -101,7 +107,7 @@ def init():
     for visa_type in ["F", "B", "H", "O", "L"]:
         fn = '../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' % visa_type.lower()
         orig = json.loads(open(fn).read()) if os.path.exists(fn) else {}
-        if not "time" in orig:
+        if "time" not in orig:
             continue
         date = orig["time"].split()[0]
         data = {}
@@ -169,30 +175,36 @@ def crawler_req(visa_type, place):
         # prepare session
         sess = session_op.get_session(visa_type, place)
         if not sess:
-            logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "No Session"))
+            logger.warning("%s, %s, FAILED, %s" %
+                           (visa_type, place, "No Session"))
             return
         cookies = copy.deepcopy(g.COOKIES)
         cookies["sid"] = sess
         # send request
-        r = requests.get(g.CANCEL_URI, headers=g.HEADERS, cookies=cookies, proxies=g.value("proxies", None))
+        r = requests.get(g.CANCEL_URI, headers=g.HEADERS,
+                         cookies=cookies, proxies=g.value("proxies", None))
         if r.status_code != 200:
-            logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
+            logger.warning("%s, %s, FAILED, %s" %
+                           (visa_type, place, "Session Expired"))
             session_op.replace_session(visa_type, place, sess)
             return
         # parse HTML
         page = r.text
         date = get_date(page)
         if not date:
-            logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
+            logger.warning("%s, %s, FAILED, %s" %
+                           (visa_type, place, "Session Expired"))
             session_op.replace_session(visa_type, place, sess)
             return
         elif date == (0, 0, 0):
             # logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Date Not Found"))
-            last_status = g.value("status_%s_%s" % (visa_type, place), (0, 0, 0))
-            # if last_status != (0, 0, 0): 
+            last_status = g.value("status_%s_%s" %
+                                  (visa_type, place), (0, 0, 0))
+            # if last_status != (0, 0, 0):
             #    session_op.replace_session(visa_type, place, sess)
             if not check_alive(page):
-                logger.warning("%s, %s, FAILED, %s" % (visa_type, place, "Session Expired"))
+                logger.warning("%s, %s, FAILED, %s" %
+                               (visa_type, place, "Session Expired"))
                 session_op.replace_session(visa_type, place, sess)
                 return
         logger.info("%s, %s, SUCCESS, %s" % (visa_type, place, date))
@@ -204,12 +216,11 @@ def crawler_req(visa_type, place):
 def crawler(visa_type, places):
     localtime = time.localtime()
     s = {'time': time.strftime('%Y/%m/%d %H:%M:%S', localtime)}
-    second = localtime.tm_sec
     cur = time.strftime('%Y/%m/%d', time.localtime())
     pool = []
     for place in places:
         t = threading.Thread(
-            target=crawler_req, 
+            target=crawler_req,
             args=(visa_type, place)
         )
         t.start()
@@ -228,7 +239,8 @@ def crawler(visa_type, places):
             os.makedirs('/'.join(path.split('/')[:-1]), exist_ok=True)
             time_hm = time.strftime('%H:%M', localtime)
             open(path, 'a+').write(time_hm + ' ' + s[n] + '\n')
-    merge('../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' % visa_type.lower(), s, cur, visa_type)
+    merge('../visa/visa.json' if visa_type == "F" else '../visa/visa-%s.json' %
+          visa_type.lower(), s, cur, visa_type)
 
 
 def get_date(page):
@@ -239,7 +251,8 @@ def get_date(page):
         text = soup.find_all(class_="leftPanelText")[-1].text
         s = text.split()
         if len(s) >= 3:
-            month_str, day_str, year_str = s[-3], s[-2].replace(",", ""), s[-1].replace(".", "")
+            month_str, day_str, year_str = s[-3], s[-2].replace(
+                ",", ""), s[-1].replace(".", "")
             year, month, day = int(year_str), g.MONTH[month_str], int(day_str)
             return (year, month, day)
     except:

@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 if (!empty($_REQUEST))
-	echo '<meta http-equiv="refresh" content="0;url=/visa"/>';
+	echo '<meta http-equiv="refresh" content="0;url=/global"/>';
 else echo '<html>
 <head>
     <title>预约美签，防止失学</title>
@@ -34,6 +34,16 @@ else echo '<html>
             else if (location.hash == "#H") chartH();
             else if (location.hash == "#O") chartO();
             else if (location.hash == "#L") chartL();
+            else if (location.hash == "#Fais") chartFais();
+            else if (location.hash == "#Bais") chartBais();
+            else if (location.hash == "#Hais") chartHais();
+            else if (location.hash == "#Oais") chartOais();
+            else if (location.hash == "#Lais") chartLais();
+            else if (location.hash == "#Fmx") chartFmx();
+            else if (location.hash == "#Bmx") chartBmx();
+            else if (location.hash == "#Hmx") chartHmx();
+            else if (location.hash == "#Omx") chartOmx();
+            else if (location.hash == "#Lmx") chartLmx();
             else chartF();
         }
         else chartF();
@@ -44,6 +54,16 @@ else echo '<html>
             else if (location.hash == "#H") chartH();
             else if (location.hash == "#O") chartO();
             else if (location.hash == "#L") chartL();
+			else if (location.hash == "#Fais") chartFais();
+            else if (location.hash == "#Bais") chartBais();
+            else if (location.hash == "#Hais") chartHais();
+            else if (location.hash == "#Oais") chartOais();
+            else if (location.hash == "#Lais") chartLais();
+            else if (location.hash == "#Fmx") chartFmx();
+            else if (location.hash == "#Bmx") chartBmx();
+            else if (location.hash == "#Hmx") chartHmx();
+            else if (location.hash == "#Omx") chartOmx();
+            else if (location.hash == "#Lmx") chartLmx();
         });
     });
     $(window).on("popstate", function() {
@@ -54,7 +74,7 @@ else echo '<html>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center" id="title"><a href="https://cgifederal.secure.force.com/">美国签证</a>预约时间（国际版）</h1>
+        <h1 class="text-center" id="title"><a href="javascript:alert(\'CGI系统：https://cgifederal.secure.force.com/ \nAIS系统：https://ais.usvisa-info.com/ \n\')">美国签证</a>预约时间（国际版）</h1>
             <center>
 				<br><a href="/visa/">国内版</a> | <a href="/visa2">系统当前状态</a> | <a href="#disqus_thread">需要翻墙的评论区</a> | <a href="https://checkee.info">签证结果统计</a>
 				<br><span style="color:red">推送通知：</span><a href="#email">个性化邮件通知</a> | <a href="https://t.me/f_visa_global">Telegram频道</a>
@@ -69,11 +89,21 @@ else echo '<html>
             <center>更多图表请点击表格左侧时间</center><br>
             <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F1/J1</a></li>
-                    <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B1/B2</a></li>
-                    <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B</a></li>
-                    <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O1/O2/O3</a></li>
-                    <li role="presentation" class=""><a href="#L" role="tab" id="L-tab" data-toggle="tab" aria-controls="L" aria-expanded="false">L1/L2</a></li>
+                    <li role="presentation" class=""><a href="#F" role="tab" id="F-tab" data-toggle="tab" aria-controls="F" aria-expanded="false">F/J-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Fais" role="tab" id="Fais-tab" data-toggle="tab" aria-controls="Fais" aria-expanded="false">F/J-ais</a></li>
+                    <li role="presentation" class=""><a href="#Fmx" role="tab" id="Fmx-tab" data-toggle="tab" aria-controls="Fmx" aria-expanded="false">F/J-mx</a></li>
+                    <li role="presentation" class=""><a href="#B" role="tab" id="B-tab" data-toggle="tab" aria-controls="B" aria-expanded="false">B-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Bais" role="tab" id="Bais-tab" data-toggle="tab" aria-controls="Bais" aria-expanded="false">B-ais</a></li>
+                    <li role="presentation" class=""><a href="#Bmx" role="tab" id="Bmx-tab" data-toggle="tab" aria-controls="Bmx" aria-expanded="false">B-mx</a></li>
+                    <li role="presentation" class=""><a href="#H" role="tab" id="H-tab" data-toggle="tab" aria-controls="H" aria-expanded="false">H1B-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Hais" role="tab" id="Hais-tab" data-toggle="tab" aria-controls="Hais" aria-expanded="false">H1B-ais</a></li>
+                    <li role="presentation" class=""><a href="#Hmx" role="tab" id="Hmx-tab" data-toggle="tab" aria-controls="Hmx" aria-expanded="false">H1B-mx</a></li>
+                    <li role="presentation" class=""><a href="#O" role="tab" id="O-tab" data-toggle="tab" aria-controls="O" aria-expanded="false">O-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Oais" role="tab" id="Oais-tab" data-toggle="tab" aria-controls="Oais" aria-expanded="false">O-ais</a></li>
+                    <li role="presentation" class=""><a href="#Omx" role="tab" id="Omx-tab" data-toggle="tab" aria-controls="Omx" aria-expanded="false">O-mx</a></li>
+                    <li role="presentation" class=""><a href="#L" role="tab" id="L-tab" data-toggle="tab" aria-controls="L" aria-expanded="false">L-cgi</a></li>
+                    <li role="presentation" class=""><a href="#Lais" role="tab" id="Lais-tab" data-toggle="tab" aria-controls="Lais" aria-expanded="false">L-ais</a></li>
+                    <li role="presentation" class=""><a href="#Lmx" role="tab" id="Lmx-tab" data-toggle="tab" aria-controls="Lmx" aria-expanded="false">L-mx</a></li>
                     <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false">邮件通知</a></li>
                     <li role="presentation" class=""><a href="#notes" role="tab" id="notes-tab" data-toggle="tab" aria-controls="notes" aria-expanded="false">注意事项</a></li>
                     <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
@@ -84,7 +114,7 @@ else echo '<html>
 <p></p>
 <p>这里总结了一些<a href="#disqus_thread">需要翻墙的评论区</a>中出现的约签证的技巧和注意事项</p>
 <p>目前测量结果是每个小时第48分04秒放（7-8个小时之前别人退掉的）名额，网站上的更新没法做到秒级别的更新，因此会稍稍慢于蹲点同学的获取时间（不过这些跳下来的尖峰都是几个人退出来的，不算批量放位置，没几分钟就被抢光了）</p>
-<p>记录在案的大批量放位置的时间：北京07/07 15:31、07/08 16:15，成都04/21 10:24、07/17 10:39，广州04/17 13:38、05/13 09:25、06/03 13:19、06/17 11:26、06/24 09:07、07/01 09:33，上海04/13 11:56、04/23 15:28、05/14 15:25、06/01 16:03、06/04 10:26、06/09 11:53，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
+<p>记录在案的大批量放位置的时间：北京07/07 15:31、07/08 16:15、08/12 08:49，成都04/21 10:24、07/17 10:39，广州04/17 13:38、05/13 09:25、06/03 13:19、06/17 11:26、06/24 09:07、07/01 09:33，上海04/13 11:56、04/23 15:28、05/14 15:25、06/01 16:03、06/04 10:26、06/09 11:53，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
 <p>一般来说，大批量放位置之后会有人不停地退和选，因此在放位置之后的一两天都有很大概率能捡漏。</p>
 <p>(04.22) <a href="http://disq.us/p/28sd6fs">JJHunter &amp; YJX</a><br>大使馆cgi账号在你频繁刷新面签时间的情况下会被冻结3天账号不能登录。没有任何办法提前解封，显示：Your account has been frozen for suspicious activity, and you will not be able to access it for up to 72 hours.<br>一个被封前兆是在首页上出现"You are approaching the maximum number of times you may view this page. Please complete your transaction at this time."</p>
 <p>(04.24) <a href="http://disq.us/p/28u3jmx">尤大师</a><br>注意一个美签收据只能约三次，即使约了早了但到时候领馆没开（譬如之前广州可以约3月4月），被动取消竟然也算在次数里..可怜了160刀<br>问过领馆穿红衣的那些小姐姐们，是说只能约三次（也就是取消两次），担心160刀没了所以没试过<br>
@@ -108,40 +138,215 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                             <center>
                             <table>
                             <tr><td align="right">邮箱地址：</td><td><input type="email" name="email" class="form-control" placeholder="prefer *@qq.com"></td></tr>
-                            <tr><td align="right">F1/J1：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fpp"> 金边</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsg"> 新加坡</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmel"> 墨尔本</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fper"> 珀斯</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsyd"> 悉尼</label>
+                            <tr><td align="right">金边：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fpp"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bpp"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hpp"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="opp"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lpp"> L1/L2</label>
                             </td></tr>
-                            <tr><td align="right">B1/B2：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bpp"> 金边</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsg"> 新加坡</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmel"> 墨尔本</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bper"> 珀斯</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsyd"> 悉尼</label>
+                            <tr><td align="right">新加坡：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsg"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsg"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsg"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osg"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsg"> L1/L2</label>
                             </td></tr>
-                            <tr><td align="right">H1B：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hpp"> 金边</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsg"> 新加坡</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmel"> 墨尔本</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hper"> 珀斯</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsyd"> 悉尼</label>
+                            <tr><td align="right">首尔：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsel"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsel"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsel"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osel"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsel"> L1/L2</label>
                             </td></tr>
-                            <tr><td align="right">O1/O2/O3：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="opp"> 金边</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osg"> 新加坡</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omel"> 墨尔本</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oper"> 珀斯</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osyd"> 悉尼</label>
+                            <tr><td align="right">墨尔本：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmel"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmel"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmel"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omel"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmel"> L1/L2</label>
                             </td></tr>
-                            <tr><td align="right">L1/L2：</td><td>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lpp"> 金边</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsg"> 新加坡</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmel"> 墨尔本</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lper"> 珀斯</label>
-                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsyd"> 悉尼</label>
+                            <tr><td align="right">珀斯：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fper"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bper"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hper"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oper"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lper"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">悉尼：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fsyd"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bsyd"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hsyd"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="osyd"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lsyd"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">伯尔尼：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbrn"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbrn"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbrn"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obrn"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbrn"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">贝尔法斯特：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbfs"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbfs"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbfs"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obfs"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbfs"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">伦敦：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="flcy"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="blcy"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hlcy"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="olcy"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="llcy"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">卡尔加里：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyyc"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byyc"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyyc"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyyc"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyyc"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">哈利法克斯：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyhz"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byhz"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyhz"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyhz"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyhz"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">蒙特利尔：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyul"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byul"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyul"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyul"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyul"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">渥太华：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyow"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byow"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyow"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyow"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyow"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">魁北克城：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyqb"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byqb"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyqb"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyqb"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyqb"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">多伦多：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyyz"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byyz"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyyz"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyyz"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyyz"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">温哥华：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fyvr"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="byvr"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hyvr"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oyvr"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lyvr"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">阿布扎比：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fauh"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bauh"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hauh"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oauh"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lauh"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">迪拜：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fdxb"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bdxb"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hdxb"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="odxb"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ldxb"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">巴黎：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcdg"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcdg"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hcdg"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocdg"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lcdg"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">贝尔格莱德：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbeg"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbeg"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbeg"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obeg"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbeg"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">华雷斯城：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcjs"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcjs"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hcjs"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocjs"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lcjs"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">瓜达拉哈拉：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fgdl"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bgdl"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hgdl"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ogdl"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lgdl"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">埃莫西约：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fhmo"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bhmo"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hhmo"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ohmo"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lhmo"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">马塔莫罗斯：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcvj"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcvj"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hcvj"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocvj"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lcvj"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">梅里达：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmid"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmid"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmid"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omid"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmid"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">墨西哥城：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmex"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmex"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmex"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omex"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmex"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">蒙特雷：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fmty"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bmty"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hmty"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="omty"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lmty"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">诺加莱斯：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fols"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bols"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hols"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ools"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lols"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">新拉雷多：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fnld"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bnld"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hnld"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="onld"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lnld"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">蒂华纳：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ftij"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="btij"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="htij"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="otij"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ltij"> L1/L2</label>
                             </td></tr>
 							<tr><td>当出现的时间早于（并包含）该日期时发送提醒：</td><td><input class="form-control" type="date" value="" name="time"></td></tr>
 							<tr><td align="right">输入以下验证码（五位小写英文字母）：</td><td><input class="form-control" type="text" value="" name="captcha" maxlength=5></td></tr>

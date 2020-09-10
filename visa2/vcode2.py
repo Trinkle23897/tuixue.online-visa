@@ -1,6 +1,5 @@
 import io
 import sys
-import json
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -121,9 +120,10 @@ config = {
     "y": {
         "width": 24,
         "w_hist": [11, 14, 17, 19, 21, 24, 24, 27, 28, 31, 27, 21, 17, 15, 22, 23, 20, 18, 15, 13, 9, 8, 7, 6],
-        "h_hist": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 11, 15, 20, 19, 20, 20, 19, 16, 14, 16, 14, 15, 14, 14, 15, 13, 12, 11, 10, 9, 8, 8, 7, 7, 6, 5, 6, 11, 12, 13, 12, 11, 10, 9, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 
+        "h_hist": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 11, 15, 20, 19, 20, 20, 19, 16, 14, 16, 14, 15, 14, 14, 15, 13, 12, 11, 10, 9, 8, 8, 7, 7, 6, 5, 6, 11, 12, 13, 12, 11, 10, 9, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     }
 }
+
 
 class Net(nn.Module):
     def __init__(self, in_channel=1, height=70, width=38, out_dim=23):
@@ -163,6 +163,7 @@ class Net(nn.Module):
         out = F.log_softmax(out, dim=1)
         return out
 
+
 model = Net()
 model.load_state_dict(torch.load("save.pth", map_location=torch.device('cpu')))
 model.to('cpu')
@@ -197,12 +198,15 @@ def delete_curve():
             while k < width:
                 cur_up, cur_down = r[-1]
                 if cur_down - cur_up == 2:
-                    possible = [(cur_up, cur_down), (cur_up - 1, cur_down), (cur_up, cur_down + 1)]
+                    possible = [(cur_up, cur_down), (cur_up - 1,
+                                                     cur_down), (cur_up, cur_down + 1)]
                 elif cur_down - cur_up == 3:
                     if len(r) <= 1:
-                        possible = [(cur_up - 1, cur_down - 1), (cur_up + 1, cur_down + 1), (cur_up, cur_down - 1), (cur_up + 1, cur_down)]
+                        possible = [(cur_up - 1, cur_down - 1), (cur_up + 1, cur_down + 1),
+                                    (cur_up, cur_down - 1), (cur_up + 1, cur_down)]
                     else:
-                        possible = [(cur_up - 1, cur_down - 1), (cur_up + 1, cur_down + 1)]
+                        possible = [(cur_up - 1, cur_down - 1),
+                                    (cur_up + 1, cur_down + 1)]
                         last_up, last_down = r[-2]
                         if last_down < cur_down:
                             possible.append((cur_up + 1, cur_down))
@@ -230,7 +234,7 @@ def eliminate_noise():
             pixels[:, j] = white_pixel
     for j in range(150, 200):
         if (pixels[:, j] != white_pixel).sum() <= 3:
-            pixels[:, j] = white_pixel    
+            pixels[:, j] = white_pixel
 
 
 def bold():
