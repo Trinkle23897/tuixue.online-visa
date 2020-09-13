@@ -289,7 +289,7 @@ def set_interval(func, visa_type, places, interval, rand, first_run=True, codes=
                      rand, first_run=False, codes=codes)
         func(visa_type, places, codes=codes)
     now_minute = datetime.now().minute
-    if not codes and visa_type == "F" and now_minute >= 47 and now_minute <= 49:
+    if False and not codes and visa_type == "F" and now_minute >= 47 and now_minute <= 49:
         sec = 5
     else:
         sec = interval + random.randint(0, rand)
@@ -303,7 +303,7 @@ def set_interval(func, visa_type, places, interval, rand, first_run=True, codes=
 def start_thread():
     logger.info("Start threads...")
 
-    places = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
+    places = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼", "福冈", "大坂", "那霸", "札幌", "东京", "加德满都"]
     cgi_config = {'F': (10, 60), 'B': (5, 120), 'H': (
         5, 180), 'O': (5, 180), 'L': (5, 180)}
     for visa_type, (number, interval) in cgi_config.items():

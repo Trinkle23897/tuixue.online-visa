@@ -11,14 +11,14 @@ from datetime import datetime
 
 
 detail = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
-translate = {'金边': 'Phnom Penh', '新加坡': 'Singapore', '首尔': 'Seoul', '墨尔本': 'Melbourne', '珀斯': 'Perth', '悉尼': 'Sydney', '伯尔尼': 'Bern',
+translate = {'金边': 'Phnom Penh', '新加坡': 'Singapore', '首尔': 'Seoul', '墨尔本': 'Melbourne', '珀斯': 'Perth', '悉尼': 'Sydney', '伯尔尼': 'Bern', "福冈": 'Fukuoka', "大坂": 'Osaka', "那霸": 'Naha', "札幌": 'Sapporo', "东京": 'Tokyo', "加德满都": 'Kathmandu',
         'Belfast': 'Belfast', 'London': 'London', 'Calgary': 'Calgary', 'Halifax': 'Halifax', 'Montreal': 'Montreal', 'Ottawa': 'Ottawa', 'Quebec City': 'Quebec City', 'Toronto': 'Toronto', 'Vancouver': 'Vancouver', 'Abu Dhabi': 'Abu Dhabi', 'Dubai': 'Dubai', 'Belgrade': 'Belgrade', 'Paris': 'Paris',
              'Ciudad Juarez': 'Ciudad Juarez', 'Guadalajara': 'Guadalajara', 'Hermosillo': 'Hermosillo', 'Matamoros': 'Matamoros', 'Merida': 'Merida', 'Mexico City': 'Mexico City', 'Monterrey': 'Monterrey', 'Nogales': 'Nogales', 'Nuevo Laredo': 'Nuevo Laredo', 'Tijuana': 'Tijuana'}
-translate2chn = {'金边': '金边', '新加坡': '新加坡', '首尔': '首尔', '墨尔本': '墨尔本', '珀斯': '珀斯', '悉尼': '悉尼', '伯尔尼': '伯尔尼',
-                 'Phnom Penh': '金边', 'Singapore': '新加坡', 'Seoul': '首尔', 'Melbourne': '墨尔本', 'Perth': '珀斯', 'Sydney': '悉尼', 'Bern': '伯尔尼',
+translate2chn = {'金边': '金边', '新加坡': '新加坡', '首尔': '首尔', '墨尔本': '墨尔本', '珀斯': '珀斯', '悉尼': '悉尼', '伯尔尼': '伯尔尼', "福冈": "福冈", "大坂": "大坂", "那霸": "那霸", "札幌": "札幌", "东京": "东京", "加德满都": "加德满都",
+        'Phnom Penh': '金边', 'Singapore': '新加坡', 'Seoul': '首尔', 'Melbourne': '墨尔本', 'Perth': '珀斯', 'Sydney': '悉尼', 'Bern': '伯尔尼', "Fukuoka": "福冈", "Osaka": "大坂", "Naha": "那霸", "Sapporo": "札幌", "Tokyo": "东京", "Kathmandu": "加德满都",
                  'Belfast': '贝尔法斯特', 'London': '伦敦', 'Calgary': '卡尔加里', 'Halifax': '哈利法克斯', 'Montreal': '蒙特利尔', 'Ottawa': '渥太华', 'Quebec City': '魁北克城', 'Toronto': '多伦多', 'Vancouver': '温哥华', 'Abu Dhabi': '阿布扎比', 'Dubai': '迪拜', 'Belgrade': '贝尔格莱德', 'Paris': '巴黎',
                  'Ciudad Juarez': '华雷斯城', 'Guadalajara': '瓜达拉哈拉', 'Hermosillo': '埃莫西约', 'Matamoros': '马塔莫罗斯', 'Merida': '梅里达', 'Mexico City': '墨西哥城', 'Monterrey': '蒙特雷', 'Nogales': '诺加莱斯', 'Nuevo Laredo': '新拉雷多', 'Tijuana': '蒂华纳'}
-short = {'金边': 'pp', '新加坡': 'sg', '首尔': 'sel', '墨尔本': 'mel', '珀斯': 'per', '悉尼': 'syd', '伯尔尼': 'brn',
+short = {'金边': 'pp', '新加坡': 'sg', '首尔': 'sel', '墨尔本': 'mel', '珀斯': 'per', '悉尼': 'syd', '伯尔尼': 'brn', "福冈": "fuk", '大坂': 'itm', '那霸': 'oka', '札幌': 'cts', '东京': 'hnd', '加德满都': 'ktm',
         '贝尔法斯特': 'bfs', '伦敦': 'lcy', '卡尔加里': 'yyc', '哈利法克斯': 'yhz', '蒙特利尔': 'yul', '渥太华': 'yow', '魁北克城': 'yqb', '多伦多': 'yyz', '温哥华': 'yvr', '阿布扎比': 'auh', '迪拜': 'dxb', '贝尔格莱德': 'beg', '巴黎': 'cdg',
         'Belfast': 'bfs', 'London': 'lcy', 'Calgary': 'yyc', 'Halifax': 'yhz', 'Montreal': 'yul', 'Ottawa': 'yow', 'Quebec City': 'yqb', 'Toronto': 'yyz', 'Vancouver': 'yvr', 'Abu Dhabi': 'auh', 'Dubai': 'dxb', 'Belgrade': 'beg', 'Paris': 'cdg',
          '华雷斯城': 'cjs', '瓜达拉哈拉': 'gdl', '埃莫西约': 'hmo', '马塔莫罗斯': 'cvj', '梅里达': 'mid', '墨西哥城': 'mex', '蒙特雷': 'mty', '诺加莱斯': 'ols', '新拉雷多': 'nld', '蒂华纳': 'tij',
@@ -254,7 +254,7 @@ def refresh_homepage():
         elif 'mx' in tp:
             legend = ["Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
         else:
-            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
+            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼", "福冈", "大坂", "那霸", "札幌", "东京", "加德满都"]
         for city in legend:
             p = '%s/%s/%s' % (tp[0], city, cur)
             if os.path.exists(p):
@@ -274,7 +274,7 @@ def refresh_homepage():
         elif 'mx' in tp:
             legend = ["Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
         else:
-            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
+            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼", "福冈", "大坂", "那霸", "札幌", "东京", "加德满都"]
         legend = '"' + '","'.join([translate2chn[i] for i in legend]) + '"'
         result = result.replace('LEGEND', legend)
         xaxis = ""
@@ -288,7 +288,7 @@ def refresh_homepage():
         elif 'mx' in tp:
             legend = ["Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
         else:
-            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
+            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼", "福冈", "大坂", "那霸", "札幌", "东京", "加德满都"]
         for city in legend:
             series += '{name: "%s", type: "line", data: [' % translate2chn[city]
             for t in x:
@@ -306,7 +306,7 @@ def refresh_homepage():
         elif 'mx' in tp:
             legend = ["Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"]
         else:
-            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼"]
+            legend = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼", "福冈", "大坂", "那霸", "札幌", "东京", "加德满都"]
         table = '<thead><tr><th>地点</th>'
         for i in legend:
             table += '<th colspan="2"><a href="/global/crawler/' + \
