@@ -229,6 +229,20 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="oktm"> O1/O2/O3</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lktm"> L1/L2</label>
                             </td></tr>
+                            <tr><td align="right">曼谷：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbkk"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbkk"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbkk"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obkk"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbkk"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">清迈：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcnx"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bcnx"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hcnx"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ocnx"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lcnx"> L1/L2</label>
+                            </td></tr>
                             <tr><td align="right">贝尔法斯特：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fbfs"> F1/J1</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bbfs"> B1/B2</label>
@@ -319,6 +333,20 @@ The U.S. Consulate in City Y is able to accept his DS-160 even though it lists t
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hbeg"> H1B</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="obeg"> O1/O2/O3</label>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lbeg"> L1/L2</label>
+							</td></tr>
+                            <tr><td align="right">瓜亚基尔：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fgye"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="bgye"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="hgye"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ogye"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="lgye"> L1/L2</label>
+                            </td></tr>
+                            <tr><td align="right">基多：</td><td>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fuio"> F1/J1</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="buio"> B1/B2</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="huio"> H1B</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="ouio"> O1/O2/O3</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="luio"> L1/L2</label>
                             </td></tr>
                             <tr><td align="right">华雷斯城：</td><td>
                                 <label class="checkbox-inline"><input type="checkbox" name="visa[]" value="fcjs"> F1/J1</label>

@@ -303,7 +303,7 @@ def set_interval(func, visa_type, places, interval, rand, first_run=True, codes=
 def start_thread():
     logger.info("Start threads...")
 
-    places = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼", "福冈", "大坂", "那霸", "札幌", "东京", "加德满都"]
+    places = ["金边", "新加坡", "首尔", "墨尔本", "珀斯", "悉尼", "伯尔尼", "福冈", "大坂", "那霸", "札幌", "东京", "加德满都", "曼谷", "清迈"]
     cgi_config = {'F': (10, 60), 'B': (5, 120), 'H': (
         5, 180), 'O': (5, 180), 'L': (5, 180)}
     for visa_type, (number, interval) in cgi_config.items():
@@ -312,12 +312,12 @@ def start_thread():
         set_interval(crawler, visa_type, places, interval, 0)
 
     # ais-account: {'ais_email_F": xxx, "ais_pswd_F": xxx}
-    codes = ["en-gb", "en-ca", "en-ae", "en-rs", "en-mx", "en-fr"]
+    codes = ["en-gb", "en-ca", "en-ae", "en-rs", "en-mx", "en-fr", "en-ec"]
     places = ["Belfast", "London",
               "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver",
               "Abu Dhabi", "Dubai", "Belgrade",
               "Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana",
-              "Belgrade", "Paris"]
+              "Belgrade", "Paris", "Guayaquil", "Quito"]
     for visa_type in "FBHOL":
         for code in codes:
             session_op.set_session_pool_size(visa_type, code, 1, ais=True)
