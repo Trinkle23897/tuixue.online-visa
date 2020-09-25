@@ -253,6 +253,33 @@ def visa_select(visa_type, place, sid, requests):
     if r.status_code != 200:
         return None
 
+    # select visa priority
+    if place == "金边":
+        select_prior_code_uri = "https://cgifederal.secure.force.com/selectvisapriority"
+        r = requests.get(select_prior_code_uri, cookies=cookies, proxies=proxies)
+        if r.status_code != 200:
+            return None
+        soup = bs(r.text, "html.parser")
+        view_state = soup.find(id="com.salesforce.visualforce.ViewState").get("value")
+        view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
+        view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
+        view_state_csrf = soup.find(id="com.salesforce.visualforce.ViewStateCSRF").get("value")
+        inputs = soup.find_all("input")
+        type_codes = [x.get("value") for x in inputs if x.get("name") == "j_id0:SiteTemplate:theForm:SelectedVisaPriority"]
+        type_code = type_codes[0]
+        data = {
+            "j_id0:SiteTemplate:theForm": "j_id0:SiteTemplate:theForm",
+            "j_id0:SiteTemplate:theForm:j_id170": "继续",
+            "j_id0:SiteTemplate:theForm:SelectedVisaPriority": type_code,
+            "com.salesforce.visualforce.ViewState": view_state,
+            "com.salesforce.visualforce.ViewStateVersion": view_state_version,
+            "com.salesforce.visualforce.ViewStateMAC": view_state_mac,
+            "com.salesforce.visualforce.ViewStateCSRF": view_state_csrf
+        }
+        r = requests.post(select_prior_code_uri, data=data, cookies=cookies, proxies=proxies)
+        if r.status_code != 200:
+            return None
+
     # update data
     update_data_uri = "https://cgifederal.secure.force.com/updatedata"
     r = requests.get(update_data_uri, cookies=cookies, proxies=proxies)
