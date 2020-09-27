@@ -25,7 +25,7 @@
         <div class="row">
             <div class="span12">
                 <center>
-                <h1 class="text-center" id="title">预约时间变化单日统计图</h1><br><br><br><br><br><br>
+                <h1 class="text-center" id="title">预约时间变化单日统计图</h1><br><br><br><br><br><br><br><br><br>
 <!--				看情况是每个小时的01/11/21/31/41/51分钟放出来名额<br><br>-->
 <?php
 $y = $_GET['y'];
@@ -39,7 +39,7 @@ else
 if ($type == 'J') $type = 'F';
 else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O' && $type != 'L')
     $type = 'F';
-$loc = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Paris", "Belgrade", "Guayaquil", "Quito", "Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"];
+$loc = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Paris", "Belgrade", "Guayaquil", "Quito", "Ankara", "Istanbul", "Athens", "Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"];
 $raw = [];
 $data = [];
 $x = [];
