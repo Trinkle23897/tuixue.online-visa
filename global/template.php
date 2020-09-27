@@ -105,29 +105,48 @@ else echo '<html>
                     <li role="presentation" class=""><a href="#Lais" role="tab" id="Lais-tab" data-toggle="tab" aria-controls="Lais" aria-expanded="false">L-ais</a></li>
                     <li role="presentation" class=""><a href="#Lmx" role="tab" id="Lmx-tab" data-toggle="tab" aria-controls="Lmx" aria-expanded="false">L-mx</a></li>
                     <li role="presentation" class=""><a href="#email" role="tab" id="email-tab" data-toggle="tab" aria-controls="email" aria-expanded="false">邮件通知</a></li>
-                    <li role="presentation" class=""><a href="#notes" role="tab" id="notes-tab" data-toggle="tab" aria-controls="notes" aria-expanded="false">注意事项</a></li>
+                    <li role="presentation" class=""><a href="#notes" role="tab" id="notes-tab" data-toggle="tab" aria-controls="notes" aria-expanded="false"><b>柬埔寨签证注意事项 (NEW!)</b></a></li>
                     <li role="presentation" class=""><a href="#code" role="tab" id="code-tab" data-toggle="tab" aria-controls="code" aria-expanded="false">关于</a></li>
                 </ul>
                 <div id="myTabContent" class="tab-content">
 					TBD_PANE
 					<div role="tabpanel" class="tab-pane fade" id="notes" aria-labelledby="notes-tab">
 <p></p>
-<p>这里总结了一些<a href="#disqus_thread">需要翻墙的评论区</a>中出现的约签证的技巧和注意事项</p>
-<p>目前测量结果是每个小时第48分04秒放（7-8个小时之前别人退掉的）名额，网站上的更新没法做到秒级别的更新，因此会稍稍慢于蹲点同学的获取时间（不过这些跳下来的尖峰都是几个人退出来的，不算批量放位置，没几分钟就被抢光了）</p>
-<p>记录在案的大批量放位置的时间：北京07/07 15:31、07/08 16:15、08/12 08:49，成都04/21 10:24、07/17 10:39，广州04/17 13:38、05/13 09:25、06/03 13:19、06/17 11:26、06/24 09:07、07/01 09:33，上海04/13 11:56、04/23 15:28、05/14 15:25、06/01 16:03、06/04 10:26、06/09 11:53，沈阳 04/24 09:04、04/28 08:41、05/13 11:27，（香港比较迷），看起来都在早上或者下午</p>
-<p>一般来说，大批量放位置之后会有人不停地退和选，因此在放位置之后的一两天都有很大概率能捡漏。</p>
-<p>(04.22) <a href="http://disq.us/p/28sd6fs">JJHunter &amp; YJX</a><br>大使馆cgi账号在你频繁刷新面签时间的情况下会被冻结3天账号不能登录。没有任何办法提前解封，显示：Your account has been frozen for suspicious activity, and you will not be able to access it for up to 72 hours.<br>一个被封前兆是在首页上出现"You are approaching the maximum number of times you may view this page. Please complete your transaction at this time."</p>
-<p>(04.24) <a href="http://disq.us/p/28u3jmx">尤大师</a><br>注意一个美签收据只能约三次，即使约了早了但到时候领馆没开（譬如之前广州可以约3月4月），被动取消竟然也算在次数里..可怜了160刀<br>问过领馆穿红衣的那些小姐姐们，是说只能约三次（也就是取消两次），担心160刀没了所以没试过<br>
-<p>(04.29) <a href="http://disq.us/p/28x22pg">qwezxc</a><br>香港入境更新：检疫政策持续到6.7，大家要是想来香港签还是再好好考虑一下吧。最简单的理解适用于大部分关注香港办签证的人： 内地游客身份从内地来港 或者 目前身在海外想来香港以过境签来香港。 这两种都不可以来香港。即便从内地出发，游客的签证只有7天，打不到14天，会被拒绝入境。过境签更不可能</p>
-<p>(05.04) <a href="http://disq.us/p/2917d5l">Rishi &amp; Claire</a><br>Q: 请问我之前预约了一个地方，ds160然后费用也交了。现在想换个地方重新填了个ds160，那我要再重新缴费换一个receipt number吗？<br>A: 不用重新缴费，在profile那儿改一下DS160号码就行，DS160可以填很多个的<br>Q: 那再请问下如果已经约上了一个地方， reschedule appointment是会回到开始的界面重新填写ds160这些信息，还是直接只能回到那个已经约上了的地方选时间那里？<br>A: reschedule只能改时间不能改地址，想要换地方的话，只能取消再预约。DS160在profile那儿可以随时改的，你预约时候用的哪个不是很重要，只要最后面试前保持一致就行<br>Q: 那reschedule会有风险吗？比如既没有选到新的更早的时间的，旧的预约也没了:(<br>A: 其实你自己试一试就知道了。。。你选择了新的时间，以前的才会作废，你没有选新的时间，以前的就当然还有效。。。</p>
-<p>(05.14) <a href="http://disq.us/p/299bl3h">Billzhaox</a><br>肉身测试了一波重新预约的次数限制，重新约了3次，加上最开始的一次也就是总共约过4次，都是同一领馆只是更改时间，现在点进重新预约后出现“如果取消本次预约，您将超出取消预约的许可上限，您必须重新缴纳可机读签证申请费，才能继续预约。“字样，说明现在只剩最后一次修改机会。但我感觉这个次数限制并不是永久固定的，具体是多少次官方也没有一个说法，一切还是以系统提示为准吧。</p>
-<p>(05.21) <a href="http://disq.us/p/29e9frs">qtwzhz</a><br>大家可以申请加急，通过以后可以预约7月8月的。前天申请的，今天预约到了7月6号。<br>沈阳的，陈述理由就是说“我收到了某某学校的offer,开学日前是9月8号，但是可以预约的时间只有9月25号，非常希望能赶上开学，希望能得到加急” 差不多这样。要用英文写。附件附上了i20和offer</p>
-<p>(05.21) <a href="http://disq.us/p/29ecgw9">脱氧和糖_SugarPlus</a><br>关于沈阳大使馆取消周三面签的衍生顾虑，我今晚打客服问了其他大使馆周三的开放情况，大使馆表示暂时没有收到其他领事馆周三面签会被取消的消息，并且他们也不知道沈阳周三面签被取消的原因。要是约上其他大使馆周三面签的小伙伴还是可以保持信心！</p>
-<p>(05.27) <a href="http://disq.us/p/29ip833">Jiayi</a><br>问了下大使馆，说DS160不同地方是可以通用的，比如写了北京也可以去广州（意味着蹲点可以不用开5个DS-160？）。但是只能内地5个通用
-<a href="https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/forms/ds-160-online-nonimmigrant-visa-application/ds-160-faqs.html">看这里</a><br>
-The U.S. Consulate in City Y is able to accept his DS-160 even though it lists the U.S. Embassy in City X as the location where he originally intended to submit his application.<br>
-尽管美国驻Y市的领事馆将他的DS-160申请表中的美国驻X市大使馆列为他最初打算提交申请的地点，但Y市的美国领事馆还是能够接受他的DS-160。</p>
-<p>(06.17) <a href="http://disq.us/p/29zfwsu">Jason</a><br>国内的几个领馆应该是可以随便换的，取消后冷却个一天就可以换个使馆重新约时间了。如果想换去别的国家、或者港台地区的使馆，那需要填写“提交反馈”来变更面谈国家。似乎也不必重新交钱 </p>
+<center><p>这里总结了一些去柬埔寨办理美签的注意事项，签证预约时间往上看就有</p></center>
+<h3>入境准备</h3>
+<p>0. 签证预约位置比较紧张，最好先在国内预约好之后再过来，不然呆多久都不能确定下来</p>
+<p>1. 办理柬埔寨商务签证：费用为 255 RMB（单次往返足够了，一年多次那种需要工作证明，并且柬埔寨当地可以续签），邮寄【护照、两张白底两寸彩照】到相应领事馆即可，从发出到收回大概3天时间</p>
+<p>2. 办理包含新冠状病毒的商业保险（一个月有效期，从入境之日起开始算）：需要两份彩色打印的保险证明（要红章，柬埔寨政府会收走留档），费用约为 150~200 RMB</p>
+<p>3. 办理国内核酸检测证明（中英文版本都要，英文版由医院出具或者可以自己找有资质的翻译机构翻译，都需要红章）：注意证件号要填写护照号而不是身份证号，并要求送检时间和入境时间间隔不超过72小时，费用约为 120-200 RMB</p>
+<p>4. 准备 2000刀 的押金，入境下飞机时在海关缴纳，第 13 天二次核酸检测之后扣除大概 300刀 退还，去银行取出押金。</p>
+<p>5. 建议开通国际漫游流量套餐，到柬埔寨之后可更换为当地电话卡（2刀一张卡，单月套餐约 10刀）</p>
+<p>6. 国内机票去各大航空公司官网APP查询，目前厦门航空最便宜（3000~5000，其他公司大概8000，国航9000）</p>
+<h3>隔离及日常生活</h3>
+<p>1. 在柬埔寨境内至少需要做三次核酸检测：刚入境、到达第13天、离境。前两次核酸检测费用和集中隔离酒店1~2天的住宿费用包含在押金扣除的 300刀 中，最后一次的离境检测需要花费约 130刀</p>
+<p>2. 如果入境柬埔寨航班上所有乘客在当地做第一次核酸检测结果均为阴性，那么只会被强制隔离两天，之后可以自行寻找酒店入住和自由活动（一般都是两天）</p>
+<p>3. 接机服务实际上是从隔离酒店接送出来的服务，不是从机场出来的服务……</p>
+<p>4. 柬埔寨当地支持瑞尔和美元的流通，1 人民币 ≈ 600 柬埔寨瑞尔，1 美元 ≈ 4100 柬埔寨瑞尔；但是一般来说比如一份快餐5刀，给两万瑞尔也是可以接受的（于是就省下了一点小钱）</p>
+<p>5. 打车软件有passApp、grab、携程海外打车</p>
+<p>6. 外卖软件有柬单点（国人多，可以支付宝）、foodpanda、nham24，一份饭大概5刀</p>
+<p>7. 超市有永旺超市（分一期和二期）和marko，可以刷visa</p>
+<p>8. 电源电压接口和国内一样；打印店挺多</p>
+<p>9. 携程一晚上普通房含早餐含税一晚上大概 200 RMB，高级一点的有早餐、有厨房、冰箱和微波炉大概 450 RMB 一晚上。此外，<a href="javascript:alert(\'微信：柬埔寨北京人，18618211016\')">这个老哥</a>包了一个<!--a href="/upload/1641687707.jpg"-->酒店，里面中国留学生居多，可以抱团取暖，价格也差不多是 30 美金一天，基本不怎么挣钱……</p>
+<p>10. 柬埔寨属于热带雨林气候，登革热比较严重，一定要注意防蚊，不要在大街上站太久</p>
+<p>11. 在大街上走路的时候不要边走边打电话，也尽量不要背包，飞车抢夺的事情时候发生，晚上尽量不要单独出门，可结伴多人出行</p>
+<h3>关于签证</h3>
+<p>1. 修改CGI信息至柬埔寨：如果你的CGI Profile在国内，打 (703)665-7346之后告知护照号姓名生日，选English、Non-Immigrant、Schedule、Have DS-160转接，说要求transfer record profile to Cambodia就行，两分钟操作完成；可以参考 <a href=https://www.ustraveldocs.com/cn_zh/cn-main-contactus.asp>https://www.ustraveldocs.com/cn_zh/cn-main-contactus.asp</a> 获取更多联系方式，大概需要两个工作日转移完毕</p>
+<p>2. 需要填写新的DS-160表格，选择Phnom Penh作为签证地点，并打印Payment Slip，要到金边银行柜台交钱，付款后一个工作日之后到账，可以开始预约面签时间，需要预约到入境14天之后</p>
+<p>3. 签证预约选项自9月20日起区分了resident和non-resident，选后者进行预约</p>
+<p>4. 签证预约费用：需要160刀，还是<a href="javascript:alert(\'微信：柬埔寨北京人，18618211016\')">上面那个包酒店的老哥</a>，额外花费 20刀 就能代缴</p>
+<p>5. 美领馆需要到达柬埔寨之日起 掐头去尾14天 之后才能进入，如果时间不够的话不让你进，相当于白白浪费了一个预约</p>
+<p>6. 面签完成之后7天内可以拿回护照</p>
+<h3>离境或继续停留</h3>
+<p>1. 离境前需要做一次核酸检测，同样要求送检时间和入境时间不超过72小时，需要到niph医院（官方指定的离境检测机构）做离境检测</p>
+<p>2. 如果被check或者拒签的话，可以在柬埔寨本地先续签商务签证，选择继续等待；或者回国。需要重新预约签证位置，第二次的vo一定和第一次的不一样，拒签也是可以重新预约，但是如果预约了很多次，所有的vo都被过了一遍之后都是没有issue，那么就不能再次预约了</p>
+<h3>其他</h3>
+<p>一些中介比如有半包服务，大概在三四万这样，全包服务不低于五万甚至更多；但是从上面看下来其实不用花那么多钱，<b>那些钱其实是完全没有必要花费的</b>，而且万一在柬埔寨当地被check的话他们不会退钱，沉没成本较大。</p>
+<p>转发请声明出处: <a href="/global/#notes">https://tuixue.online/global/#notes</a></p>
+<center><h3>祝大家一路顺利！</h3></center>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="email" aria-labelledby="email-tab">
                     <br>
