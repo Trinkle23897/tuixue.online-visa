@@ -45,6 +45,8 @@ raw_info = raw = [
     ('安卡拉', 'Ankara', 'esb', 'ais'),
     ('伊斯坦布尔', 'Istanbul', 'ist', 'ais'),
     ('雅典', 'Athens', 'ath', 'ais'),
+    ('波哥大', 'Bogota', 'bog', 'ais'),
+    ('布里奇顿', 'Bridgetown', 'bgi', 'ais'),
     ('华雷斯城', 'Ciudad Juarez', 'cjs', 'ais'),
     ('瓜达拉哈拉', 'Guadalajara', 'gdl', 'ais'),
     ('埃莫西约', 'Hermosillo', 'hmo', 'ais'),

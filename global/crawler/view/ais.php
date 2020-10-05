@@ -39,7 +39,8 @@ else
 if ($type == 'J') $type = 'F';
 else if ($type != 'F' && $type != 'B' && $type != 'H' && $type != 'O' && $type != 'L')
     $type = 'F';
-$loc = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Paris", "Belgrade", "Guayaquil", "Quito", "Ankara", "Istanbul", "Athens", "Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"];
+$loc = ["Belfast", "London", "Calgary", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Abu Dhabi", "Dubai", "Paris", "Belgrade", "Guayaquil", "Quito", "Ankara", "Istanbul", "Athens", "Bogota", "Bridgetown",
+	"Ciudad Juarez", "Guadalajara", "Hermosillo", "Matamoros", "Merida", "Mexico City", "Monterrey", "Nogales", "Nuevo Laredo", "Tijuana"];
 $raw = [];
 $data = [];
 $x = [];
