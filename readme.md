@@ -22,9 +22,7 @@
 
 国内版（`/visa`）和国际版（`/global`）的前端部署其实差不多，在对应文件夹下找到 `lite_visa.py` 之后启动起来就行，这个是个定时拉数据的脚本。在获取新的数据之后会调用 `notify.py` 更新
 
----
-
-以下是各种接口的定义：（包含了不少历史遗留问题）
+# Website Documentation
 
 ## 日期存储
 
@@ -60,6 +58,30 @@ json文件格式是
 
 举个例子，比如有一条叫做 `"北京-2020/04/05": "2020/11/29"` 的数据，意思是北京这个地方在4月5号访问cgi网站的时候，显示最早日期是11月29日。
 
-## 邮件相关
+## 邮件系统
 
-TODO
+邮件系统主文件夹位于 `/asiv`，详情参考对应文件夹下的[readme](asiv/readme.md)
+
+发送邮件采取（我自己搭的）第三方服务，只需要http post到一个api链接即可，参数为：
+
+| Query     | Type   | Required | Explanation                                                  |
+| --------- | ------ | -------- | ------------------------------------------------------------ |
+| content   | string | True     | 邮件内容                                                     |
+| receivers | string | True     | 邮箱列表，不同邮箱由 `@@@` 拼接起来，比如 `a@gmail.com@@@b@qq.com` |
+| title     | string | True     | 邮件标题                                                     |
+| sendfrom  | string | True     | 邮件中显示的发件人                                           |
+| sendto    | string | True     | 邮件中显示的收件人                                           |
+
+## QQ、Telegram通知
+
+QQ使用mirai第三方框架，部署在前端服务器中，需要的参数为：
+
+- `mirai_base_uri`：string，mirai的java接口地址
+- `mirai_auth_key`：string，认证秘钥
+- `qq_num`：string，机器人的qq号
+- `qq_group_id`：List[string]，通知群的号码
+
+Telegram本身支持API调用来进行通知，需要的参数为：
+
+- `tg_bot_token`：string，Telegram bot的id
+- `tg_chat_id`：string，channel的id
