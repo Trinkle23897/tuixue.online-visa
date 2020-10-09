@@ -62,16 +62,6 @@ json文件格式是
 
 邮件系统主文件夹位于 `/asiv`，详情参考对应文件夹下的[readme](asiv/readme.md)
 
-发送邮件采取（我自己搭的）第三方服务，只需要http post到一个api链接即可，参数为：
-
-| Query     | Type   | Required | Explanation                                                  |
-| --------- | ------ | -------- | ------------------------------------------------------------ |
-| content   | string | True     | 邮件内容                                                     |
-| receivers | string | True     | 邮箱列表，不同邮箱由 `@@@` 拼接起来，比如 `a@gmail.com@@@b@qq.com` |
-| title     | string | True     | 邮件标题                                                     |
-| sendfrom  | string | True     | 邮件中显示的发件人                                           |
-| sendto    | string | True     | 邮件中显示的收件人                                           |
-
 ## QQ、Telegram通知
 
 QQ使用mirai第三方框架，部署在前端服务器中，需要的参数为：
