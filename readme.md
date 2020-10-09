@@ -44,7 +44,7 @@ json文件存放于 `/visa/visa-{type}.json`、`/visa/visa-{type}-last.json` 和
 
 json文件格式是
 
-```json
+```
 {
     "time": "{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}",
     "index": ["{YYYY}/{MM}/{DD}", "{YYYY}/{MM}/{DD}", ...],
