@@ -2,6 +2,17 @@
 
 使用 Python Django 框架构建，配置文件为 `tuixue/setting.py`
 
+## 0. 部署
+
+安装环境
+
+```bash
+pip3 install uwsgi django selenium
+# and install chrome-driver
+```
+
+运行：`./run.sh` 或者 `python3 manage.py runserver 0:8888`
+
 ## 1. 服务器连接检测
 
 ### 请求地址 
