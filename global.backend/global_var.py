@@ -6,6 +6,7 @@ from typing import List
 from threading import Lock
 
 DATA_PATH = os.path.join(os.curdir, 'data')
+EMAIL_SUBSCRIPTION_PATH = os.path.join(os.curdir, 'data', 'subscription.json')
 
 CRAWLER_API = {
     'register': {

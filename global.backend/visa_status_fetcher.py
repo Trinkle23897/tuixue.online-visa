@@ -16,6 +16,7 @@ import requests
 
 import util
 import global_var as G
+from notifier import Notifier
 from session_operation import Session, SessionCache
 
 
@@ -135,19 +136,31 @@ class VisaFetcher:
     @staticmethod
     def save_fetched_data(visa_type: str, location: str, available_visa_date: List[int]):
         """ Write the visa status to the end of the file."""
-        filepath = os.path.join(G.DATA_PATH, visa_type, location, datetime.now().strftime('%Y/%m/%d'))
-        os.makedirs(os.path.join(*filepath.split('/')[:-1]), exist_ok=True)
+        file_path = os.path.join(G.DATA_PATH, visa_type, location, datetime.now().strftime('%Y/%m/%d'))
+        os.makedirs(os.path.join(*file_path.split('/')[:-1]), exist_ok=True)
 
-        if not os.path.exists(filepath):
-            open(filepath, 'w').close()  # /{location}/{YYYY}/{MM}/{DD} will be an empty file instead of 404
+        if not os.path.exists(file_path):
+            open(file_path, 'w').close()  # /{location}/{YYYY}/{MM}/{DD} will be an empty file instead of 404
 
         if len(set(available_visa_date)) == 1 and set(available_visa_date).pop() == 0:  # unwritable date 0/0/0
             LOGGER.debug('Un-writable result for %s-%s: %d/%d/%d', visa_type, location, *available_visa_date)
             return
 
         time_of_update = datetime.now().strftime('%H:%M')
+
+        # decide if a notification should be send BEFORE writing the new data into file
+        sent_notification = Notifier(visa_type, location).notify_visa_status_change(file_path, available_visa_date)
+        if sent_notification:
+            LOGGER.info(
+                'Sent notification for %s-%s: %s %d/%d/%d',
+                visa_type,
+                location,
+                time_of_update,
+                *available_visa_date
+            )
+
         available_dt_str = '/'.join([str(dt_seg) for dt_seg in available_visa_date])
-        with open(filepath, 'a+') as f:
+        with open(file_path, 'a+') as f:
             f.write(f'{time_of_update} {available_dt_str}\n')
             LOGGER.debug('WRITE SUCCESS - %s-%s "%s %s"', visa_type, location, time_of_update, available_dt_str)
 

@@ -51,6 +51,8 @@ def get_earliest_dt(file_path: str):
 
     if len(dt_lst) == 0:
         raise EmptyDataFile()
+    elif len(dt_lst) == 1:
+        return dt_lst[0]
     else:
         return min(*dt_lst)
 
