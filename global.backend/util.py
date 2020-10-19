@@ -15,7 +15,7 @@ def init_logger(log_name: str, log_dir: str, debug: bool = False):
         filename=os.path.join(log_dir, f'{log_name}.log'),
         when='midnight',
         interval=1,
-        )
+    )
     file_handler.suffix = '%Y%m%d'
     file_handler.setFormatter(fmt=log_fmt)
 
@@ -33,13 +33,13 @@ def init_logger(log_name: str, log_dir: str, debug: bool = False):
 def construct_data_file_path(
     visa_type: str,
     location: str,
-    dt_str: str=datetime.now().strftime('%Y/%m/%d')
+    dt_str: str = datetime.now().strftime('%Y/%m/%d'),
 ):
     """ Construct data file path."""
     return os.path.join(G.DATA_PATH, visa_type, location, dt_str)
 
 
-def file_line_to_dt(line: str, fmt='%Y/%m/%d'):
+def file_line_to_dt(line: str, fmt: str = '%Y/%m/%d'):
     """ Convert a line in data file to datetime object"""
     return datetime.strptime(line.strip().split()[1], fmt)
 

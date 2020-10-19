@@ -134,7 +134,7 @@ VISA_TYPE_DETAILS = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L
 # CGI/AIS_LOCATION are the parameters sent to crawler backend to retrieve session data
 CGI_LOCATION_DOMESTIC = ['北京', '成都', '广州', '上海', '沈阳', '香港', '台北']
 CGI_LOCATION_GLOBAL = ['金边', '新加坡', '首尔', '墨尔本', '珀斯', '悉尼', '伯尔尼', '福冈', '大坂', '那霸', '札幌', '东京', '加德满都', '曼谷', '清迈']
-CGI_LOCATION = [*CGI_LOCATION_DOMESTIC, *CGI_LOCATION_GLOBAL]
+CGI_LOCATION = CGI_LOCATION_DOMESTIC + CGI_LOCATION_GLOBAL
 AIS_LOCATION = ['en-gb', 'en-ca', 'en-ae', 'en-rs', 'en-mx', 'en-fr', 'en-ec', 'en-tr', 'en-gr', 'en-co', 'en-bb']
 SYS_LOCATION = {'cgi': CGI_LOCATION, 'ais': AIS_LOCATION}
 
