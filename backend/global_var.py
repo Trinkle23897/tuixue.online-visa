@@ -2,8 +2,8 @@
 
 import os
 from queue import Queue
-from typing import List
 from threading import Lock
+from typing import List, Optional
 
 DATA_PATH = os.path.join(os.curdir, 'data')
 EMAIL_SUBSCRIPTION_PATH = os.path.join(os.curdir, 'data', 'subscription.json')
@@ -22,13 +22,12 @@ CRAWLER_API = {
 SESSION_UPDATE_QUEUE = Queue()
 
 REGION_LOCATION_MAPPING = {
-    'SOUTH_EAST_ASIA': ['pp', 'sg', 'bkk', 'cnx'],
+    'SOUTH_EAST_ASIA': ['pp', 'sg', 'bkk', 'cnx', 'ktm'],
     'EAST_ASIA': [
         'sel', 'fuk', 'itm', 'oka', 'cts', 'hnd',
         'bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp',
     ],
     'WEST_ASIA': ['auh', 'dxb', 'esb', 'ist'],
-    'SOUTH_ASIA': ['ktm'],
     'OCEANIA': ['mel', 'per', 'syd'],
     'WEST_EUROPE': ['brn', 'bfs', 'lcy', 'cdg', 'ath'],
     'EAST_EUROPE': ['beg'],
@@ -161,23 +160,31 @@ LOCK = Lock()
 class USEmbassy:
     """ An abstraction represent a U.S. Embassy or Consulate"""
     @classmethod
-    def get_embassy_lst(cls):
+    def get_embassy_lst(cls) -> List['__class__']:
         """ Return the list of USEmbassy objects."""
         return [cls(*embassy_attr) for embassy_attr in EMBASSY_LOC]
 
-    def __init__(self, name_cn: str, name_en: str, code: str, sys: str):
+    @classmethod
+    def get_embassy_by_loc(cls, loc: str) -> Optional['__class__']:
+        """ Return an USEbassy object by the attribute."""
+        return next((emb for emb in cls.get_embassy_lst() if emb.location == loc), None)
+
+    def __init__(self, name_cn: str, name_en: str, code: str, sys: str) -> None:
         self.name_cn = name_cn
         self.name_en = name_en
         self.code = code
         self.sys = sys
 
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(name_cn={self.name_cn}, name_en={self.name_cn}, code={self.code})'
+
     @property
-    def location(self):
+    def location(self) -> str:
         """ Return the location value for data storage."""
         return self.name_cn if self.is_cgi else self.name_en
 
     @property
-    def country(self):
+    def country(self) -> str:
         """ Return the ISO 3166-3 country code of the Embassy/Consulate."""
         for continent, country_dct in CONTINENT_COUNTRY_LOCATION_MAPPING.items():
             for country, embassy_lst in country_dct.items():
@@ -185,7 +192,7 @@ class USEmbassy:
                     return country
 
     @property
-    def continent(self):
+    def continent(self) -> str:
         """ Return the continent UPPER_SNAKE_CASE of the Embassy/Consulate."""
         for continent, country_dct in CONTINENT_COUNTRY_LOCATION_MAPPING.items():
             for country, embassy_lst in country_dct.items():
@@ -193,19 +200,19 @@ class USEmbassy:
                     return continent
 
     @property
-    def region(self):
+    def region(self) -> str:
         """ Return the region UPPER_SNAKE_CASE of the Embassy/Consulate."""
         for region, embassy_lst in REGION_LOCATION_MAPPING.items():
             if self.code in embassy_lst:
                 return region
 
     @property
-    def is_ais(self):
+    def is_ais(self) -> bool:
         """ Return True if the embassy/consulate uses AIS system."""
         return self.sys == 'ais'
 
     @property
-    def is_cgi(self):
+    def is_cgi(self) -> bool:
         """ Return True if the embassy.consulate uses CGI system."""
         return self.sys == 'cgi'
 

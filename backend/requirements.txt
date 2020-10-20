@@ -1,6 +1,7 @@
 certifi==2020.6.20
 chardet==3.0.4
 click==7.1.2
+dnspython==2.0.0
 fastapi==0.61.1
 flake8==3.8.4
 h11==0.11.0
@@ -10,6 +11,7 @@ mccabe==0.6.1
 pycodestyle==2.6.0
 pydantic==1.6.1
 pyflakes==2.2.0
+pymongo==3.11.0
 requests==2.24.0
 starlette==0.13.6
 typing-extensions==3.7.4.3

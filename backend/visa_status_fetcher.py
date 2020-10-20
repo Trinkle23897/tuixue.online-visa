@@ -16,6 +16,7 @@ import requests
 
 import util
 import global_var as G
+import tuixue_mongodb as DB
 from notifier import Notifier
 from session_operation import Session, SessionCache
 
@@ -31,9 +32,6 @@ def init():
     parser.add_argument('--log_name', type=str, default='visa_fetcher', help='name of log file')
     parser.add_argument('--debug', action="store_true", default=False, help='log debug information')
     args = parser.parse_args()
-
-    if args.target.lower() not in ('cgi', 'ais'):
-        raise TypeError('The --target argument can only be "ais" or "cgi"')
 
     if not os.path.exists(args.log_dir):
         os.mkdir(args.log_dir)
@@ -136,33 +134,49 @@ class VisaFetcher:
     @staticmethod
     def save_fetched_data(visa_type: str, location: str, available_visa_date: List[int]):
         """ Write the visa status to the end of the file."""
-        file_path = os.path.join(G.DATA_PATH, visa_type, location, datetime.now().strftime('%Y/%m/%d'))
-        os.makedirs(os.path.join(*file_path.split('/')[:-1]), exist_ok=True)
-
-        if not os.path.exists(file_path):
-            open(file_path, 'w').close()  # /{location}/{YYYY}/{MM}/{DD} will be an empty file instead of 404
-
-        if len(set(available_visa_date)) == 1 and set(available_visa_date).pop() == 0:  # unwritable date 0/0/0
-            LOGGER.debug('Un-writable result for %s-%s: %d/%d/%d', visa_type, location, *available_visa_date)
-            return
-
-        time_of_update = datetime.now().strftime('%H:%M')
+        logging_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        year, month, day = available_visa_date
+        available_date = None if year == month == day == 0 else datetime(year, month, day)
+        embassy = G.USEmbassy.get_embassy_by_loc(location)
 
         # decide if a notification should be send BEFORE writing the new data into file
-        sent_notification = Notifier(visa_type, location).notify_visa_status_change(file_path, available_visa_date)
+        sent_notification = Notifier.notify_visa_status_change(visa_type, embassy, available_date)
         if sent_notification:
             LOGGER.info(
-                'Sent notification for %s-%s: %s %d/%d/%d',
+                'Sent notification for %s - %s-%s %s',
+                logging_time,
                 visa_type,
                 location,
-                time_of_update,
-                *available_visa_date
+                available_date
             )
 
-        available_dt_str = '/'.join([str(dt_seg) for dt_seg in available_visa_date])
-        with open(file_path, 'a+') as f:
-            f.write(f'{time_of_update} {available_dt_str}\n')
-            LOGGER.debug('WRITE SUCCESS - %s-%s "%s %s"', visa_type, location, time_of_update, available_dt_str)
+        try:
+            LOGGER.debug(
+                'WRITING TO DATABASE %s - %s-%s %s',
+                logging_time,
+                visa_type,
+                location,
+                available_date
+            )
+            writting_start = datetime.now()
+            DB.VisaStatus.save_fetched_visa_status(
+                visa_type=visa_type,
+                embassy_code=embassy.code,
+                write_time=datetime.now(),
+                available_date=available_date
+            )
+            writting_finish = datetime.now()
+        except:
+            LOGGER.error('Catch an error when saveing fetched result to database', traceback.format_exc())
+        else:
+            LOGGER.debug(
+                'WRITE TO DATABASE SUCCESS %s - %s-%s %s',
+                logging_time,
+                visa_type,
+                location,
+                available_date
+            )
+            LOGGER.debug('WRITTING TAKES %f seconds', (writting_finish - writting_start).total_seconds())
 
     @staticmethod
     def check_crawler_server_connection():
@@ -208,9 +222,9 @@ class VisaFetcher:
                 LOGGER.warning('%s, %s, %s, FAILED - No Session', now, visa_type, location)
                 return
 
-            if session.is_ais:
+            if session.sys == 'ais':
                 endpoint = G.CRAWLER_API['refresh']['ais'].format(location, session.schedule_id, session.session)
-            elif session.is_cgi:
+            elif session.sys == 'cgi':
                 endpoint = G.CRAWLER_API['refresh']['cgi'].format(session.session)
 
             url = '{}{}'.format(G.value('current_crawler_node', ''), endpoint)
@@ -234,12 +248,12 @@ class VisaFetcher:
                     SESSION_CACHE.produce_new_session_request(visa_type, location, session)
                     return
 
-                if session.is_cgi:
+                if session.sys == 'cgi':
                     dt_segments = [int(dt_seg) for dt_seg in result['msg'].split('-')]
                     cls.save_fetched_data(visa_type, location, dt_segments)
                     LOGGER.info('%s, %s, %s, SUCCESS - %d/%d/%d', now, visa_type, location, *dt_segments)
 
-                elif session.is_ais:
+                elif session.sys == 'ais':
                     date_lst = result['msg']
                     for city, dt_segments in date_lst:
                         if city in G.AIS_MONITORING_CITY:
@@ -254,8 +268,7 @@ class VisaFetcher:
                             )
 
                     new_session = Session(
-                        session=result['session'],
-                        schedule_id=session.schedule_id,
+                        session=(result['session'], session.schedule_id),
                         sys=session.sys
                     )
                     SESSION_CACHE.replace_session(visa_type, location, session, new_session)
@@ -281,14 +294,18 @@ class VisaFetcher:
             if session is None:
                 LOGGER.error('A session object from %s-%s is NoneType', visa_type, location)  # just in case
 
+            if not SESSION_CACHE.contain_session(visa_type, location, session):
+                LOGGER.debug('Session %s is no longer in the %s-%s session list.', session, visa_type, location)
+                continue
+
             try:
-                if session.is_ais:
+                if session.sys == 'ais':
                     email = G.value(f'ais_email_{visa_type}', None)
                     password = G.value(f'ais_pswd_{visa_type}', None)
 
                     LOGGER.debug('Fetching new session for AIS: %s, %s, %s', location, email, password)
                     endpoint = G.CRAWLER_API['register']['ais'].format(location, email, password)
-                elif session.is_cgi:
+                elif session.sys == 'cgi':
                     endpoint = G.CRAWLER_API['register']['cgi'].format(visa_type, location)
 
                 url = '{}{}'.format(G.value('current_crawler_node', ''), endpoint)
@@ -312,10 +329,10 @@ class VisaFetcher:
                     continue
 
                 # Generate new session object and update cache
-                if session.is_ais:
-                    new_session = Session(result['session'], result['id'], sys='ais')
+                if session.sys == 'ais':
+                    new_session = Session((result['session'], result['id']), sys='ais')
                     date_available = bool(len(result['msg']))
-                elif session.is_cgi:
+                elif session.sys == 'cgi':
                     new_session = Session(result['session'], sys='cgi')
                     date_available = bool(tuple([dt_seg for dt_seg in result['msg'].split('-')]))  # Always True
 

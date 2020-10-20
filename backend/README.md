@@ -1,12 +1,30 @@
-# Global Backend API
+# Backend API
+
+## Intro
 
 This folder contains the code that:
 
-1. Fetch and udpate available visa appointment time data from crawler servers.
+1. Fetch and udpate available visa appointment date for both domestic and global embassy/consulate from crawler servers.
 2. Send notification to the users who subscribe via email and other social media platforms
-3. Expose RESTful api to provide data for tuixue global frontend views and other dope developers(a.k.a desperate CS students)
+3. Expose RESTful api to provide data for tuixue global frontend views and other dope developers (a.k.a desperate CS students)
 
-This api server should be designed to *be extensible to serve as domestic api with another set of secret files*. Please review the PR based on this principle :)
+~~This api server should be designed to *be extensible to serve as domestic api with another set of secret files*. Please review the PR based on this principle :)~~
+
+## Deployment and Dependency
+
+### Python Version
+
+**This code base is developed with _Python v3.7.8_**
+
+### Dependency
+
+The api server is developed with [FastAPI](https://fastapi.tiangolo.com/), which is said to be one of the most performant api framework in Python, better than Flask and Django. Personally I find it more pythonic (than Django) and better documented (than Flask).
+
+The choice of database (which is new XD) will be [MongoDB](https://www.mongodb.com/) NoSQL database, which suits our use case better (imo).
+
+### Configuration Files
+
+The necessary configuration files for accessing the crawler servers and scrape data from the embassy/consulate website is held privately by the developers. For detail on HOWTO please contact us.
 
 ## API Reference
 
@@ -71,10 +89,8 @@ HTTP/1.1 200 OK
             "availability": [
                 {"location": "pp", "earliest": "YY/MM/DD", "latest": "YY/MM/DD"},
                 {"location": "bkk", "earliest": "YY/MM/DD", "latest": "YY/MM/DD"},
-                ...
             ]
         },
-        ...
     ]
 }
 ```
@@ -112,10 +128,8 @@ HTTP/1.1 200 OK
             "availability": [
                 {"location": "pp", "earliest": "YY/MM/DD", "latest": "YY/MM/DD"},
                 {"location": "bkk", "earliest": "YY/MM/DD", "latest": "YY/MM/DD"},
-                ...
             ]
         },
-        ...
     ]
 }
 ```

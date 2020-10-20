@@ -1,6 +1,7 @@
 """ Some utility functions and class."""
 import os
 import logging
+from typing import Tuple
 from datetime import datetime
 from logging.handlers import TimedRotatingFileHandler
 
@@ -34,36 +35,34 @@ def construct_data_file_path(
     visa_type: str,
     location: str,
     dt_str: str = datetime.now().strftime('%Y/%m/%d'),
-):
+) -> str:
     """ Construct data file path."""
     return os.path.join(G.DATA_PATH, visa_type, location, dt_str)
 
 
-def file_line_to_dt(line: str, fmt: str = '%Y/%m/%d'):
+def file_line_to_dt(line: str) -> Tuple[datetime, datetime]:
     """ Convert a line in data file to datetime object"""
-    return datetime.strptime(line.strip().split()[1], fmt)
+    time_of_update, available_dt = line.strip().split()
+    return datetime.strptime(time_of_update, '%H:%M').time(), datetime.strptime(available_dt, '%Y/%m/%d')
 
 
-def get_earliest_dt(file_path: str):
-    """ Get the eariliest date from a visa status data file."""
-    with open(file_path) as f:
-        dt_lst = [file_line_to_dt(line) for line in f.readlines()]
-
-    if len(dt_lst) == 0:
-        raise EmptyDataFile()
-    elif len(dt_lst) == 1:
-        return dt_lst[0]
-    else:
-        return min(*dt_lst)
-
-def get_latest_update_dt(file_path: str):
+def get_earliest_and_latest_update_dt(file_path: str) -> Tuple[datetime, datetime]:
+    """ Get the earliest date and currently available date from a visa status
+        data file.
+        return: (earlist_date, latest_update_date)
+    """
     with open(file_path) as f:
         dt_lst = [file_line_to_dt(line) for line in f.readlines()]
 
     if len(dt_lst) == 0:
         raise EmptyDataFile()
     else:
-        return dt_lst[-1]
+        latest_write, latest_dt = dt_lst[-1]
+
+    # elif len(dt_lst) == 1:
+    #     return dt_lst[0], dt_lst[0]
+    # else:
+    #     return min(*dt_lst), dt_lst[-1]
 
 
 class EmptyDataFile(Exception):
