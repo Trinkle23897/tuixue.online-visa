@@ -2,7 +2,10 @@
     pymongo gurantees that the MongoClient is thread-safe
 """
 
+import os
 import pymongo
+import util
+from global_var import USEmbassy, VISA_TYPES
 from collections import defaultdict
 from datetime import datetime, timedelta
 from tuixue_typing import VisaType, EmbassyCode
@@ -11,8 +14,7 @@ from typing import Union, List, Tuple, Optional, Dict
 EmailSubscription = NewVisaStatus = Tuple[VisaType, EmbassyCode, datetime]
 EmailSubscriptionNoDate = NewVisaStatusNoDate = Tuple[VisaType, EmbassyCode]  # seeking for a better name...
 
-MONGO_CONFIG = {'host': '127.0.0.1', 'port': 27017, 'database': 'tuixue_dev'}
-ATLAS_CONNECTION = 'mongodb+srv://benji:{pwd}@tuixue-dev.jcq33.mongodb.net/{db}?retryWrites=true&w=majority'
+MONGO_CONFIG = {'host': '127.0.0.1', 'port': 27017, 'database': 'tuixue'}
 MONGO_CLIENT = None
 
 
@@ -21,7 +23,6 @@ def connect() -> pymongo.database.Database:
     global MONGO_CLIENT
     if MONGO_CLIENT is None:  # keep one alive connection will be enough (and preferred)
         MONGO_CLIENT = pymongo.MongoClient(host=MONGO_CONFIG['host'], port=MONGO_CONFIG['port'])
-        # MONGO_CLIENT = pymongo.MongoClient(ATLAS_CONNECTION.format(pwd='benji', db='tuixue'))
 
     database = MONGO_CLIENT.get_database(MONGO_CONFIG['database'])
     return database
@@ -36,7 +37,8 @@ def get_collection(collection_name: str) -> pymongo.collection.Collection:
 class VisaStatus:
     """ MongoDB operations for storing:
         1. All fetched visa status by (visa_type, embassy_code), *only successful fetching*
-        2. Latest written time and data, *including failed one*
+        2. Earliest available appointment date of a given write date, *only successful fetching*
+        3. Latest written time and data, *including failed one*
 
         The successfully fetched visa status will be stored in Mongo collection `'visa_status'`
         and the latest written time will be stored in Mongo collection `'latest_written'`.
@@ -47,8 +49,21 @@ class VisaStatus:
         {
             'visa_type': str,
             'embassy_code': str,
+            'write_date': datetime,
             'available_dates': [
                 {'write_time': datetime, 'available_date': datetime},
+            ]
+        }
+        ```
+
+        The schema of documents for `'earliest_date'` is as follow:
+
+        ```python
+        {
+            'visa_type': str,
+            'embassy_code': str,
+            'earliest_dates': [
+                {'write_date': datetime, 'earliest_date': datetime},
             ]
         }
         ```
@@ -65,18 +80,83 @@ class VisaStatus:
         ```
    """
     visa_status = get_collection('visa_status')
+    earliest_date = get_collection('earliest_date')
     latest_written = get_collection('latest_written')
+
+    @classmethod
+    def initiate_collections(cls, since: datetime) -> None:
+        """ Initiate the visa status storage with the file based data."""
+        since_midnight = since.replace(hour=0, minute=0, second=0, microsecond=0)
+        today_midnight = datetime.combine(datetime.today().date(), datetime.min.time())
+        date_range = [since_midnight + timedelta(days=d) for d in range((today_midnight - since_midnight).days)]
+
+        embassy_lst = USEmbassy.get_embassy_lst()
+
+        cls.drop()
+        cls.visa_status.create_index([('write_date', pymongo.ASCENDING)])
+
+        for vt in VISA_TYPES:
+            for emb in embassy_lst:
+                print()
+                accumulated_inserted = 0
+                for date in date_range:
+                    file_path = util.construct_data_file_path(vt, emb.location, date.strftime('%Y/%m/%d'))
+                    if not os.path.exists(file_path):
+                        continue
+
+                    with open(file_path) as f:
+                        fetched_result_lst = [util.file_line_to_dt(ln) for ln in f.readlines()]
+                        available_dates_arr = [
+                            {'write_time': datetime.combine(date.date(), wt), 'available_date': avai_dt}
+                            for wt, avai_dt in fetched_result_lst
+                        ]
+
+                    cls.visa_status.insert_one(
+                        {
+                            'visa_type': vt,
+                            'embassy_code': emb.code,
+                            'write_date': date,
+                            'available_dates': available_dates_arr
+                        }
+                    )
+
+                    if len(available_dates_arr) > 0:
+                        earliest_dt = min([d['available_date'] for d in available_dates_arr])
+                        cls.earliest_date.update_one(
+                            {'visa_type': vt, 'embassy_code': emb.code},
+                            {
+                                '$push': {
+                                    'earliest_dates': {
+                                        'write_date': date,
+                                        'earliest_date': earliest_dt,
+                                    }
+                                }
+                            },
+                            upsert=True,
+                        )
+
+                    accumulated_inserted += len(available_dates_arr)
+                    print(
+                        f'Inserted: {vt}-{emb.location}-{date.year}/{date.month}/{date.day}\
+                            \t\t{len(available_dates_arr)}\trecords |\t{accumulated_inserted} in total',
+                        end='\r'
+                    )
 
     @classmethod
     def drop(cls, collection: str = 'all') -> None:
         """ THSI METHOD SHOULD BE USED WITH CAUTION (OR DELETED) IN PRODUCTION."""
-        if collection not in ('visa_status', 'latest_written', 'all'):
-            raise ValueError('collection can only be one of [\'visa_status\', \'latest_written\', \'all\']')
+        if collection not in ('visa_status', 'latest_written', 'earliest_date', 'all'):
+            raise ValueError(
+                f'collection can only be one of [\'visa_status\', \'latest_written\', \'earliest_date\', \'all\'],\
+                    get {collection}'
+            )
 
         if collection in ('visa_status', 'all'):
             cls.visa_status.drop()
         if collection in ('latest_written', 'all'):
             cls.latest_written.drop()
+        if collection in ('earliest_date', 'all'):
+            cls.earliest_date.drop()
 
     @classmethod
     def save_fetched_visa_status(
@@ -90,20 +170,31 @@ class VisaStatus:
             `'latest_written'` collection will always be modified, whereas the `'available_dates'`
             collection will only be modified when available date is not None
         """
+        write_date = write_time.replace(hour=0, minute=0, second=0, microsecond=0)  # midnight of write date
+
         query = {'visa_type': visa_type, 'embassy_code': embassy_code}
-        visa_status_query = {**query, 'write_date': datetime.combine(write_time.date(), datetime.min.time())}
+        visa_status_query = {**query, 'write_date': write_date}
+        earliest_dt_query = {**query, 'earliest_dates.write_date': write_date}
+
         new_fetch = {'write_time': write_time, 'available_date': available_date}
 
-        if cls.latest_written.find_one(query) is None:
-            cls.latest_written.insert_one({**query, **new_fetch})
-        else:
-            cls.latest_written.update_one(query, {'$set': new_fetch})
+        # udpate document if exists, otherwise insert a new document
+        cls.latest_written.update_one(query, {'$set': new_fetch}, upsert=True)
 
         if available_date is not None:
-            if cls.visa_status.find_one(visa_status_query) is None:
-                cls.visa_status.insert_one({**visa_status_query, 'available_dates': [new_fetch]})
+            cls.visa_status.update_one(visa_status_query, {'$push': {'available_dates': new_fetch}}, upsert=True)
+
+            if cls.earliest_date.find_one(earliest_dt_query) is None:  # $(update) of array can't work with upsert
+                cls.earliest_date.update_one(
+                    query,
+                    {'$push': {'earliest_dates': {'write_date': write_date, 'earliest_date': available_date}}},
+                    upsert=True
+                )
             else:
-                cls.visa_status.update_one(visa_status_query, {'$push': {'available_dates': new_fetch}})
+                cls.earliest_date.update_one(
+                    earliest_dt_query,
+                    {'$min': {'earliest_dates.$.earliest_date': available_date}}
+                )  # update if the current record greater than the new record
 
     @classmethod
     def find_earliest_visa_status(
@@ -145,58 +236,97 @@ class VisaStatus:
         # ensure date list is unique and ascendingly sorted and each date is at mid-night
         date = sorted(set([datetime.combine(d.date(), datetime.min.time()) for d in date]))
 
-        tabular_data = []
-        for dt in date:
-            row = {'date': dt, 'earliest_dates': []}
+        cursor = cls.earliest_date.aggregate([
+            {'$match': {'visa_type': {'$in': visa_type}, 'embassy_code': {'$in': embassy_code}}},
+            {
+                '$project': {
+                    'visa_type': '$visa_type',
+                    'embassy_code': '$embassy_code',
+                    'earliest_dates': {
+                        '$filter': {
+                            'input': '$earliest_dates',
+                            'as': 'edt',
+                            'cond': {'$in': ['$$edt.write_date', date]}
+                        }
+                    }
+                }
+            },
+            {'$unwind': '$earliest_dates'},
+            {
+                '$group': {
+                    '_id': '$earliest_dates.write_date',
+                    'date': {'$first': '$earliest_dates.write_date'},
+                    'earliest_dates': {
+                        '$push': {
+                            'visa_type': '$visa_type',
+                            'embassy_code': '$embassy_code',
+                            'earliest_date': '$earliest_dates.earliest_date'
+                        }
+                    }
+                }
+            },
+            {'$project': {'_id': False}},
+            {'$sort': {'date': pymongo.DESCENDING}},  # today first
+        ])
 
-            for vt in visa_type:
-                for emb in embassy_code:
-                    cursor = cls.visa_status.aggregate([
-                        {'$match': {'visa_type': vt, 'embassy_code': emb, 'write_date': dt}},
-                        {'$unwind': '$available_dates'},
-                        {
-                            '$group': {
-                                '_id': None,
-                                'visa_type': {'$first': '$visa_type'},
-                                'embassy_code': {'$first': '$embassy_code'},
-                                'earliest_date': {'$min': '$available_dates.available_date'},
-                            },
-                        },
-                        {'$project': {'_id': False}},
-                    ])
-
-                    try:
-                        earliest_date = next(cursor)
-                    except StopIteration:
-                        earliest_date = {'visa_type': vt, 'embassy_code': emb, 'earliest_date': None}
-
-                    row['earliest_dates'].append(earliest_date)
-            tabular_data.append(row)
-
-        return tabular_data
+        return list(cursor)  # tabular data on the fly
 
     @classmethod
     def find_latest_written_visa_status(
         cls,
         visa_type: Union[VisaType, List[VisaType]],
         embassy_code: Union[EmbassyCode, List[EmbassyCode]],
-    ) -> Union[dict, List[dict]]:
+    ) -> List[dict]:
         """ Find the latest written visa status of a given visa_type and embassy_code"""
         if not isinstance(visa_type, list):
             visa_type = [visa_type]
         if not isinstance(embassy_code, list):
             embassy_code = [embassy_code]
 
-        latest_written_vs_lst = []
-        for vt in visa_type:
-            for emb in embassy_code:
-                latest_written = cls.latest_written.find_one(
-                    filter={'visa_type': vt, 'embassy_code': emb},
-                    projection={'_id': False}
-                )
-                latest_written_vs_lst.append(latest_written)
+        cursor = cls.latest_written.aggregate([
+            {'$match': {'visa_type': {'$in': visa_type}, 'embassy_code': {'$in': embassy_code}}},
+            {'$project': {'_id': False}}
+        ])
 
-        return latest_written_vs_lst
+        return list(cursor)
+
+    @classmethod
+    def find_historical_visa_status(
+        cls,
+        visa_type: VisaType,
+        embassy_code: EmbassyCode,
+        write_date: datetime,
+    ) -> Optional[dict]:
+        """ Return historical data of a given `visa_type`-`embassy_cde` pair.
+            If we sort the available dates in the guranularity of minutes, it will be too heavy a
+            work load for backend servers, so sort by date and leave the other work to front end.
+        """
+        cursor = cls.visa_status.aggregate([
+            {'$match': {'visa_type': visa_type, 'embassy_code': embassy_code, 'write_date': write_date}},
+            {'$unwind': '$available_dates'},
+            {'$sort': {'available_dates.write_time': pymongo.ASCENDING}},
+            {
+                '$group': {
+                    '_id': None,
+                    'visa_type': {'$first': '$visa_type'},
+                    'embassy_code': {'$first': '$embassy_code'},
+                    'write_date': {'$first': '$write_date'},
+                    'available_dates': {
+                        '$push': {
+                            'write_time': '$available_dates.write_time',
+                            'available_date': '$available_dates.available_date',
+                        },
+                    },
+                }
+            },
+            {'$project': {'_id': False}}
+        ], allowDiskUse=True)
+
+        result = list(cursor)
+        if len(result) > 0:
+            return result[0]
+        else:
+            return None
 
 
 class Subscription:
@@ -304,7 +434,7 @@ class Subscription:
                         {'$set': {'subscription.$.till': till}}
                     )
 
-        return cls.email.find_one({'email': email})
+        return cls.email.find_one({'email': email}, projection={'_id': False})
 
     @classmethod
     def remove_email_subscription(
@@ -348,6 +478,7 @@ def simple_test_visa_status():
         for embassy_code in ('pp', 'bj', 'syd'):
             for wtd in write_times_date:
                 write_time_by_min = [wtd + timedelta(minutes=m) for m in range(15)]
+                random.shuffle(write_time_by_min)
                 for write_time in write_time_by_min:
                     VisaStatus.save_fetched_visa_status(
                         visa_type,
@@ -355,6 +486,9 @@ def simple_test_visa_status():
                         write_time,
                         random.choice(available_dts)
                     )
+
+    result = VisaStatus.find_historical_visa_status('F', 'pp', datetime(2020, 9, 25), datetime(2020, 9, 26))
+    pprint(result)
 
     result = VisaStatus.find_earliest_visa_status(
         ['F', 'B'],
@@ -414,6 +548,6 @@ def simple_test_subscription():
 
 if __name__ == "__main__":
     # manual test
-    simple_test_visa_status()
+    # simple_test_visa_status()
     # simple_test_subscription()
     pass

@@ -9,6 +9,7 @@ from datetime import datetime
 from typing import List, Optional
 from tuixue_typing import VisaType
 from global_var import USEmbassy, VISA_TYPE_DETAILS
+from urllib.parse import urlencode, urlunsplit, quote
 
 with open(os.path.join(os.curdir, 'config', 'secret.json')) as f:
     SECRET = json.load(f)
@@ -28,13 +29,10 @@ SUBSCRIPTION_CONFIRMATION_CONTENT = """
     Dear subscriber:<br>
     <br>
     A faculty committee at tuixue.online has made a decision on your
-    application with email {email} for subcription of following visa types
-    and embassies: <br>
-    <br>
+    application with email {email} for subcription of following visa types and embassies/consulate:<br>
     {subscription_str}
-    <br>
     Please review your decision by logging back into tuixue.online
-    application status page at <a href="">this link</a>.<br>
+    application status page at <a href="{confirmation_url}"><strong>this link</strong></a>.<br>
     <br>
     Sincerely,<br>
     <br>
@@ -55,29 +53,42 @@ class Notifier:
     email_request = requests.Session()
 
     @classmethod
-    def send_subscription_confirmation(cls, subscription: dict):
+    def send_subscription_confirmation(cls, email: str, subs_lst: List[DB.EmailSubscription]):
         """ Send the email for confirmation of email subscription."""
-        email = subscription['email']
-        subs_lst = [(subs['visa_type'], subs['code'], subs['till']) for subs in subscription['subscription']]
+        query_dct = {'visa_type': [], 'code': [], 'till': []}
+        for visa_type, code, till in subs_lst:
+            query_dct['visa_type'].append(visa_type)
+            query_dct['code'].append(code)
+            query_dct['till'].append(till)
 
-        # Show user the {visa_type}-{location} {till}
-        subscription_str = '<ul>\n{}</ul>'.format(
-            '\n'.join(
-                ['<li>{visa_type}-{code} till {till}</li>'.format(
-                    visa_type=visa_type,
-                    code=code,
-                    till=till,
-                ) for (visa_type, code, till) in subs_lst]
+        # Construct the redirect frontend url
+        confirmation_url = urlunsplit(
+            ('https', 'tuixue.online', '/subscription/email', urlencode(query_dct, doseq=True, quote_via=quote), '')
+        )
+
+        subscription_str = '<ul>\n{}\n</ul>'.format(
+            '\n'.join(['<li>{} Visa at {} till {}.</li>'.format(
+                vt,
+                next((e.name_en for e in USEmbassy.get_embassy_lst() if e.code == ec), 'None'),
+                tl.strftime('%Y/%m/%d') if tl != datetime.max else 'FOREVER',
+            ) for vt, ec, tl in subs_lst])
+        )
+
+        content = SUBSCRIPTION_CONFIRMATION_CONTENT.format(
+            email=email,
+            subscription_str=subscription_str,
+            confirmation_url=confirmation_url,
+        )
+
+        for _ in range(10):  # for robust
+            sent = cls.send_email(
+                title=SUBSCRIPTION_CONFIRMATION_TITLE.format(email=email),
+                content=content,
+                receivers=[email]
             )
-        )
-        sent = cls.send_email(
-            title=SUBSCRIPTION_CONFIRMATION_TITLE.format(email=email),
-            content=SUBSCRIPTION_CONFIRMATION_CONTENT.format(
-                email=email,
-                subscription_str=subscription_str,
-            ),
-            receivers=[email]
-        )
+            if sent:
+                break
+
         return sent
 
     @classmethod
@@ -99,7 +110,7 @@ class Notifier:
         }
         res = cls.email_request.post(SECRET['email'], data=data)
 
-        return res.status_code == 200
+        return 'success' in res.text
 
     @classmethod
     def notify_visa_status_change(
@@ -112,19 +123,24 @@ class Notifier:
             And send the notification if needed.
             Return a flag indicating wheter the email is sent or not.
         """
-        latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
-        if latest_written is None:  # when the new code deploy into production
+        latest_written_lst = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
+        if len(latest_written_lst) == 0:  # when the new code deploy into production
             return False
 
-        last_available_date = latest_written['available_date']
+        last_available_date = latest_written_lst[0]['available_date']
 
         if available_date is None:
             return False
         else:
-            email_lst = DB.Subscription.get_email_list(
+            email_dct = DB.Subscription.get_email_list(
                 new_visa_status=(visa_type, embassy.code, available_date),
                 inclusion='effective_only',  # if the available date surpass the effective date
-            )[(visa_type, embassy.code)]
+            )  # should return an one-element dictionary
+
+            if (visa_type, embassy.code) in email_dct:
+                email_lst = email_dct[(visa_type, embassy.code)]
+            else:
+                return False
 
             if (last_available_date is None or last_available_date != available_date) and len(email_lst) > 0:
                 old_status = '/' if last_available_date is None else last_available_date.strftime('%Y/%m/%d')

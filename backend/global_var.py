@@ -22,10 +22,12 @@ CRAWLER_API = {
 SESSION_UPDATE_QUEUE = Queue()
 
 REGION_LOCATION_MAPPING = {
+    'DOMESTIC': [
+        'bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp',
+    ],
     'SOUTH_EAST_ASIA': ['pp', 'sg', 'bkk', 'cnx', 'ktm'],
     'EAST_ASIA': [
         'sel', 'fuk', 'itm', 'oka', 'cts', 'hnd',
-        'bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp',
     ],
     'WEST_ASIA': ['auh', 'dxb', 'esb', 'ist'],
     'OCEANIA': ['mel', 'per', 'syd'],
@@ -176,7 +178,7 @@ class USEmbassy:
         self.sys = sys
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(name_cn={self.name_cn}, name_en={self.name_cn}, code={self.code})'
+        return f'{self.__class__.__name__}(name_cn={self.name_cn}, name_en={self.name_en}, code={self.code})'
 
     @property
     def location(self) -> str:

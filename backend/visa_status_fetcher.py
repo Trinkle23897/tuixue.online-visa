@@ -234,6 +234,10 @@ class VisaFetcher:
                 LOGGER.warning('%s, %s, %s, FAILED - Endpoint Timeout.', now, visa_type, location)
                 cls.check_crawler_server_connection()
                 return
+            except requests.exceptions.ConnectionError:
+                LOGGER.warning('%s, %s, %s, FAILED - Endpoint Connection Aborted.', now, visa_type, location)
+                cls.check_crawler_server_connection()
+                return
             else:
                 if res.status_code != 200:
                     LOGGER.warning('%s, %s, %s, FAILED - Endpoint Inaccessible.', now, visa_type, location)
