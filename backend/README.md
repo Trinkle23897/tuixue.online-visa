@@ -22,11 +22,7 @@ This folder contains the code that:
 
 #### Python dependency
 
-Personally I use `python3 -m venv` to manage the python packages for a project. All of the used packages can be found in the `./requirements.txt` file. Run the `pip3 install` command like below to install dependent Python packages.
-
-```sh
-python3 -m venv venv  # This is optional
-source ./venv/bin/activate  # Switch to virtual environment. This is also optinal.
+```bash
 pip3 install -r requirements.txt
 ```
 
@@ -81,7 +77,7 @@ python3 sync_data.py -o write -s 2020/4/8  # or any other date after the start d
 
 It will write all the data fetched after the given `since` date till yesterday.
 
-**P.S.**: You will need to move the data from other places to ./data folder. Or change the value of `DATA_PATH` variable in `global_var.py#L8`
+**P.S.**: You will need to move the data from other places to ./data folder. Or change the value of `DATA_PATH` variable in `global_var.py`
 
 #### Nginx proxy and run the api server with `uvicorn`
 
@@ -95,11 +91,11 @@ With the help of [official documentation](https://www.uvicorn.org/deployment/#ru
     server {
         listen       443 ssl http2;
         listen       [::]:443 ssl http2;
-        server_name  api.tuixue.benjamincai.io 127.0.0.1; # managed by Certbot
+        server_name  api.tuixue.online 127.0.0.1; # managed by Certbot
 
 
-        ssl_certificate /etc/letsencrypt/live/api.tuixue.benjamincai.io/fullchain.pem; # managed by Certbot
-        ssl_certificate_key /etc/letsencrypt/live/api.tuixue.benjamincai.io/privkey.pem; # managed by Certbot
+        ssl_certificate /etc/letsencrypt/live/api.tuixue.online/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/api.tuixue.online/privkey.pem; # managed by Certbot
         ssl_session_cache shared:SSL:1m;
         ssl_session_timeout  10m;
         ssl_ciphers HIGH:!aNULL:!MD5;

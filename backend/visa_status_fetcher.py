@@ -71,9 +71,7 @@ def set_fetching_interval(
     first_run: bool = True
 ):
     """ Execute the fetching function every `interval` seconds
-        The mechanism is copy-paste from ../global/crawler/lite_visa.py#L286
-        According to z3dd, sourced from:
-        https://stackoverflow.com/questions/2697039/python-equivalent-of-setinterval?noredirect=1
+        https://stackoverflow.com/questions/2697039/python-equivalent-of-setinterval
     """
     def function_wrapper():
         set_fetching_interval(visa_type, location, sys, interval_sec, first_run=False)
