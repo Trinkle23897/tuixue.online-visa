@@ -23,9 +23,9 @@ app.add_middleware(
 
 
 # This class will be moved to tuixue_typing.py if it's needed by other modules
-class EmailSubsRep(str, Enum):
-    first_rep = 'first'
-    second_rep = 'second'
+class EmailSubsStep(str, Enum):
+    confirming = 'confirming'
+    subscribed = 'subscribed'
 
 
 # These classes serve for the purpose of request body type chechking for FastAPI
@@ -48,17 +48,28 @@ def handshake():
 
 @app.get('/visastatus/meta')
 def get_meta_data():
-    """ Return metadata such as region mapping and embassy detail."""
-    region_lst = []
-    for region, embassy_code_lst in G.REGION_LOCATION_MAPPING.items():
-        region_lst.append({
-            'region': region,
-            'embassy_code_lst': embassy_code_lst
-        })
-    return {'region': region_lst, 'embassy': G.EMBASSY_LOC}
+    """ Return metadata such as region mapping and embassy detail. Where `region` is
+        a list of `region-embassy_code` mapping in following shape:
+
+        ```json
+        [
+            {"region": "REGION_0", "embassy_code_lst": ["code0", "code1"]}
+        ]
+        ```
+
+        and embassy lst is an array of array, where each sub array carries attributes
+        in following order:
+
+        ```json
+        [
+            ["name_cn", "name_en", "code", "sys", "region", "continent", "country"]
+        ]
+        ```
+    """
+    return {'region': G.USEmbassy.get_region_mapping(), 'embassy_lst': G.EMBASSY_ATTR}
 
 
-@app.get('/visastatus/earliest')
+@app.get('/visastatus/overview')
 def get_earliest_visa_status(
     visa_type: List[VisaType] = Query(...),
     embassy_code: List[EmbassyCode] = Query(...),
@@ -71,7 +82,7 @@ def get_earliest_visa_status(
     to = to.replace(hour=0, minute=0, second=0, microsecond=0)
     dt_range = [since + timedelta(days=d) for d in range((to - since).days)]
 
-    tabular_data = DB.VisaStatus.find_earliest_visa_status(visa_type, embassy_code, dt_range)
+    tabular_data = DB.VisaStatus.find_visa_status_overview(visa_type, embassy_code, dt_range)
 
     return {
         'visa_type': visa_type,
@@ -118,8 +129,8 @@ def get_visa_status_by_visa_type_and_embassy(
     return hist_visa_status
 
 
-@app.post('/subscribe/email/{rep}')
-def post_email_subscription(rep: EmailSubsRep, subscription: EmailSubscription = Body(..., embed=True)):
+@app.post('/subscribe/email/{step}')
+def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription = Body(..., embed=True)):
     """ Post email subscription."""
     subscription = subscription.dict()
     subs_lst = [
@@ -130,12 +141,12 @@ def post_email_subscription(rep: EmailSubsRep, subscription: EmailSubscription =
         ) for subs in subscription['subscription']
     ]
 
-    if rep == EmailSubsRep.first_rep:
+    if step == EmailSubsStep.confirming:
         # TODO: construct the email addresses. send the email. new unsubscribe route
         Notifier.send_subscription_confirmation(subscription['email'], subs_lst)
         return Response(status_code=status.HTTP_202_ACCEPTED)
 
-    elif rep == EmailSubsRep.second_rep:
+    elif step == EmailSubsStep.subscribed:
         updated_subscriber = DB.Subscription.add_email_subscription(subscription['email'], subs_lst)
 
         return updated_subscriber

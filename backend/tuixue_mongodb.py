@@ -5,16 +5,15 @@
 import os
 import pymongo
 import util
-from global_var import USEmbassy, VISA_TYPES
 from collections import defaultdict
 from datetime import datetime, timedelta
 from tuixue_typing import VisaType, EmbassyCode
 from typing import Union, List, Tuple, Optional, Dict
+from global_var import USEmbassy, VISA_TYPES, MONGO_CONFIG
 
 EmailSubscription = NewVisaStatus = Tuple[VisaType, EmbassyCode, datetime]
 EmailSubscriptionNoDate = NewVisaStatusNoDate = Tuple[VisaType, EmbassyCode]  # seeking for a better name...
 
-MONGO_CONFIG = {'host': '127.0.0.1', 'port': 27017, 'database': 'tuixue'}
 MONGO_CLIENT = None
 
 
@@ -37,7 +36,7 @@ def get_collection(collection_name: str) -> pymongo.collection.Collection:
 class VisaStatus:
     """ MongoDB operations for storing:
         1. All fetched visa status by (visa_type, embassy_code), *only successful fetching*
-        2. Earliest available appointment date of a given write date, *only successful fetching*
+        2. Overview of available appointment date of a given write date, *only successful fetching*
         3. Latest written time and data, *including failed one*
 
         The successfully fetched visa status will be stored in Mongo collection `'visa_status'`
@@ -56,14 +55,14 @@ class VisaStatus:
         }
         ```
 
-        The schema of documents for `'earliest_date'` is as follow:
+        The schema of documents for `'overview'` is as follow:
 
         ```python
         {
             'visa_type': str,
             'embassy_code': str,
-            'earliest_dates': [
-                {'write_date': datetime, 'earliest_date': datetime},
+            'overview': [
+                {'write_date': datetime, 'earliest_date': datetime, 'latest_date': datetime},
             ]
         }
         ```
@@ -80,7 +79,7 @@ class VisaStatus:
         ```
    """
     visa_status = get_collection('visa_status')
-    earliest_date = get_collection('earliest_date')
+    overview = get_collection('overview')
     latest_written = get_collection('latest_written')
 
     @classmethod
@@ -122,13 +121,15 @@ class VisaStatus:
 
                     if len(available_dates_arr) > 0:
                         earliest_dt = min([d['available_date'] for d in available_dates_arr])
-                        cls.earliest_date.update_one(
+                        latest_dt = max([d['available_date'] for d in available_dates_arr])
+                        cls.overview.update_one(
                             {'visa_type': vt, 'embassy_code': emb.code},
                             {
                                 '$push': {
-                                    'earliest_dates': {
+                                    'overview': {
                                         'write_date': date,
                                         'earliest_date': earliest_dt,
+                                        'latest_date': latest_dt,
                                     }
                                 }
                             },
@@ -145,9 +146,9 @@ class VisaStatus:
     @classmethod
     def drop(cls, collection: str = 'all') -> None:
         """ THSI METHOD SHOULD BE USED WITH CAUTION (OR DELETED) IN PRODUCTION."""
-        if collection not in ('visa_status', 'latest_written', 'earliest_date', 'all'):
+        if collection not in ('visa_status', 'latest_written', 'overview', 'all'):
             raise ValueError(
-                f'collection can only be one of [\'visa_status\', \'latest_written\', \'earliest_date\', \'all\'],\
+                f'collection can only be one of [\'visa_status\', \'latest_written\', \'overview\', \'all\'],\
                     get {collection}'
             )
 
@@ -155,8 +156,8 @@ class VisaStatus:
             cls.visa_status.drop()
         if collection in ('latest_written', 'all'):
             cls.latest_written.drop()
-        if collection in ('earliest_date', 'all'):
-            cls.earliest_date.drop()
+        if collection in ('overview', 'all'):
+            cls.overview.drop()
 
     @classmethod
     def save_fetched_visa_status(
@@ -174,7 +175,7 @@ class VisaStatus:
 
         query = {'visa_type': visa_type, 'embassy_code': embassy_code}
         visa_status_query = {**query, 'write_date': write_date}
-        earliest_dt_query = {**query, 'earliest_dates.write_date': write_date}
+        overview_query = {**query, 'overview.write_date': write_date}
 
         new_fetch = {'write_time': write_time, 'available_date': available_date}
 
@@ -184,20 +185,31 @@ class VisaStatus:
         if available_date is not None:
             cls.visa_status.update_one(visa_status_query, {'$push': {'available_dates': new_fetch}}, upsert=True)
 
-            if cls.earliest_date.find_one(earliest_dt_query) is None:  # $(update) of array can't work with upsert
-                cls.earliest_date.update_one(
+            if cls.overview.find_one(overview_query) is None:  # $(update) of array can't work with upsert
+                cls.overview.update_one(
                     query,
-                    {'$push': {'earliest_dates': {'write_date': write_date, 'earliest_date': available_date}}},
+                    {
+                        '$push': {
+                            'overview': {
+                                'write_date': write_date,
+                                'earliest_date': available_date,
+                                'latest_date': available_date
+                            }
+                        }
+                    },
                     upsert=True
                 )
             else:
-                cls.earliest_date.update_one(
-                    earliest_dt_query,
-                    {'$min': {'earliest_dates.$.earliest_date': available_date}}
-                )  # update if the current record greater than the new record
+                cls.overview.update_one(
+                    overview_query,
+                    {
+                        '$min': {'overview.$.earliest_date': available_date},
+                        '$max': {'overview.$.latest_date': available_date},
+                    }
+                )
 
     @classmethod
-    def find_earliest_visa_status(
+    def find_visa_status_overview(
         cls,
         visa_type: Union[VisaType, List[VisaType]],
         embassy_code: Union[EmbassyCode, List[EmbassyCode]],
@@ -213,8 +225,13 @@ class VisaStatus:
             [
                 {  # each row is indexed with 'date'
                     'date': datetime,
-                    'earliest_dates': [
-                        {'visa_type': VisaType, 'embassy_code': EmbassyCode, 'earliest_date': datetime},
+                    'overview': [
+                        {
+                            'visa_type': VisaType,
+                            'embassy_code': EmbassyCode,
+                            'earliest_date': datetime,
+                            'latest_date': datetime
+                        },
                     ],
                 },
             ]
@@ -236,31 +253,32 @@ class VisaStatus:
         # ensure date list is unique and ascendingly sorted and each date is at mid-night
         date = sorted(set([datetime.combine(d.date(), datetime.min.time()) for d in date]))
 
-        cursor = cls.earliest_date.aggregate([
+        cursor = cls.overview.aggregate([
             {'$match': {'visa_type': {'$in': visa_type}, 'embassy_code': {'$in': embassy_code}}},
             {
                 '$project': {
                     'visa_type': '$visa_type',
                     'embassy_code': '$embassy_code',
-                    'earliest_dates': {
+                    'overview': {
                         '$filter': {
-                            'input': '$earliest_dates',
-                            'as': 'edt',
-                            'cond': {'$in': ['$$edt.write_date', date]}
+                            'input': '$overview',
+                            'as': 'ov',
+                            'cond': {'$in': ['$$ov.write_date', date]}
                         }
                     }
                 }
             },
-            {'$unwind': '$earliest_dates'},
+            {'$unwind': '$overview'},
             {
                 '$group': {
-                    '_id': '$earliest_dates.write_date',
-                    'date': {'$first': '$earliest_dates.write_date'},
-                    'earliest_dates': {
+                    '_id': '$overview.write_date',
+                    'date': {'$first': '$overview.write_date'},
+                    'overview': {
                         '$push': {
                             'visa_type': '$visa_type',
                             'embassy_code': '$embassy_code',
-                            'earliest_date': '$earliest_dates.earliest_date'
+                            'earliest_date': '$overview.earliest_date',
+                            'latest_date': '$overview.latest_date',
                         }
                     }
                 }
@@ -335,7 +353,6 @@ class Subscription:
             based TuixueDB, the difference is that to represent 'subscribe with no end date'
             we use the `datetime.max` instead of a special string. It helps to simplify the
             logic here as suggested by @n+e.
-        2. other social media (Telegram, QQ) subscription: HOWTO is to be decided
 
         The schema of email susbcriber is as following:
 
@@ -549,5 +566,5 @@ def simple_test_subscription():
 if __name__ == "__main__":
     # manual test
     # simple_test_visa_status()
-    # simple_test_subscription()
+    simple_test_subscription()
     pass

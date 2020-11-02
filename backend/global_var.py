@@ -1,12 +1,17 @@
 """ A thread-safe global variable getter-setter interface."""
 
 import os
+import json
 from queue import Queue
 from threading import Lock
 from typing import List, Optional
 
 DATA_PATH = os.path.join(os.curdir, 'data')
-EMAIL_SUBSCRIPTION_PATH = os.path.join(os.curdir, 'data', 'subscription.json')
+
+with open(os.path.join(os.curdir, 'config', 'secret.json')) as f:
+    SECRET = json.load(f)
+
+MONGO_CONFIG = {'host': '127.0.0.1', 'port': 27017, 'database': 'tuixue'}
 
 CRAWLER_API = {
     'register': {
@@ -18,135 +23,76 @@ CRAWLER_API = {
         'ais': '/ais/refresh/?code={}&id={}&session={}'
     }
 }
+WAIT_TIME = {'register': 40, 'refresh': 7}
 
 SESSION_UPDATE_QUEUE = Queue()
 
-REGION_LOCATION_MAPPING = {
-    'DOMESTIC': [
-        'bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp',
-    ],
-    'SOUTH_EAST_ASIA': ['pp', 'sg', 'bkk', 'cnx', 'ktm'],
-    'EAST_ASIA': [
-        'sel', 'fuk', 'itm', 'oka', 'cts', 'hnd',
-    ],
-    'WEST_ASIA': ['auh', 'dxb', 'esb', 'ist'],
-    'OCEANIA': ['mel', 'per', 'syd'],
-    'WEST_EUROPE': ['brn', 'bfs', 'lcy', 'cdg', 'ath'],
-    'EAST_EUROPE': ['beg'],
-    'NORTH_AMERICA': [
-        'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr',
-        'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mid', 'mex',
-        'mty', 'ols', 'nld', 'tij'
-    ],
-    'SOUTH_AMERICA': ['gye', 'uio', 'bog']
-}
-
-CONTINENT_COUNTRY_LOCATION_MAPPING = {
-    'ASIA': {
-        'CHN': ['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp'],
-        'SGP': ['sg'],
-        'KHM': ['pp'],
-        'KOR': ['sel'],
-        'JPN': ['fuk', 'itm', 'oka', 'cts', 'hnd'],
-        'NPL': ['ktm'],
-        'THA': ['bkk', 'cnx'],
-        'ARE': ['auh', 'dxb'],
-        'TUR': ['esb', 'ist'],
-    },
-    'OCEANIA': {
-        'AUS': ['mel', 'per', 'syd'],
-    },
-    'EUROPE': {
-        'CHE': ['brn'],
-        'GBR': ['bfs', 'lcy'],
-        'SRB': ['beg'],
-        'FRA': ['cdg'],
-        'GRC': ['ath'],
-    },
-    'NORTH_AMERICA': {
-        'CAN': ['yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr'],
-        'MEX': ['cjs', 'gdl', 'hmo', 'cvj', 'mid', 'mex', 'mty', 'ols', 'nld', 'tij'],
-    },
-    'SOUTH_AMERICA': {
-        'ECU': ['gye', 'uio'],
-        'COL': ['bog'],
-        'BRB': ['bgi'],
-    }
-}
-
-EMBASSY_LOC = [
-    ('北京', 'Beijing', 'bj', 'cgi'),
-    ('上海', 'Shanghai', 'sh', 'cgi'),
-    ('成都', 'Chengdu', 'cd', 'cgi'),
-    ('广州', 'Guangzhou', 'gz', 'cgi'),
-    ('沈阳', 'Shenyang', 'sy', 'cgi'),
-    ('香港', 'Hongkong', 'hk', 'cgi'),
-    ('台北', 'Taipei', 'tp', 'cgi'),
-    ('金边', 'Phnom Penh', 'pp', 'cgi'),
-    ('新加坡', 'Singapore', 'sg', 'cgi'),
-    ('首尔', 'Seoul', 'sel', 'cgi'),
-    ('墨尔本', 'Melbourne', 'mel', 'cgi'),
-    ('珀斯', 'Perth', 'per', 'cgi'),
-    ('悉尼', 'Sydney', 'syd', 'cgi'),
-    ('伯尔尼', 'Bern', 'brn', 'cgi'),
-    ('福冈', 'Fukuoka', 'fuk', 'cgi'),
-    ('大坂', 'Osaka', 'itm', 'cgi'),
-    ('那霸', 'Naha', 'oka', 'cgi'),
-    ('札幌', 'Sapporo', 'cts', 'cgi'),
-    ('东京', 'Tokyo', 'hnd', 'cgi'),
-    ('加德满都', 'Kathmandu', 'ktm', 'cgi'),
-    ('曼谷', 'Bangkok', 'bkk', 'cgi'),
-    ('清迈', 'Chiang Mai', 'cnx', 'cgi'),
-    ('贝尔法斯特', 'Belfast', 'bfs', 'ais'),
-    ('伦敦', 'London', 'lcy', 'ais'),
-    ('卡尔加里', 'Calgary', 'yyc', 'ais'),
-    ('哈利法克斯', 'Halifax', 'yhz', 'ais'),
-    ('蒙特利尔', 'Montreal', 'yul', 'ais'),
-    ('渥太华', 'Ottawa', 'yow', 'ais'),
-    ('魁北克城', 'Quebec City', 'yqb', 'ais'),
-    ('多伦多', 'Toronto', 'yyz', 'ais'),
-    ('温哥华', 'Vancouver', 'yvr', 'ais'),
-    ('阿布扎比', 'Abu Dhabi', 'auh', 'ais'),
-    ('迪拜', 'Dubai', 'dxb', 'ais'),
-    ('贝尔格莱德', 'Belgrade', 'beg', 'ais'),
-    ('巴黎', 'Paris', 'cdg', 'ais'),
-    ('瓜亚基尔', 'Guayaquil', 'gye', 'ais'),
-    ('基多', 'Quito', 'uio', 'ais'),
-    ('安卡拉', 'Ankara', 'esb', 'ais'),
-    ('伊斯坦布尔', 'Istanbul', 'ist', 'ais'),
-    ('雅典', 'Athens', 'ath', 'ais'),
-    ('波哥大', 'Bogota', 'bog', 'ais'),
-    ('布里奇顿', 'Bridgetown', 'bgi', 'ais'),
-    ('华雷斯城', 'Ciudad Juarez', 'cjs', 'ais'),
-    ('瓜达拉哈拉', 'Guadalajara', 'gdl', 'ais'),
-    ('埃莫西约', 'Hermosillo', 'hmo', 'ais'),
-    ('马塔莫罗斯', 'Matamoros', 'cvj', 'ais'),
-    ('梅里达', 'Merida', 'mid', 'ais'),
-    ('墨西哥城', 'Mexico City', 'mex', 'ais'),
-    ('蒙特雷', 'Monterrey', 'mty', 'ais'),
-    ('诺加莱斯', 'Nogales', 'ols', 'ais'),
-    ('新拉雷多', 'Nuevo Laredo', 'nld', 'ais'),
-    ('蒂华纳', 'Tijuana', 'tij', 'ais'),
+# Embassy/consulate attributes
+# Tuple[name_cn, name_en, code, sys, region, continent, country]
+EMBASSY_ATTR = [
+    ('北京', 'Beijing', 'bj', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
+    ('上海', 'Shanghai', 'sh', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
+    ('成都', 'Chengdu', 'cd', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
+    ('广州', 'Guangzhou', 'gz', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
+    ('沈阳', 'Shenyang', 'sy', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
+    ('香港', 'Hongkong', 'hk', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
+    ('台北', 'Taipei', 'tp', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
+    ('金边', 'Phnom Penh', 'pp', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'KHM'),
+    ('新加坡', 'Singapore', 'sg', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'SGP'),
+    ('首尔', 'Seoul', 'sel', 'cgi', 'EAST_ASIA', 'ASIA', 'KOR'),
+    ('墨尔本', 'Melbourne', 'mel', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS'),
+    ('珀斯', 'Perth', 'per', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS'),
+    ('悉尼', 'Sydney', 'syd', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS'),
+    ('伯尔尼', 'Bern', 'brn', 'cgi', 'WEST_EUROPE', 'EUROPE', 'CHE'),
+    ('福冈', 'Fukuoka', 'fuk', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
+    ('大坂', 'Osaka', 'itm', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
+    ('那霸', 'Naha', 'oka', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
+    ('札幌', 'Sapporo', 'cts', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
+    ('东京', 'Tokyo', 'hnd', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
+    ('加德满都', 'Kathmandu', 'ktm', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'NPL'),
+    ('曼谷', 'Bangkok', 'bkk', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA'),
+    ('清迈', 'Chiang Mai', 'cnx', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA'),
+    ('贝尔法斯特', 'Belfast', 'bfs', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR'),
+    ('伦敦', 'London', 'lcy', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR'),
+    ('卡尔加里', 'Calgary', 'yyc', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
+    ('哈利法克斯', 'Halifax', 'yhz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
+    ('蒙特利尔', 'Montreal', 'yul', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
+    ('渥太华', 'Ottawa', 'yow', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
+    ('魁北克城', 'Quebec City', 'yqb', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
+    ('多伦多', 'Toronto', 'yyz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
+    ('温哥华', 'Vancouver', 'yvr', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
+    ('阿布扎比', 'Abu Dhabi', 'auh', 'ais', 'WEST_ASIA', 'ASIA', 'ARE'),
+    ('迪拜', 'Dubai', 'dxb', 'ais', 'WEST_ASIA', 'ASIA', 'ARE'),
+    ('贝尔格莱德', 'Belgrade', 'beg', 'ais', 'EAST_EUROPE', 'EUROPE', 'SRB'),
+    ('巴黎', 'Paris', 'cdg', 'ais', 'WEST_EUROPE', 'EUROPE', 'FRA'),
+    ('瓜亚基尔', 'Guayaquil', 'gye', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'ECU'),
+    ('基多', 'Quito', 'uio', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'ECU'),
+    ('安卡拉', 'Ankara', 'esb', 'ais', 'WEST_ASIA', 'ASIA', 'TUR'),
+    ('伊斯坦布尔', 'Istanbul', 'ist', 'ais', 'WEST_ASIA', 'ASIA', 'TUR'),
+    ('雅典', 'Athens', 'ath', 'ais', 'WEST_EUROPE', 'EUROPE', 'GRC'),
+    ('波哥大', 'Bogota', 'bog', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'COL'),
+    ('布里奇顿', 'Bridgetown', 'bgi', 'ais', 'NORTH_AMERICA', 'SOUTH_AMERICA', 'BRB'),
+    ('华雷斯城', 'Ciudad Juarez', 'cjs', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('瓜达拉哈拉', 'Guadalajara', 'gdl', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('埃莫西约', 'Hermosillo', 'hmo', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('马塔莫罗斯', 'Matamoros', 'cvj', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('墨西哥城', 'Mexico City', 'mex', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('蒙特雷', 'Monterrey', 'mty', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('诺加莱斯', 'Nogales', 'ols', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('新拉雷多', 'Nuevo Laredo', 'nld', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('蒂华纳', 'Tijuana', 'tij', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
 ]
 
 VISA_TYPES = 'FBHOL'
 VISA_TYPE_DETAILS = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
 
 # CGI/AIS_LOCATION are the parameters sent to crawler backend to retrieve session data
-CGI_LOCATION_DOMESTIC = ['北京', '成都', '广州', '上海', '沈阳', '香港', '台北']
-CGI_LOCATION_GLOBAL = ['金边', '新加坡', '首尔', '墨尔本', '珀斯', '悉尼', '伯尔尼', '福冈', '大坂', '那霸', '札幌', '东京', '加德满都', '曼谷', '清迈']
-CGI_LOCATION = CGI_LOCATION_DOMESTIC + CGI_LOCATION_GLOBAL
+CGI_LOCATION = [emb[0] for emb in EMBASSY_ATTR if emb[3] == 'cgi']
 AIS_LOCATION = ['en-gb', 'en-ca', 'en-ae', 'en-rs', 'en-mx', 'en-fr', 'en-ec', 'en-tr', 'en-gr', 'en-co', 'en-bb']
 SYS_LOCATION = {'cgi': CGI_LOCATION, 'ais': AIS_LOCATION}
 
-AIS_MONITORING_CITY = [  # filter of AIS visa data retrieved from cralwer backend by city
-    'Belfast', 'London', 'Calgary', 'Halifax', 'Montreal',
-    'Ottawa', 'Quebec City', 'Toronto', 'Vancouver', 'Abu Dhabi',
-    'Dubai', 'Belgrade', 'Ankara', 'Istanbul', 'Athens',
-    'Bogota', 'Bridgetown', 'Ciudad Juarez', 'Guadalajara', 'Hermosillo',
-    'Matamoros', 'Merida', 'Mexico City', 'Monterrey', 'Nogales',
-    'Nuevo Laredo', 'Tijuana', 'Paris', 'Guayaquil', 'Quito'
-]
+# filter of AIS visa data retrieved from cralwer backend by city
+AIS_MONITORING_CITY = [emb[1] for emb in EMBASSY_ATTR if emb[3] == 'ais']
 
 CGI_SESS_POOL_SIZE = {visa_type: 10 if visa_type == 'F' else 5 for visa_type in VISA_TYPES}
 AIS_SESS_POOL_SIZE = {visa_type: 1 for visa_type in VISA_TYPES}
@@ -164,18 +110,40 @@ class USEmbassy:
     @classmethod
     def get_embassy_lst(cls) -> List['__class__']:
         """ Return the list of USEmbassy objects."""
-        return [cls(*embassy_attr) for embassy_attr in EMBASSY_LOC]
+        return [cls(*embassy_attr) for embassy_attr in EMBASSY_ATTR]
 
     @classmethod
     def get_embassy_by_loc(cls, loc: str) -> Optional['__class__']:
-        """ Return an USEbassy object by the attribute."""
+        """ Return an USEbassy object by the location property."""
         return next((emb for emb in cls.get_embassy_lst() if emb.location == loc), None)
 
-    def __init__(self, name_cn: str, name_en: str, code: str, sys: str) -> None:
+    @classmethod
+    def get_region_mapping(cls) -> List[dict]:
+        """ Return a region to embassy code mapping. In JSON convention."""
+        return [
+            {
+                'region': region,
+                'embassy_code_lst': [emb.code for emb in cls.get_embassy_lst() if emb.region == region]
+            } for region in {emb.region for emb in cls.get_embassy_lst()}
+        ]
+
+    def __init__(
+        self,
+        name_cn: str,
+        name_en: str,
+        code: str,
+        sys: str,
+        region: str,
+        continent: str,
+        country: str
+    ) -> None:
         self.name_cn = name_cn
         self.name_en = name_en
         self.code = code
         self.sys = sys
+        self.region = region
+        self.continent = continent
+        self.country = country
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(name_cn={self.name_cn}, name_en={self.name_en}, code={self.code})'
@@ -183,40 +151,7 @@ class USEmbassy:
     @property
     def location(self) -> str:
         """ Return the location value for data storage."""
-        return self.name_cn if self.is_cgi else self.name_en
-
-    @property
-    def country(self) -> str:
-        """ Return the ISO 3166-3 country code of the Embassy/Consulate."""
-        for continent, country_dct in CONTINENT_COUNTRY_LOCATION_MAPPING.items():
-            for country, embassy_lst in country_dct.items():
-                if self.code in embassy_lst:
-                    return country
-
-    @property
-    def continent(self) -> str:
-        """ Return the continent UPPER_SNAKE_CASE of the Embassy/Consulate."""
-        for continent, country_dct in CONTINENT_COUNTRY_LOCATION_MAPPING.items():
-            for country, embassy_lst in country_dct.items():
-                if self.code in embassy_lst:
-                    return continent
-
-    @property
-    def region(self) -> str:
-        """ Return the region UPPER_SNAKE_CASE of the Embassy/Consulate."""
-        for region, embassy_lst in REGION_LOCATION_MAPPING.items():
-            if self.code in embassy_lst:
-                return region
-
-    @property
-    def is_ais(self) -> bool:
-        """ Return True if the embassy/consulate uses AIS system."""
-        return self.sys == 'ais'
-
-    @property
-    def is_cgi(self) -> bool:
-        """ Return True if the embassy.consulate uses CGI system."""
-        return self.sys == 'cgi'
+        return self.name_cn if self.sys == 'cgi' else self.name_en
 
 
 class GlobalVar:  # Can we just define a dictionary for it?

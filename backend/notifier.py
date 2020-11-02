@@ -1,18 +1,14 @@
 """ Functionality for sending notification for visa status change as well as
     confirmation for email subscription.
 """
-import os
-import json
 import requests
 import tuixue_mongodb as DB
 from datetime import datetime
 from typing import List, Optional
 from tuixue_typing import VisaType
-from global_var import USEmbassy, VISA_TYPE_DETAILS
 from urllib.parse import urlencode, urlunsplit, quote
+from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET
 
-with open(os.path.join(os.curdir, 'config', 'secret.json')) as f:
-    SECRET = json.load(f)
 
 VISA_STATUS_CHANGE_TITLE = '[tuixue.online] {visa_detail} Visa Status Change'
 VISA_STATUS_CHANGE_CONTENT = """

@@ -72,7 +72,8 @@ def set_fetching_interval(
 ):
     """ Execute the fetching function every `interval` seconds
         The mechanism is copy-paste from ../global/crawler/lite_visa.py#L286
-        I have no idea why it's working or not working.
+        According to z3dd, sourced from:
+        https://stackoverflow.com/questions/2697039/python-equivalent-of-setinterval?noredirect=1
     """
     def function_wrapper():
         set_fetching_interval(visa_type, location, sys, interval_sec, first_run=False)
@@ -82,8 +83,9 @@ def set_fetching_interval(
             G.value(f'{visa_type}_requests_Session', requests.Session())
         )
 
+    emb = G.USEmbassy.get_embassy_by_loc(location)
     now_minute = datetime.now().minute
-    if sys == 'cgi' and visa_type == 'F' and 47 <= now_minute <= 49:
+    if sys == 'cgi' and visa_type == 'F' and 47 <= now_minute <= 49 and emb.region == 'DOMESTIC':
         interval = 5
     else:
         interval = interval_sec
@@ -229,7 +231,7 @@ class VisaFetcher:
 
             url = '{}{}'.format(G.value('current_crawler_node', ''), endpoint)
             try:
-                res = req.get(url, timeout=7, proxies=G.value('proxies', None))
+                res = req.get(url, timeout=G.WAIT_TIME['refresh'], proxies=G.value('proxies', None))
             except requests.exceptions.Timeout:
                 LOGGER.warning('%s, %s, %s, FAILED - Endpoint Timeout.', now, visa_type, location)
                 cls.check_crawler_server_connection()
@@ -313,7 +315,7 @@ class VisaFetcher:
                     endpoint = G.CRAWLER_API['register']['cgi'].format(visa_type, location)
 
                 url = '{}{}'.format(G.value('current_crawler_node', ''), endpoint)
-                res = requests.get(url, timeout=40, proxies=G.value('proxies', None))
+                res = requests.get(url, timeout=G.WAIT_TIME['register'], proxies=G.value('proxies', None))
                 result = res.json()
                 LOGGER.debug(
                     'consume_new_session_request - Endpoint: %s | Response json: %s',

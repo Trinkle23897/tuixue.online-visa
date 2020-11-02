@@ -41,6 +41,8 @@ The newly developed backend uses [MongoDB Communitry Edition v4.4](https://docs.
 - For Ubuntu: [Install MongoDB on Ubuntu](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 - For other OS: [Install MongoDB Community Edition](https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials)
 
+> **P.S.** MongoDB runs on port **27017** by default. Seal this port in production server.
+
 #### MongoDB data migration
 
 Previously, all the fetched data are stored in a folder structured as follow:
@@ -192,21 +194,20 @@ HTTP/1.1 200 OK
 }
 ```
 
-
-### Get earliest Visa appointment date
+### Get overview of Visa appointment date
 
 ```sh
-GET /visastatus/earliest
+GET /visastatus/overview
 ```
 
-Return the earliest available appointment date for any given date of a visa type and embassy/consulate. The endpoint will return the earliest dates of given `(visa_type, embassy_code)` permutation grouped by write date. Note that all `(visa_type, embassy_code)` combo results, if exist, will be mixed together by write date. It's frontend's job to decide how to use them.
+Return the overview: earliest and latest available appointment date for any given date of a visa type and embassy/consulate. The endpoint will return the earliest dates of given `(visa_type, embassy_code)` permutation grouped by write date. Note that all `(visa_type, embassy_code)` combo results, if exist, will be mixed together by write date. It's frontend's job to decide how to use them.
 
 #### Parameters
 
 | Param | Type | Description |
 |---|---|---|---|
 |`visa_type`|`list`|Required. List of types of visa for the returning visa status. One of `['B', 'F', 'H', 'O', 'L']`.|
-|`embassy_code`|`list`|Required. List of codes of embassy/consulate for returning visa status. One of `['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'sel', 'mel', 'per', 'syd', 'brn', 'fuk', 'itm', 'oka', 'cts', 'hnd', 'ktm', 'bkk', 'cnx', 'bfs', 'lcy', 'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr', 'auh', 'dxb', 'beg', 'cdg', 'gye', 'uio', 'esb', 'ist', 'ath', 'bog', 'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mid', 'mex', 'mty', 'ols', 'nld', 'tij']`|
+|`embassy_code`|`list`|Required. List of codes of embassy/consulate for returning visa status. One of `['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'sel', 'mel', 'per', 'syd', 'brn', 'fuk', 'itm', 'oka', 'cts', 'hnd', 'ktm', 'bkk', 'cnx', 'bfs', 'lcy', 'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr', 'auh', 'dxb', 'beg', 'cdg', 'gye', 'uio', 'esb', 'ist', 'ath', 'bog', 'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mex', 'mty', 'ols', 'nld', 'tij']`|
 |`since`|`string`|Default to 15 days before today. The endpoint will return the data after `since` date. The string **MUST** in the format of a UTC time string, e.g. `2020-10-17T22:13:54.617098`.|
 |`to`|`string`|Default to today. The endpoint will return the data before `to` date. The string **MUST** in the format of a UTC time string, e.g. `2020-11-01T22:13:54.617110`.|
 
@@ -227,9 +228,9 @@ HTTP/1.1 200 OK
     "visa_status": [
         {
             "date": "YYYY-MM-DDT00:00:00",
-            "earliest_dates": [
-                {"visa_type": "F", "embassy_code": "pp", "earliest_date": "YYYY-MM-DDT00:00:00"},
-                {"visa_type": "H", "embassy_code": "bkk", "earliest_date": "YYYY-MM-DDT00:00:00"},
+            "overview": [
+                {"visa_type": "F", "embassy_code": "pp", "earliest_date": "YYYY-MM-DDT00:00:00", "latest_date": "YYYY-MM-DDT00:00:00"},
+                {"visa_type": "H", "embassy_code": "bkk", "earliest_date": "YYYY-MM-DDT00:00:00", "latest_date": "YYYY-MM-DDT00:00:00"},
             ]
         },
     ]
@@ -244,13 +245,12 @@ GET /visastatus/latest
 
 Return the latest fetch record of all given Visa types and embassy codes. Return the `(visa_type, embassy_code)` pair's latest fetched result, _including the failed fetch_.
 
-
 #### Parameters
 
 | Param | Type | Description |
 |---|---|---|---|
 |`visa_type`|`list`|Required. List of types of visa for the returning visa status. One of `['B', 'F', 'H', 'O', 'L']`.|
-|`embassy_code`|`list`|Required. List of codes of embassy/consulate for returning visa status. One of `['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'sel', 'mel', 'per', 'syd', 'brn', 'fuk', 'itm', 'oka', 'cts', 'hnd', 'ktm', 'bkk', 'cnx', 'bfs', 'lcy', 'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr', 'auh', 'dxb', 'beg', 'cdg', 'gye', 'uio', 'esb', 'ist', 'ath', 'bog', 'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mid', 'mex', 'mty', 'ols', 'nld', 'tij']`|
+|`embassy_code`|`list`|Required. List of codes of embassy/consulate for returning visa status. One of `['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'sel', 'mel', 'per', 'syd', 'brn', 'fuk', 'itm', 'oka', 'cts', 'hnd', 'ktm', 'bkk', 'cnx', 'bfs', 'lcy', 'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr', 'auh', 'dxb', 'beg', 'cdg', 'gye', 'uio', 'esb', 'ist', 'ath', 'bog', 'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mex', 'mty', 'ols', 'nld', 'tij']`|
 
 #### Responses
 
