@@ -246,7 +246,7 @@ Return the overview: earliest and latest available appointment date for any give
 #### Parameters
 
 | Param | Type | Description |
-|---|---|---|---|
+|---|---|---|
 |`visa_type`|`list`|Required. List of types of visa for the returning visa status. One of `['B', 'F', 'H', 'O', 'L']`.|
 |`embassy_code`|`list`|Required. List of codes of embassy/consulate for returning visa status. One of `['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'sel', 'mel', 'per', 'syd', 'brn', 'fuk', 'itm', 'oka', 'cts', 'hnd', 'ktm', 'bkk', 'cnx', 'bfs', 'lcy', 'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr', 'auh', 'dxb', 'beg', 'cdg', 'gye', 'uio', 'esb', 'ist', 'ath', 'bog', 'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mex', 'mty', 'ols', 'nld', 'tij']`|
 |`since`|`string`|Default to 15 days before today. The endpoint will return the data after `since` date. The string **MUST** in the format of a UTC time string, e.g. `2020-10-17T22:13:54.617098`.|
@@ -289,7 +289,7 @@ Return the latest fetch record of all given Visa types and embassy codes. Return
 #### Parameters
 
 | Param | Type | Description |
-|---|---|---|---|
+|---|---|---|
 |`visa_type`|`list`|Required. List of types of visa for the returning visa status. One of `['B', 'F', 'H', 'O', 'L']`.|
 |`embassy_code`|`list`|Required. List of codes of embassy/consulate for returning visa status. One of `['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'sel', 'mel', 'per', 'syd', 'brn', 'fuk', 'itm', 'oka', 'cts', 'hnd', 'ktm', 'bkk', 'cnx', 'bfs', 'lcy', 'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr', 'auh', 'dxb', 'beg', 'cdg', 'gye', 'uio', 'esb', 'ist', 'ath', 'bog', 'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mex', 'mty', 'ols', 'nld', 'tij']`|
 
