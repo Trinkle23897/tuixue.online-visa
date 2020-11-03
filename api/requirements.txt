@@ -1,0 +1,17 @@
+asgiref==3.2.10
+beautifulsoup4==4.9.3
+certifi==2020.6.20
+chardet==3.0.4
+Django==3.1.2
+future==0.18.2
+idna==2.10
+numpy==1.19.2
+Pillow==7.2.0
+pytz==2020.1
+requests==2.24.0
+selenium==3.141.0
+soupsieve==2.0.1
+sqlparse==0.4.1
+torch==1.6.0
+torchvision==0.7.0
+urllib3==1.25.10
