@@ -20,13 +20,14 @@ def init_logger(log_name: str, log_dir: str, debug: bool = False):
     file_handler.suffix = '%Y%m%d'
     file_handler.setFormatter(fmt=log_fmt)
 
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(fmt=log_fmt)
+    # Commenting out the stdout streaming for production server.
+    # stream_handler = logging.StreamHandler()
+    # stream_handler.setFormatter(fmt=log_fmt)
 
     logger = logging.getLogger(log_name)
     logger.setLevel(logging.INFO if not debug else logging.DEBUG)
     logger.addHandler(file_handler)
-    logger.addHandler(stream_handler)
+    # logger.addHandler(stream_handler)
 
     return logger
 
@@ -44,26 +45,3 @@ def file_line_to_dt(line: str) -> Tuple[datetime, datetime]:
     """ Convert a line in data file to datetime object"""
     time_of_update, available_dt = line.strip().split()
     return datetime.strptime(time_of_update, '%H:%M').time(), datetime.strptime(available_dt, '%Y/%m/%d')
-
-
-def get_earliest_and_latest_update_dt(file_path: str) -> Tuple[datetime, datetime]:
-    """ Get the earliest date and currently available date from a visa status
-        data file.
-        return: (earlist_date, latest_update_date)
-    """
-    with open(file_path) as f:
-        dt_lst = [file_line_to_dt(line) for line in f.readlines()]
-
-    if len(dt_lst) == 0:
-        raise EmptyDataFile()
-    else:
-        latest_write, latest_dt = dt_lst[-1]
-
-    # elif len(dt_lst) == 1:
-    #     return dt_lst[0], dt_lst[0]
-    # else:
-    #     return min(*dt_lst), dt_lst[-1]
-
-
-class EmptyDataFile(Exception):
-    pass

@@ -6,10 +6,12 @@ from queue import Queue
 from threading import Lock
 from typing import List, Optional
 
-DATA_PATH = os.path.join(os.curdir, 'data')
+DATA_PATH = os.path.join(os.curdir, 'data')  # dir stroing file-based data
 
 with open(os.path.join(os.curdir, 'config', 'secret.json')) as f:
     SECRET = json.load(f)
+
+MAX_EMAIL_SENT = 512  # maximum number of emails sent for one POST to email server
 
 MONGO_CONFIG = {'host': '127.0.0.1', 'port': 27017, 'database': 'tuixue'}
 

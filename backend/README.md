@@ -26,9 +26,51 @@ This folder contains the code that:
 pip3 install -r requirements.txt
 ```
 
-##### A detail caveat in the code
+#### Visa Status Fetcher
 
-In the `notifier.py`, I specify a global variable `SECRET` which is a dictionary containing the email server url and other social media secret like Telegram bot tokens. The dictionary is read from a JSON file in the path `./config/secret.json`. The `config` folder was manuanlly created to store the secret files used to access crawler node. In this circumstances, only the `./config/secret.json` to have the backend api server to run. (This file path should be written in a more configurable way in the future commits.)
+`visa_status_fetcher.py` is the script for fetching new available visa appointment date from the crawler backend. This script is design to run separated from FastAPI so that the request load of crawler server is controlled under a resasonable level. It comes with a simple command line interface.
+
+```sh
+$ python3 visa_status_fetcher.py --help
+usage: visa_status_fetcher.py [-h] --target {ais,cgi} [--proxy PROXY]
+                              [--crawler CRAWLER] [--ais AIS]
+                              [--log_dir LOG_DIR] [--log_name LOG_NAME]
+                              [--debug]
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --target {ais,cgi}   targeting system
+  --proxy PROXY        local proxy port
+  --crawler CRAWLER    crawler api list
+  --ais AIS            ais account in json format
+  --log_dir LOG_DIR    directory to save logs
+  --log_name LOG_NAME  name of log file
+  --debug              log debug information
+```
+
+`--target` specifies the system used by a U.S. embassy/consulate. In order to fetch both AIS and CGI system, one should run two processes of this script separately.
+
+`--proxy` is a legacy argument from previous version of the fetcher. The functionality and mechanism remains unchanged.
+
+`--cralwer` requires a text file that contains the address of crawler servers.
+
+`--ais` requires a JSON file containing the user names and passwords of users in AIS systems. It's needed for crawler server to obtain available Visa appointment date.
+
+`--log_dir` and `--log_name` are optional parameters which allow you to specify where to store the log files. It's default to log files `./logs/{target}_visa_fetcher` where `target` is sepcified by `--target` argument.
+
+`--debug` is a flag that provides a richer content of logging for development.
+
+**Run following command for fetching the CGI system:**
+
+```sh
+python3 visa_status_fetch.py --target cgi --crawler path/to/crawler_file
+```
+
+**Run following command for fetching the AIS system:**
+
+```sh
+python3 visa_status_fetch.py --target ais --crawler path/to/crawler_file --ais path/to/ais.json
+```
 
 #### MongoDB
 
@@ -182,10 +224,13 @@ HTTP/1.1 200 OK
 ```json
 {
     "region": [
-        {"region": "DOMESTIC", "embassy_code_lst": ["bj", "sh", "cd", "gz", "sy", "hk", "tp"]}
+        {"region": "DOMESTIC", "embassy_code_lst": ["bj", "sh", "cd", "gz", "sy", "hk", "tp"]},
+        {"region":"SOUTH_EAST_ASIA","embassy_code_lst":["pp","sg","ktm","bkk","cnx"]}
     ],
     "embassy": [
-        ["北京", "Beijing", "bj", "cgi"]
+        ["北京", "Beijing", "bj", "cgi", "DOMESTIC", "ASIA", "CHN"],
+        ["金边", "Phnom Penh", "pp", "cgi", "SOUTH_EAST_ASIA", "ASIA", "KHM"],
+        ["伦敦", "London", "lcy", "ais", "WEST_EUROPE", "EUROPE", "GBR"]
     ]
 }
 ```
@@ -266,7 +311,7 @@ HTTP/1.1 200 OK
 ### Email Subscription
 
 ```sh
-POST /subscribe/email/{rep}
+POST /subscribe/email/{step}
 ```
 
 Post email subscription data to the backend. This endpoint is supposed to be pinged twice for a successful subscription. The endpoint is still in the middle of develoment.

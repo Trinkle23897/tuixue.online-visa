@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import List, Optional
 from tuixue_typing import VisaType
 from urllib.parse import urlencode, urlunsplit, quote
-from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET
+from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, MAX_EMAIL_SENT
 
 
 VISA_STATUS_CHANGE_TITLE = '[tuixue.online] {visa_detail} Visa Status Change'
@@ -18,7 +18,7 @@ VISA_STATUS_CHANGE_CONTENT = """
     See <a href="">Some link to the website</a> for more detail.<br>
     If you want to change your subscribe option, please re-submit a
     request over <a href="">Some link to the website</a>.
-"""
+"""  # TODO: add the frontend href attr here.
 
 SUBSCRIPTION_CONFIRMATION_TITLE = '[tuixue.online] Subscription Confirmation of {email}'
 SUBSCRIPTION_CONFIRMATION_CONTENT = """
@@ -142,16 +142,19 @@ class Notifier:
                 old_status = '/' if last_available_date is None else last_available_date.strftime('%Y/%m/%d')
                 new_status = available_date.strftime('%Y/%m/%d')
 
-                success = cls.send_email(
-                    title=VISA_STATUS_CHANGE_TITLE.format(visa_detail=VISA_TYPE_DETAILS[visa_type]),
-                    content=VISA_STATUS_CHANGE_CONTENT.format(
-                        send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
-                        location=embassy.name_en,
-                        old_status=old_status,
-                        new_status=new_status,
-                    ),
-                    receivers=email_lst
-                )
-                return success
+                email_sent = []  # handling maximum email sent
+                for step in range(len(email_lst) // MAX_EMAIL_SENT + 1):
+                    success = cls.send_email(
+                        title=VISA_STATUS_CHANGE_TITLE.format(visa_detail=VISA_TYPE_DETAILS[visa_type]),
+                        content=VISA_STATUS_CHANGE_CONTENT.format(
+                            send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
+                            location=embassy.name_en,
+                            old_status=old_status,
+                            new_status=new_status,
+                        ),
+                        receivers=email_lst[step * MAX_EMAIL_SENT: step * MAX_EMAIL_SENT + MAX_EMAIL_SENT]
+                    )
+                    email_sent.append(success)
+                return all(email_sent)
             else:
                 return False
