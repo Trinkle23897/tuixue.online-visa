@@ -525,11 +525,12 @@ def simple_test_subscription():
 
     Subscription.email.drop()
 
-    email = 'benji@example.com'
+    email = 'benjamincaiyh+tuixuetest@gmail.com'
     subs = [
-        ('F', 'pp', datetime(2020, 9, 25)),
-        ('F', 'sh', datetime(2020, 10, 15)),
-        ('H', 'bj', datetime.max)
+        ('F', 'pp', datetime.max),
+        ('O', 'beg', datetime.max),
+        ('H', 'lcy', datetime.max),
+        ('B', 'sel', datetime.max)
     ]
     Subscription.add_email_subscription(email, subs)
     pprint(Subscription.get_subscriptions_by_email(email))

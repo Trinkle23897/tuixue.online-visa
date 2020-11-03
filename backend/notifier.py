@@ -115,9 +115,12 @@ class Notifier:
         embassy: USEmbassy,
         available_date: Optional[datetime],
     ) -> bool:
-        """ Determine whether or not a email notification should be sent.
-            And send the notification if needed.
-            Return a flag indicating wheter the email is sent or not.
+        """ Determine whether or not a email notification should be sent. And send the notification
+            if needed. Return a flag indicating wheter the email is sent or not.
+
+            Only notify user when one of two condition below is satisfied:
+            1. `last_available_date` is None and `available_date` is not None
+            2. `last_available_date` is datetime and `available_date` is an earlier datetime
         """
         latest_written_lst = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
         if len(latest_written_lst) == 0:  # when the new code deploy into production
@@ -138,7 +141,7 @@ class Notifier:
             else:
                 return False
 
-            if (last_available_date is None or last_available_date != available_date) and len(email_lst) > 0:
+            if (last_available_date is None or available_date < last_available_date) and len(email_lst) > 0:
                 old_status = '/' if last_available_date is None else last_available_date.strftime('%Y/%m/%d')
                 new_status = available_date.strftime('%Y/%m/%d')
 
