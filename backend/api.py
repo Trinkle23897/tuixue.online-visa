@@ -17,7 +17,7 @@ EMBASSY_LST = G.USEmbassy.get_embassy_lst()
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r'http[s]://localhost:?[\d]*',
+    allow_origins=['*'],
     allow_methods=['GET', 'POST'],
 )
 
