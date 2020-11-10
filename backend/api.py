@@ -4,7 +4,15 @@ from enum import Enum
 from typing import Optional, List
 from datetime import datetime, timedelta
 
-from fastapi import FastAPI, Body, Query, Response, status
+from fastapi import (
+    FastAPI,
+    Body,
+    Query,
+    Response,
+    status,
+    WebSocket,
+    WebSocketDisconnect
+)
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -78,9 +86,9 @@ def get_earliest_visa_status(
 ):
     """ Get the available visa appointment status with given query."""
 
-    since = since.replace(hour=0, minute=0, second=0, microsecond=0)
-    to = to.replace(hour=0, minute=0, second=0, microsecond=0)
-    dt_range = [since + timedelta(days=d) for d in range((to - since).days)]
+    since = since.astimezone(tz=None).replace(hour=0, minute=0, second=0, microsecond=0)
+    to = to.astimezone(tz=None).replace(hour=0, minute=0, second=0, microsecond=0)
+    dt_range = [since + timedelta(days=d) for d in range((to - since).days + 1)]
 
     tabular_data = DB.VisaStatus.find_visa_status_overview(visa_type, embassy_code, dt_range)
 
@@ -93,16 +101,17 @@ def get_earliest_visa_status(
     }
 
 
-@app.get('/visastatus/latest')
-def get_latest_visa_status(
-    visa_type: List[VisaType] = Query(...),
-    embassy_code: List[EmbassyCode] = Query(...),
-):
+@app.websocket('/visastatus/latest')
+async def get_latest_visa_status(websocket: WebSocket):
     """ Get the latest fetched visa status with the given query"""
-
-    latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy_code)
-
-    return latest_written
+    await websocket.accept()
+    try:
+        while True:
+            visa_type, embassy_code = await websocket.receive_json()
+            latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy_code)
+            await websocket.send_json(latest_written)
+    except WebSocketDisconnect:
+        pass
 
 
 @app.get('/visastatus/{visa_type}/{embassy_code}')
@@ -117,7 +126,7 @@ def get_visa_status_by_visa_type_and_embassy(
         It's noteworthy that this endpoint consume a huge amount of resource in backend when `since`
         and `to` date range are too large. Use with caution.
     """
-    write_date = write_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    write_date = write_date.astimezone(tz=None).replace(hour=0, minute=0, second=0, microsecond=0)
     empty_record = {
         'visa_type': visa_type,
         'embassy_code': embassy_code,
@@ -137,7 +146,7 @@ def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription
         (
             subs['visa_type'],
             subs['code'],
-            subs['till'] or datetime.max
+            (subs['till'] or datetime.max).astimezone(tz=None)  # TODO: untested
         ) for subs in subscription['subscription']
     ]
 
