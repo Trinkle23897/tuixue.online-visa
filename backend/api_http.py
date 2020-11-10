@@ -1,18 +1,10 @@
-""" RESTful API for http://tuixue.online/global/"""
+""" RESTful API for http://tuixue.online/visa/"""
 
 from enum import Enum
 from typing import Optional, List
 from datetime import datetime, timedelta
 
-from fastapi import (
-    FastAPI,
-    Body,
-    Query,
-    Response,
-    status,
-    WebSocket,
-    WebSocketDisconnect
-)
+from fastapi import FastAPI, Body, Query, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -99,19 +91,6 @@ def get_earliest_visa_status(
         'to': to,
         'visa_status': tabular_data,
     }
-
-
-@app.websocket('/visastatus/latest')
-async def get_latest_visa_status(websocket: WebSocket):
-    """ Get the latest fetched visa status with the given query"""
-    await websocket.accept()
-    try:
-        while True:
-            visa_type, embassy_code = await websocket.receive_json()
-            latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy_code)
-            await websocket.send_json(latest_written)
-    except WebSocketDisconnect:
-        pass
 
 
 @app.get('/visastatus/{visa_type}/{embassy_code}')
