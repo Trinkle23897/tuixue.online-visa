@@ -309,6 +309,63 @@ class VisaStatus:
         return list(cursor)
 
     @classmethod
+    def find_visa_status_past24h(
+        cls,
+        visa_type: VisaType,
+        embassy_code: EmbassyCode,
+        timestamp: datetime,
+    ) -> Optional[dict]:
+        """ Return historical data of a given `visa_type`-`embassy_cde` pair for the past 24 hours"""
+        ts_start, ts_end = timestamp - timedelta(days=1), timestamp
+
+        today = datetime.combine(timestamp.date(), datetime.min.time())
+        yesterday = today - timedelta(days=1)
+        dates = list({today, yesterday})
+
+        cursor = cls.visa_status.aggregate([
+            {'$match': {'visa_type': visa_type, 'embassy_code': embassy_code, 'write_date': {'$in': dates}}},
+            {'$unwind': '$available_dates'},
+            {'$sort': {'available_dates.write_time': pymongo.ASCENDING}},
+            {
+                '$group': {
+                    '_id': None,
+                    'visa_type': {'$first': '$visa_type'},
+                    'embassy_code': {'$first': '$embassy_code'},
+                    'available_dates': {
+                        '$push': {
+                            '$cond': [
+                                {
+                                    '$and': [
+                                        {'$gte': ['$available_dates.write_time', ts_start]},
+                                        {'$lte': ['$available_dates.write_time', ts_end]},
+                                    ],
+                                },
+                                {
+                                    'write_time': '$available_dates.write_time',
+                                    'available_date': '$available_dates.available_date',
+                                },
+                                None
+                            ]
+                        },
+                    },
+                }
+            },
+            {'$project': {
+                '_id': False,
+                'visa_type': '$visa_type',
+                'embassy_code': '$embassy_code',
+                'time_range': [ts_start, ts_end],
+                'available_dates': {'$setDifference': ['$available_dates', [None]]},
+            }}
+        ])
+
+        result = list(cursor)
+        if len(result) > 0:
+            return result[0]
+        else:
+            return None
+
+    @classmethod
     def find_historical_visa_status(
         cls,
         visa_type: VisaType,

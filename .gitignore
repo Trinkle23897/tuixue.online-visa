@@ -6,6 +6,8 @@ B
 O
 H
 L
+sync_data.py
+db_playground.py
 logs
 ais.json
 crawler*.txt

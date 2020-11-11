@@ -97,7 +97,6 @@ def get_earliest_visa_status(
 def get_visa_status_by_visa_type_and_embassy(
     visa_type: VisaType,
     embassy_code: EmbassyCode,
-    write_date: Optional[datetime] = datetime.today(),
 ):
     """ Return all of the historical data fetched for a givenv `(visa_type, embassy_code)` pair.
         If a given `since` or `or` date query is given, the historical data will be truncated to
@@ -105,14 +104,18 @@ def get_visa_status_by_visa_type_and_embassy(
         It's noteworthy that this endpoint consume a huge amount of resource in backend when `since`
         and `to` date range are too large. Use with caution.
     """
-    write_date = write_date.astimezone(tz=None).replace(hour=0, minute=0, second=0, microsecond=0)
+    timestamp = datetime.now()
+
     empty_record = {
         'visa_type': visa_type,
         'embassy_code': embassy_code,
-        'write_date': write_date,
+        'time_range': [timestamp - timedelta(days=1), timestamp],
         'available_dates': []
     }
-    hist_visa_status = (DB.VisaStatus.find_historical_visa_status(visa_type, embassy_code, write_date) or empty_record)
+    hist_visa_status = (
+        DB.VisaStatus.find_visa_status_past24h(visa_type, embassy_code, timestamp) or
+        empty_record
+    )
 
     return hist_visa_status
 
