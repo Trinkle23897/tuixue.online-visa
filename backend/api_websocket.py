@@ -1,11 +1,12 @@
 """ WebSocket service for http://tuixue.online/visa/"""
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.encoders import jsonable_encoder
 
 import tuixue_mongodb as DB
 import global_var as G
 
 EMBASSY_CODES = [emb.code for emb in G.USEmbassy.get_embassy_lst()]
-app = FastAPI()
+app = FastAPI(root_path='/ws')
 
 
 @app.websocket('/visastatus/latest')
@@ -30,6 +31,6 @@ async def get_latest_visa_status(websocket: WebSocket):
                 continue
 
             latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy_code)
-            await websocket.send_json(latest_written)
+            await websocket.send_json(jsonable_encoder(latest_written))  # jsonify datetime manuanlly
     except WebSocketDisconnect:
         pass
