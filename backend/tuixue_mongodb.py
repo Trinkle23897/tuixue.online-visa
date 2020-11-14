@@ -6,8 +6,8 @@ import os
 import pymongo
 import util
 from collections import defaultdict
-from datetime import datetime, timedelta
 from tuixue_typing import VisaType, EmbassyCode
+from datetime import datetime, timedelta, timezone
 from typing import Union, List, Tuple, Optional, Dict
 from global_var import USEmbassy, VISA_TYPES, MONGO_CONFIG
 
@@ -83,10 +83,101 @@ class VisaStatus:
     latest_written = get_collection('latest_written')
 
     @classmethod
+    def initiate_collections_tz(cls, since: datetime) -> None:
+        """ Initiate the database with following handling of datetime object regarding timezone.
+
+            1. All of the `available_date` data are stored as is. (what we fetch is what we store)
+            2. All of the `write_time` and `write_date` data in Mongo collections **`visa_status`**
+                and **`latest_written`** are stored in UTC+0 standard time.
+            3. **(Very important here)** All of the `write_time` and `write_date` data in Mongo
+                collection **`overview`** are stored in the time in the local time zone of a given
+                U.S. Embassy location. e.g. The overview data of U.S. Embassy in Phnom Pend on the
+                date Oct 10th, 2020 stands for the time range `"2020-10-10T00:00+07:00"` to
+                `"2020-10-10T23:59+07:00"`, **NOT** `"2020-10-10T00:00+00:00"` to `"2020-10-10T23:59+00:00"`.
+            4. All time data in a HTTP request from frontend **must be** a UTC standard time. The
+                `Date.toISOString` is the default way we construct the time related query in a request
+                url in frontend. FastAPI backend should add a layer of logic that consolidate the received
+                datetime object must have a `tzinfo` attribute otherwise should return a 422 status code.
+        """
+        since_midnight = since.replace(hour=0, minute=0, second=0, microsecond=0)
+        today_midnight = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        date_range = [since_midnight + timedelta(days=d) for d in range((today_midnight - since_midnight).days + 1)]
+
+        embassy_lst = USEmbassy.get_embassy_lst()
+
+        cls.drop()
+        cls.visa_status.create_index([('write_date', pymongo.ASCENDING)])
+
+        for vt in VISA_TYPES:
+            for emb in embassy_lst:
+                print()  # Go to a new line (inner loop using end='\r')
+                accumulated_inserted = 0
+                for date in date_range:
+                    file_path = util.construct_data_file_path(vt, emb.location, date.strftime('%Y/%m/%d'))
+                    if not os.path.exists(file_path):
+                        continue
+
+                    with open(file_path) as f:
+                        available_dates_arr = [
+                            {'write_time': datetime.combine(date.date(), wt), 'available_date': avai_dt}
+                            for wt, avai_dt in [util.file_line_to_dt(ln) for ln in f.readlines()]
+                        ]
+
+                    for i, adt in enumerate(available_dates_arr):
+                        write_time_utc = adt['write_time'].astimezone(tz=None).astimezone(tz=timezone.utc)
+                        write_date_utc = write_time_utc.replace(hour=0, minute=0, second=0, microsecond=0)
+                        available_date = adt['available_date']
+
+                        # Push the available date one by one because write_date_utc may be different
+                        # MongoDB will convert the datetime obj with tzinfo attr to UTC time
+                        cls.visa_status.update_one(
+                            {'visa_type': vt, 'embassy_code': emb.code, 'write_date': write_date_utc},
+                            {'$push': {'available_dates': available_date}},
+                            upsert=True,
+                        )
+
+                        write_date_emb_local = write_time_utc\
+                            .astimezone(emb.timezone)\
+                            .replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+                        
+                        query = {'visa_type': vt, 'embassy_code': emb.code}
+                        overview_query = {**query, 'overview.write_date': write_date_emb_local}
+
+                        if cls.overview.find_one(overview_query) is None:  # $(update) of array can't work with upsert
+                            cls.overview.update_one(
+                                query,
+                                {
+                                    '$push': {
+                                        'overview': {
+                                            'write_date': write_date_emb_local,
+                                            'earliest_date': available_date,
+                                            'latest_date': available_date,
+                                        },
+                                    },
+                                },
+                                upsert=True,
+                            )
+
+                        else:
+                            cls.overview.update_one(
+                                overview_query,
+                                {
+                                    '$min': {'overview.$.earliest_date': available_date},
+                                    '$max': {'overview.$.latest_date': available_date}, 
+                                }
+                            )
+
+                        accumulated_inserted += 1
+                        print(
+                            f'{vt}\t{emb.location}\t\t{date.year}/{date.month}/{date.day}\t{write_date_utc.year}/{write_date_utc.month}/{write_date_utc.day}\t{write_date_emb_local.year}/{write_date_emb_local.month}/{write_date_emb_local.day}\t{i + 1}/{len(available_dates_arr)}\t{accumulated_inserted}',
+                            end='\r'
+                        )
+
+    @classmethod
     def initiate_collections(cls, since: datetime) -> None:
         """ Initiate the visa status storage with the file based data."""
         since_midnight = since.replace(hour=0, minute=0, second=0, microsecond=0)
-        today_midnight = datetime.combine(datetime.today().date(), datetime.min.time())
+        today_midnight = datetime.combine(datetime.now().date(), datetime.min.time())
         date_range = [since_midnight + timedelta(days=d) for d in range((today_midnight - since_midnight).days)]
 
         embassy_lst = USEmbassy.get_embassy_lst()
@@ -171,13 +262,16 @@ class VisaStatus:
             `'latest_written'` collection will always be modified, whereas the `'available_dates'`
             collection will only be modified when available date is not None
         """
-        write_date = write_time.replace(hour=0, minute=0, second=0, microsecond=0)  # midnight of write date
+        embassy = USEmbassy.get_embassy_by_code(embassy_code)
+        write_time_utc = write_time.astimezone(tz=None).astimezone(tz=timezone.utc)
+        write_date_utc = write_time_utc.replace(hour=0, minute=0, second=0, microsecond=0)
+        write_date_emb_local = write_date_utc.astimezone(embassy.timezone).replace(tzinfo=None)
 
         query = {'visa_type': visa_type, 'embassy_code': embassy_code}
-        visa_status_query = {**query, 'write_date': write_date}
-        overview_query = {**query, 'overview.write_date': write_date}
+        visa_status_query = {**query, 'write_date': write_date_utc}
+        overview_query = {**query, 'overview.write_date': write_date_emb_local}
 
-        new_fetch = {'write_time': write_time, 'available_date': available_date}
+        new_fetch = {'write_time': write_time_utc, 'available_date': available_date}
 
         # udpate document if exists, otherwise insert a new document
         cls.latest_written.update_one(query, {'$set': new_fetch}, upsert=True)
@@ -191,7 +285,7 @@ class VisaStatus:
                     {
                         '$push': {
                             'overview': {
-                                'write_date': write_date,
+                                'write_date': write_date_emb_local,
                                 'earliest_date': available_date,
                                 'latest_date': available_date
                             }

@@ -2,7 +2,7 @@
 
 from enum import Enum
 from typing import Optional, List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import FastAPI, Body, Query, Response, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -70,16 +70,20 @@ def get_meta_data():
 
 
 @app.get('/visastatus/overview')
-def get_earliest_visa_status(
+def get_visa_status_overview(
     visa_type: List[VisaType] = Query(...),
     embassy_code: List[EmbassyCode] = Query(...),
-    since: Optional[datetime] = datetime.today() - timedelta(days=15),
-    to: Optional[datetime] = datetime.today(),
+    since: Optional[datetime] = datetime.now(timezone.utc) - timedelta(days=15),
+    to: Optional[datetime] = datetime.now(timezone.utc),
 ):
-    """ Get the available visa appointment status with given query."""
+    """ Get the available visa appointment status with given query.
+        The `since` and `to` query params, if provided, MUST be in the timezone of UTC.
+    """
+    embassy = G.USEmbassy.get_embassy_by_code(embassy_code)
 
-    since = since.astimezone(tz=None).replace(hour=0, minute=0, second=0, microsecond=0)
-    to = to.astimezone(tz=None).replace(hour=0, minute=0, second=0, microsecond=0)
+    # Convert `since` and `to` to embassy local time and get rid of tzinfo
+    since = since.astimezone(embassy.timezone).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+    to = to.astimezone(embassy.timezone).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
     dt_range = [since + timedelta(days=d) for d in range((to - since).days + 1)]
 
     tabular_data = DB.VisaStatus.find_visa_status_overview(visa_type, embassy_code, dt_range)
@@ -104,7 +108,7 @@ def get_visa_status_by_visa_type_and_embassy(
         It's noteworthy that this endpoint consume a huge amount of resource in backend when `since`
         and `to` date range are too large. Use with caution.
     """
-    timestamp = datetime.now()
+    timestamp = datetime.now(timezone.utc)
 
     empty_record = {
         'visa_type': visa_type,
@@ -141,3 +145,11 @@ def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription
         updated_subscriber = DB.Subscription.add_email_subscription(subscription['email'], subs_lst)
 
         return updated_subscriber
+
+
+@app.get('/test')
+def test(dt: datetime):
+    """ Log the datetime."""
+    print(dt, dt.astimezone())
+    print(dt.strftime('%Z%z'), dt.astimezone().strftime('%Z%z'))
+    return dt

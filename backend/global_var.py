@@ -4,7 +4,8 @@ import os
 import json
 from queue import Queue
 from threading import Lock
-from typing import List, Optional
+from typing import List, Optional, Union
+from datetime import timedelta, timezone
 
 DATA_PATH = os.path.join(os.curdir, 'data')  # dir stroing file-based data
 
@@ -29,60 +30,67 @@ WAIT_TIME = {'register': 40, 'refresh': 7}
 
 SESSION_UPDATE_QUEUE = Queue()
 
+COUTNRY_CODE_TO_UTC_OFFSET = {
+    'ARE': 4, 'AUS': 10, 'BRB': -4, 'CAN': -5, 'CHE': 1,
+    'CHN': 8, 'COL': -5, 'ECU': -5, 'FRA': 1, 'GBR': 0,
+    'GRC': 2, 'JPN': 9, 'KHM': 7, 'KOR': 9, 'MEX': -6,
+    'NPL': 5.75, 'SGP': 8, 'SRB': 1, 'THA': 7, 'TUR': 3
+}
+
 # Embassy/consulate attributes
 # Tuple[name_cn, name_en, code, sys, region, continent, country]
 EMBASSY_ATTR = [
-    ('北京', 'Beijing', 'bj', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
-    ('上海', 'Shanghai', 'sh', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
-    ('成都', 'Chengdu', 'cd', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
-    ('广州', 'Guangzhou', 'gz', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
-    ('沈阳', 'Shenyang', 'sy', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
-    ('香港', 'Hongkong', 'hk', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
-    ('台北', 'Taipei', 'tp', 'cgi', 'DOMESTIC', 'ASIA', 'CHN'),
-    ('金边', 'Phnom Penh', 'pp', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'KHM'),
-    ('新加坡', 'Singapore', 'sg', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'SGP'),
-    ('首尔', 'Seoul', 'sel', 'cgi', 'EAST_ASIA', 'ASIA', 'KOR'),
-    ('墨尔本', 'Melbourne', 'mel', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS'),
-    ('珀斯', 'Perth', 'per', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS'),
-    ('悉尼', 'Sydney', 'syd', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS'),
-    ('伯尔尼', 'Bern', 'brn', 'cgi', 'WEST_EUROPE', 'EUROPE', 'CHE'),
-    ('福冈', 'Fukuoka', 'fuk', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
-    ('大坂', 'Osaka', 'itm', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
-    ('那霸', 'Naha', 'oka', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
-    ('札幌', 'Sapporo', 'cts', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
-    ('东京', 'Tokyo', 'hnd', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN'),
-    ('加德满都', 'Kathmandu', 'ktm', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'NPL'),
-    ('曼谷', 'Bangkok', 'bkk', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA'),
-    ('清迈', 'Chiang Mai', 'cnx', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA'),
-    ('贝尔法斯特', 'Belfast', 'bfs', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR'),
-    ('伦敦', 'London', 'lcy', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR'),
-    ('卡尔加里', 'Calgary', 'yyc', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
-    ('哈利法克斯', 'Halifax', 'yhz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
-    ('蒙特利尔', 'Montreal', 'yul', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
-    ('渥太华', 'Ottawa', 'yow', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
-    ('魁北克城', 'Quebec City', 'yqb', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
-    ('多伦多', 'Toronto', 'yyz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
-    ('温哥华', 'Vancouver', 'yvr', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN'),
-    ('阿布扎比', 'Abu Dhabi', 'auh', 'ais', 'WEST_ASIA', 'ASIA', 'ARE'),
-    ('迪拜', 'Dubai', 'dxb', 'ais', 'WEST_ASIA', 'ASIA', 'ARE'),
-    ('贝尔格莱德', 'Belgrade', 'beg', 'ais', 'EAST_EUROPE', 'EUROPE', 'SRB'),
-    ('巴黎', 'Paris', 'cdg', 'ais', 'WEST_EUROPE', 'EUROPE', 'FRA'),
-    ('瓜亚基尔', 'Guayaquil', 'gye', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'ECU'),
-    ('基多', 'Quito', 'uio', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'ECU'),
-    ('安卡拉', 'Ankara', 'esb', 'ais', 'WEST_ASIA', 'ASIA', 'TUR'),
-    ('伊斯坦布尔', 'Istanbul', 'ist', 'ais', 'WEST_ASIA', 'ASIA', 'TUR'),
-    ('雅典', 'Athens', 'ath', 'ais', 'WEST_EUROPE', 'EUROPE', 'GRC'),
-    ('波哥大', 'Bogota', 'bog', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'COL'),
-    ('布里奇顿', 'Bridgetown', 'bgi', 'ais', 'NORTH_AMERICA', 'SOUTH_AMERICA', 'BRB'),
-    ('华雷斯城', 'Ciudad Juarez', 'cjs', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
-    ('瓜达拉哈拉', 'Guadalajara', 'gdl', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
-    ('埃莫西约', 'Hermosillo', 'hmo', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
-    ('马塔莫罗斯', 'Matamoros', 'cvj', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
-    ('墨西哥城', 'Mexico City', 'mex', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
-    ('蒙特雷', 'Monterrey', 'mty', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
-    ('诺加莱斯', 'Nogales', 'ols', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
-    ('新拉雷多', 'Nuevo Laredo', 'nld', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
-    ('蒂华纳', 'Tijuana', 'tij', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX'),
+    ('北京', 'Beijing', 'bj', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8),
+    ('上海', 'Shanghai', 'sh', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8),
+    ('成都', 'Chengdu', 'cd', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8),
+    ('广州', 'Guangzhou', 'gz', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8),
+    ('沈阳', 'Shenyang', 'sy', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8),
+    ('香港', 'Hongkong', 'hk', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8),
+    ('台北', 'Taipei', 'tp', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8),
+    ('金边', 'Phnom Penh', 'pp', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'KHM', 7),
+    ('新加坡', 'Singapore', 'sg', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'SGP', 8),
+    ('首尔', 'Seoul', 'sel', 'cgi', 'EAST_ASIA', 'ASIA', 'KOR', 9),
+    ('墨尔本', 'Melbourne', 'mel', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10),
+    ('珀斯', 'Perth', 'per', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10),
+    ('悉尼', 'Sydney', 'syd', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10),
+    ('伯尔尼', 'Bern', 'brn', 'cgi', 'WEST_EUROPE', 'EUROPE', 'CHE', 1),
+    ('福冈', 'Fukuoka', 'fuk', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
+    ('大坂', 'Osaka', 'itm', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
+    ('那霸', 'Naha', 'oka', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
+    ('札幌', 'Sapporo', 'cts', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
+    ('东京', 'Tokyo', 'hnd', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
+    ('加德满都', 'Kathmandu', 'ktm', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'NPL', 5.75),
+    ('曼谷', 'Bangkok', 'bkk', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7),
+    ('清迈', 'Chiang Mai', 'cnx', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7),
+    ('贝尔法斯特', 'Belfast', 'bfs', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR', 0),
+    ('伦敦', 'London', 'lcy', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR', 0),
+    ('卡尔加里', 'Calgary', 'yyc', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5),
+    ('哈利法克斯', 'Halifax', 'yhz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5),
+    ('蒙特利尔', 'Montreal', 'yul', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5),
+    ('渥太华', 'Ottawa', 'yow', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5),
+    ('魁北克城', 'Quebec City', 'yqb', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5),
+    ('多伦多', 'Toronto', 'yyz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5),
+    ('温哥华', 'Vancouver', 'yvr', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5),
+    ('阿布扎比', 'Abu Dhabi', 'auh', 'ais', 'WEST_ASIA', 'ASIA', 'ARE', 4),
+    ('迪拜', 'Dubai', 'dxb', 'ais', 'WEST_ASIA', 'ASIA', 'ARE', 4),
+    ('贝尔格莱德', 'Belgrade', 'beg', 'ais', 'EAST_EUROPE', 'EUROPE', 'SRB', 1),
+    ('巴黎', 'Paris', 'cdg', 'ais', 'WEST_EUROPE', 'EUROPE', 'FRA', 1),
+    ('瓜亚基尔', 'Guayaquil', 'gye', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'ECU', -5),
+    ('基多', 'Quito', 'uio', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'ECU', -5),
+    ('安卡拉', 'Ankara', 'esb', 'ais', 'WEST_ASIA', 'ASIA', 'TUR', 3),
+    ('伊斯坦布尔', 'Istanbul', 'ist', 'ais', 'WEST_ASIA', 'ASIA', 'TUR', 3),
+    ('雅典', 'Athens', 'ath', 'ais', 'WEST_EUROPE', 'EUROPE', 'GRC', 2),
+    ('波哥大', 'Bogota', 'bog', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'COL', -5),
+    ('布里奇顿', 'Bridgetown', 'bgi', 'ais', 'NORTH_AMERICA', 'SOUTH_AMERICA', 'BRB', -4),
+    ('华雷斯城', 'Ciudad Juarez', 'cjs', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
+    ('瓜达拉哈拉', 'Guadalajara', 'gdl', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
+    ('埃莫西约', 'Hermosillo', 'hmo', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
+    ('马塔莫罗斯', 'Matamoros', 'cvj', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
+    ('墨西哥城', 'Mexico City', 'mex', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
+    ('蒙特雷', 'Monterrey', 'mty', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
+    ('诺加莱斯', 'Nogales', 'ols', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
+    ('新拉雷多', 'Nuevo Laredo', 'nld', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
+    ('蒂华纳', 'Tijuana', 'tij', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6),
 ]
 
 VISA_TYPES = 'FBHOL'
@@ -120,6 +128,11 @@ class USEmbassy:
         return next((emb for emb in cls.get_embassy_lst() if emb.location == loc), None)
 
     @classmethod
+    def get_embassy_by_code(cls, code: str) -> Optional['__class__']:
+        """ Return an USEbassy object by the code property."""
+        return next((emb for emb in cls.get_embassy_lst() if emb.code == code), None)
+
+    @classmethod
     def get_region_mapping(cls) -> List[dict]:
         """ Return a region to embassy code mapping. In JSON convention."""
         return [
@@ -137,7 +150,8 @@ class USEmbassy:
         sys: str,
         region: str,
         continent: str,
-        country: str
+        country: str,
+        utcoffset: Union[float, int],
     ) -> None:
         self.name_cn = name_cn
         self.name_en = name_en
@@ -146,6 +160,7 @@ class USEmbassy:
         self.region = region
         self.continent = continent
         self.country = country
+        self.timezone = timezone(timedelta(hours=utcoffset))
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(name_cn={self.name_cn}, name_en={self.name_en}, code={self.code})'
