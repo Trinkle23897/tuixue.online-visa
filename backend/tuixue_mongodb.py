@@ -112,6 +112,10 @@ class VisaStatus:
             for emb in embassy_lst:
                 print()  # Go to a new line (inner loop using end='\r')
                 accumulated_inserted = 0
+
+                avai_dt_cache_utc = defaultdict(list)
+                avai_dt_cache_emb = defaultdict(list)
+
                 for date in date_range:
                     file_path = util.construct_data_file_path(vt, emb.location, date.strftime('%Y/%m/%d'))
                     if not os.path.exists(file_path):
@@ -123,54 +127,71 @@ class VisaStatus:
                             for wt, avai_dt in [util.file_line_to_dt(ln) for ln in f.readlines()]
                         ]
 
-                    for i, adt in enumerate(available_dates_arr):
+                    for adt in available_dates_arr:
                         write_time_utc = adt['write_time'].astimezone(tz=None).astimezone(tz=timezone.utc)
+
                         write_date_utc = write_time_utc.replace(hour=0, minute=0, second=0, microsecond=0)
-                        available_date = adt['available_date']
-
-                        # Push the available date one by one because write_date_utc may be different
-                        # MongoDB will convert the datetime obj with tzinfo attr to UTC time
-                        cls.visa_status.update_one(
-                            {'visa_type': vt, 'embassy_code': emb.code, 'write_date': write_date_utc},
-                            {'$push': {'available_dates': available_date}},
-                            upsert=True,
-                        )
-
-                        write_date_emb_local = write_time_utc\
+                        write_date_emb = write_time_utc\
                             .astimezone(emb.timezone)\
                             .replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
-                        
-                        query = {'visa_type': vt, 'embassy_code': emb.code}
-                        overview_query = {**query, 'overview.write_date': write_date_emb_local}
 
-                        if cls.overview.find_one(overview_query) is None:  # $(update) of array can't work with upsert
-                            cls.overview.update_one(
-                                query,
-                                {
-                                    '$push': {
-                                        'overview': {
-                                            'write_date': write_date_emb_local,
-                                            'earliest_date': available_date,
-                                            'latest_date': available_date,
-                                        },
-                                    },
-                                },
-                                upsert=True,
-                            )
+                        available_date = adt['available_date']
+                        avai_dt_cache_utc[write_date_utc].append(
+                            {'write_time': write_time_utc, 'available_date': available_date}
+                        )
+                        avai_dt_cache_emb[write_date_emb].append(available_date)
 
-                        else:
-                            cls.overview.update_one(
-                                overview_query,
-                                {
-                                    '$min': {'overview.$.earliest_date': available_date},
-                                    '$max': {'overview.$.latest_date': available_date}, 
-                                }
-                            )
-
-                        accumulated_inserted += 1
+                        print(' ' * 150, end='\r')  # erase previous print
+                        print('Reading: {}-{}-{}'.format(vt, emb.location, date.strftime('%Y/%m/%d')), end='\t\t')
                         print(
-                            f'{vt}\t{emb.location}\t\t{date.year}/{date.month}/{date.day}\t{write_date_utc.year}/{write_date_utc.month}/{write_date_utc.day}\t{write_date_emb_local.year}/{write_date_emb_local.month}/{write_date_emb_local.day}\t{i + 1}/{len(available_dates_arr)}\t{accumulated_inserted}',
+                            'UTC\t{}: {}'.format(
+                                write_date_utc.strftime('%Y/%m/%d'),
+                                len(avai_dt_cache_utc[write_date_utc])
+                            ),
+                            end='\t'
+                        )
+                        print(
+                            'EMB\t{}: {}'.format(
+                                write_date_emb.strftime('%Y/%m/%d'),
+                                len(avai_dt_cache_emb[write_date_emb])
+                            ),
+                            end='\t'
+                        )
+                        print(
+                            '|Total:\tUTC-{}\tEMB-{}'.format(
+                                sum([len(l) for l in avai_dt_cache_emb.values()]),
+                                sum([len(l) for l in avai_dt_cache_emb.values()]),
+                            ),
                             end='\r'
+                        )
+
+                if len(avai_dt_cache_utc) > 0:
+                    cls.visa_status.insert_many([  # insert all visa status fetch result in one write
+                        {
+                            'visa_type': vt,
+                            'embassy_code': emb.code,
+                            'write_date': write_date,
+                            'available_dates': avai_dt_arr,
+                        } for write_date, avai_dt_arr in avai_dt_cache_utc.items()
+                    ])
+                else:
+                    print('Skipping: {}-{} No records'.format(vt, emb.location), end='\r')
+
+                for write_date, avai_dt_arr in avai_dt_cache_emb.items():
+                    if len(avai_dt_arr) > 0:
+                        earliest_dt, latest_dt = min(avai_dt_arr), max(avai_dt_arr)
+                        cls.overview.update_one(
+                            {'visa_type': vt, 'embassy_code': emb.code},
+                            {
+                                '$push': {
+                                    'overview': {
+                                        'write_date': write_date,
+                                        'earliest_date': earliest_dt,
+                                        'latest_date': latest_dt,
+                                    }
+                                }
+                            },
+                            upsert=True,
                         )
 
     @classmethod
@@ -178,7 +199,7 @@ class VisaStatus:
         """ Initiate the visa status storage with the file based data."""
         since_midnight = since.replace(hour=0, minute=0, second=0, microsecond=0)
         today_midnight = datetime.combine(datetime.now().date(), datetime.min.time())
-        date_range = [since_midnight + timedelta(days=d) for d in range((today_midnight - since_midnight).days)]
+        date_range = [since_midnight + timedelta(days=d) for d in range((today_midnight - since_midnight).days + 1)]
 
         embassy_lst = USEmbassy.get_embassy_lst()
 
