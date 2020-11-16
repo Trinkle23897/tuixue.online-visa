@@ -83,6 +83,63 @@ class VisaStatus:
     latest_written = get_collection('latest_written')
 
     @classmethod
+    def restore_overview(cls) -> None:
+        """ This method should only be used when `mongorestore` is executed and the
+            `tuixue.visa_status` collection is restored.
+        """
+        cls.drop('overview')
+        embassy_lst = USEmbassy.get_embassy_lst()
+
+        day_one = datetime(2020, 3, 1, tzinfo=timezone.utc)
+        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+
+        for visa_type in VISA_TYPES:
+            for emb in embassy_lst:
+                print()
+                avai_dt_cache = defaultdict(list)
+
+                cursor = cls.visa_status.aggregate([
+                    {'$match': {'visa_type': visa_type, 'embassy_code': emb.code}},
+                    {'$unwind': '$available_dates'},
+                    {'$group': {'_id': None, 'available_dates': {'$push': '$available_dates'}}},
+                    {'$project': {'_id': False}}
+                ])
+                res = list(cursor)
+                if len(res) == 0:
+                    continue
+                all_avai_dt = res[0]['available_dates']
+
+                for adt in all_avai_dt:
+                    write_time_utc = adt['write_time']
+                    available_date = adt['available_date']
+
+                    write_time_emb = write_time_utc.astimezone(emb.timezone)
+                    write_date_emb = write_time_emb.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+
+                    avai_dt_cache[write_date_emb].append(available_date)
+
+                for write_date, avai_dt_arr in avai_dt_cache.items():
+                    if len(avai_dt_arr) > 0:
+                        earliest_dt, latest_dt = min(avai_dt_arr), max(avai_dt_arr)
+                        cls.overview.update_one(
+                            {'visa_type': visa_type, 'embassy_code': emb.code},
+                            {
+                                '$push': {
+                                    'overview': {
+                                        'write_date': write_date,
+                                        'earliest_date': earliest_dt,
+                                        'latest_date': latest_dt,
+                                    }
+                                }
+                            },
+                            upsert=True,
+                        )
+                        print(
+                            'Update tuixue.overview: {}\t{}\t\t\t{}'.format(visa_type, emb.location, write_date.strftime('%Y/%m/%d')),
+                            end='\r'
+                        )
+
+    @classmethod
     def initiate_collections_tz(cls, since: datetime) -> None:
         """ Initiate the database with following handling of datetime object regarding timezone.
 
@@ -286,11 +343,12 @@ class VisaStatus:
         embassy = USEmbassy.get_embassy_by_code(embassy_code)
         write_time_utc = write_time.astimezone(tz=None).astimezone(tz=timezone.utc)
         write_date_utc = write_time_utc.replace(hour=0, minute=0, second=0, microsecond=0)
-        write_date_emb_local = write_date_utc.astimezone(embassy.timezone).replace(tzinfo=None)
+        write_date_emb = write_time_utc.astimezone(embassy.timezone)\
+                                                .replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
 
         query = {'visa_type': visa_type, 'embassy_code': embassy_code}
         visa_status_query = {**query, 'write_date': write_date_utc}
-        overview_query = {**query, 'overview.write_date': write_date_emb_local}
+        overview_query = {**query, 'overview.write_date': write_date_emb}
 
         new_fetch = {'write_time': write_time_utc, 'available_date': available_date}
 
@@ -306,7 +364,7 @@ class VisaStatus:
                     {
                         '$push': {
                             'overview': {
-                                'write_date': write_date_emb_local,
+                                'write_date': write_date_emb,
                                 'earliest_date': available_date,
                                 'latest_date': available_date
                             }
