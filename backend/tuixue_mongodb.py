@@ -90,24 +90,22 @@ class VisaStatus:
         cls.drop('overview')
         embassy_lst = USEmbassy.get_embassy_lst()
 
-        day_one = datetime(2020, 3, 1, tzinfo=timezone.utc)
-        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-
         for visa_type in VISA_TYPES:
             for emb in embassy_lst:
                 print()
                 avai_dt_cache = defaultdict(list)
 
-                cursor = cls.visa_status.aggregate([
+                all_avai_dt = cls.visa_status.aggregate([
                     {'$match': {'visa_type': visa_type, 'embassy_code': emb.code}},
                     {'$unwind': '$available_dates'},
-                    {'$group': {'_id': None, 'available_dates': {'$push': '$available_dates'}}},
-                    {'$project': {'_id': False}}
+                    {
+                        '$project': {
+                            '_id': False,
+                            'write_time': '$available_dates.write_time',
+                            'available_date': '$available_dates.available_date'
+                        }
+                    },
                 ])
-                res = list(cursor)
-                if len(res) == 0:
-                    continue
-                all_avai_dt = res[0]['available_dates']
 
                 for adt in all_avai_dt:
                     write_time_utc = adt['write_time']
@@ -135,7 +133,11 @@ class VisaStatus:
                             upsert=True,
                         )
                         print(
-                            'Update tuixue.overview: {}\t{}\t\t\t{}'.format(visa_type, emb.location, write_date.strftime('%Y/%m/%d')),
+                            'Update tuixue.overview: {}\t{}\t\t\t{}'.format(
+                                visa_type,
+                                emb.location,
+                                write_date.strftime('%Y/%m/%d')
+                            ),
                             end='\r'
                         )
 
@@ -168,7 +170,6 @@ class VisaStatus:
         for vt in VISA_TYPES:
             for emb in embassy_lst:
                 print()  # Go to a new line (inner loop using end='\r')
-                accumulated_inserted = 0
 
                 avai_dt_cache_utc = defaultdict(list)
                 avai_dt_cache_emb = defaultdict(list)
@@ -216,8 +217,8 @@ class VisaStatus:
                         )
                         print(
                             '|Total:\tUTC-{}\tEMB-{}'.format(
-                                sum([len(l) for l in avai_dt_cache_emb.values()]),
-                                sum([len(l) for l in avai_dt_cache_emb.values()]),
+                                sum([len(cache_len) for cache_len in avai_dt_cache_emb.values()]),
+                                sum([len(cache_len) for cache_len in avai_dt_cache_emb.values()]),
                             ),
                             end='\r'
                         )
@@ -344,7 +345,7 @@ class VisaStatus:
         write_time_utc = write_time.astimezone(tz=None).astimezone(tz=timezone.utc)
         write_date_utc = write_time_utc.replace(hour=0, minute=0, second=0, microsecond=0)
         write_date_emb = write_time_utc.astimezone(embassy.timezone)\
-                                                .replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+            .replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
 
         query = {'visa_type': visa_type, 'embassy_code': embassy_code}
         visa_status_query = {**query, 'write_date': write_date_utc}
