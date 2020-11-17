@@ -1,9 +1,10 @@
+import { renameObjectKeys } from "../utils/misc";
 import * as tp from "./typeCheck";
 
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 const metadata = "/visastatus/meta";
 const overview = "/visastatus/overview";
-const latest = "/visastatus/latest";
+const latest = "/ws/visastatus/latest";
 const singleStatus = (visaType, embassyCode) => `/visastatus/${visaType}/${embassyCode}`;
 
 const HEADERS = {
@@ -16,8 +17,8 @@ const HEADERS = {
  * @param {Object} query    Object used to construct query parameters
  * @return {string}         The constructed URL string
  */
-const constructURL = (path, query = null) => {
-    const url = new URL(path, API_BASE_URL);
+const constructURL = ({ path, query = null, protocol = "http" }) => {
+    const url = new URL(path, `${protocol}://${API_BASE_URL}`);
     if (query) {
         for (const [paramKey, paramVal] of Object.entries(query)) {
             if (Array.isArray(paramVal)) {
@@ -37,14 +38,14 @@ const constructURL = (path, query = null) => {
  * @return {Object} The object containing metadata info.
  */
 export const getVisaStatusMetadata = async () => {
-    const url = constructURL(metadata);
+    const url = constructURL({ path: metadata });
 
     let res;
     let responseJson;
     try {
         res = await fetch(url, { method: "GET", headers: HEADERS });
         if (res.ok) {
-            responseJson = await res.json();
+            responseJson = renameObjectKeys(await res.json());
         }
     } catch (e) {
         console.error(`In getVisaStatusMetadata: ${e}`);
@@ -85,20 +86,20 @@ export const getVisaStatusOverview = async (visaType, embassyCode, since, to) =>
 
     const queryParam = { visa_type: visaTypeLst, embassy_code: embassyCodeLst };
     if (since) {
-        queryParam.since = since.toISOString().slice(0, -1);
+        queryParam.since = since.toISOString();
     }
     if (to) {
-        queryParam.to = to.toISOString().slice(0, -1);
+        queryParam.to = to.toISOString();
     }
 
-    const url = constructURL(overview, queryParam);
+    const url = constructURL({ path: overview, query: queryParam });
 
     let res;
     let responseJson;
     try {
         res = await fetch(url, { method: "GET", headers: HEADERS });
         if (res.ok) {
-            responseJson = await res.json();
+            responseJson = renameObjectKeys(await res.json());
         }
     } catch (e) {
         console.error(`In getVisaStatusOverview: ${e}`);
@@ -108,6 +109,7 @@ export const getVisaStatusOverview = async (visaType, embassyCode, since, to) =>
 };
 
 /**
+ * **DEPRECATED**: Use the WebSocket method
  * GET `${API_BASE_URL}/visastatus/latest`
  *
  * Get the latest fetched result of `[visaType] x [embassyCode]`
@@ -128,6 +130,7 @@ export const getLatestVisaStatus = async (visaType, embassyCode) => {
         throw new Error(`In getVisaStatusOverview: received invalid embassyCode: ${embassyCode}`);
     }
 
+    // this line will throw an UNEXPECTED error
     const url = constructURL(latest, { visa_type: visaType, embassy_code: embassyCode });
 
     let res;
@@ -135,7 +138,7 @@ export const getLatestVisaStatus = async (visaType, embassyCode) => {
     try {
         res = await fetch(url, { method: "GET", headers: HEADERS });
         if (res.ok) {
-            responseJson = await res.json();
+            responseJson = renameObjectKeys(await res.json());
         }
     } catch (e) {
         console.error(`In getLatestVisaStatus: ${e}`);
@@ -143,6 +146,11 @@ export const getLatestVisaStatus = async (visaType, embassyCode) => {
 
     return responseJson || null;
 };
+
+/**
+ * Return an WebSocket connected to the backend WebSocket endpoint.
+ */
+export const openLatestVisaStatusSocket = () => new WebSocket(constructURL({ path: latest, protocol: "ws" }));
 
 /**
  * GET `${API_BASE_URL}/visastatus/${visaType}/${embassyCode}`
@@ -165,13 +173,13 @@ export const getSingleVisaStatus = async (visaType, embassyCode, writeDate) => {
     }
 
     const path = singleStatus(visaType, embassyCode);
-    const url = constructURL(path, { write_date: writeDate.toISOString().slice(0, -1) });
+    const url = constructURL({ path, query: { write_date: writeDate.toISOString().slice(0, -1) } });
 
     let res;
     let responseJson;
     try {
         res = await fetch(url, { method: "GET", headers: HEADERS });
-        responseJson = await res.json();
+        responseJson = renameObjectKeys(await res.json());
     } catch (e) {
         console.error(`In getSingleVisaStatus: ${e}`);
     }

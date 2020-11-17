@@ -1,23 +1,15 @@
-import React, { useEffect } from "react";
-import { Provider, useDispatch } from "react-redux";
+import React from "react";
+import { Provider } from "react-redux";
 import store from "./redux";
-import { fetchMetadata } from "./redux/metadataSlice";
 import Pages from "./pages";
-import { NotificationPopUp } from "./components";
+import { useInitialDataFetch, useWebSocketSubscribe } from "./hooks";
 import "./assets/styles/index.less";
 
 function App() {
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(fetchMetadata());
-    }, [dispatch]);
+    useInitialDataFetch();
+    useWebSocketSubscribe();
 
-    return (
-        <>
-            <Pages />
-            <NotificationPopUp />
-        </>
-    );
+    return <Pages />;
 }
 
 export default () => (

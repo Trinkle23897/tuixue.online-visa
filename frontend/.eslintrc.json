@@ -30,6 +30,7 @@
         "no-unused-vars": "warn",
         "no-nested-ternary": "off",
         "no-restricted-syntax": "off",
+        "no-param-reassign": ["error", { "props": false }],
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
         "react/jsx-curly-brace-presence": 0,
         "react/forbid-prop-types": 0,

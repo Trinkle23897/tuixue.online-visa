@@ -4,20 +4,29 @@
     width: 100%;
 
     display: flex;
-    justify-content: space-between;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    > * {
+        flex: 1;
+    }
+}
+
+.logo {
+    display: flex !important;
+    justify-content: flex-start;
     align-items: center;
-    .logo {
-        margin-top: auto;
-        margin-bottom: auto;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        & > * {
-            margin: 2px;
-            padding: 2px
-        }
-        h1 {
-            color: white !important;
-        }
+    & > * {
+        margin: 2px !important;
+        padding: 2px !important;
+    }
+    h1 {
+        color: white !important;
+    }
+}
+
+.nav-popover {
+    .ant-popover {
+        min-width: 0.5vw;
     }
 }
