@@ -6,6 +6,7 @@ B
 O
 H
 L
+config
 # sync_data.py
 db_playground.py
 logs

@@ -104,7 +104,7 @@ class Notifier:
             'sendfrom': sendfrom,
             'sendto': sendto
         }
-        res = cls.email_request.post(SECRET['email'], data=data)
+        res = cls.email_request.post(SECRET['email'], data=data, proxies=SECRET['email_proxy'])
 
         return 'success' in res.text
 
