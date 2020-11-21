@@ -1,11 +1,15 @@
 """ Functionality for sending notification for visa status change as well as
     confirmation for email subscription.
 """
+import json
+import asyncio
 import requests
+import websockets
 import tuixue_mongodb as DB
 from datetime import datetime
-from typing import List, Optional
 from tuixue_typing import VisaType
+from typing import Any, List, Optional
+from fastapi.encoders import jsonable_encoder
 from urllib.parse import urlencode, urlunsplit, quote
 from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, MAX_EMAIL_SENT
 
@@ -77,7 +81,7 @@ class Notifier:
         )
 
         for _ in range(10):  # for robust
-            sent = cls.send_email(
+            sent = self.send_email(
                 title=SUBSCRIPTION_CONFIRMATION_TITLE.format(email=email),
                 content=content,
                 receivers=[email]
@@ -86,6 +90,14 @@ class Notifier:
                 break
 
         return sent
+
+    @classmethod
+    async def send_via_websocket(cls, data: Any) -> None:
+        """ Send an object in JSON string visa websocket."""
+        ws_url, ws_token = SECRET['websocket_url'], SECRET['websocket_token']
+        async with websockets.connect(f'{ws_url}?token={ws_token}') as ws:
+            data_str = json.dumps(jsonable_encoder(data))
+            await ws.send(data_str)
 
     @classmethod
     def send_email(
@@ -145,19 +157,25 @@ class Notifier:
                 old_status = '/' if last_available_date is None else last_available_date.strftime('%Y/%m/%d')
                 new_status = available_date.strftime('%Y/%m/%d')
 
-                email_sent = []  # handling maximum email sent
-                for step in range(len(email_lst) // MAX_EMAIL_SENT + 1):
-                    success = cls.send_email(
-                        title=VISA_STATUS_CHANGE_TITLE.format(visa_detail=VISA_TYPE_DETAILS[visa_type]),
-                        content=VISA_STATUS_CHANGE_CONTENT.format(
-                            send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
-                            location=embassy.name_en,
-                            old_status=old_status,
-                            new_status=new_status,
-                        ),
-                        receivers=email_lst[step * MAX_EMAIL_SENT: step * MAX_EMAIL_SENT + MAX_EMAIL_SENT]
-                    )
-                    email_sent.append(success)
-                return all(email_sent)
+                success = cls.send_email(
+                    title=VISA_STATUS_CHANGE_TITLE.format(visa_detail=VISA_TYPE_DETAILS[visa_type]),
+                    content=VISA_STATUS_CHANGE_CONTENT.format(
+                        send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
+                        location=embassy.name_en,
+                        old_status=old_status,
+                        new_status=new_status,
+                    ),
+                    receivers=email_lst,
+                )
+
+                ws_data = {
+                    'visa_type': visa_type,
+                    'embassy_code': embassy.code,
+                    'prev_avai_date': last_available_date,
+                    'curr_avai_date': available_date
+                }
+                asyncio.run(cls.send_via_websocket(ws_data))
+
+                return success
             else:
                 return False

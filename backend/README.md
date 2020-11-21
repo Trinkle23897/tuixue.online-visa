@@ -18,7 +18,7 @@ This folder contains the code that:
 >
 > It's noteworthy that it's _NOT_ what the backend api server orignally designed to run. **In the production the api server and React frontend will be deployed in the same machine and the api server will _NOT_ be exposed to the public until further decision is made.**
 
-**This code base is developed with Python >= 3.6**
+**This code base is developed with Python >= 3.7**
 
 #### Python dependency
 
