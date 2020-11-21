@@ -66,7 +66,11 @@ def get_meta_data():
         ]
         ```
     """
-    return {'region': G.USEmbassy.get_region_mapping(), 'embassy_lst': G.EMBASSY_ATTR}
+    return {
+        'region': G.USEmbassy.get_region_mapping(),
+        'embassy_lst': G.EMBASSY_ATTR,
+        'visa_type_details': G.VISA_TYPE_DETAILS,
+    }
 
 
 @app.get('/visastatus/overview')
