@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const visastatusNewest = createSlice({
     name: "latestWritten",
-    initialState: Array.from("FBOHL").reduce((obj, vt) => ({ ...obj, [vt]: { previous: [], current: [] } }), {}),
+    initialState: Array.from("FBOHL").reduce((obj, vt) => ({ ...obj, [vt]: [] }), {}),
     reducers: {
         updateNewest: (state, action) => {
-            const { visaType, current } = action.payload;
-            [state[visaType].previous, state[visaType].current] = [state[visaType].current, current];
+            const { visaType, newest } = action.payload;
+            state[visaType] = newest;
         },
     },
 });

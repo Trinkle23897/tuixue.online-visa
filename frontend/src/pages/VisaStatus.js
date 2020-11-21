@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
-import { Divider, Layout, Typography, List, Card, Button, Collapse, Space } from "antd";
+import { Layout, Typography, List, Card, Collapse } from "antd";
 import { PlusCircleOutlined, UpOutlined, DownOutlined, QqCircleFilled } from "@ant-design/icons";
 import { TuixueHeader } from "../components";
 import "./VisaStatus.less";

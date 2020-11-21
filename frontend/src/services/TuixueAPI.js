@@ -150,7 +150,10 @@ export const getLatestVisaStatus = async (visaType, embassyCode) => {
 /**
  * Return an WebSocket connected to the backend WebSocket endpoint.
  */
-export const openLatestVisaStatusSocket = () => new WebSocket(constructURL({ path: latest, protocol: "ws" }));
+export const openLatestVisaStatusSocket = () => {
+    console.log("Returning a new WebSocket connection");
+    return new WebSocket(constructURL({ path: latest, protocol: "ws" }));
+};
 
 /**
  * GET `${API_BASE_URL}/visastatus/${visaType}/${embassyCode}`

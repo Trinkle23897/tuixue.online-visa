@@ -48,15 +48,6 @@ const NavMenuPopover = () => {
 };
 
 export default function Nav() {
-    // const [menuExpand, setMenuExpand] = useState(window.innerWidth >= 768);
-    // useEffect(() => {
-    //     const onResize = () => setMenuExpand(window.innerWidth >= 768);
-    //     window.addEventListener("resize", onResize);
-    //     return () => {
-    //         window.removeEventListener("resize", onResize);
-    //     };
-    // });
-
     return (
         <Header className="tuixue-header">
             <Row gutter={{ xs: 16, lg: 32 }}>
