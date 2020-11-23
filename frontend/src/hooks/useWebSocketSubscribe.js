@@ -4,6 +4,7 @@ import { notification } from "antd";
 import { updateNewest } from "../redux/visastatusNewest";
 import { openLatestVisaStatusSocket } from "../services";
 import { renameObjectKeys } from "../utils/misc";
+import { findEmbassyAttributeByCode } from "../utils/USEmbassy";
 
 const ONE_MINUTE = 60 * 1000;
 let CONNECT_ATTEMPT = 0;
@@ -11,6 +12,8 @@ let CONNECT_ATTEMPT = 0;
 export default function useWebSocketSubscribe() {
     const dispatch = useDispatch();
     const visastatusFilter = useSelector(state => state.visastatusFilter);
+    const embassyLst = useSelector(state => state.metadata.embassyLst);
+    const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
     const [wsConnected, setWsConnected] = useState(false);
     const websocketRef = useRef(null); // initiate with null doesn't trigger re-connect when re-renderin
 
@@ -29,11 +32,15 @@ export default function useWebSocketSubscribe() {
             const { type, data } = renameObjectKeys(JSON.parse(e.data));
             if (type === "notification") {
                 console.log(`${new Date()} Sending notification pop up`);
-                console.log(data);
+
+                const { visaType, embassyCode, prevAvaiDate, currAvaiDate } = data;
+                const embassyName = findEmbassyAttributeByCode("nameEn", embassyCode, embassyLst);
+                const visaTypeDetail = visaTypeDetails[visaType];
+
                 notification.warn({
-                    message: `${data.visaType}: Visa Status Change ${data.embassyCode}`,
-                    description: `${data.embassyCode} changed from ${data.prevAvaiDate || "/"} to ${data.currAvaiDate}`,
-                    duration: 3,
+                    message: `${visaTypeDetail}: Visa Status Change`,
+                    description: `${embassyName} changed from ${prevAvaiDate || "/"} to ${currAvaiDate}`,
+                    duration: 5,
                     placement: "topRight",
                 });
             } else if (type === "newest") {
@@ -43,7 +50,7 @@ export default function useWebSocketSubscribe() {
                 }
             }
         };
-    }, [wsConnected, dispatch]);
+    }, [embassyLst, visaTypeDetails, wsConnected, dispatch]);
 
     useEffect(() => {
         // We don't need to check wsConnect here because WebSocket.readyState must be OPEN to

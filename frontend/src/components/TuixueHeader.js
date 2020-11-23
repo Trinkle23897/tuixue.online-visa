@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { HashLink as Link } from "react-router-hash-link";
 import { Row, Col, Button, Layout, Menu, Typography, Popover } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import "./TuixueHeader.less";
 
 const { Header } = Layout;
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const Logo = () => (
     <Col xs={{ span: 12 }} lg={{ span: 4, push: 1 }} className="logo">
@@ -15,21 +15,22 @@ const Logo = () => (
     </Col>
 );
 
-const NavMenu = ({ mode, theme }) => {
+const NavMenu = ({ mode, theme, onClick }) => {
     return (
-        <Menu theme={theme} mode={mode}>
-            <Menu.Item>
-                {/* <Link to="/" component={Typography.Link}> */}
+        <Menu theme={theme} mode={mode} onClick={onClick ? () => onClick() : () => {}}>
+            <Menu.Item key="visastatus">
+                {/* <Link to="/" component={Typography.Text}> */}
                 Visa Status
                 {/* </Link> */}
             </Menu.Item>
-            <Menu.Item>Item 1</Menu.Item>
+            <Menu.Item key="placeholder">Item 1</Menu.Item>
         </Menu>
     );
 };
 NavMenu.propTypes = {
     mode: PropTypes.oneOf(["vertical", "horizontal", "inline"]),
     theme: PropTypes.oneOf(["dark", "light"]),
+    onClick: PropTypes.func,
 };
 
 const NavMenuPopover = () => {
@@ -37,12 +38,19 @@ const NavMenuPopover = () => {
 
     return (
         <Popover
-            content={<NavMenu mode="vertical" theme="light" />}
+            content={<NavMenu mode="vertical" theme="light" onClick={() => setMenuPop(!menuPop)} />}
+            visible={menuPop}
+            overlayStyle={{ minWidth: "65vw" }}
             trigger="click"
             placement="bottomRight"
             arrowPointAtCenter
         >
-            <Button size="large" icon={<MenuOutlined />} ghost />
+            <Button
+                onClick={() => setMenuPop(!menuPop)}
+                size="large"
+                icon={menuPop ? <CloseOutlined /> : <MenuOutlined />}
+                ghost
+            />
         </Popover>
     );
 };

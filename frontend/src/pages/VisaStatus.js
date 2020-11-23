@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Layout, Typography, List, Card, Collapse } from "antd";
+import { Layout, Typography, List, Card, Collapse, Row, Col } from "antd";
 import { PlusCircleOutlined, UpOutlined, DownOutlined, QqCircleFilled } from "@ant-design/icons";
-import { TuixueHeader } from "../components";
+import { TuixueHeader, VisaStatusTabs } from "../components";
 import "./VisaStatus.less";
 
 const { Content } = Layout;
@@ -75,13 +75,14 @@ export default function VisaStatus() {
                 <Title level={2} style={{ textAlign: "center", margin: "8px", padding: "8px" }}>
                     Visa Status Overview
                 </Title>
-                <List
+                <VisaStatusTabs />
+                {/* <List
                     size="large"
                     className="overview-list"
                     itemLayout="horizontal"
                     dataSource={[]}
                     renderItem={item => <OverviewCard {...item} />}
-                />
+                /> */}
             </Content>
         </Layout>
     );

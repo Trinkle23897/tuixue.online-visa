@@ -4,7 +4,7 @@ import { getVisaStatusMetadata } from "../services";
 
 const metadataSlice = createSlice({
     name: "metadata",
-    initialState: { region: [], embassyLst: [] },
+    initialState: { region: [], embassyLst: [], visaTypeDetails: {} },
     reducers: {
         updateMetadata: (state, action) => action.payload.metadata,
     },
