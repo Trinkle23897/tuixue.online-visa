@@ -62,7 +62,7 @@ def get_meta_data():
 
         ```json
         [
-            ["name_cn", "name_en", "code", "sys", "region", "continent", "country"]
+            ["name_cn", "name_en", "code", "sys", "region", "continent", "country", "tz_info"]
         ]
         ```
     """
@@ -70,6 +70,7 @@ def get_meta_data():
         'region': G.USEmbassy.get_region_mapping(),
         'embassy_lst': G.EMBASSY_ATTR,
         'visa_type_details': G.VISA_TYPE_DETAILS,
+        'default_filter': ['bj', 'sh', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'bkk', 'bfs', 'lcy', 'dxb', 'gye'],
     }
 
 
