@@ -5,6 +5,7 @@ import base64
 import requests
 import numpy as np
 from . import global_var as g
+from . import config
 from . import vcode2
 from bs4 import BeautifulSoup as bs
 
@@ -31,7 +32,7 @@ def get_date(page):
 
 def login(cracker, place, requests):
     proxies = g.value("proxies", None)
-    ref = {"北京": "China", "上海": "China", "广州": "China", "成都": "China", "沈阳": "China", "香港": "Hong%20Kong", "台北": "Taiwan", "金边": "Cambodia", "新加坡": "Singapore", "墨尔本": "Australia", "珀斯": "Australia", "悉尼": "Australia", "首尔": "Korea", "伯尔尼": "Switzerland", "福冈": "Japan", "大坂": "Japan", "那霸": "Japan", "札幌": "Japan", "东京": "Japan", "加德满都": "Nepal", "曼谷": "Thailand", "清迈": "Thailand"}
+    ref = config.get("ref")
 
     # get register page
     REG_URI = "https://cgifederal.secure.force.com/SiteRegister?country=%s&language=zh_CN" % ref[place]
@@ -153,12 +154,7 @@ def visa_select(visa_type, place, sid, requests):
         return None
 
     # select place
-    place2id = {
-        "北京": "0", "成都": "1", "广州": "2", "上海": "3", "沈阳": "4",
-        "墨尔本": "0", "珀斯": "1", "悉尼": "2",
-        "福冈": "0", "大坂": "1", "那霸": "2", "札幌": "3", "东京": "4",
-        "曼谷": "0", "清迈": "1"
-    }
+    place2id = config.get("place2id")
     if sum([place == x for x in place2id.keys()]) > 0:
         select_post_uri = "https://cgifederal.secure.force.com/selectpost"
         r = requests.get(select_post_uri, cookies=cookies, proxies=proxies)
@@ -198,13 +194,7 @@ def visa_select(visa_type, place, sid, requests):
     view_state_csrf = soup.find(id="com.salesforce.visualforce.ViewStateCSRF").get("value")
     contact_id = soup.find(id="j_id0:SiteTemplate:j_id109:contactId").get("value")
     prefix = "j_id0:SiteTemplate:j_id109:j_id162:"
-    category2id = {
-        "B": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 1, "台北": 1, "金边": 0, "新加坡": 1, "墨尔本": 0, "珀斯": 0, "悉尼": 3, "首尔": 4, "伯尔尼": 0, "福冈": 1, "大坂": 0, "那霸": 2, "札幌": 1, "东京": 4, "加德满都": 0, "曼谷": 4, "清迈": 3},
-        "F": {"北京": 1, "成都": 1, "广州": 1, "上海": 1, "沈阳": 1, "香港": 0, "台北": 0, "金边": 1, "新加坡": 4, "墨尔本": 1, "珀斯": 0, "悉尼": 0, "首尔": 0, "伯尔尼": 3, "福冈": 0, "大坂": 1, "那霸": 1, "札幌": 0, "东京": 2, "加德满都": 1, "曼谷": 0, "清迈": 0},
-        "O": {"北京": 4, "成都": 2, "广州": 3, "上海": 4, "沈阳": 2, "香港": 3, "台北": 3, "金边": 2, "新加坡": 3, "墨尔本": 2, "珀斯": 0, "悉尼": 3, "首尔": 2, "伯尔尼": 1, "福冈": 1, "大坂": 0, "那霸": 2, "札幌": 0, "东京": 5, "加德满都": 0, "曼谷": 1, "清迈": 1},
-        "H": {"北京": 2, "广州": 3, "上海": 2, "香港": 3, "台北": 3, "金边": 2, "新加坡": 3, "墨尔本": 2, "珀斯": 0, "悉尼": 3, "首尔": 1, "伯尔尼": 1, "福冈": 1, "大坂": 0, "那霸": 2, "札幌": 1, "东京": 1, "加德满都": 0, "曼谷": 1, "清迈": 1},
-        "L": {"北京": 3, "广州": 2, "上海": 3, "香港": 3, "台北": 3, "金边": 2, "新加坡": 3, "墨尔本": 2, "珀斯": 0, "悉尼": 3, "首尔": 1, "伯尔尼": 1, "福冈": 1, "大坂": 2, "那霸": 2, "札幌": 1, "东京": 1, "加德满都": 0, "曼谷": 1, "清迈": 1}
-    }
+    category2id = config.get("category2id")
     category_code = soup.find(id=prefix + str(category2id[visa_type][place])).get("value")
     data = {
         "j_id0:SiteTemplate:j_id109": "j_id0:SiteTemplate:j_id109",
@@ -230,13 +220,7 @@ def visa_select(visa_type, place, sid, requests):
     view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
     view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
     view_state_csrf = soup.find(id="com.salesforce.visualforce.ViewStateCSRF").get("value")
-    type2id = {
-        "B": {"北京": 2, "成都": 2, "广州": 2, "上海": 2, "沈阳": 2, "香港": 2, "台北": 2, "金边": 2, "新加坡": 0, "墨尔本": 2, "珀斯": 2, "悉尼": 2, "首尔": 2, "伯尔尼": 2, "福冈": 1, "大坂": 1, "那霸": 0, "札幌": 1, "东京": 1, "加德满都": 1, "曼谷": 1, "清迈": 1},
-        "F": {"北京": 0, "成都": 0, "广州": 0, "上海": 0, "沈阳": 0, "香港": 0, "台北": 0, "金边": 0, "新加坡": 0, "墨尔本": 0, "珀斯": 3, "悉尼": 0, "首尔": 0, "伯尔尼": 0, "福冈": 0, "大坂": 0, "那霸": 0, "札幌": 0, "东京": 0, "加德满都": 0, "曼谷": 0, "清迈": 0},
-        "O": {"北京": 0, "成都": 0, "广州": 6, "上海": 0, "沈阳": 0, "香港": 10, "台北": 10, "金边": 10, "新加坡": 8, "墨尔本": 7, "珀斯": 14, "悉尼": 10, "首尔": 0, "伯尔尼": 10, "福冈": 14, "大坂": 8, "那霸": 10, "札幌": 6, "东京": 0, "加德满都": 13, "曼谷": 10, "清迈": 10},
-        "H": {"北京": 0, "广州": 0, "上海": 0, "香港": 0, "台北": 0, "金边": 0, "新加坡": 0, "墨尔本": 0, "珀斯": 7, "悉尼": 3, "首尔": 0, "伯尔尼": 0, "福冈": 7, "大坂": 3, "那霸": 3, "札幌": 3, "东京": 0, "加德满都": 3, "曼谷": 0, "清迈": 0},
-        "L": {"北京": 1, "广州": 1, "上海": 1, "香港": 7, "台北": 7, "金边": 7, "新加坡": 6, "墨尔本": 5, "珀斯": 12, "悉尼": 8, "首尔": 5, "伯尔尼": 7, "福冈": 12, "大坂": 0, "那霸": 8, "札幌": 8, "东京": 5, "加德满都": 9, "曼谷": 7, "清迈": 7}
-    }
+    type2id = config.get("type2id")
     inputs = soup.find_all("input")
     type_codes = [x.get("value") for x in inputs if x.get("name") == "selectedVisaClass"]
     type_code = type_codes[type2id[visa_type][place]]
@@ -254,7 +238,8 @@ def visa_select(visa_type, place, sid, requests):
         return None
 
     # select visa priority
-    if place == "金边":
+    priority = config.get("priority")
+    if place in priority:
         select_prior_code_uri = "https://cgifederal.secure.force.com/selectvisapriority"
         r = requests.get(select_prior_code_uri, cookies=cookies, proxies=proxies)
         if r.status_code != 200:
@@ -264,9 +249,10 @@ def visa_select(visa_type, place, sid, requests):
         view_state_version = soup.find(id="com.salesforce.visualforce.ViewStateVersion").get("value")
         view_state_mac = soup.find(id="com.salesforce.visualforce.ViewStateMAC").get("value")
         view_state_csrf = soup.find(id="com.salesforce.visualforce.ViewStateCSRF").get("value")
+        choose_option = priority[place]
         inputs = soup.find_all("input")
         type_codes = [x.get("value") for x in inputs if x.get("name") == "j_id0:SiteTemplate:theForm:SelectedVisaPriority"]
-        type_code = type_codes[0]
+        type_code = type_codes[choose_option[visa_type]]
         data = {
             "j_id0:SiteTemplate:theForm": "j_id0:SiteTemplate:theForm",
             "j_id0:SiteTemplate:theForm:j_id170": "继续",
