@@ -11,7 +11,7 @@ from tuixue_typing import VisaType
 from typing import Any, List, Optional
 from fastapi.encoders import jsonable_encoder
 from urllib.parse import urlencode, urlunsplit, quote
-from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, MAX_EMAIL_SENT
+from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET
 
 
 VISA_STATUS_CHANGE_TITLE = '[tuixue.online] {visa_detail} Visa Status Change'
@@ -81,7 +81,7 @@ class Notifier:
         )
 
         for _ in range(10):  # for robust
-            sent = self.send_email(
+            sent = cls.send_email(
                 title=SUBSCRIPTION_CONFIRMATION_TITLE.format(email=email),
                 content=content,
                 receivers=[email]

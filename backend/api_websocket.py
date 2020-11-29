@@ -13,6 +13,7 @@ import global_var as G
 EMBASSY_CODES = [emb.code for emb in G.USEmbassy.get_embassy_lst()]
 app = FastAPI(root_path='/ws')
 
+
 # P.S. The broadcasting logic copy-paste a LOT of code from https://github.com/encode/broadcaster
 class VisaStatusUpdateEvent:
     def __init__(
@@ -27,16 +28,17 @@ class VisaStatusUpdateEvent:
         self.prev_avai_date = prev_avai_date
         self.curr_avai_date = curr_avai_date
 
-    def __repr__(self):
-        return 'VisaStatusUpdateEvent\
-            (visa_type={!r}, embassy_code={!r}, prev_avai_date={!r}, curr_avai_date={!r})'.format(
-                self.visa_type,
-                self.embassy_code,
-                self.prev_avai_date,
-                self.curr_avai_date,
-            )
+    def __repr__(self) -> str:
+        return 'VisaStatusUpdateEvent(\
+            visa_type={!r}, embassy_code={!r}, prev_avai_date={!r}, curr_avai_date={!r}\
+        )'.format(
+            self.visa_type,
+            self.embassy_code,
+            self.prev_avai_date,
+            self.curr_avai_date,
+        )
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             'visa_type': self.visa_type,
             'embassy_code': self.embassy_code,
@@ -44,8 +46,9 @@ class VisaStatusUpdateEvent:
             'curr_avai_date': self.curr_avai_date,
         }
 
+
 class BroadcastBackend:
-    """ A in-memory broadcaster backend.
+    """ An in-memory broadcaster backend.
         Maintaining an event queue that publish every incoming event. There is no
         channel distinguishment as there is only one channel in our case, therefore
         no subscribe nor unsubscribe methods.

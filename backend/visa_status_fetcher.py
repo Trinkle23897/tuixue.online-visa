@@ -166,7 +166,7 @@ class VisaFetcher:
                 available_date=available_date
             )
             writting_finish = datetime.now()
-        except:
+        except Exception:
             LOGGER.error('Catch an error when saveing fetched result to database', traceback.format_exc())
         else:
             LOGGER.debug(
