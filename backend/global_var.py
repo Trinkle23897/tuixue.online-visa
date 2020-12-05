@@ -4,6 +4,7 @@ import os
 import json
 from queue import Queue
 from threading import Lock
+from collections import defaultdict
 from typing import List, Optional, Union
 from datetime import timedelta, timezone
 
@@ -140,6 +141,25 @@ class USEmbassy:
                 'region': region,
                 'embassy_code_lst': [emb.code for emb in cls.get_embassy_lst() if emb.region == region]
             } for region in {emb.region for emb in cls.get_embassy_lst()}
+        ]
+
+    @classmethod
+    def get_region_country_embassy_tree(cls) -> List[dict]:
+        """ Return a region-country-embassy mapping"""
+        rce_tree = defaultdict(lambda: defaultdict(list))
+        for emb in cls.get_embassy_lst():
+            rce_tree[emb.region][emb.country].append(emb.code)
+
+        return [
+            {
+                'region': region,
+                'country_embassy_map': [
+                    {
+                        'country': country,
+                        'embassy_code_lst': embassy_code_lst,
+                    } for country, embassy_code_lst in ce_map.items()
+                ],
+            } for region, ce_map in rce_tree.items()
         ]
 
     def __init__(

@@ -68,6 +68,7 @@ def get_meta_data():
     """
     return {
         'region': G.USEmbassy.get_region_mapping(),
+        'region_country_embassy_tree': G.USEmbassy.get_region_country_embassy_tree(),
         'embassy_lst': G.EMBASSY_ATTR,
         'visa_type_details': G.VISA_TYPE_DETAILS,
         'default_filter': ['bj', 'sh', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'bkk', 'bfs', 'lcy', 'dxb', 'gye'],
