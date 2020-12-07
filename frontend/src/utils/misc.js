@@ -11,3 +11,15 @@ export const renameObjectKeys = obj => {
 
     return Object.fromEntries(Object.entries(obj).map(([key, val]) => [snakeToCamel(key), renameObjectKeys(val)]));
 };
+
+/**
+ * Extract the year, month date from datetime string
+ * Not using javascript's Date class cause it sucks at datetime string parsing
+ * @param {string} s ISO Datetime string in format of `YYYY-MM-DDTHH:MM:SS`
+ */
+export const getDateFromISOString = s => s.split("T")[0].split("-");
+export const getTimeFromISOString = s =>
+    s
+        .split("T")[1]
+        .split(":")
+        .map(i => i.split(".")[0]);

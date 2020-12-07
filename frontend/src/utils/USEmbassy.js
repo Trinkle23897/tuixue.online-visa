@@ -1,5 +1,5 @@
-const embassyAttributeLst = ["nameCn", "nameEn", "code", "sys", "region", "continent", "country", "tzInfo"];
-const embassyAttributeIdx = Object.fromEntries(embassyAttributeLst.map((attr, idx) => [attr, idx]));
+export const embassyAttributeLst = ["nameCn", "nameEn", "code", "sys", "region", "continent", "country", "tzInfo"];
+export const embassyAttributeIdx = Object.fromEntries(embassyAttributeLst.map((attr, idx) => [attr, idx]));
 
 /**
  *
@@ -24,3 +24,11 @@ export const findEmbassyAttributeByAnotherAttr = (targetAttr, inputAttrKey, inpu
         }
     }
 };
+
+export const getEmbassyAttributeLst = (attr, embassyLst) => {
+    if (embassyAttributeLst.includes(attr)) {
+        return embassyLst.map(emb => emb[embassyAttributeIdx[attr]]);
+    }
+};
+
+export const getAllEmbassyCodes = embassyLst => embassyLst.map(emb => emb[embassyAttributeIdx.code]);

@@ -12,6 +12,7 @@
     "antd": "^4.8.0",
     "craco-less": "^1.17.0",
     "echarts": "^4.9.0",
+    "i18n-iso-countries": "^6.3.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

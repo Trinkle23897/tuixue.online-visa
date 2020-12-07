@@ -1,42 +1,68 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { findEmbassyAttributeByCode, findEmbassyAttributeByAnotherAttr } from "../utils/USEmbassy";
+import countries from "i18n-iso-countries";
+import { embassyAttributeIdx, findEmbassyAttributeByCode } from "../utils/USEmbassy";
 
+// register languages for browser versions
+countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
+countries.registerLocale(require("i18n-iso-countries/langs/zh.json"));
+
+// basic selectors
 const metadataSelector = state => state.metadata;
 const overviewSelector = state => state.visastatusOverview;
 const newestSelector = state => state.visastatusNewest;
 const filterSelector = state => state.visastatusFilter;
-
 const embassyLstSelector = createSelector(metadataSelector, metadata => metadata.embassyLst);
-const makeOverviewSelectorByVisaType = visaType => createSelector(overviewSelector, overview => overview[visaType]);
-const makeNewestSelectorByVisaType = visaType => createSelector(newestSelector, newest => newest[visaType]);
-const makeFilterSelectorByVisaType = visaType => createSelector(filterSelector, filter => filter[visaType]);
+export const makeEmbassyBySysSelector = sys =>
+    createSelector(embassyLstSelector, embassyLst =>
+        sys === "all"
+            ? embassyLst.map(emb => emb[embassyAttributeIdx.code])
+            : embassyLst.filter(emb => emb[embassyAttributeIdx.sys] === sys).map(emb => emb[embassyAttributeIdx.code]),
+    );
+const embassyOptionsSelector = createSelector(embassyLstSelector, embassyLst =>
+    embassyLst.map(emb => ({ name: emb[embassyAttributeIdx.nameEn], code: emb[embassyAttributeIdx.code] })),
+);
+const rceTreeSelector = createSelector(metadataSelector, metadata => metadata.regionCountryEmbassyTree);
+export const makeEmbassyTreeSelector = sys =>
+    createSelector(
+        [embassyOptionsSelector, rceTreeSelector, makeEmbassyBySysSelector(sys)],
+        (embassyOptions, rceTree, embassyBySys) =>
+            rceTree
+                .map(({ region, countryEmbassyMap }) => ({
+                    title: region
+                        .split("_")
+                        .map(s => `${s[0]}${s.slice(1).toLowerCase()}`)
+                        .join(" "),
+                    value: region,
+                    key: region,
+                    children: countryEmbassyMap
+                        .map(({ country, embassyCodeLst }) => ({
+                            title: countries.getName(country, "en", { select: "official" }), // use `zh` for Chinese
+                            value: country,
+                            key: country,
+                            children: embassyOptions
+                                .filter(({ code }) => embassyCodeLst.includes(code) && embassyBySys.includes(code))
+                                .map(emb => ({ title: emb.name, value: emb.code, key: emb.code })),
+                        }))
+                        .filter(countryNode => countryNode.children.length > 0),
+                }))
+                .filter(regionNode => regionNode.children.length > 0),
+    );
+
+// generate `make{Some}SelectorByVisaType`
+const makeSelectorMakerByVisaType = selector => visType => createSelector(selector, output => output[visType]);
+
+// Selectors by Visa type
+const makeOverviewSelectorByVisaType = makeSelectorMakerByVisaType(overviewSelector);
+export const makeFilterSelectorByVisaType = makeSelectorMakerByVisaType(filterSelector);
 
 export const makeOverviewDetailSelector = visaType =>
     createSelector(
         [embassyLstSelector, makeOverviewSelectorByVisaType(visaType), makeFilterSelectorByVisaType(visaType)],
-        (embLst, overview, filter) => {
-            if (overview.length > 0) {
-                const overviewLst = overview[0].overview;
-                return overviewLst
-                    .filter(ov => filter.includes(ov.embassyCode))
-                    .map(ov =>
-                        Object.fromEntries(
-                            Object.entries(ov).map(([k, v]) =>
-                                k === "embassyCode"
-                                    ? ["embassyName", findEmbassyAttributeByCode("nameEn", v, embLst)]
-                                    : [k, v],
-                            ),
-                        ),
-                    );
-            }
-        },
+        (embLst, overview, filter) =>
+            overview
+                .filter(ov => filter.includes(ov.embassyCode))
+                .map(ov => ({ ...ov, embassyName: findEmbassyAttributeByCode("nameEn", ov.embassyCode, embLst) })),
     );
 
-export const makeNewestVisaStatusSelector = (visaType, embassyName) =>
-    createSelector([embassyLstSelector, makeNewestSelectorByVisaType(visaType)], (embLst, newest) => {
-        const targetNewest = newest.find(
-            ({ embassyCode }) =>
-                findEmbassyAttributeByAnotherAttr("nameEn", "code", embassyCode, embLst) === embassyName,
-        );
-        return targetNewest;
-    });
+export const makeNewestVisaStatusSelector = (visaType, embassyCode) =>
+    createSelector(newestSelector, newest => newest[visaType][embassyCode]);

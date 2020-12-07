@@ -3,6 +3,7 @@ import metadata from "./metadataSlice";
 import visastatusNewest from "./visastatusNewest";
 import visastatusFilter from "./visastatusFilterSlice";
 import visastatusOverview from "./visastatusOverviewSlice";
+import visastatusTab from "./visastatusTabSlice";
 
 export default configureStore({
     reducer: {
@@ -10,5 +11,6 @@ export default configureStore({
         visastatusNewest,
         visastatusFilter,
         visastatusOverview,
+        visastatusTab,
     },
 });

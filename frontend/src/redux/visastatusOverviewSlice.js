@@ -1,13 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getVisaStatusOverview } from "../services";
+import { getDateFromISOString } from "../utils/misc";
 
 const visastatusOverviewSlice = createSlice({
     name: "visastatusOverview",
     initialState: { F: [], B: [], O: [], H: [], L: [] },
     reducers: {
         updateOverview: (state, action) => {
-            const { visaType, visaStatus } = action.payload;
-            state[visaType] = visaStatus;
+            const { visaType, overviewLst } = action.payload;
+            overviewLst.forEach(overview => {
+                const overviewIdx = state[visaType].findIndex(ov => ov.embassyCode === overview.embassyCode);
+                if (overviewIdx !== -1) {
+                    state[visaType][overviewIdx] = overview;
+                } else {
+                    state[visaType].push(overview);
+                }
+            });
         },
     },
 });
@@ -29,30 +37,16 @@ export const fetchVisaStatusOverview = visaType => async (dispatch, getState) =>
         const vsOverview = await getVisaStatusOverview(visaType, selectedEmb, now, now);
         if (vsOverview) {
             const { visaStatus } = vsOverview;
-            dispatch(updateOverview({ visaType, visaStatus }));
+            const overviewLst = visaStatus[0].overview.map(({ embassyCode, earliestDate, latestDate }) => ({
+                visaType,
+                embassyCode,
+                earliestDate: getDateFromISOString(earliestDate),
+                latestDate: getDateFromISOString(latestDate),
+            }));
+            dispatch(updateOverview({ visaType, overviewLst }));
         }
     } catch (e) {
         console.error(`In fetchVisaStatusOverview: ${e}`);
-    }
-
-    return Promise.resolve();
-};
-
-export const fetchAllOverview = () => async (dispatch, getState) => {
-    const { visastatusFilter: vsFilter } = getState();
-    const visaTypes = Object.keys(vsFilter).filter(vt => vsFilter[vt].length > 0);
-    const embassyCodes = [...new Set(Object.values(vsFilter).flat())];
-
-    const now = new Date(Date.now());
-    try {
-        const allOverview = await getVisaStatusOverview(visaTypes, embassyCodes, now, now);
-        console.log(allOverview);
-        if (allOverview) {
-            const { visa_status: visaStatus } = allOverview;
-            visaTypes.forEach(vt => dispatch(updateOverview({ visaType: vt, visaStatus })));
-        }
-    } catch (e) {
-        console.error(`In fetchAllOverview: ${e}`);
     }
 
     return Promise.resolve();

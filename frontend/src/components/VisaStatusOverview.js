@@ -1,67 +1,85 @@
 import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { Collapse, Card, List, Row, Col } from "antd";
-import { PlusCircleOutlined, UpOutlined, DownOutlined, QqCircleFilled } from "@ant-design/icons";
+import { Collapse, List, Row, Col, Button } from "antd";
+import { PlusOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
 
 const { Panel } = Collapse;
 
-const OverviewNewest = ({ visaType, embassyName }) => {
-    const newestVisaStatueSelector = useMemo(() => makeNewestVisaStatusSelector(visaType, embassyName), [
+const overviewPropTypes = {
+    overview: PropTypes.shape({
+        visaType: PropTypes.string,
+        embassyCode: PropTypes.string,
+        embassyName: PropTypes.string,
+        earliestDate: PropTypes.arrayOf(PropTypes.string),
+        latestDate: PropTypes.arrayOf(PropTypes.string),
+    }).isRequired,
+};
+
+const OverviewNewest = ({ visaType, embassyCode }) => {
+    const newestVisaStatueSelector = useMemo(() => makeNewestVisaStatusSelector(visaType, embassyCode), [
         visaType,
-        embassyName,
+        embassyCode,
     ]);
-    const { writeTime, availableDate } = useSelector(state => newestVisaStatueSelector(state));
+    const newestVisaStatus = useSelector(state => newestVisaStatueSelector(state));
+    const { writeTime, availableDate } = newestVisaStatus || { writeTime: ["/"], availableDate: ["/"] };
     return (
-        <Col xs={{ span: 24 }} md={{ span: 6 }} style={{ textAlign: "left" }}>
-            {availableDate || "/"} at {writeTime}
+        <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
+            {availableDate.join("/")} at {`${writeTime.slice(0, 3).join("/")} ${writeTime.slice(3).join(":")}`}
         </Col>
     );
 };
 OverviewNewest.propTypes = {
     visaType: PropTypes.string,
-    embassyName: PropTypes.string,
+    embassyCode: PropTypes.string,
 };
 
-const OverviewContent = ({ overview }) => (
+// This component can evolve into something VERY COMPLEX with subscription stuff.
+// We may want to create a stand-alone component (e.g. OverviewWidget.j) file for it
+const OverviewContent = ({ overview, dropdownControl }) => (
     <Row align="middle" justify="space-around">
-        {/* <Col span={{ xs: 24, md: 6 }} style={{ textAlign: "left" }}>
-            {overview.visaType}
-        </Col> */}
-        <Col xs={{ span: 24 }} md={{ span: 6 }} style={{ textAlign: "left" }}>
+        <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
             {overview.embassyName}
         </Col>
-        <Col xs={{ span: 24 }} md={{ span: 6 }} style={{ textAlign: "left" }}>
-            {overview.earliestDate}
+        <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
+            {overview.earliestDate.join("/")}
         </Col>
-        <Col xs={{ span: 24 }} md={{ span: 6 }} style={{ textAlign: "left" }}>
-            {overview.latestDate}
+        <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
+            {overview.latestDate.join("/")}
         </Col>
-        <OverviewNewest visaType={overview.visaType} embassyName={overview.embassyName} />
+        <OverviewNewest visaType={overview.visaType} embassyCode={overview.embassyCode} />
+        <Col md={{ span: 1 }}>
+            <Button
+                icon={<PlusOutlined />}
+                shape="circle"
+                size="large"
+                onClick={() => console.log(`Click subscription button of ${overview.embassyName}`)}
+            />
+        </Col>
+        <Col md={{ span: 1 }}>
+            <Button
+                icon={<QqOutlined />}
+                shape="circle"
+                size="large"
+                onClick={() => console.log(`Click QQ button of ${overview.embassyName}`)}
+            />
+        </Col>
+        <Col md={{ span: 1 }}>
+            <Button icon={<LineChartOutlined />} shape="circle" size="large" onClick={() => dropdownControl()} />
+        </Col>
     </Row>
 );
-OverviewContent.propTypes = {
-    overview: PropTypes.shape({
-        visaType: PropTypes.string,
-        embassyName: PropTypes.string,
-        earliestDate: PropTypes.string,
-        latestDate: PropTypes.string,
-    }).isRequired,
-};
+OverviewContent.propTypes = { ...overviewPropTypes, dropdownControl: PropTypes.func };
 
-export default function VisaStatusOverviewList({ visaType }) {
-    const overviewSelector = useMemo(() => makeOverviewDetailSelector(visaType), [visaType]);
-    const overviewData = useSelector(state => overviewSelector(state));
-
+const VisaStatusOverviewListItem = ({ overview }) => {
+    const [panelOpen, setPanelOpen] = useState(false);
+    const dropdownControl = () => setPanelOpen(!panelOpen);
     return (
-        <Collapse
-            expandIconPosition="right"
-            expandIcon={({ isActive }) => (isActive ? <UpOutlined /> : <DownOutlined />)}
-            accordion
-        >
-            {(overviewData || []).map(overview => (
-                <Panel header={<OverviewContent overview={overview} />}>
+        <List.Item style={{ marginBottom: 12, padding: "24px 12px 0", backgroundColor: "#FFFFFF", borderRadius: 12 }}>
+            <OverviewContent overview={overview} dropdownControl={dropdownControl} />
+            <Collapse activeKey={panelOpen ? [overview.embassyCode] : []} style={{ width: "100%" }} ghost>
+                <Panel key={overview.embassyCode} showArrow={false}>
                     <div
                         style={{
                             width: "100%",
@@ -75,8 +93,22 @@ export default function VisaStatusOverviewList({ visaType }) {
                         <h3> A DOPE ASS plot here</h3>
                     </div>
                 </Panel>
-            ))}
-        </Collapse>
+            </Collapse>
+        </List.Item>
+    );
+};
+VisaStatusOverviewListItem.propTypes = overviewPropTypes;
+
+export default function VisaStatusOverviewList({ visaType }) {
+    const overviewSelector = useMemo(() => makeOverviewDetailSelector(visaType), [visaType]);
+    const overviewData = useSelector(state => overviewSelector(state));
+
+    return (
+        <List
+            itemLayout="vertical"
+            dataSource={overviewData}
+            renderItem={overview => <VisaStatusOverviewListItem key={overview.embassyCode} overview={overview} />}
+        />
     );
 }
 VisaStatusOverviewList.propTypes = {

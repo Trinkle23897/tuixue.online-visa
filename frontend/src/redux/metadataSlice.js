@@ -4,7 +4,7 @@ import { getVisaStatusMetadata } from "../services";
 
 const metadataSlice = createSlice({
     name: "metadata",
-    initialState: { region: [], embassyLst: [], visaTypeDetails: {} },
+    initialState: { region: [], regionCountryEmbassyTree: [], embassyLst: [], visaTypeDetails: {}, defaultFilter: [] },
     reducers: {
         updateMetadata: (state, action) => action.payload.metadata,
     },
@@ -27,9 +27,9 @@ export const fetchMetadata = () => async dispatch => {
         console.error(`In metadataSlice: ${e}`);
     }
 
-    const { embassyLst } = metadata;
+    const { defaultFilter } = metadata;
     dispatch(updateMetadata({ metadata }));
-    Array.from("FBOHL").forEach(visaType => dispatch(updateFilter({ visaType, newFilter: embassyLst.map(e => e[2]) })));
+    Array.from("FBOHL").forEach(visaType => dispatch(updateFilter({ visaType, newFilter: defaultFilter })));
 
     return Promise.resolve();
 };
