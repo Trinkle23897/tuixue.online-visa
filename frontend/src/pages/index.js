@@ -6,8 +6,8 @@ export default function Pages() {
     return (
         <Router>
             <Switch>
-                <Route path="/visa" component={() => <VisaStatus />} />
-                <Redirect to="/visa" />
+                <Route path="/" component={() => <VisaStatus />} />
+                <Redirect to="/" />
             </Switch>
         </Router>
     );
