@@ -15,11 +15,15 @@ export default function VisaStatus() {
                     Visa Status Overview
                 </Title>
                 <Row>
-                    <Col xs={0} sm={1} md={2} lg={4} xl={5} />
-                    <Col xs={24} sm={22} md={20} lg={16} xl={14}>
+                    <Col
+                        xs={{ span: 24, push: 0 }}
+                        sm={{ span: 22, push: 1 }}
+                        md={{ span: 20, push: 2 }}
+                        lg={{ span: 16, push: 4 }}
+                        xl={{ span: 14, push: 5 }}
+                    >
                         <VisaStatusTabs />
                     </Col>
-                    <Col xs={0} sm={1} md={2} lg={4} xl={5} />
                 </Row>
             </Content>
         </Layout>
