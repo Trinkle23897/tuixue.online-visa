@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchVisaStatusOverview } from "./visastatusOverviewSlice";
+import { setCookie } from "../utils/cookie";
 
 const visastatusFilterSlice = createSlice({
     name: "visastatusFilter",
@@ -8,6 +9,7 @@ const visastatusFilterSlice = createSlice({
         updateFilter: (state, action) => {
             const { visaType, newFilter } = action.payload;
             state[visaType] = newFilter;
+            setCookie(`filter-${visaType}`, newFilter);
         },
     },
 });

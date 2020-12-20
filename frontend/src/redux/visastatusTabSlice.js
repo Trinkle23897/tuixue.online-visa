@@ -1,10 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getCookie, setCookie } from "../utils/cookie";
 
 const visastatusTabSlice = createSlice({
     name: "visastatusTab",
-    initialState: "F", // TODO: read historical preference from cookie
+    initialState: getCookie("visaType", "F"),
     reducers: {
-        changeTab: (state, action) => action.payload.activeKey,
+        changeTab: (state, action) => {
+            setCookie("visaType", action.payload.activeKey);
+            return action.payload.activeKey;
+        },
     },
 });
 

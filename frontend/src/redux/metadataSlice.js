@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { updateFilter } from "./visastatusFilterSlice";
 import { getVisaStatusMetadata } from "../services";
+import { getCookie } from "../utils/cookie";
 
 const metadataSlice = createSlice({
     name: "metadata",
@@ -29,7 +30,9 @@ export const fetchMetadata = () => async dispatch => {
 
     const { defaultFilter } = metadata;
     dispatch(updateMetadata({ metadata }));
-    Array.from("FBOHL").forEach(visaType => dispatch(updateFilter({ visaType, newFilter: defaultFilter })));
+    Array.from("FBOHL").forEach(visaType =>
+        dispatch(updateFilter({ visaType, newFilter: getCookie(`filter-${visaType}`, defaultFilter) })),
+    );
 
     return Promise.resolve();
 };

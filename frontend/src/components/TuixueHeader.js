@@ -10,7 +10,7 @@ const { Title } = Typography;
 
 const Logo = () => (
     <Col
-        xs={{ span: 2, push: 7 }}
+        xs={{ span: 2, push: 5 }}
         md={{ span: 2, push: 2 }}
         lg={{ span: 2, push: 3 }}
         xl={{ span: 2, push: 4 }}
@@ -76,7 +76,7 @@ export default function Nav() {
                 <Col xs={0} md={{ span: 14, push: 6 }}>
                     <NavMenu mode="horizontal" />
                 </Col>
-                <Col xs={{ span: 2, push: 18 }} md={{ span: 2, push: 5 }} lg={{ span: 2, push: 3 }}>
+                <Col xs={{ span: 2, push: 17 }} md={{ span: 2, push: 5 }} lg={{ span: 2, push: 3 }}>
                     <Button onClick={() => console.log("change")} size="large" icon={<EditOutlined />} />
                 </Col>
             </Row>
