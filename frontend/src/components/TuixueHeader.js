@@ -16,8 +16,8 @@ const Logo = () => (
         xl={{ span: 2, push: 4 }}
         className="logo"
     >
-        <img src="https://via.placeholder.com/40" alt="tuixue logo" />
-        <Title>Tuixue</Title>
+        <img src="/favicon.ico" height="40" alt="real tuixue logo" />
+        <img src="/tuixue-logo.png" height="48" alt="fake tuixue logo" />
     </Col>
 );
 

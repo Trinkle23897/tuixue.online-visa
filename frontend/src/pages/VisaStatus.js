@@ -1,5 +1,6 @@
 import React from "react";
 import { Layout, Typography, Row, Col } from "antd";
+import { DiscussionEmbed } from "disqus-react";
 import { TuixueHeader, VisaStatusTabs } from "../components";
 import "./VisaStatus.less";
 
@@ -23,6 +24,7 @@ export default function VisaStatus() {
                         xl={{ span: 14, push: 5 }}
                     >
                         <VisaStatusTabs />
+                        <DiscussionEmbed shortname="tuixue-online" />
                     </Col>
                 </Row>
             </Content>
