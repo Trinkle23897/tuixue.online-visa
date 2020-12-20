@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
+import ReactEcharts from "echarts-for-react";
 import { Collapse, List, Row, Col, Button } from "antd";
 import { PlusOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
@@ -80,18 +81,23 @@ const VisaStatusOverviewListItem = ({ overview }) => {
             <OverviewContent overview={overview} dropdownControl={dropdownControl} />
             <Collapse activeKey={panelOpen ? [overview.embassyCode] : []} style={{ width: "100%" }} ghost>
                 <Panel key={overview.embassyCode} showArrow={false}>
-                    <div
-                        style={{
-                            width: "100%",
-                            height: "80px",
-                            backgroundColor: "#EFB777",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                    <ReactEcharts
+                        option={{
+                            xAxis: {
+                                type: "category",
+                                data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                            },
+                            yAxis: {
+                                type: "value",
+                            },
+                            series: [
+                                {
+                                    data: [820, 932, 901, 934, 1290, 1330, 1320],
+                                    type: "line",
+                                },
+                            ],
                         }}
-                    >
-                        <h3> A DOPE ASS plot here</h3>
-                    </div>
+                    />
                 </Panel>
             </Collapse>
         </List.Item>
