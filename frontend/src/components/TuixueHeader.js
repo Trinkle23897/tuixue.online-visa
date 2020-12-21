@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { HashLink as Link } from "react-router-hash-link";
 import { Row, Col, Button, Layout, Menu, Typography, Popover } from "antd";
-import { MenuOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
+import { IoLanguageOutline } from "react-icons/io5";
 import "./TuixueHeader.less";
+import { setCookie } from "../utils/cookie";
 
 const { Header } = Layout;
 const { Title } = Typography;
@@ -22,17 +25,18 @@ const Logo = () => (
 );
 
 const NavMenu = ({ mode, theme, onClick }) => {
+    const [t, i18n] = useTranslation();
     return (
         <Menu theme={theme} mode={mode} onClick={onClick ? () => onClick() : () => {}}>
             <Menu.Item key="visastatus">
-                <Link to="/">Visa Status</Link>
+                <Link to="/">{t("visaStatus")}</Link>
             </Menu.Item>
             <Menu.Item key="sysinfo">
-                <Link to="/sysinfo">System Status</Link>
+                <Link to="/sysinfo">{t("sysStatus")}</Link>
             </Menu.Item>
             <Menu.Item key="checkee">
                 <a href="https://checkee.info/" target="_blank" rel="noreferrer">
-                    Check Reporter
+                    {t("checkee")}
                 </a>
             </Menu.Item>
         </Menu>
@@ -65,6 +69,19 @@ const NavMenuPopover = () => {
     );
 };
 
+const LanguageButton = () => {
+    const [t, i18n] = useTranslation();
+    setCookie("i18next", i18n.language);
+    return (
+        <Button
+            onClick={() => i18n.changeLanguage(i18n.language === "en" ? "zh" : "en")}
+            size="large"
+            shape="circle"
+            icon={<IoLanguageOutline />}
+        />
+    );
+};
+
 export default function Nav() {
     return (
         <Header className="tuixue-header">
@@ -77,7 +94,7 @@ export default function Nav() {
                     <NavMenu mode="horizontal" />
                 </Col>
                 <Col xs={{ span: 2, push: 17 }} md={{ span: 2, push: 5 }} lg={{ span: 2, push: 3 }}>
-                    <Button onClick={() => console.log("change")} size="large" icon={<EditOutlined />} />
+                    <LanguageButton />
                 </Col>
             </Row>
         </Header>

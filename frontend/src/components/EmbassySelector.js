@@ -2,10 +2,12 @@ import React, { useMemo, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Card, Divider, Radio, Space, TreeSelect, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { updateFilterAndFetch } from "../redux/visastatusFilterSlice";
 import { makeFilterSelectorByVisaType, makeEmbassyTreeSelector, makeEmbassyBySysSelector } from "../redux/selectors";
 
 export default function EmbassySelector({ visaType }) {
+    const [t, i18n] = useTranslation();
     const [sys, setSys] = useState("all");
     const embassyTreeSelector = useMemo(() => makeEmbassyTreeSelector(sys), [sys]);
     const embassyBySysSelector = useMemo(() => makeEmbassyBySysSelector(sys), [sys]);
@@ -40,7 +42,7 @@ export default function EmbassySelector({ visaType }) {
 
     const SysSelect = () => (
         <Space>
-            <span>Filter by system: </span>
+            <span>{t("filterSystemDesc")}</span>
             <Radio.Group onChange={e => setSys(e.target.value)} value={sys}>
                 {["all", "ais", "cgi"].map(s => (
                     <Radio key={s} value={s}>
@@ -48,12 +50,11 @@ export default function EmbassySelector({ visaType }) {
                     </Radio>
                 ))}
             </Radio.Group>
-            <span>Some bugs needs to be fix here</span>
         </Space>
     );
     const SelectDefaultFilter = () => (
         <Button type="primary" onClick={() => resetFilter()}>
-            Reset to default
+            {t("filterDefault")}
         </Button>
     );
     const SelectDomesticOnly = () => (
@@ -61,13 +62,13 @@ export default function EmbassySelector({ visaType }) {
             type="primary"
             onClick={() => domesticRegion && dispatch(updateFilterAndFetch(visaType, domesticRegion.embassyCodeLst))}
         >
-            Domestic only
+            {t("filterDomestic")}
         </Button>
     );
 
     return (
         <Card
-            title="Add embassies/consulates of your choice"
+            title={t("filterDesc")}
             extra={
                 <Space>
                     <SelectDefaultFilter />

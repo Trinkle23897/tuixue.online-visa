@@ -1,10 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
-import countries from "i18n-iso-countries";
 import { embassyAttributeIdx, findEmbassyAttributeByCode } from "../utils/USEmbassy";
-
-// register languages for browser versions
-countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
-countries.registerLocale(require("i18n-iso-countries/langs/zh.json"));
+import i18n from "../utils/i18n";
 
 // basic selectors
 const metadataSelector = state => state.metadata;
@@ -36,7 +32,7 @@ export const makeEmbassyTreeSelector = sys =>
                     key: region,
                     children: countryEmbassyMap
                         .map(({ country, embassyCodeLst }) => ({
-                            title: countries.getName(country, "en", { select: "official" }), // use `zh` for Chinese
+                            title: i18n.t("countryCode", { countryName: country }), // no change when i18n lng changes, should be fixed
                             value: country,
                             key: country,
                             children: embassyOptions

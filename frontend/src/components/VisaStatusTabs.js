@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { Tabs, Typography, Row, Col } from "antd";
 import { changeTab } from "../redux/visastatusTabSlice";
@@ -12,6 +13,7 @@ const { Title } = Typography;
 export default function VisaStatusTabs() {
     const chosenKey = useSelector(state => state.visastatusTab);
     const dispatch = useDispatch();
+    const [t, i18n] = useTranslation();
 
     return (
         <Tabs
@@ -26,7 +28,7 @@ export default function VisaStatusTabs() {
                 <TabPane tab={visaType} key={visaType}>
                     <Row gutter={[16, { xs: 16, md: 32 }]}>
                         <Col span={24}>
-                            <Title level={2}>Visa Type {visaType}</Title>
+                            <Title level={2}>{t("visaType", { visaType: visaType })}</Title>
                         </Col>
                         <Col span={24}>
                             <EmbassySelector visaType={visaType} />
