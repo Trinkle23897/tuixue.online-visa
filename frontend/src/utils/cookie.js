@@ -5,10 +5,6 @@ export const setCookie = (name, value) => {
 };
 
 export const getCookie = (name, defaultValue) => {
-    let value = Cookies.get(name) || defaultValue;
-    if (!(typeof defaultValue === typeof value)) {
-        // js-cookie stores array as string
-        value = JSON.parse(value);
-    }
-    return value;
+    const value = Cookies.get(name) || defaultValue;
+    return typeof defaultValue === typeof value ? value : JSON.parse(value);
 };

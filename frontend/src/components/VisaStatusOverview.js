@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import ReactEcharts from "echarts-for-react";
 import { Collapse, List, Row, Col, Button } from "antd";
 import { PlusOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
+import { getSingleVisaStatus } from "../services";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
 
 const { Panel } = Collapse;
@@ -73,6 +74,42 @@ const OverviewContent = ({ overview, dropdownControl }) => (
 );
 OverviewContent.propTypes = { ...overviewPropTypes, dropdownControl: PropTypes.func };
 
+const OverviewChart = async ({ visaType, embassyCode }) => {
+    console.log(visaType, embassyCode);
+    const now = new Date();
+    try {
+        const sVS = await getSingleVisaStatus(visaType, embassyCode, now);
+        if (sVS) {
+            console.log(sVS);
+        }
+    } catch (e) {
+        console.error(`In OverviewChart: ${e}`);
+    }
+    return (
+        <ReactEcharts
+            option={{
+                xAxis: {
+                    type: "category",
+                    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                },
+                yAxis: {
+                    type: "value",
+                },
+                series: [
+                    {
+                        data: [820, 932, 901, 934, 1290, 1330, 1320],
+                        type: "line",
+                    },
+                ],
+            }}
+        />
+    );
+};
+OverviewChart.propTypes = {
+    visaType: PropTypes.string,
+    embassyCode: PropTypes.string,
+};
+
 const VisaStatusOverviewListItem = ({ overview }) => {
     const [panelOpen, setPanelOpen] = useState(false);
     const dropdownControl = () => setPanelOpen(!panelOpen);
@@ -81,23 +118,7 @@ const VisaStatusOverviewListItem = ({ overview }) => {
             <OverviewContent overview={overview} dropdownControl={dropdownControl} />
             <Collapse activeKey={panelOpen ? [overview.embassyCode] : []} style={{ width: "100%" }} ghost>
                 <Panel key={overview.embassyCode} showArrow={false}>
-                    <ReactEcharts
-                        option={{
-                            xAxis: {
-                                type: "category",
-                                data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                            },
-                            yAxis: {
-                                type: "value",
-                            },
-                            series: [
-                                {
-                                    data: [820, 932, 901, 934, 1290, 1330, 1320],
-                                    type: "line",
-                                },
-                            ],
-                        }}
-                    />
+                    {panelOpen && <OverviewChart visaType={overview.visaType} embassyCode={overview.embassyCode} />}
                 </Panel>
             </Collapse>
         </List.Item>

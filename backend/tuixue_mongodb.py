@@ -531,7 +531,7 @@ class VisaStatus:
                 'time_range': [ts_start, ts_end],
                 'available_dates': {'$setDifference': ['$available_dates', [None]]},
             }}
-        ])
+        ], allowDiskUse=True)
 
         result = list(cursor)
         if len(result) > 0:
