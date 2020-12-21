@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import ReactEcharts from "echarts-for-react";
@@ -6,6 +6,7 @@ import { Collapse, List, Row, Col, Button } from "antd";
 import { PlusOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { getSingleVisaStatus } from "../services";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
+import { getYMDFromISOString, getHMFromISOString } from "../utils/misc";
 
 const { Panel } = Collapse;
 
@@ -74,41 +75,75 @@ const OverviewContent = ({ overview, dropdownControl }) => (
 );
 OverviewContent.propTypes = { ...overviewPropTypes, dropdownControl: PropTypes.func };
 
-const OverviewChart = async ({ visaType, embassyCode }) => {
-    console.log(visaType, embassyCode);
+const OverviewChart = ({ overview }) => {
+    const { visaType, embassyCode, embassyName } = overview;
     const now = new Date();
-    try {
-        const sVS = await getSingleVisaStatus(visaType, embassyCode, now);
-        if (sVS) {
-            console.log(sVS);
-        }
-    } catch (e) {
-        console.error(`In OverviewChart: ${e}`);
-    }
+    const [xAxis, setXAxis] = useState([]);
+    const [yAxis, setYAxis] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await getSingleVisaStatus(visaType, embassyCode, now);
+            setXAxis(result.availableDates.map(({ writeTime, availableDate }) => getHMFromISOString(writeTime)));
+            setYAxis(result.availableDates.map(({ writeTime, availableDate }) => getYMDFromISOString(availableDate)));
+        };
+        fetchData();
+    }, [visaType, embassyCode]);
     return (
         <ReactEcharts
             option={{
                 xAxis: {
                     type: "category",
-                    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    data: xAxis,
                 },
                 yAxis: {
-                    type: "value",
+                    type: "time",
                 },
+                legend: {
+                    data: [embassyName],
+                },
+                tooltip: {
+                    trigger: "axis",
+                    formatter: pack => {
+                        const header = `${pack[0].name}<br/>`;
+                        const content = pack
+                            .map(({ marker, seriesName, data }) => `${marker}${seriesName}: ${data}`)
+                            .join("<br>");
+                        return header + content;
+                    },
+                },
+                dataZoom: [
+                    {
+                        type: "slider",
+                        height: 8,
+                        bottom: 20,
+                        borderColor: "transparent",
+                        backgroundColor: "#e2e2e2",
+                        handleIcon:
+                            "M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z",
+                        handleSize: 20,
+                        handleStyle: {
+                            shadowBlur: 6,
+                            shadowOffsetX: 1,
+                            shadowOffsetY: 2,
+                            shadowColor: "#aaa",
+                        },
+                    },
+                    {
+                        type: "inside",
+                    },
+                ],
                 series: [
                     {
-                        data: [820, 932, 901, 934, 1290, 1330, 1320],
+                        name: embassyName,
                         type: "line",
+                        data: yAxis,
                     },
                 ],
             }}
         />
     );
 };
-OverviewChart.propTypes = {
-    visaType: PropTypes.string,
-    embassyCode: PropTypes.string,
-};
+OverviewChart.propTypes = overviewPropTypes;
 
 const VisaStatusOverviewListItem = ({ overview }) => {
     const [panelOpen, setPanelOpen] = useState(false);
@@ -118,7 +153,7 @@ const VisaStatusOverviewListItem = ({ overview }) => {
             <OverviewContent overview={overview} dropdownControl={dropdownControl} />
             <Collapse activeKey={panelOpen ? [overview.embassyCode] : []} style={{ width: "100%" }} ghost>
                 <Panel key={overview.embassyCode} showArrow={false}>
-                    {panelOpen && <OverviewChart visaType={overview.visaType} embassyCode={overview.embassyCode} />}
+                    {panelOpen && <OverviewChart overview={overview} />}
                 </Panel>
             </Collapse>
         </List.Item>

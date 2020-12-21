@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Tabs, Typography, Row, Col } from "antd";
 import { changeTab } from "../redux/visastatusTabSlice";
-import VisaStatusOverview from "./VisaStatusOverview";
+import VisaStatusOverviewList from "./VisaStatusOverview";
 import EmbassySelector from "./EmbassySelector";
 import "./VisaStatusTabs.less";
 
@@ -32,7 +32,7 @@ export default function VisaStatusTabs() {
                             <EmbassySelector visaType={visaType} />
                         </Col>
                         <Col span={24}>
-                            <VisaStatusOverview visaType={visaType} />
+                            <VisaStatusOverviewList visaType={visaType} />
                         </Col>
                     </Row>
                 </TabPane>

@@ -23,3 +23,6 @@ export const getTimeFromISOString = s =>
         .split("T")[1]
         .split(":")
         .map(i => i.split(".")[0]);
+
+export const getYMDFromISOString = s => s.split("T")[0]
+export const getHMFromISOString = s => s.split("T")[1].slice(0, -3);
