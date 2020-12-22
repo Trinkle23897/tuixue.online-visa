@@ -9,15 +9,21 @@ const visastatusFilterSlice = createSlice({
         updateFilter: (state, action) => {
             const { visaType, newFilter } = action.payload;
             state[visaType] = newFilter;
-            setCookie(`filter-${visaType}`, newFilter);
         },
     },
 });
 
 const { reducer, actions } = visastatusFilterSlice;
-export const { updateFilter } = actions;
-export const updateFilterAndFetch = (visaType, newFilter) => async dispatch => {
+const { updateFilter } = actions;
+
+export const updateFilterAndSetCookie = (visaType, newFilter) => async dispatch => {
+    setCookie(`filter-${visaType}`, newFilter);
     dispatch(updateFilter({ visaType, newFilter }));
+    return Promise.resolve();
+};
+
+export const updateFilterAndFetch = (visaType, newFilter) => async dispatch => {
+    dispatch(updateFilterAndSetCookie(visaType, newFilter));
     dispatch(fetchVisaStatusOverview(visaType));
     return Promise.resolve();
 };

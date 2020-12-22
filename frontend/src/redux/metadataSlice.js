@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { updateFilter } from "./visastatusFilterSlice";
+import { updateFilterAndSetCookie } from "./visastatusFilterSlice";
 import { getVisaStatusMetadata } from "../services";
 import { getCookie } from "../utils/cookie";
 
@@ -31,7 +31,7 @@ export const fetchMetadata = () => async dispatch => {
     const { defaultFilter } = metadata;
     dispatch(updateMetadata({ metadata }));
     Array.from("FBOHL").forEach(visaType =>
-        dispatch(updateFilter({ visaType, newFilter: getCookie(`filter-${visaType}`, defaultFilter) })),
+        dispatch(updateFilterAndSetCookie(visaType, getCookie(`filter-${visaType}`, defaultFilter))),
     );
 
     return Promise.resolve();

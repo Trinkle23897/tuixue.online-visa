@@ -6,12 +6,17 @@ const visastatusTabSlice = createSlice({
     initialState: getCookie("visaType", "F"),
     reducers: {
         changeTab: (state, action) => {
-            setCookie("visaType", action.payload.activeKey);
             return action.payload.activeKey;
         },
     },
 });
 
 const { reducer, actions } = visastatusTabSlice;
-export const { changeTab } = actions;
+const { changeTab } = actions;
+export const changeTabAndSetCookie = activeKey => async dispatch => {
+    setCookie("visaType", activeKey);
+    dispatch(changeTab({ activeKey }));
+    return Promise.resolve();
+};
+
 export default reducer;
