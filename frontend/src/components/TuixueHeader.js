@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { HashLink as Link } from "react-router-hash-link";
 import { Row, Col, Button, Layout, Menu, Typography, Popover } from "antd";
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import { IoLanguageOutline } from "react-icons/io5";
 import "./TuixueHeader.less";
 import { setCookie } from "../utils/cookie";
+import { updateLanguage } from "../redux/languageSlice";
 
 const { Header } = Layout;
 const { Title } = Typography;
@@ -70,8 +72,12 @@ const NavMenuPopover = () => {
 };
 
 const LanguageButton = () => {
+    const dispatch = useDispatch();
     const [t, i18n] = useTranslation();
-    setCookie("i18next", i18n.language);
+    useEffect(() => {
+        setCookie("i18next", i18n.language);
+        dispatch(updateLanguage({ language: i18n.language }));
+    });
     return (
         <Button
             onClick={() => i18n.changeLanguage(i18n.language === "en" ? "zh" : "en")}
