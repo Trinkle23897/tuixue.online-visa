@@ -29,6 +29,8 @@ CRAWLER_API = {
 }
 WAIT_TIME = {'register': 40, 'refresh': 7}
 
+CD_HOURS = 4
+
 SESSION_UPDATE_QUEUE = Queue()
 
 COUTNRY_CODE_TO_UTC_OFFSET = {
