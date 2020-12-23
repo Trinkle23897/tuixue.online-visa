@@ -7,9 +7,9 @@ import { updateFilterAndFetch } from "../redux/visastatusFilterSlice";
 import { makeFilterSelectorByVisaType, makeEmbassyTreeSelector, makeEmbassyBySysSelector } from "../redux/selectors";
 
 export default function EmbassySelector({ visaType }) {
-    const [t, i18n] = useTranslation();
+    const [t] = useTranslation();
     const [sys, setSys] = useState("all");
-    const embassyTreeSelector = useMemo(() => makeEmbassyTreeSelector(sys), [sys]);
+    const embassyTreeSelector = useMemo(() => makeEmbassyTreeSelector(sys, t), [sys, t]);
     const embassyBySysSelector = useMemo(() => makeEmbassyBySysSelector(sys), [sys]);
     const embassyTreeOptions = useSelector(state => embassyTreeSelector(state));
     const embassyBySys = useSelector(state => embassyBySysSelector(state));
@@ -21,25 +21,6 @@ export default function EmbassySelector({ visaType }) {
 
     const domesticRegion = useSelector(state => state.metadata.region.find(r => r.region === "DOMESTIC"));
     const dispatch = useDispatch();
-
-    const translate = embassyTree => {
-        if (Array.isArray(embassyTree) && !embassyTree.length) return [];
-        return embassyTree.map(({ region, countries }) => ({
-            title: t(region), // TODO: translate
-            value: region,
-            key: region,
-            children: countries.map(({ country, cities }) => ({
-                title: t("countryCode", { countryName: country }),
-                value: country,
-                key: country,
-                children: cities.map(({ city, key }) => ({
-                    title: t(city), // TODO: translate
-                    value: city,
-                    key: city,
-                })),
-            })),
-        }));
-    };
 
     const [dropdownOpen, setDropdownOpen] = useState(null);
     useEffect(() => {
@@ -97,7 +78,7 @@ export default function EmbassySelector({ visaType }) {
         >
             <TreeSelect
                 dropdownRender={renderDropdown}
-                treeData={translate(embassyTreeOptions)}
+                treeData={embassyTreeOptions}
                 value={displayValue}
                 onChange={value => dispatch(updateFilterAndFetch(visaType, value))}
                 onDropdownVisibleChange={open => setDropdownOpen(open)}

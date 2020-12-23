@@ -42,7 +42,7 @@ OverviewNewest.propTypes = {
 // This component can evolve into something VERY COMPLEX with subscription stuff.
 // We may want to create a stand-alone component (e.g. OverviewWidget.j) file for it
 const OverviewContent = ({ overview, dropdownControl }) => {
-    const [t, i18n] = useTranslation();
+    const [t] = useTranslation();
     return (
         <Row align="middle" justify="space-around">
             <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
@@ -59,7 +59,6 @@ const OverviewContent = ({ overview, dropdownControl }) => {
                 <Button
                     icon={<PlusOutlined />}
                     shape="circle"
-                    size="large"
                     onClick={() => console.log(`Click subscription button of ${overview.embassyName}`)}
                 />
             </Col>
@@ -67,12 +66,11 @@ const OverviewContent = ({ overview, dropdownControl }) => {
                 <Button
                     icon={<QqOutlined />}
                     shape="circle"
-                    size="large"
                     onClick={() => console.log(`Click QQ button of ${overview.embassyName}`)}
                 />
             </Col>
             <Col md={{ span: 1 }}>
-                <Button icon={<LineChartOutlined />} shape="circle" size="large" onClick={() => dropdownControl()} />
+                <Button icon={<LineChartOutlined />} shape="circle" onClick={() => dropdownControl()} />
             </Col>
         </Row>
     );
@@ -80,16 +78,15 @@ const OverviewContent = ({ overview, dropdownControl }) => {
 OverviewContent.propTypes = { ...overviewPropTypes, dropdownControl: PropTypes.func };
 
 const OverviewChart = ({ overview }) => {
-    const [t, i18n] = useTranslation();
-    const { visaType, embassyCode, embassyName } = overview;
-    const now = new Date();
+    const [t] = useTranslation();
+    const { visaType, embassyCode } = overview;
     const [xAxis, setXAxis] = useState([]);
     const [yAxis, setYAxis] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
-            const result = await getSingleVisaStatus(visaType, embassyCode, now);
-            setXAxis(result.availableDates.map(({ writeTime, availableDate }) => getHMFromISOString(writeTime)));
-            setYAxis(result.availableDates.map(({ writeTime, availableDate }) => getYMDFromISOString(availableDate)));
+            const result = await getSingleVisaStatus(visaType, embassyCode, new Date());
+            setXAxis(result.availableDates.map(({ writeTime }) => getHMFromISOString(writeTime)));
+            setYAxis(result.availableDates.map(({ availableDate }) => getYMDFromISOString(availableDate)));
         };
         fetchData();
     }, [visaType, embassyCode]);

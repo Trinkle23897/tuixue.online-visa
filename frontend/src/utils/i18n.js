@@ -7,6 +7,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 countries.registerLocale(require("i18n-iso-countries/langs/zh.json"));
 
+export { countries };
+
 const resources = {
     en: {
         translation: {
@@ -20,8 +22,6 @@ const resources = {
             filterSystemDesc: "Filter by system: ",
             filterDefault: "Reset to default",
             filterDomestic: "Domestic only",
-            DOMESTIC: "Domestic",
-            bj: "Beijing",
         },
     },
     zh: {
@@ -36,8 +36,6 @@ const resources = {
             filterSystemDesc: "选择系统：",
             filterDefault: "恢复默认",
             filterDomestic: "只看国内",
-            DOMESTIC: "国内",
-            bj: "北京",
         },
     },
 };
@@ -49,13 +47,11 @@ i18n.use(LanguageDetector)
         fallbacklng: "zh",
         interpolation: {
             escapeValue: false,
-            format: (value, format, lng) => {
-                if (format === "country") {
-                    return countries.getName(value, lng, { select: "official" });
-                }
-                return value;
-            },
+            format: (value, format, lng) =>
+                format === "country" ? countries.getName(value, lng, { select: "official" }) : value,
         },
     });
 
+export const namespace = "translation";
+export const lngs = { en: "en", zh: "zh" };
 export default i18n;

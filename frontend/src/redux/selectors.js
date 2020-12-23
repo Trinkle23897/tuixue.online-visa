@@ -17,23 +17,27 @@ const embassyOptionsSelector = createSelector(embassyLstSelector, embassyLst =>
     embassyLst.map(emb => ({ name: emb[embassyAttributeIdx.nameEn], code: emb[embassyAttributeIdx.code] })),
 );
 const rceTreeSelector = createSelector(metadataSelector, metadata => metadata.regionCountryEmbassyTree);
-export const makeEmbassyTreeSelector = sys =>
+export const makeEmbassyTreeSelector = (sys, t) =>
     createSelector(
         [embassyOptionsSelector, rceTreeSelector, makeEmbassyBySysSelector(sys)],
         (embassyOptions, rceTree, embassyBySys) =>
             rceTree
                 .map(({ region, countryEmbassyMap }) => ({
-                    region,
-                    countries: countryEmbassyMap
+                    title: t(region),
+                    value: region,
+                    key: region,
+                    children: countryEmbassyMap
                         .map(({ country, embassyCodeLst }) => ({
-                            country,
-                            cities: embassyOptions
+                            title: t(country),
+                            value: country,
+                            key: country,
+                            children: embassyOptions
                                 .filter(({ code }) => embassyCodeLst.includes(code) && embassyBySys.includes(code))
-                                .map(emb => ({ city: emb.code })),
+                                .map(({ code }) => ({ title: t(code), value: code, key: code })),
                         }))
-                        .filter(countryNode => countryNode.cities.length > 0),
+                        .filter(countryNode => countryNode.children.length > 0),
                 }))
-                .filter(regionNode => regionNode.countries.length > 0),
+                .filter(regionNode => regionNode.children.length > 0),
     );
 
 // generate `make{Some}SelectorByVisaType`

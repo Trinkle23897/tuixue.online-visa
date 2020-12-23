@@ -9,7 +9,7 @@ const { Content } = Layout;
 const { Title } = Typography;
 
 export default function VisaStatus() {
-    const [t, i18n] = useTranslation();
+    const [t] = useTranslation();
     return (
         <Layout className="tuixue-page">
             <TuixueHeader />
