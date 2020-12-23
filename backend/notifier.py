@@ -8,7 +8,7 @@ import websockets
 import tuixue_mongodb as DB
 from datetime import datetime
 from tuixue_typing import VisaType
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 from fastapi.encoders import jsonable_encoder
 from urllib.parse import urlencode, urlunsplit, quote
 from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET
@@ -92,7 +92,7 @@ class Notifier:
         return sent
 
     @classmethod
-    async def send_via_websocket(cls, data: Any) -> None:
+    async def send_via_websocket(cls, data: Dict[str, Any]) -> None:
         """ Send an object in JSON string visa websocket."""
         ws_url, ws_token = SECRET['websocket_url'], SECRET['websocket_token']
         async with websockets.connect(f'{ws_url}?token={ws_token}') as ws:
@@ -121,6 +121,42 @@ class Notifier:
         return 'success' in res.text
 
     @classmethod
+    def send_qq_tg(
+        cls,
+        city: str,
+        prev: Optional[datetime],
+        curr: Optional[datetime],
+    ) -> bool:
+        """ Send notification to QQ group and Telegram channel."""
+        def converter(d: Optional[datetime]) -> str:
+            if d is None:
+                return "/"
+            if d.year == datetime.now().year:
+                return d.strftime("%m/%d")
+            return d.strftime("%Y/%m/%d")
+        prev, curr = converter(prev), converter(curr)
+        content = f"NEW {city}: {prev} -> {curr}"
+        # qq
+        extra = SECRET["qq"]
+        base_uri = extra["mirai_base_uri"]
+        auth_key = extra["mirai_auth_key"]
+        qq_num = extra["qq_num"]
+        group_id = extra["qq_group_id"]
+        r = requests.post(base_uri + "/auth",
+                          data=json.dumps({"authKey": auth_key})).json()
+        session = r["session"]
+        requests.post(base_uri + "/verify",
+                      data=json.dumps({"sessionKey": session, "qq": qq_num}))
+        for g in group_id:
+            requests.post(base_uri + "/sendGroupMessage", data=json.dumps(
+                {"sessionKey": session, "target": g, "messageChain": [{"type": "Plain", "text": content}]}))
+        requests.post(base_uri + "/release",
+                      data=json.dumps({"sessionKey": session, "qq": qq_num}))
+        # tg
+        # TODO
+
+
+    @classmethod
     def notify_visa_status_change(
         cls,
         visa_type: VisaType,
@@ -139,10 +175,10 @@ class Notifier:
             return False
 
         last_available_date = latest_written_lst[0]['available_date']
-
         if available_date is None:
             return False
-        else:
+        if last_available_date is None or available_date < last_available_date:
+            # email
             email_dct = DB.Subscription.get_email_list(
                 new_visa_status=(visa_type, embassy.code, available_date),
                 inclusion='effective_only',  # if the available date surpass the effective date
@@ -150,32 +186,32 @@ class Notifier:
 
             if (visa_type, embassy.code) in email_dct:
                 email_lst = email_dct[(visa_type, embassy.code)]
-            else:
-                return False
+                if len(email_lst) > 0:
+                    old_status = '/' if last_available_date is None else last_available_date.strftime('%Y/%m/%d')
+                    new_status = available_date.strftime('%Y/%m/%d')
 
-            if (last_available_date is None or available_date < last_available_date) and len(email_lst) > 0:
-                old_status = '/' if last_available_date is None else last_available_date.strftime('%Y/%m/%d')
-                new_status = available_date.strftime('%Y/%m/%d')
+                    cls.send_email(
+                        title=VISA_STATUS_CHANGE_TITLE.format(visa_detail=VISA_TYPE_DETAILS[visa_type]),
+                        content=VISA_STATUS_CHANGE_CONTENT.format(
+                            send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
+                            location=embassy.name_en,
+                            old_status=old_status,
+                            new_status=new_status,
+                        ),
+                        receivers=email_lst,
+                    )
+            # websocket
+            ws_data = {
+                'visa_type': visa_type,
+                'embassy_code': embassy.code,
+                'prev_avai_date': last_available_date,
+                'curr_avai_date': available_date
+            }
+            asyncio.run(cls.send_via_websocket(ws_data))
 
-                success = cls.send_email(
-                    title=VISA_STATUS_CHANGE_TITLE.format(visa_detail=VISA_TYPE_DETAILS[visa_type]),
-                    content=VISA_STATUS_CHANGE_CONTENT.format(
-                        send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
-                        location=embassy.name_en,
-                        old_status=old_status,
-                        new_status=new_status,
-                    ),
-                    receivers=email_lst,
-                )
+            # QQ/TG, need async
+            if visa_type == "F":
+                cls.send_qq_tg(embassy.name_cn, last_available_date, available_date)
 
-                ws_data = {
-                    'visa_type': visa_type,
-                    'embassy_code': embassy.code,
-                    'prev_avai_date': last_available_date,
-                    'curr_avai_date': available_date
-                }
-                asyncio.run(cls.send_via_websocket(ws_data))
-
-                return success
-            else:
-                return False
+            return True
+        return False

@@ -68,39 +68,35 @@ class Session:
             return None
 
 
+def random_session(sys: str) -> Session:
+    sess = 'placeholder_{}'.format(''.join(random.choices(string.ascii_lowercase, k=16)))
+    if sys == 'ais':
+        random_sched_id = ''.join(random.choices(string.digits, k=6))
+        sess = (sess, random_sched_id)
+    return Session(session=sess, sys=sys)
+
+
 class SessionCache:
     """ A container that store all the sessions by visa_type and places, along
         with thread safe methods to manipulate it.
     """
     @staticmethod
     def inititae_session_cache(
-        sys: str
+        sys: str,
+        session: DefaultDict[str, DefaultDict[str, List[Session]]],
+        session_idx: DefaultDict[str, DefaultDict[str, int]],
     ) -> Tuple[DefaultDict[str, DefaultDict[str, List[Session]]], DefaultDict[str, DefaultDict[str, int]]]:
         """ When there is no session cache file or reading a sessoin cache file
             in __init__ is failing, this method will be called to generate a new
             session cache data structure with random sessions filling in as pla-
             ceholders.
         """
-        session = defaultdict(lambda: defaultdict(list))
-        session_idx = defaultdict(lambda: defaultdict(int))
         with G.LOCK:
             for visa_type, sess_pool_size in G.SESS_POOL_SIZE[sys].items():
                 for loc in G.SYS_LOCATION[sys]:
-                    random_sess = [
-                        'placeholder_{}'.format(''.join(random.choices(string.ascii_lowercase, k=16)))
-                        for _ in range(sess_pool_size)
-                    ]
-
-                    if sys == 'ais':
-                        random_sched_id = [
-                            ''.join(random.choices(string.digits, k=6)) for _ in range(sess_pool_size)
-                        ]
-                        session[visa_type][loc] = [
-                            Session(session=sess, sys=sys) for sess in zip(random_sess, random_sched_id)
-                        ]
-                    else:
-                        session[visa_type][loc] = [Session(session=sess, sys=sys) for sess in random_sess]
-
+                    session[visa_type][loc] = session[visa_type][loc][:sess_pool_size]
+                    while len(session[visa_type][loc]) < sess_pool_size:
+                        session[visa_type][loc].append(random_session(sys))
                     session_idx[visa_type][loc] = 0
         return session, session_idx
 
@@ -126,21 +122,15 @@ class SessionCache:
                         raise TypeError()
                 except json.decoder.JSONDecodeError:
                     self.logger.debug('session.json is empty or borken written')
-                    self.session, self.session_idx = self.inititae_session_cache(sys)
-                    self.save()
                 except TypeError:
                     self.logger.debug('session.json doesn\'t store a dictionary.')
-                    self.session, self.session_idx = self.inititae_session_cache(sys)
-                    self.save()
                 else:
                     for visa_type, loc_sess_lst in old_session.items():
                         for loc, sess_lst in loc_sess_lst.items():
                             self.session[visa_type][loc] = [Session(**session) for session in sess_lst]
                             self.session_idx[visa_type][loc] = 0  # set currently used index to 0
-
-        else:  # Initiate the pool size
-            self.session, self.session_idx = self.inititae_session_cache(sys)
-            self.save()
+        self.session, self.session_idx = self.inititae_session_cache(sys, self.session, self.session_idx)
+        self.save()
 
     def save(self):
         """ Write the current session into disk."""
