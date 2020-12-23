@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import ReactEcharts from "echarts-for-react";
 import { Collapse, List, Row, Col, Button } from "antd";
 import { PlusOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { getSingleVisaStatus } from "../services";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
 import { getYMDFromISOString, getHMFromISOString } from "../utils/misc";
@@ -40,42 +41,46 @@ OverviewNewest.propTypes = {
 
 // This component can evolve into something VERY COMPLEX with subscription stuff.
 // We may want to create a stand-alone component (e.g. OverviewWidget.j) file for it
-const OverviewContent = ({ overview, dropdownControl }) => (
-    <Row align="middle" justify="space-around">
-        <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
-            {overview.embassyName}
-        </Col>
-        <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
-            {overview.earliestDate.join("/")}
-        </Col>
-        <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
-            {overview.latestDate.join("/")}
-        </Col>
-        <OverviewNewest visaType={overview.visaType} embassyCode={overview.embassyCode} />
-        <Col md={{ span: 1 }}>
-            <Button
-                icon={<PlusOutlined />}
-                shape="circle"
-                size="large"
-                onClick={() => console.log(`Click subscription button of ${overview.embassyName}`)}
-            />
-        </Col>
-        <Col md={{ span: 1 }}>
-            <Button
-                icon={<QqOutlined />}
-                shape="circle"
-                size="large"
-                onClick={() => console.log(`Click QQ button of ${overview.embassyName}`)}
-            />
-        </Col>
-        <Col md={{ span: 1 }}>
-            <Button icon={<LineChartOutlined />} shape="circle" size="large" onClick={() => dropdownControl()} />
-        </Col>
-    </Row>
-);
+const OverviewContent = ({ overview, dropdownControl }) => {
+    const [t, i18n] = useTranslation();
+    return (
+        <Row align="middle" justify="space-around">
+            <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
+                {t(overview.embassyCode)}
+            </Col>
+            <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
+                {overview.earliestDate.join("/")}
+            </Col>
+            <Col xs={{ span: 24 }} md={{ span: 5 }} style={{ paddingLeft: 8, textAlign: "left" }}>
+                {overview.latestDate.join("/")}
+            </Col>
+            <OverviewNewest visaType={overview.visaType} embassyCode={overview.embassyCode} />
+            <Col md={{ span: 1 }}>
+                <Button
+                    icon={<PlusOutlined />}
+                    shape="circle"
+                    size="large"
+                    onClick={() => console.log(`Click subscription button of ${overview.embassyName}`)}
+                />
+            </Col>
+            <Col md={{ span: 1 }}>
+                <Button
+                    icon={<QqOutlined />}
+                    shape="circle"
+                    size="large"
+                    onClick={() => console.log(`Click QQ button of ${overview.embassyName}`)}
+                />
+            </Col>
+            <Col md={{ span: 1 }}>
+                <Button icon={<LineChartOutlined />} shape="circle" size="large" onClick={() => dropdownControl()} />
+            </Col>
+        </Row>
+    );
+};
 OverviewContent.propTypes = { ...overviewPropTypes, dropdownControl: PropTypes.func };
 
 const OverviewChart = ({ overview }) => {
+    const [t, i18n] = useTranslation();
     const { visaType, embassyCode, embassyName } = overview;
     const now = new Date();
     const [xAxis, setXAxis] = useState([]);
@@ -99,7 +104,7 @@ const OverviewChart = ({ overview }) => {
                     type: "time",
                 },
                 legend: {
-                    data: [embassyName],
+                    data: [t(embassyCode)],
                 },
                 tooltip: {
                     trigger: "axis",
@@ -134,7 +139,7 @@ const OverviewChart = ({ overview }) => {
                 ],
                 series: [
                     {
-                        name: embassyName,
+                        name: t(embassyCode),
                         type: "line",
                         data: yAxis,
                     },

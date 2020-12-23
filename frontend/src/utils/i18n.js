@@ -20,6 +20,8 @@ const resources = {
             filterSystemDesc: "Filter by system: ",
             filterDefault: "Reset to default",
             filterDomestic: "Domestic only",
+            DOMESTIC: "Domestic",
+            bj: "Beijing",
         },
     },
     zh: {
@@ -34,6 +36,8 @@ const resources = {
             filterSystemDesc: "选择系统：",
             filterDefault: "恢复默认",
             filterDomestic: "只看国内",
+            DOMESTIC: "国内",
+            bj: "北京",
         },
     },
 };

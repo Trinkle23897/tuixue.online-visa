@@ -1,6 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { embassyAttributeIdx, findEmbassyAttributeByCode } from "../utils/USEmbassy";
-import i18n from "../utils/i18n";
 
 // basic selectors
 const metadataSelector = state => state.metadata;
@@ -24,24 +23,17 @@ export const makeEmbassyTreeSelector = sys =>
         (embassyOptions, rceTree, embassyBySys) =>
             rceTree
                 .map(({ region, countryEmbassyMap }) => ({
-                    title: region
-                        .split("_")
-                        .map(s => `${s[0]}${s.slice(1).toLowerCase()}`)
-                        .join(" "),
-                    value: region,
-                    key: region,
-                    children: countryEmbassyMap
+                    region,
+                    countries: countryEmbassyMap
                         .map(({ country, embassyCodeLst }) => ({
-                            title: i18n.t("countryCode", { countryName: country }), // no change when i18n lng changes, should be fixed
-                            value: country,
-                            key: country,
-                            children: embassyOptions
+                            country,
+                            cities: embassyOptions
                                 .filter(({ code }) => embassyCodeLst.includes(code) && embassyBySys.includes(code))
-                                .map(emb => ({ title: emb.name, value: emb.code, key: emb.code })),
+                                .map(emb => ({ city: emb.code })),
                         }))
-                        .filter(countryNode => countryNode.children.length > 0),
+                        .filter(countryNode => countryNode.cities.length > 0),
                 }))
-                .filter(regionNode => regionNode.children.length > 0),
+                .filter(regionNode => regionNode.countries.length > 0),
     );
 
 // generate `make{Some}SelectorByVisaType`

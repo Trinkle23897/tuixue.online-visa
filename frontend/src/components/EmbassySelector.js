@@ -22,6 +22,25 @@ export default function EmbassySelector({ visaType }) {
     const domesticRegion = useSelector(state => state.metadata.region.find(r => r.region === "DOMESTIC"));
     const dispatch = useDispatch();
 
+    const translate = embassyTree => {
+        if (Array.isArray(embassyTree) && !embassyTree.length) return [];
+        return embassyTree.map(({ region, countries }) => ({
+            title: t(region), // TODO: translate
+            value: region,
+            key: region,
+            children: countries.map(({ country, cities }) => ({
+                title: t("countryCode", { countryName: country }),
+                value: country,
+                key: country,
+                children: cities.map(({ city, key }) => ({
+                    title: t(city), // TODO: translate
+                    value: city,
+                    key: city,
+                })),
+            })),
+        }));
+    };
+
     const [dropdownOpen, setDropdownOpen] = useState(null);
     useEffect(() => {
         if (dropdownOpen !== null && !dropdownOpen && JSON.stringify(displayValue) !== JSON.stringify(vsFilter)) {
@@ -78,7 +97,7 @@ export default function EmbassySelector({ visaType }) {
         >
             <TreeSelect
                 dropdownRender={renderDropdown}
-                treeData={embassyTreeOptions}
+                treeData={translate(embassyTreeOptions)}
                 value={displayValue}
                 onChange={value => dispatch(updateFilterAndFetch(visaType, value))}
                 onDropdownVisibleChange={open => setDropdownOpen(open)}
