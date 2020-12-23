@@ -27,7 +27,7 @@ CRAWLER_API = {
         'ais': '/ais/refresh/?code={}&id={}&session={}'
     }
 }
-WAIT_TIME = {'register': 40, 'refresh': 7}
+WAIT_TIME = {'register': 50, 'refresh': 7}
 
 CD_HOURS = 4
 

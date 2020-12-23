@@ -185,10 +185,16 @@ class VisaFetcher:
         """
         if G.value('checking_crawler_connection', False):
             return
+        previous_crawler_node = G.value('current_crawler_node', '')
+        try:
+            res = requests.get(previous_crawler_node, timeout=5)
+            if res.status_code == 200:
+                return  # current cralwer node is ok
+        except Exception:
+            pass
 
         G.assign('checking_crawler_connection', True)
         crawler_path = G.value('crawler_path', None)
-        previous_crawler_node = G.value('current_crawler_node', '')
 
         if crawler_path is None or not os.path.exists(crawler_path):
             LOGGER.warning('GlobalVar crawler file path is not found or path not valid.')
