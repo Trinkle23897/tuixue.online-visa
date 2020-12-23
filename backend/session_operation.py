@@ -13,6 +13,7 @@ import string
 import logging
 from queue import Queue
 from collections import defaultdict
+from datetime import datetime, timedelta
 from typing import DefaultDict, List, Optional, Sequence, Tuple, Union
 
 import global_var as G
@@ -106,6 +107,8 @@ class SessionCache:
     def __init__(self) -> None:
         self.session = defaultdict(lambda: defaultdict(list))
         self.session_idx = defaultdict(lambda: defaultdict(int))
+        now = datetime.now()
+        self.session_avail = defaultdict(lambda: defaultdict(lambda: now))
         self.logger = logging.getLogger(G.GlobalVar.var_dct['log_name'])
 
         # read cached session pool (if any)
@@ -157,6 +160,8 @@ class SessionCache:
     def get_session(self, visa_type: str, location: str) -> Session:
         """ Return the cached session object by visa_type and location."""
         if visa_type not in G.VISA_TYPES or location not in [*G.CGI_LOCATION, *G.AIS_LOCATION]:
+            return
+        if datetime.now() < self.session_avail[visa_type][location]:
             return
 
         with G.LOCK:  # is locking here necessary?
@@ -213,8 +218,17 @@ class SessionCache:
 
     def contain_session(self, visa_type: str, location: str, session: Session) -> bool:
         """ For a given session, return whether or not the session is in the cache"""
+        if datetime.now() < self.session_avail[visa_type][location]:
+            return False
         sess_str_lst = [sess.session for sess in self.session[visa_type][location]]
         return session.session in sess_str_lst
+
+    def mark_unavailable(
+        self, visa_type: str, location: str, cd: timedelta = timedelta(hours=1)
+    ) -> None:
+        self.logger.warning(f"mark {visa_type} {location} unavailable for {cd.seconds}s")
+        with G.LOCK:
+            self.session_avail[visa_type][location] = datetime.now() + cd
 
 
 if __name__ == "__main__":

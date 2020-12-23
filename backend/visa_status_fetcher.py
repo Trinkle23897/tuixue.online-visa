@@ -329,7 +329,10 @@ class VisaFetcher:
                         location,
                         result['msg']
                     )
-                    cls.check_crawler_server_connection()
+                    if result['msg'] == "Network Error":
+                        SESSION_CACHE.mark_unavailable(visa_type, location)
+                    else:
+                        cls.check_crawler_server_connection()
                     continue
 
                 # Generate new session object and update cache
