@@ -15,10 +15,10 @@ const { Title } = Typography;
 
 const Logo = () => (
     <Col
-        xs={{ span: 2, push: 5 }}
-        md={{ span: 2, push: 2 }}
-        lg={{ span: 2, push: 3 }}
-        xl={{ span: 2, push: 4 }}
+        xs={{ span: 16, push: 5 }}
+        md={{ span: 5, push: 2 }}
+        lg={{ span: 5, push: 3 }}
+        xl={{ span: 5, push: 4 }}
         className="logo"
     >
         <img src="/favicon.ico" height="40" alt="real tuixue logo" />
@@ -91,15 +91,20 @@ const LanguageButton = () => {
 export default function Nav() {
     return (
         <Header className="tuixue-header">
-            <Row>
-                <Col xs={{ span: 2, push: 1 }} md={0}>
+            <Row justify="center">
+                <Col xs={{ span: 4, push: 2 }} md={0}>
                     <NavMenuPopover />
                 </Col>
                 <Logo />
-                <Col xs={0} md={{ span: 14, push: 6 }}>
+                <Col xs={0} md={{ span: 13, push: 2 }} lg={{ span: 10, push: 3 }}>
                     <NavMenu mode="horizontal" />
                 </Col>
-                <Col xs={{ span: 2, push: 17 }} md={{ span: 2, push: 5 }} lg={{ span: 2, push: 3 }}>
+                <Col
+                    xs={{ span: 4, push: 1 }}
+                    md={{ span: 4, push: 1 }}
+                    lg={{ span: 8, push: 4 }}
+                    xl={{ span: 9, push: 4 }}
+                >
                     <LanguageButton />
                 </Col>
             </Row>
