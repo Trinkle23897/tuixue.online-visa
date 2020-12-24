@@ -23,6 +23,10 @@ const resources = {
             filterDefault: "Reset to default",
             filterDomestic: "Domestic only",
             all: "All",
+            overviewRange: "The changing range of Earliest Date within 24h",
+            overviewNewest: "The current Earliest Date",
+            overviewEmailIcon: "Subscribe from email",
+            overviewQQIcon: "Subscribe from QQ group / Telegram channel",
         },
     },
     zh: {
@@ -37,7 +41,12 @@ const resources = {
             filterSystemDesc: "选择系统：",
             filterDefault: "恢复默认",
             filterDomestic: "只看国内",
+            at: "于",
             all: "全部",
+            overviewRange: "过去24h内最早预约日期变化范围",
+            overviewNewest: "当前日期",
+            overviewEmailIcon: "邮件订阅",
+            overviewQQIcon: "QQ群/Telegram频道订阅",
         },
     },
 };
