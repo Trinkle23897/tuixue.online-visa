@@ -11,6 +11,7 @@ let CONNECT_ATTEMPT = 0;
 
 export default function useWebSocketSubscribe() {
     const dispatch = useDispatch();
+    const visastatusTab = useSelector(state => state.visastatusTab);
     const visastatusFilter = useSelector(state => state.visastatusFilter);
     const embassyLst = useSelector(state => state.metadata.embassyLst);
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
@@ -35,12 +36,15 @@ export default function useWebSocketSubscribe() {
                 const embassyName = findEmbassyAttributeByCode("nameEn", embassyCode, embassyLst);
                 const visaTypeDetail = visaTypeDetails[visaType];
 
-                notification.warn({
-                    message: `${visaTypeDetail}: Visa Status Change`,
-                    description: `${embassyName} changed from ${prevAvaiDate || "/"} to ${currAvaiDate}`,
-                    duration: 5,
-                    placement: "topRight",
-                });
+                // only send notification for selected visa type and embassy
+                if (visastatusTab === visaType && visastatusFilter[visaType].includes(embassyCode)) {
+                    notification.warn({
+                        message: `${visaTypeDetail}: Visa Status Change`,
+                        description: `${embassyName} changed from ${prevAvaiDate || "/"} to ${currAvaiDate}`,
+                        duration: 5,
+                        placement: "topRight",
+                    });
+                }
             } else if (type === "newest") {
                 if (data.length > 0) {
                     const { visaType } = data[0];
@@ -48,11 +52,9 @@ export default function useWebSocketSubscribe() {
                 }
             }
         };
-    }, [embassyLst, visaTypeDetails, wsConnected, dispatch]);
+    }, [embassyLst, visaTypeDetails, wsConnected, dispatch, visastatusTab, visastatusFilter]);
 
     useEffect(() => {
-        // We don't need to check wsConnect here because WebSocket.readyState must be OPEN to
-        // send a message.
         if (wsConnected) {
             const getNewestVisaStatus = visaType =>
                 websocketRef.current.readyState === WebSocket.OPEN &&

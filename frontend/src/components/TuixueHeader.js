@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { HashLink as Link } from "react-router-hash-link";
-import { Row, Col, Button, Layout, Menu, Popover } from "antd";
+import { Row, Col, Button, Layout, Menu, Popover, Grid } from "antd";
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { IoLanguageOutline } from "react-icons/io5";
@@ -9,19 +9,7 @@ import "./TuixueHeader.less";
 import { setCookie } from "../utils/cookie";
 
 const { Header } = Layout;
-
-const Logo = () => (
-    <Col
-        xs={{ span: 16, push: 5 }}
-        md={{ span: 5, push: 2 }}
-        lg={{ span: 5, push: 3 }}
-        xl={{ span: 5, push: 4 }}
-        className="logo"
-    >
-        <img src="/favicon.ico" height="40" alt="real tuixue logo" />
-        <img src="/tuixue-logo.png" height="48" alt="fake tuixue logo" />
-    </Col>
-);
+const { useBreakpoint } = Grid;
 
 const NavMenu = ({ mode, theme, onClick }) => {
     const [t] = useTranslation();
@@ -69,7 +57,7 @@ const NavMenuPopover = () => {
 };
 
 const LanguageButton = () => {
-    const [t, i18n] = useTranslation();
+    const { i18n } = useTranslation();
     useEffect(() => setCookie("i18next", i18n.language));
     return (
         <Button
@@ -82,23 +70,53 @@ const LanguageButton = () => {
 };
 
 export default function Nav() {
+    const screens = useBreakpoint();
+    const [logoJustify, setLogoJustify] = useState("flex-start");
+
+    useEffect(() => {
+        const screenWidths = Object.entries(screens).filter(screen => !!screen[1]);
+        if (screenWidths.length === 1 && screenWidths[0][0] === "xs") {
+            setLogoJustify("center");
+        } else {
+            setLogoJustify("flex-start");
+        }
+    }, [screens]);
+
+    const Logo = () => (
+        <div className="logo" style={{ justifyContent: logoJustify }}>
+            <img src="/favicon.ico" height="40" alt="real tuixue logo" />
+            <img src="/tuixue-logo.png" height="48" alt="fake tuixue logo" />
+        </div>
+    );
+
     return (
         <Header className="tuixue-header">
-            <Row justify="center">
-                <Col xs={{ span: 4, push: 2 }} md={0}>
-                    <NavMenuPopover />
-                </Col>
-                <Logo />
-                <Col xs={0} md={{ span: 13, push: 2 }} lg={{ span: 10, push: 3 }}>
-                    <NavMenu mode="horizontal" />
-                </Col>
+            <Row>
                 <Col
-                    xs={{ span: 4, push: 1 }}
-                    md={{ span: 4, push: 1 }}
-                    lg={{ span: 8, push: 4 }}
-                    xl={{ span: 9, push: 4 }}
+                    xs={{ span: 24, push: 0 }}
+                    sm={{ span: 22, push: 1 }}
+                    md={{ span: 20, push: 2 }}
+                    lg={{ span: 16, push: 4 }}
+                    xl={{ span: 14, push: 5 }}
                 >
-                    <LanguageButton />
+                    <Row justify="center">
+                        <Col xs={{ span: 4 }} md={0}>
+                            <div className="center-box">
+                                <NavMenuPopover />
+                            </div>
+                        </Col>
+                        <Col xs={{ span: 16 }} md={{ span: 5 }}>
+                            <Logo />
+                        </Col>
+                        <Col xs={0} md={{ span: 17 }}>
+                            <NavMenu mode="horizontal" />
+                        </Col>
+                        <Col xs={{ span: 4 }} md={{ span: 2 }}>
+                            <div className="center-box">
+                                <LanguageButton />
+                            </div>
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
         </Header>
