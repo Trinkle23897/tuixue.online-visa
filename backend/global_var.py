@@ -29,7 +29,7 @@ CRAWLER_API = {
 }
 WAIT_TIME = {'register': 50, 'refresh': 7}
 
-CD_HOURS = 4
+CD_HOURS = 1
 
 SESSION_UPDATE_QUEUE = Queue()
 

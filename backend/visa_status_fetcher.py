@@ -91,13 +91,13 @@ def set_fetching_interval(
     fetching_thread = threading.Timer(interval, function_wrapper)
     fetching_thread.start()
 
+    return fetching_thread
     if first_run:  # execute fecthing without waiting for the first time.
         VisaFetcher.fetch_visa_status(
             visa_type,
             location,
             G.value(f'{visa_type}_requests_Session', requests.Session())
         )
-    return fetching_thread
 
 
 def start_threads():

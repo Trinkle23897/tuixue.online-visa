@@ -123,7 +123,7 @@ class Notifier:
     @classmethod
     def send_qq_tg(
         cls,
-        city: str,
+        embassy: USEmbassy,
         prev: Optional[datetime],
         curr: Optional[datetime],
     ) -> bool:
@@ -135,13 +135,16 @@ class Notifier:
                 return d.strftime("%m/%d")
             return d.strftime("%Y/%m/%d")
         prev, curr = converter(prev), converter(curr)
-        content = f"NEW {city}: {prev} -> {curr}"
+        content = f"NEW {embassy.name_cn}: {prev} -> {curr}"
         # qq
         extra = SECRET["qq"]
         base_uri = extra["mirai_base_uri"]
         auth_key = extra["mirai_auth_key"]
         qq_num = extra["qq_num"]
-        group_id = extra["qq_group_id"]
+        if embassy.region == "DOMESTIC":  # need to be modified, different groups
+            group_id = extra["qq_group_id"]
+        else:
+            group_id = extra["qq_group_id"]
         r = requests.post(base_uri + "/auth",
                           data=json.dumps({"authKey": auth_key})).json()
         session = r["session"]
@@ -154,7 +157,6 @@ class Notifier:
                       data=json.dumps({"sessionKey": session, "qq": qq_num}))
         # tg
         # TODO
-
 
     @classmethod
     def notify_visa_status_change(
@@ -211,7 +213,7 @@ class Notifier:
 
             # QQ/TG, need async
             if visa_type == "F":
-                cls.send_qq_tg(embassy.name_cn, last_available_date, available_date)
+                cls.send_qq_tg(embassy, last_available_date, available_date)
 
             return True
         return False
