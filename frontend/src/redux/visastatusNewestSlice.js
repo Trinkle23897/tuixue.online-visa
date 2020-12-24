@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getDateFromISOString, getTimeFromISOString } from "../utils/misc";
 
-const visastatusNewest = createSlice({
+const visastatusNewestSlice = createSlice({
     name: "latestWritten",
     initialState: Array.from("FBOHL").reduce((obj, vt) => ({ ...obj, [vt]: {} }), {}),
     reducers: {
@@ -17,7 +17,7 @@ const visastatusNewest = createSlice({
     },
 });
 
-const { reducer, actions } = visastatusNewest;
+const { reducer, actions } = visastatusNewestSlice;
 
 export const { updateNewest } = actions;
 

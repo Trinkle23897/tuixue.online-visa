@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { embassyAttributeIdx, findEmbassyAttributeByCode } from "../utils/USEmbassy";
+import { embassyAttributeIdx } from "../utils/USEmbassy";
 
 // basic selectors
 const metadataSelector = state => state.metadata;
@@ -49,11 +49,17 @@ export const makeFilterSelectorByVisaType = makeSelectorMakerByVisaType(filterSe
 
 export const makeOverviewDetailSelector = visaType =>
     createSelector(
-        [embassyLstSelector, makeOverviewSelectorByVisaType(visaType), makeFilterSelectorByVisaType(visaType)],
-        (embLst, overview, filter) =>
-            overview
-                .filter(ov => filter.includes(ov.embassyCode))
-                .map(ov => ({ ...ov, embassyName: findEmbassyAttributeByCode("nameEn", ov.embassyCode, embLst) })),
+        [makeOverviewSelectorByVisaType(visaType), makeFilterSelectorByVisaType(visaType)],
+        (overview, filter) =>
+            filter.map(
+                code =>
+                    overview.find(ov => ov.embassyCode === code) || {
+                        visaType,
+                        embassyCode: code,
+                        earliestDate: ["/"],
+                        latestDate: ["/"],
+                    },
+            ),
     );
 
 export const makeNewestVisaStatusSelector = (visaType, embassyCode) =>

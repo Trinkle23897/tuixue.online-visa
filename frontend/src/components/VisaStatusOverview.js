@@ -2,20 +2,17 @@ import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import ReactEcharts from "echarts-for-react";
-import { Collapse, List, Row, Col, Button } from "antd";
+import { List, Row, Col, Button } from "antd";
 import { PlusOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { getSingleVisaStatus } from "../services";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
 import { getYMDFromISOString, getHMFromISOString } from "../utils/misc";
 
-const { Panel } = Collapse;
-
 const overviewPropTypes = {
     overview: PropTypes.shape({
         visaType: PropTypes.string,
         embassyCode: PropTypes.string,
-        embassyName: PropTypes.string,
         earliestDate: PropTypes.arrayOf(PropTypes.string),
         latestDate: PropTypes.arrayOf(PropTypes.string),
     }).isRequired,
@@ -41,7 +38,7 @@ OverviewNewest.propTypes = {
 
 // This component can evolve into something VERY COMPLEX with subscription stuff.
 // We may want to create a stand-alone component (e.g. OverviewWidget.j) file for it
-const OverviewContent = ({ overview, dropdownControl }) => {
+const OverviewContent = ({ overview }) => {
     const [t] = useTranslation();
     return (
         <Row align="middle" justify="space-around">
@@ -59,27 +56,26 @@ const OverviewContent = ({ overview, dropdownControl }) => {
                 <Button
                     icon={<PlusOutlined />}
                     shape="circle"
-                    onClick={() => console.log(`Click subscription button of ${overview.embassyName}`)}
+                    onClick={() => console.log(`Click subscription button of ${t(overview.embassyCode)}`)}
                 />
             </Col>
             <Col md={{ span: 1 }}>
                 <Button
                     icon={<QqOutlined />}
                     shape="circle"
-                    onClick={() => console.log(`Click QQ button of ${overview.embassyName}`)}
+                    onClick={() => console.log(`Click QQ button of ${t(overview.embassyCode)}`)}
                 />
             </Col>
             <Col md={{ span: 1 }}>
-                <Button icon={<LineChartOutlined />} shape="circle" onClick={() => dropdownControl()} />
+                <Button icon={<LineChartOutlined />} shape="circle" onClick={() => {}} />
             </Col>
         </Row>
     );
 };
-OverviewContent.propTypes = { ...overviewPropTypes, dropdownControl: PropTypes.func };
+OverviewContent.propTypes = overviewPropTypes;
 
-const OverviewChart = ({ overview }) => {
+const OverviewChart = ({ visaType, embassyCode }) => {
     const [t] = useTranslation();
-    const { visaType, embassyCode } = overview;
     const [xAxis, setXAxis] = useState([]);
     const [yAxis, setYAxis] = useState([]);
     useEffect(() => {
@@ -145,22 +141,21 @@ const OverviewChart = ({ overview }) => {
         />
     );
 };
-OverviewChart.propTypes = overviewPropTypes;
-
-const VisaStatusOverviewListItem = ({ overview }) => {
-    const [panelOpen, setPanelOpen] = useState(false);
-    const dropdownControl = () => setPanelOpen(!panelOpen);
-    return (
-        <List.Item style={{ marginBottom: 12, padding: "24px 12px 0", backgroundColor: "#FFFFFF", borderRadius: 12 }}>
-            <OverviewContent overview={overview} dropdownControl={dropdownControl} />
-            <Collapse activeKey={panelOpen ? [overview.embassyCode] : []} style={{ width: "100%" }} ghost>
-                <Panel key={overview.embassyCode} showArrow={false}>
-                    {panelOpen && <OverviewChart overview={overview} />}
-                </Panel>
-            </Collapse>
-        </List.Item>
-    );
+OverviewChart.propTypes = {
+    visaType: PropTypes.string,
+    embassyCode: PropTypes.string,
 };
+
+const VisaStatusOverviewListItem = ({ overview }) => (
+    <List.Item
+        style={{
+            marginBottom: 12,
+            backgroundColor: "#FFFFFF",
+        }}
+    >
+        <OverviewContent overview={overview} />
+    </List.Item>
+);
 VisaStatusOverviewListItem.propTypes = overviewPropTypes;
 
 export default function VisaStatusOverviewList({ visaType }) {

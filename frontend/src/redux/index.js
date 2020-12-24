@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import metadata from "./metadataSlice";
-import visastatusNewest from "./visastatusNewest";
+import visastatusNewest from "./visastatusNewestSlice";
 import visastatusFilter from "./visastatusFilterSlice";
 import visastatusOverview from "./visastatusOverviewSlice";
 import visastatusTab from "./visastatusTabSlice";
+import visastatusDetail from "./visastatusDetailSlice";
 
 export default configureStore({
     reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
         visastatusFilter,
         visastatusOverview,
         visastatusTab,
+        visastatusDetail,
     },
 });

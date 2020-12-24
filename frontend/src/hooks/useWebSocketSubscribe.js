@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { notification } from "antd";
-import { updateNewest } from "../redux/visastatusNewest";
+import { updateNewest } from "../redux/visastatusNewestSlice";
 import { openLatestVisaStatusSocket } from "../services";
 import { renameObjectKeys } from "../utils/misc";
 import { findEmbassyAttributeByCode } from "../utils/USEmbassy";
@@ -31,8 +31,6 @@ export default function useWebSocketSubscribe() {
         websocketRef.current.onmessage = e => {
             const { type, data } = renameObjectKeys(JSON.parse(e.data));
             if (type === "notification") {
-                console.log(`${new Date()} Sending notification pop up`);
-
                 const { visaType, embassyCode, prevAvaiDate, currAvaiDate } = data;
                 const embassyName = findEmbassyAttributeByCode("nameEn", embassyCode, embassyLst);
                 const visaTypeDetail = visaTypeDetails[visaType];
