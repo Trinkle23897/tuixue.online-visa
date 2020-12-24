@@ -22,6 +22,7 @@ const resources = {
             filterSystemDesc: "Filter by system: ",
             filterDefault: "Reset to default",
             filterDomestic: "Domestic only",
+            all: "All",
         },
     },
     zh: {
@@ -36,6 +37,7 @@ const resources = {
             filterSystemDesc: "选择系统：",
             filterDefault: "恢复默认",
             filterDomestic: "只看国内",
+            all: "全部",
         },
     },
 };

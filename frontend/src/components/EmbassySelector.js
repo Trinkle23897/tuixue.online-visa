@@ -46,7 +46,7 @@ export default function EmbassySelector({ visaType }) {
             <Radio.Group onChange={e => setSys(e.target.value)} value={sys}>
                 {["all", "ais", "cgi"].map(s => (
                     <Radio key={s} value={s}>
-                        {s}
+                        {t(s)}
                     </Radio>
                 ))}
             </Radio.Group>
