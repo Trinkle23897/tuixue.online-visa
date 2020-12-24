@@ -499,7 +499,16 @@ class VisaStatus:
         cursor = cls.visa_status.aggregate([
             {'$match': {'visa_type': visa_type, 'embassy_code': embassy_code, 'write_date': {'$in': dates}}},
             {'$unwind': '$available_dates'},
-            {'$sort': {'available_dates.write_time': pymongo.ASCENDING}},
+            {
+                '$group': {
+                    '_id': {'$dateToString': {'format': '%Y-%m-%dT%H:%M', 'date': '$available_dates.write_time'}},
+                    'visa_type': {'$first': '$visa_type'},
+                    'embassy_code': {'$first': '$embassy_code'},
+                    'write_time': {'$first': '$available_dates.write_time'},
+                    'available_date': {'$min': '$available_dates.available_date'}
+                }
+            },
+            {'$sort': {'write_time': pymongo.ASCENDING}},
             {
                 '$group': {
                     '_id': None,
@@ -510,13 +519,13 @@ class VisaStatus:
                             '$cond': [
                                 {
                                     '$and': [
-                                        {'$gte': ['$available_dates.write_time', ts_start]},
-                                        {'$lte': ['$available_dates.write_time', ts_end]},
+                                        {'$gte': ['$write_time', ts_start]},
+                                        {'$lte': ['$write_time', ts_end]},
                                     ],
                                 },
                                 {
-                                    'write_time': '$available_dates.write_time',
-                                    'available_date': '$available_dates.available_date',
+                                    'write_time': '$write_time',
+                                    'available_date': '$available_date',
                                 },
                                 None
                             ]
