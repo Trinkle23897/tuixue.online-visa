@@ -72,6 +72,7 @@ def get_meta_data():
         'embassy_lst': G.EMBASSY_ATTR,
         'visa_type_details': G.VISA_TYPE_DETAILS,
         'default_filter': ['bj', 'sh', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'bfs', 'lcy', 'gye'],
+        'region_attr': G.REGION_ATTR,
     }
 
 

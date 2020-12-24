@@ -40,6 +40,18 @@ COUTNRY_CODE_TO_UTC_OFFSET = {
     'NPL': 5.75, 'SGP': 8, 'SRB': 1, 'THA': 7, 'TUR': 3
 }
 
+REGION_ATTR = [
+    {"code": "DOMESTIC", "name_cn": "国内", "name_en": "Domestic"},
+    {"code": "SOUTH_EAST_ASIA", "name_cn": "东南亚", "name_en": "South East Asia"},
+    {"code": "EAST_ASIA", "name_cn": "东亚", "name_en": "East Asia"},
+    {"code": "OCEANIA", "name_cn": "大洋洲", "name_en": "Oceania"},
+    {"code": "WEST_EUROPE", "name_cn": "西欧", "name_en": "West Europe"},
+    {"code": "NORTH_AMERICA", "name_cn": "北美", "name_en": "North America"},
+    {"code": "WEST_ASIA", "name_cn": "西亚", "name_en": "West Asia"},
+    {"code": "EAST_EUROPE", "name_cn": "东欧", "name_en": "East Europe"},
+    {"code": "SOUTH_AMERICA", "name_cn": "南美", "name_en": "South America"},
+]
+
 # Embassy/consulate attributes
 # Tuple[name_cn, name_en, code, sys, region, continent, country]
 EMBASSY_ATTR = [
