@@ -28,6 +28,7 @@ const resources = {
             overviewPlusIcon: "Additional information",
             overviewEmailIcon: "Subscribe from email",
             overviewQQIcon: "Subscribe from QQ group / Telegram channel",
+            overviewAddtionalIcon: "Additional information",
         },
     },
     zh: {
@@ -49,6 +50,7 @@ const resources = {
             overviewPlusIcon: "额外信息",
             overviewEmailIcon: "邮件订阅",
             overviewQQIcon: "QQ群/Telegram频道订阅",
+            overviewAddtionalIcon: "更多信息",
         },
     },
 };

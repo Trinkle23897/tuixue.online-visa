@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { HashLink as Link } from "react-router-hash-link";
-import { Row, Col, Button, Layout, Menu, Popover, Grid } from "antd";
+import { Row, Col, Button, Layout, Menu, Popover } from "antd";
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { IoLanguageOutline } from "react-icons/io5";
-import "./TuixueHeader.less";
+import { useScreenXS } from "../hooks";
 import { setCookie } from "../utils/cookie";
+import "./TuixueHeader.less";
 
 const { Header } = Layout;
-const { useBreakpoint } = Grid;
 
 const NavMenu = ({ mode, theme, onClick }) => {
     const [t] = useTranslation();
@@ -70,22 +70,12 @@ const LanguageButton = () => {
 };
 
 export default function Nav() {
-    const screens = useBreakpoint();
-    const [logoJustify, setLogoJustify] = useState("flex-start");
-
-    useEffect(() => {
-        const screenWidths = Object.entries(screens).filter(screen => !!screen[1]);
-        if (screenWidths.length === 1 && (screenWidths[0][0] === "xs" || screenWidths[0][0] === "sm")) {
-            setLogoJustify("center");
-        } else {
-            setLogoJustify("flex-start");
-        }
-    }, [screens]);
+    const screenXS = useScreenXS();
 
     const Logo = () => (
-        <div className="logo" style={{ justifyContent: logoJustify }}>
-            <img src="/favicon.ico" width="40" height="40" alt="real tuixue logo" />
-            <img src="/tuixue-logo.png" width="96" height="48" alt="fake tuixue logo" />
+        <div className="logo" style={{ justifyContent: screenXS ? "center" : "flex-start" }}>
+            <img src="/favicon.ico" height="40" alt="real tuixue logo" />
+            <img src="/tuixue-logo.png" height="48" alt="fake tuixue logo" />
         </div>
     );
 

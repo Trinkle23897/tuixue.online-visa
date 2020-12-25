@@ -2,12 +2,18 @@ import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import ReactEcharts from "echarts-for-react";
-import { List, Row, Col, Button, Tooltip } from "antd";
-import { MailOutlined, QqOutlined, PlusOutlined } from "@ant-design/icons";
+import { List, Row, Col, Button, Tooltip, Space, Card } from "antd";
+import { MailOutlined, QqOutlined, EllipsisOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { useScreenXS } from "../hooks";
 import { getSingleVisaStatus } from "../services";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
 import { getYMDFromISOString, getHMFromISOString } from "../utils/misc";
+import "./VisaStatusOverview.less";
+
+/**
+ * IMPORTANT: This component/file is big and complex enough that we should refactor it into smaller components
+ */
 
 const overviewPropTypes = {
     overview: PropTypes.shape({
@@ -18,11 +24,15 @@ const overviewPropTypes = {
     }).isRequired,
 };
 
-const rangeStr = (earliestDate, latestDate) =>
-    earliestDate.length <= 1 ? "/" : `${earliestDate.slice(1).join("/")} ~ ${latestDate.slice(1).join("/")}`;
-
-const newestStr = (availableDate, writeTime, at) =>
-    writeTime.length <= 1 ? "/" : `${availableDate.join("/")} ${at} ${writeTime.slice(3).join(":")}`;
+const TooltipBox = ({ children, title }) => (
+    <Tooltip title={title}>
+        <div style={{ width: "100%", height: "100%" }}>{children}</div>
+    </Tooltip>
+);
+TooltipBox.propTypes = {
+    title: PropTypes.string.isRequired,
+    children: PropTypes.any.isRequired,
+};
 
 const OverviewNewest = ({ visaType, embassyCode }) => {
     const [t] = useTranslation();
@@ -33,11 +43,15 @@ const OverviewNewest = ({ visaType, embassyCode }) => {
     const newestVisaStatus = useSelector(state => newestVisaStatueSelector(state));
     const { writeTime, availableDate } = newestVisaStatus || { writeTime: ["/"], availableDate: ["/"] };
     return (
-        <Tooltip title={t("overviewNewest")}>
-            <Col xs={{ span: 12 }} md={{ span: 5 }} style={{ textAlign: "right" }}>
-                {newestStr(availableDate, writeTime, t("at"))}
+        <Row justify="center" className="newest-inner-row">
+            <Col xs={{ span: 11 }} md={{ span: 9 }}>
+                {availableDate.join("/")}
             </Col>
-        </Tooltip>
+            <Col span={2}>{t("at")}</Col>
+            <Col xs={{ span: 11 }} md={{ span: 7 }}>
+                {writeTime.length === 1 ? writeTime[0] : writeTime.slice(3).join(":")}
+            </Col>
+        </Row>
     );
 };
 OverviewNewest.propTypes = {
@@ -47,46 +61,98 @@ OverviewNewest.propTypes = {
 
 // This component can evolve into something VERY COMPLEX with subscription stuff.
 // We may want to create a stand-alone component (e.g. OverviewWidget.j) file for it
-const OverviewContent = ({ overview }) => {
+const OverviewContentBar = ({ visaType, embassyCode, earliestDate, latestDate }) => {
     const [t] = useTranslation();
     return (
-        <Row align="middle" justify="space-around">
-            <Col xs={{ span: 12 }} md={{ span: 2 }} style={{ textAlign: "center" }}>
-                {t(overview.embassyCode)}
+        <Row align="middle" className="ovreview-content-row" gutter={16}>
+            <Col md={{ span: 4 }}>{t(embassyCode)}</Col>
+            <Col md={{ span: 4 }}>
+                <TooltipBox title="Earliest availabe appointment date of today">{earliestDate.join("/")}</TooltipBox>
             </Col>
-            <Tooltip title={t("overviewRange")}>
-                <Col xs={{ span: 12 }} md={{ span: 5 }} style={{ textAlign: "center" }}>
-                    {rangeStr(overview.earliestDate, overview.latestDate)}
-                </Col>
-            </Tooltip>
-            <OverviewNewest visaType={overview.visaType} embassyCode={overview.embassyCode} />
-            <Col md={{ span: 1 }}>
-                <Tooltip title={t("overviewPlusIcon")}>
-                    <Button icon={<PlusOutlined />} shape="circle" onClick={() => {}} />
-                </Tooltip>
+            <Col md={{ span: 4 }}>
+                <TooltipBox title="Latest available appointment date of today">{latestDate.join("/")}</TooltipBox>
             </Col>
-            <Col md={{ span: 1 }}>
-                <Tooltip title={t("overviewEmailIcon")}>
-                    <Button
-                        icon={<MailOutlined />}
-                        shape="circle"
-                        onClick={() => console.log(`Click subscription button of ${t(overview.embassyCode)}`)}
-                    />
-                </Tooltip>
+            <Col md={{ span: 7 }}>
+                <TooltipBox title="Latest fetching result of available appointment date">
+                    <OverviewNewest visaType={visaType} embassyCode={embassyCode} />
+                </TooltipBox>
             </Col>
-            <Col md={{ span: 1 }}>
-                <Tooltip title={t("overviewQQIcon")}>
-                    <Button
-                        icon={<QqOutlined />}
-                        shape="circle"
-                        onClick={() => console.log(`Click QQ button of ${t(overview.embassyCode)}`)}
-                    />
-                </Tooltip>
+            <Col md={{ span: 5 }}>
+                <Space direction="horizontal">
+                    <TooltipBox title={t("overviewEmailIcon")}>
+                        <Button icon={<MailOutlined />} shape="circle" onClick={() => {}} />
+                    </TooltipBox>
+                    <TooltipBox title={t("overviewQQIcon")}>
+                        <Button icon={<QqOutlined />} shape="circle" onClick={() => {}} />
+                    </TooltipBox>
+                    <TooltipBox title={t("overviewAddtionalIcon")}>
+                        <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => {}} />
+                    </TooltipBox>
+                </Space>
             </Col>
         </Row>
     );
 };
-OverviewContent.propTypes = overviewPropTypes;
+OverviewContentBar.propTypes = { ...overviewPropTypes.overview };
+
+const OveriviewHeaderBar = () => (
+    <Row align="middle" className="ovreview-content-row" gutter={16}>
+        <Col xs={{ span: 0 }} md={{ span: 4 }}>
+            <strong>Embassy</strong>
+        </Col>
+        <Col xs={{ span: 0 }} md={{ span: 4 }}>
+            <strong>Earliest Date</strong>
+        </Col>
+        <Col xs={{ span: 0 }} md={{ span: 4 }}>
+            <strong>Latest Date</strong>
+        </Col>
+        <Col xs={{ span: 0 }} md={{ span: 7 }}>
+            <strong>Newest Fetch</strong>
+        </Col>
+        <Col xs={{ span: 0 }} md={{ span: 5 }}>
+            <strong>Actions</strong>
+        </Col>
+    </Row>
+);
+
+const OverviewContentCard = ({ visaType, embassyCode, earliestDate, latestDate }) => {
+    const [t] = useTranslation();
+
+    return (
+        <Card
+            title={t(embassyCode)}
+            actions={[
+                <TooltipBox title={t("overviewEmailIcon")}>
+                    <Button icon={<MailOutlined />} shape="circle" onClick={() => {}} />
+                </TooltipBox>,
+                <TooltipBox title={t("overviewQQIcon")}>
+                    <Button icon={<QqOutlined />} shape="circle" onClick={() => {}} />
+                </TooltipBox>,
+                <TooltipBox title={t("overviewAddtionalIcon")}>
+                    <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => {}} />
+                </TooltipBox>,
+            ]}
+        >
+            <Row>
+                <Col span={9}>
+                    <strong>Earliest Date: </strong>
+                </Col>
+                <Col span={15}>{earliestDate.join("/")}</Col>
+                <Col span={9}>
+                    <strong>Latest Date: </strong>
+                </Col>
+                <Col span={15}>{latestDate.join("/")}</Col>
+                <Col span={9}>
+                    <strong>Newest Fetch: </strong>
+                </Col>
+                <Col span={15}>
+                    <OverviewNewest visaType={visaType} embassyCode={embassyCode} />
+                </Col>
+            </Row>
+        </Card>
+    );
+};
+OverviewContentCard.propTypes = { ...overviewPropTypes.overview };
 
 const OverviewChart = ({ visaType, embassyCode }) => {
     const [t] = useTranslation();
@@ -160,27 +226,22 @@ OverviewChart.propTypes = {
     embassyCode: PropTypes.string,
 };
 
-const VisaStatusOverviewListItem = ({ overview }) => (
-    <List.Item
-        style={{
-            marginBottom: 12,
-            backgroundColor: "#FFFFFF",
-        }}
-    >
-        <OverviewContent overview={overview} />
-    </List.Item>
-);
-VisaStatusOverviewListItem.propTypes = overviewPropTypes;
-
 export default function VisaStatusOverviewList({ visaType }) {
     const overviewSelector = useMemo(() => makeOverviewDetailSelector(visaType), [visaType]);
     const overviewData = useSelector(state => overviewSelector(state));
+
+    const screenXS = useScreenXS();
 
     return (
         <List
             itemLayout="vertical"
             dataSource={overviewData}
-            renderItem={overview => <VisaStatusOverviewListItem key={overview.embassyCode} overview={overview} />}
+            header={!screenXS && <OveriviewHeaderBar />}
+            renderItem={overview => (
+                <List.Item key={overview.embassyCode}>
+                    {screenXS ? <OverviewContentCard {...overview} /> : <OverviewContentBar {...overview} />}
+                </List.Item>
+            )}
         />
     );
 }
