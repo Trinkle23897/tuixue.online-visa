@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { notification } from "antd";
 import { updateNewest } from "../redux/visastatusNewestSlice";
 import { openLatestVisaStatusSocket } from "../services";
 import { renameObjectKeys } from "../utils/misc";
@@ -17,6 +16,8 @@ export default function useWebSocketSubscribe() {
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
     const [wsConnected, setWsConnected] = useState(false);
     const websocketRef = useRef(null); // initiate with null doesn't trigger re-connect when re-renderin
+    const [notificationTitle, setNotificationTitle] = useState("init-title");
+    const [notificationOption, setNotificationOption] = useState({ body: "init-content" });
 
     // This effect SHOULD keep web socket alive and reconnect when it's closed
     useEffect(() => {
@@ -38,11 +39,9 @@ export default function useWebSocketSubscribe() {
 
                 // only send notification for selected visa type and embassy
                 if (visastatusTab === visaType && visastatusFilter[visaType].includes(embassyCode)) {
-                    notification.warn({
-                        message: `${visaTypeDetail}: Visa Status Change`,
-                        description: `${embassyName} changed from ${prevAvaiDate || "/"} to ${currAvaiDate}`,
-                        duration: 5,
-                        placement: "topRight",
+                    setNotificationTitle(`${visaTypeDetail}: Visa Status Change`);
+                    setNotificationOption({
+                        body: `${embassyName} changed from ${prevAvaiDate || "/"} to ${currAvaiDate}`,
                     });
                 }
             } else if (type === "newest") {
@@ -68,4 +67,6 @@ export default function useWebSocketSubscribe() {
             return () => intervalIds.forEach(intvId => clearInterval(intvId));
         }
     }, [wsConnected, visastatusFilter]);
+
+    return [notificationTitle, notificationOption];
 }

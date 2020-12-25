@@ -9,7 +9,7 @@ export default function useScreenXS() {
 
     useEffect(() => {
         const screenWidths = Object.entries(screens).filter(screen => !!screen[1]);
-        setScreenXS(screenWidths.length === 1 && screenWidths[0][0] === "xs");
+        setScreenXS(screenWidths.length === 1 && (screenWidths[0][0] === "xs" || screenWidths[0][0] === "sm"));
     }, [screens]);
 
     return screenXS;
