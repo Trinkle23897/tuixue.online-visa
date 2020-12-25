@@ -19,7 +19,7 @@ export default function VisaStatus() {
                 </Title>
                 <Row>
                     <Col
-                        xs={{ span: 24, push: 0 }}
+                        xs={{ span: 22, push: 1 }}
                         sm={{ span: 22, push: 1 }}
                         md={{ span: 20, push: 2 }}
                         lg={{ span: 16, push: 4 }}

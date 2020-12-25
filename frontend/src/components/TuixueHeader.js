@@ -75,7 +75,7 @@ export default function Nav() {
 
     useEffect(() => {
         const screenWidths = Object.entries(screens).filter(screen => !!screen[1]);
-        if (screenWidths.length === 1 && screenWidths[0][0] === "xs") {
+        if (screenWidths.length === 1 && (screenWidths[0][0] === "xs" || screenWidths[0][0] === "sm")) {
             setLogoJustify("center");
         } else {
             setLogoJustify("flex-start");
@@ -84,8 +84,8 @@ export default function Nav() {
 
     const Logo = () => (
         <div className="logo" style={{ justifyContent: logoJustify }}>
-            <img src="/favicon.ico" height="40" alt="real tuixue logo" />
-            <img src="/tuixue-logo.png" height="48" alt="fake tuixue logo" />
+            <img src="/favicon.ico" width="40" height="40" alt="real tuixue logo" />
+            <img src="/tuixue-logo.png" width="96" height="48" alt="fake tuixue logo" />
         </div>
     );
 
@@ -94,7 +94,7 @@ export default function Nav() {
             <Row>
                 <Col
                     xs={{ span: 24, push: 0 }}
-                    sm={{ span: 22, push: 1 }}
+                    sm={{ span: 24, push: 0 }}
                     md={{ span: 20, push: 2 }}
                     lg={{ span: 16, push: 4 }}
                     xl={{ span: 14, push: 5 }}

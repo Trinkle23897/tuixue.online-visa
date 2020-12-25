@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import ReactEcharts from "echarts-for-react";
 import { List, Row, Col, Button, Tooltip } from "antd";
-import { MailOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
+import { MailOutlined, QqOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { getSingleVisaStatus } from "../services";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
@@ -61,6 +61,11 @@ const OverviewContent = ({ overview }) => {
             </Tooltip>
             <OverviewNewest visaType={overview.visaType} embassyCode={overview.embassyCode} />
             <Col md={{ span: 1 }}>
+                <Tooltip title={t("overviewPlusIcon")}>
+                    <Button icon={<PlusOutlined />} shape="circle" onClick={() => {}} />
+                </Tooltip>
+            </Col>
+            <Col md={{ span: 1 }}>
                 <Tooltip title={t("overviewEmailIcon")}>
                     <Button
                         icon={<MailOutlined />}
@@ -77,9 +82,6 @@ const OverviewContent = ({ overview }) => {
                         onClick={() => console.log(`Click QQ button of ${t(overview.embassyCode)}`)}
                     />
                 </Tooltip>
-            </Col>
-            <Col md={{ span: 1 }}>
-                <Button icon={<LineChartOutlined />} shape="circle" onClick={() => {}} />
             </Col>
         </Row>
     );

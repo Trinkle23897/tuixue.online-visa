@@ -24,9 +24,6 @@ export default function VisaStatusTabs() {
             {Array.from("FBHOL").map(visaType => (
                 <TabPane tab={visaType} key={visaType}>
                     <Row gutter={[16, { xs: 16, md: 32 }]}>
-                        {/* <Col span={24}>
-                            <Title level={2}>{t("visaType", { visaType: visaType })}</Title>
-                        </Col> */}
                         <Col span={24}>
                             <EmbassySelector visaType={visaType} />
                         </Col>
