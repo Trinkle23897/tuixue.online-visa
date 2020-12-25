@@ -63,7 +63,7 @@ export default function EmbassySelector({ visaType }) {
 
     const SelectOverviewType = () => {
         return (
-            <Button type="primary" onClick={console.log("switch from word to chart or chart to word")}>
+            <Button type="primary" onClick={() => console.log("switch from word to chart or chart to word")}>
                 {t("filterOverviewType")}
             </Button>
         );
@@ -73,18 +73,18 @@ export default function EmbassySelector({ visaType }) {
         <Card
             title={
                 <Row justify="space-between">
-                    <Col span={10}>{t("filterDesc")}</Col>
-                    <Space direction="horizontal">
-                        <Col span={3}>
-                            <SelectDefaultFilter />
-                        </Col>
-                        <Col span={3}>
-                            <SelectDomesticOnly />
-                        </Col>
-                        <Col span={3}>
-                            <SelectOverviewType />
-                        </Col>
-                    </Space>
+                    <Col xs={{ span: 24 }} md={{ span: 10 }}>
+                        {t("filterDesc")}
+                    </Col>
+                    <Col xs={{ span: 8 }} md={{ span: 3 }}>
+                        <SelectDefaultFilter />
+                    </Col>
+                    <Col xs={{ span: 8 }} md={{ span: 3 }}>
+                        <SelectDomesticOnly />
+                    </Col>
+                    <Col xs={{ span: 8 }} md={{ span: 3 }}>
+                        <SelectOverviewType />
+                    </Col>
                 </Row>
             }
         >

@@ -3,7 +3,6 @@ import { Layout, Typography, Row, Col } from "antd";
 import { DiscussionEmbed } from "disqus-react";
 import { useTranslation } from "react-i18next";
 import { TuixueHeader, VisaStatusTabs } from "../components";
-import { useScreenXS } from "../hooks";
 import "./VisaStatus.less";
 
 const { Content } = Layout;
@@ -11,17 +10,11 @@ const { Title } = Typography;
 
 export default function VisaStatus() {
     const [t] = useTranslation();
-    const screenXS = useScreenXS();
-
-    const paddingStyle = ["Left", "Rgiht"].reduce(
-        (padding, side) => ({ ...padding, [`padding`]: screenXS ? 8 : 0 }),
-        {},
-    );
 
     return (
         <Layout className="tuixue-page">
             <TuixueHeader />
-            <Content className="tuixue-content" style={paddingStyle}>
+            <Content className="tuixue-content">
                 <Title level={2} style={{ textAlign: "center", margin: "8px", padding: "8px" }}>
                     {t("overviewTitle")}
                 </Title>

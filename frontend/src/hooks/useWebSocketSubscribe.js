@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { updateNewest } from "../redux/visastatusNewestSlice";
 import { openLatestVisaStatusSocket } from "../services";
 import { renameObjectKeys, getDateFromISOString } from "../utils/misc";
-import { findEmbassyAttributeByCode } from "../utils/USEmbassy";
 
 const ONE_MINUTE = 60 * 1000;
 let CONNECT_ATTEMPT = 0;
@@ -56,7 +55,7 @@ export default function useWebSocketSubscribe() {
                 }
             }
         };
-    }, [embassyLst, visaTypeDetails, wsConnected, dispatch, visastatusTab, visastatusFilter]);
+    }, [embassyLst, visaTypeDetails, wsConnected, dispatch, t, visastatusTab, visastatusFilter]);
 
     useEffect(() => {
         if (wsConnected) {

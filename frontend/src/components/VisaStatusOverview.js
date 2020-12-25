@@ -124,25 +124,23 @@ const OverviewContentCard = ({ visaType, embassyCode, earliestDate, latestDate }
     return (
         <Card
             title={
-                <Row justify="space-between">
+                <Row justify="space-between" align="middle">
                     <Col span={10}>{t(embassyCode)}</Col>
-                    <Space direction="horizontal">
-                        <Col span={3}>
-                            <TooltipBox title={t("overviewEmailIcon")}>
-                                <Button icon={<MailOutlined />} shape="circle" onClick={() => {}} />
-                            </TooltipBox>
-                        </Col>
-                        <Col span={3}>
-                            <TooltipBox title={t("overviewQQIcon")}>
-                                <Button icon={<QqOutlined />} shape="circle" onClick={() => {}} />
-                            </TooltipBox>
-                        </Col>
-                        <Col span={3}>
-                            <TooltipBox title={t("overviewAddtionalIcon")}>
-                                <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => {}} />
-                            </TooltipBox>
-                        </Col>
-                    </Space>
+                    <Col span={3}>
+                        <TooltipBox title={t("overviewEmailIcon")}>
+                            <Button icon={<MailOutlined />} shape="circle" onClick={() => {}} />
+                        </TooltipBox>
+                    </Col>
+                    <Col span={3}>
+                        <TooltipBox title={t("overviewQQIcon")}>
+                            <Button icon={<QqOutlined />} shape="circle" onClick={() => {}} />
+                        </TooltipBox>
+                    </Col>
+                    <Col span={3}>
+                        <TooltipBox title={t("overviewAddtionalIcon")}>
+                            <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => {}} />
+                        </TooltipBox>
+                    </Col>
                 </Row>
             }
         >
