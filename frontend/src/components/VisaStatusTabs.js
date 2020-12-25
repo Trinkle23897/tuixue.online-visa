@@ -11,7 +11,7 @@ const { TabPane } = Tabs;
 export default function VisaStatusTabs() {
     const chosenKey = useSelector(state => state.visastatusTab);
     const dispatch = useDispatch();
-
+    const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
     return (
         <Tabs
             activeKey={chosenKey}
@@ -19,10 +19,9 @@ export default function VisaStatusTabs() {
             type="card"
             size="large"
             renderTabBar={(props, DefaultTabBar) => <DefaultTabBar {...props} className="autofill-tab-bar" />}
-            centered
         >
             {Array.from("FBHOL").map(visaType => (
-                <TabPane tab={visaType} key={visaType}>
+                <TabPane tab={visaTypeDetails[visaType]} key={visaType}>
                     <Row gutter={[16, { xs: 16, md: 32 }]}>
                         <Col span={24}>
                             <EmbassySelector visaType={visaType} />
