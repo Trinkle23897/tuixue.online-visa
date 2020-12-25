@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Card, Divider, Radio, Space, TreeSelect, Button } from "antd";
+import { Card, Divider, Radio, Space, TreeSelect, Button, Row, Col } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { updateFilterAndFetch } from "../redux/visastatusFilterSlice";
@@ -66,14 +66,31 @@ export default function EmbassySelector({ visaType }) {
         </Button>
     );
 
+    const SelectOverviewType = () => {
+        return (
+            <Button type="primary" onClick={console.log("switch from word to chart or chart to word")}>
+                {t("filterOverviewType")}
+            </Button>
+        );
+    };
+
     return (
         <Card
-            title={t("filterDesc")}
-            extra={
-                <Space>
-                    <SelectDefaultFilter />
-                    <SelectDomesticOnly />
-                </Space>
+            title={
+                <Row justify="space-between">
+                    <Col span={10}>{t("filterDesc")}</Col>
+                    <Space direction="horizontal">
+                        <Col span={3}>
+                            <SelectDefaultFilter />
+                        </Col>
+                        <Col span={3}>
+                            <SelectDomesticOnly />
+                        </Col>
+                        <Col span={3}>
+                            <SelectOverviewType />
+                        </Col>
+                    </Space>
+                </Row>
             }
         >
             <TreeSelect
