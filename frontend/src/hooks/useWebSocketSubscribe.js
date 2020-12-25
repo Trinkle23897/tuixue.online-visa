@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { updateNewest } from "../redux/visastatusNewestSlice";
 import { openLatestVisaStatusSocket } from "../services";
-import { renameObjectKeys } from "../utils/misc";
+import { renameObjectKeys, getDateFromISOString } from "../utils/misc";
 import { findEmbassyAttributeByCode } from "../utils/USEmbassy";
 
 const ONE_MINUTE = 60 * 1000;
 let CONNECT_ATTEMPT = 0;
 
 export default function useWebSocketSubscribe() {
+    const [t] = useTranslation();
     const dispatch = useDispatch();
     const visastatusTab = useSelector(state => state.visastatusTab);
     const visastatusFilter = useSelector(state => state.visastatusFilter);
@@ -16,8 +18,8 @@ export default function useWebSocketSubscribe() {
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
     const [wsConnected, setWsConnected] = useState(false);
     const websocketRef = useRef(null); // initiate with null doesn't trigger re-connect when re-renderin
-    const [notificationTitle, setNotificationTitle] = useState("init-title");
-    const [notificationOption, setNotificationOption] = useState({ body: "init-content" });
+    const [notificationTitle, setNotificationTitle] = useState(t("notificationInitTitle"));
+    const [notificationOption, setNotificationOption] = useState({ body: t("notificationInitContent") });
 
     // This effect SHOULD keep web socket alive and reconnect when it's closed
     useEffect(() => {
@@ -34,14 +36,17 @@ export default function useWebSocketSubscribe() {
             const { type, data } = renameObjectKeys(JSON.parse(e.data));
             if (type === "notification") {
                 const { visaType, embassyCode, prevAvaiDate, currAvaiDate } = data;
-                const embassyName = findEmbassyAttributeByCode("nameEn", embassyCode, embassyLst);
                 const visaTypeDetail = visaTypeDetails[visaType];
 
                 // only send notification for selected visa type and embassy
                 if (visastatusTab === visaType && visastatusFilter[visaType].includes(embassyCode)) {
-                    setNotificationTitle(`${visaTypeDetail}: Visa Status Change`);
+                    setNotificationTitle(t("notificationTitle", { visaTypeDetail }));
                     setNotificationOption({
-                        body: `${embassyName} changed from ${prevAvaiDate || "/"} to ${currAvaiDate}`,
+                        body: t("notificationContent", {
+                            embassyName: t(embassyCode),
+                            prevAvaiDate: prevAvaiDate ? getDateFromISOString(prevAvaiDate).join("/") : "/",
+                            currAvaiDate: getDateFromISOString(currAvaiDate).join("/"),
+                        }),
                     });
                 }
             } else if (type === "newest") {

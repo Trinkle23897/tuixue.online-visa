@@ -32,6 +32,10 @@ const resources = {
             overviewLatestDate: "Latest Date",
             overviewNewestFetch: "Newest Fetch",
             overviewActions: "Actions",
+            notificationInitTitle: "Auto-notification is enabled",
+            notificationInitContent: "If a new position pops up, the browser will pop up a notification ASAP",
+            notificationTitle: "{{visaTypeDetail}} Visa Status Changed",
+            notificationContent: "{{embassyName}} changed from {{prevAvaiDate}} to {{currAvaiDate}}.",
         },
     },
     zh: {
@@ -58,6 +62,10 @@ const resources = {
             overviewLatestDate: "最晚日期",
             overviewNewestFetch: "当前日期",
             overviewActions: "操作",
+            notificationInitTitle: "已开启自动通知功能",
+            notificationInitContent: "如果有新位置放出来，浏览器会第一时间弹出通知",
+            notificationTitle: "{{visaTypeDetail}} 签证放新位置了",
+            notificationContent: "{{embassyName}}: {{prevAvaiDate}} -> {{currAvaiDate}}",
         },
     },
 };
