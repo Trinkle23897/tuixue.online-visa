@@ -70,7 +70,7 @@ EMBASSY_ATTR = [
     ('悉尼', 'Sydney', 'syd', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10),
     ('伯尔尼', 'Bern', 'brn', 'cgi', 'WEST_EUROPE', 'EUROPE', 'CHE', 1),
     ('福冈', 'Fukuoka', 'fuk', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
-    ('大坂', 'Osaka', 'itm', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
+    ('大阪', 'Osaka', 'itm', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
     ('那霸', 'Naha', 'oka', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
     ('札幌', 'Sapporo', 'cts', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
     ('东京', 'Tokyo', 'hnd', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9),
