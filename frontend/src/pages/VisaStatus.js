@@ -14,7 +14,7 @@ export default function VisaStatus() {
     const screenXS = useScreenXS();
 
     const paddingStyle = ["Left", "Rgiht"].reduce(
-        (padding, side) => ({ ...padding, [`padding${side}`]: screenXS ? 8 : 0 }),
+        (padding, side) => ({ ...padding, [`padding`]: screenXS ? 8 : 0 }),
         {},
     );
 

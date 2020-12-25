@@ -52,14 +52,9 @@ export default function EmbassySelector({ visaType }) {
             </Radio.Group>
         </Space>
     );
-    const SelectDefaultFilter = () => (
-        <Button type="primary" onClick={() => resetFilter()}>
-            {t("filterDefault")}
-        </Button>
-    );
+    const SelectDefaultFilter = () => <Button onClick={() => resetFilter()}>{t("filterDefault")}</Button>;
     const SelectDomesticOnly = () => (
         <Button
-            type="primary"
             onClick={() => domesticRegion && dispatch(updateFilterAndFetch(visaType, domesticRegion.embassyCodeLst))}
         >
             {t("filterDomestic")}
