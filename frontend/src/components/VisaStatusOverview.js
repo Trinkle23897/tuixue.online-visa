@@ -65,15 +65,15 @@ const OverviewContentBar = ({ visaType, embassyCode, earliestDate, latestDate })
     const [t] = useTranslation();
     return (
         <Row align="middle" className="ovreview-content-row" gutter={16}>
-            <Col md={{ span: 4 }}>{t(embassyCode)}</Col>
+            <Col md={{ span: 3 }}>{t(embassyCode)}</Col>
             <Col md={{ span: 4 }}>
-                <TooltipBox title="Earliest availabe appointment date of today">{earliestDate.join("/")}</TooltipBox>
+                <TooltipBox title={t("overviewEarliest")}>{earliestDate.join("/")}</TooltipBox>
             </Col>
             <Col md={{ span: 4 }}>
-                <TooltipBox title="Latest available appointment date of today">{latestDate.join("/")}</TooltipBox>
+                <TooltipBox title={t("overviewLatest")}>{latestDate.join("/")}</TooltipBox>
             </Col>
-            <Col md={{ span: 7 }}>
-                <TooltipBox title="Latest fetching result of available appointment date">
+            <Col md={{ span: 8 }}>
+                <TooltipBox title={t("overviewNewest")}>
                     <OverviewNewest visaType={visaType} embassyCode={embassyCode} />
                 </TooltipBox>
             </Col>
@@ -95,25 +95,28 @@ const OverviewContentBar = ({ visaType, embassyCode, earliestDate, latestDate })
 };
 OverviewContentBar.propTypes = { ...overviewPropTypes.overview };
 
-const OveriviewHeaderBar = () => (
-    <Row align="middle" className="ovreview-content-row" gutter={16}>
-        <Col xs={{ span: 0 }} md={{ span: 4 }}>
-            <strong>Embassy</strong>
-        </Col>
-        <Col xs={{ span: 0 }} md={{ span: 4 }}>
-            <strong>Earliest Date</strong>
-        </Col>
-        <Col xs={{ span: 0 }} md={{ span: 4 }}>
-            <strong>Latest Date</strong>
-        </Col>
-        <Col xs={{ span: 0 }} md={{ span: 7 }}>
-            <strong>Newest Fetch</strong>
-        </Col>
-        <Col xs={{ span: 0 }} md={{ span: 5 }}>
-            <strong>Actions</strong>
-        </Col>
-    </Row>
-);
+const OveriviewHeaderBar = () => {
+    const [t] = useTranslation();
+    return (
+        <Row align="middle" className="ovreview-content-row" gutter={16}>
+            <Col xs={{ span: 0 }} md={{ span: 3 }}>
+                <strong>{t("Location")}</strong>
+            </Col>
+            <Col xs={{ span: 0 }} md={{ span: 4 }}>
+                <strong>{t("overviewEarliestDate")}</strong>
+            </Col>
+            <Col xs={{ span: 0 }} md={{ span: 4 }}>
+                <strong>{t("overviewLatestDate")}</strong>
+            </Col>
+            <Col xs={{ span: 0 }} md={{ span: 8 }}>
+                <strong>{t("overviewNewestFetch")}</strong>
+            </Col>
+            <Col xs={{ span: 0 }} md={{ span: 5 }}>
+                <strong>{t("overviewActions")}</strong>
+            </Col>
+        </Row>
+    );
+};
 
 const OverviewContentCard = ({ visaType, embassyCode, earliestDate, latestDate }) => {
     const [t] = useTranslation();
@@ -135,15 +138,15 @@ const OverviewContentCard = ({ visaType, embassyCode, earliestDate, latestDate }
         >
             <Row>
                 <Col span={9}>
-                    <strong>Earliest Date: </strong>
+                    <strong>{t("overviewEarliestDate")}: </strong>
                 </Col>
                 <Col span={15}>{earliestDate.join("/")}</Col>
                 <Col span={9}>
-                    <strong>Latest Date: </strong>
+                    <strong>{t("overviewLatestDate")}: </strong>
                 </Col>
                 <Col span={15}>{latestDate.join("/")}</Col>
                 <Col span={9}>
-                    <strong>Newest Fetch: </strong>
+                    <strong>{t("overviewNewestFetch")}: </strong>
                 </Col>
                 <Col span={15}>
                     <OverviewNewest visaType={visaType} embassyCode={embassyCode} />
