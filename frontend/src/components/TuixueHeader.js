@@ -74,8 +74,8 @@ export default function Nav() {
 
     const Logo = () => (
         <div className="logo" style={{ justifyContent: screenXS ? "center" : "flex-start" }}>
-            <img src="/favicon.ico" height="40" alt="real tuixue logo" />
-            <img src="/tuixue-logo.png" height="48" alt="fake tuixue logo" />
+            <img src="/favicon.ico" height="40" width="40" alt="real tuixue logo" />
+            <img src="/tuixue-logo.png" height="48" width="96" alt="fake tuixue logo" />
         </div>
     );
 

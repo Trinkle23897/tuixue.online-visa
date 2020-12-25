@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useScreenXS } from "../hooks";
 import { getSingleVisaStatus } from "../services";
 import { makeOverviewDetailSelector, makeNewestVisaStatusSelector } from "../redux/selectors";
-import { getYMDFromISOString, getHMFromISOString } from "../utils/misc";
+import { getDateFromISOString, getTimeFromISOString } from "../utils/misc";
 import "./VisaStatusOverview.less";
 
 /**
@@ -123,18 +123,28 @@ const OverviewContentCard = ({ visaType, embassyCode, earliestDate, latestDate }
 
     return (
         <Card
-            title={t(embassyCode)}
-            actions={[
-                <TooltipBox title={t("overviewEmailIcon")}>
-                    <Button icon={<MailOutlined />} shape="circle" onClick={() => {}} />
-                </TooltipBox>,
-                <TooltipBox title={t("overviewQQIcon")}>
-                    <Button icon={<QqOutlined />} shape="circle" onClick={() => {}} />
-                </TooltipBox>,
-                <TooltipBox title={t("overviewAddtionalIcon")}>
-                    <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => {}} />
-                </TooltipBox>,
-            ]}
+            title={
+                <Row justify="space-between">
+                    <Col span={10}>{t(embassyCode)}</Col>
+                    <Space direction="horizontal">
+                        <Col span={3}>
+                            <TooltipBox title={t("overviewEmailIcon")}>
+                                <Button icon={<MailOutlined />} shape="circle" onClick={() => {}} />
+                            </TooltipBox>
+                        </Col>
+                        <Col span={3}>
+                            <TooltipBox title={t("overviewQQIcon")}>
+                                <Button icon={<QqOutlined />} shape="circle" onClick={() => {}} />
+                            </TooltipBox>
+                        </Col>
+                        <Col span={3}>
+                            <TooltipBox title={t("overviewAddtionalIcon")}>
+                                <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => {}} />
+                            </TooltipBox>
+                        </Col>
+                    </Space>
+                </Row>
+            }
         >
             <Row>
                 <Col span={9}>
@@ -164,8 +174,10 @@ const OverviewChart = ({ visaType, embassyCode }) => {
     useEffect(() => {
         const fetchData = async () => {
             const result = await getSingleVisaStatus(visaType, embassyCode, new Date());
-            setXAxis(result.availableDates.map(({ writeTime }) => getHMFromISOString(writeTime)));
-            setYAxis(result.availableDates.map(({ availableDate }) => getYMDFromISOString(availableDate)));
+            setXAxis(
+                result.availableDates.map(({ writeTime }) => getTimeFromISOString(writeTime).slice(0, 2).join("/")),
+            );
+            setYAxis(result.availableDates.map(({ availableDate }) => getDateFromISOString(availableDate).join("/")));
         };
         fetchData();
     }, [visaType, embassyCode]);
