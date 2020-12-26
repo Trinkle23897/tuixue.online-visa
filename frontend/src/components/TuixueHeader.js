@@ -64,7 +64,19 @@ const LanguageButton = () => {
             onClick={() => i18n.changeLanguage(i18n.language === "en" ? "zh" : "en")}
             size="large"
             shape="circle"
-            icon={<IoLanguageOutline />}
+            icon={
+                <div // simple hack, could be optimized
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <IoLanguageOutline size="20px" />
+                </div>
+            }
         />
     );
 };

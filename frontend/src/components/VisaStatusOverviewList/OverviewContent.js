@@ -35,7 +35,7 @@ ContentActions.propTypes = {
     onAddtionClick: PropTypes.func.isRequired,
 };
 
-export const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
+const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
     const [t] = useTranslation();
     const { writeTime, availableDate } = newest;
     return (
@@ -89,15 +89,21 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
             <Col span={8}>{t(embassyCode)}</Col>
             <Col span={cardDrop ? 0 : 8}>{availableDate.join("/")}</Col>
             <Col span={cardDrop ? 16 : 8}>
-                <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-                    {cardDrop ? (
-                        <ContentActions onEmailSubsClick={() => {}} onQQSubsClick={() => {}} onAddtionClick={() => {}}>
+                <Row justify="end" align="middle">
+                    <Col>
+                        {cardDrop ? (
+                            <ContentActions
+                                onEmailSubsClick={() => {}}
+                                onQQSubsClick={() => {}}
+                                onAddtionClick={() => {}}
+                            >
+                                <DropdownControlBtn />
+                            </ContentActions>
+                        ) : (
                             <DropdownControlBtn />
-                        </ContentActions>
-                    ) : (
-                        <DropdownControlBtn />
-                    )}
-                </div>
+                        )}
+                    </Col>
+                </Row>
             </Col>
         </Row>
     );
@@ -106,23 +112,27 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
         <Collapse activeKey={cardDrop ? [embassyCode] : []} className="overview-dropdown-card" ghost>
             <Panel key={embassyCode} header={<BriefOverview />} showArrow={false} forceRender>
                 <Row>
-                    <Col span={9}>
+                    <Col span={8}>
                         <strong>{t("overviewEarliestDate")}: </strong>
                     </Col>
-                    <Col span={15}>{earliestDate.join("/")}</Col>
-                    <Col span={9}>
+                    <Col span={8} className="content-data">
+                        {earliestDate.join("/")}
+                    </Col>
+                    <Col span={8} />
+                    <Col span={8}>
                         <strong>{t("overviewLatestDate")}: </strong>
                     </Col>
-                    <Col span={15}>{latestDate.join("/")}</Col>
-                    <Col span={9}>
+                    <Col span={8} className="content-data">
+                        {latestDate.join("/")}
+                    </Col>
+                    <Col span={8} />
+                    <Col span={8}>
                         <strong>{t("overviewNewestFetch")}: </strong>
                     </Col>
-                    <Col span={15}>
+                    <Col span={16} className="content-data">
                         <Row justify="center" align="middle">
-                            <Col xs={{ span: 11 }} md={{ span: 9 }}>
-                                {availableDate.join("/")}
-                            </Col>
-                            <Col xs={{ span: 13 }} md={{ span: 9 }}>
+                            <Col span={12}>{availableDate.join("/")}</Col>
+                            <Col span={12}>
                                 <Tag>{`${t("at")} ${
                                     writeTime.length === 1 ? writeTime[0] : writeTime.slice(3).join(":")
                                 }`}</Tag>
@@ -136,7 +146,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
 };
 ContentCard.propTypes = { ...overviewAttrProps, ...newestOverviewProps };
 
-export const HeaderBar = () => {
+const HeaderBar = () => {
     const [t] = useTranslation();
     return (
         <Row align="middle" className="ovreview-header bar" gutter={16}>

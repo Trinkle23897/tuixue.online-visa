@@ -76,14 +76,12 @@ export default function EmbassySelector({ visaType }) {
                     <Col xs={{ span: 24 }} md={{ span: 10 }}>
                         {t("filterDesc")}
                     </Col>
-                    <Col xs={{ span: 8 }} md={{ span: 3 }}>
-                        <SelectDefaultFilter />
-                    </Col>
-                    <Col xs={{ span: 8 }} md={{ span: 3 }}>
-                        <SelectDomesticOnly />
-                    </Col>
-                    <Col xs={{ span: 8 }} md={{ span: 3 }}>
-                        <SelectOverviewType />
+                    <Col>
+                        <Space>
+                            <SelectDefaultFilter />
+                            <SelectDomesticOnly />
+                            <SelectOverviewType />
+                        </Space>
                     </Col>
                 </Row>
             }
