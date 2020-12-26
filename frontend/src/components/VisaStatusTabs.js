@@ -2,15 +2,15 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Tabs, Row, Col } from "antd";
 import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
-import VisaStatusOverviewList from "./VisaStatusOverview";
+import VisaStatusOverviewList from "./VisaStatusOverviewList";
 import EmbassySelector from "./EmbassySelector";
 import "./VisaStatusTabs.less";
 
 const { TabPane } = Tabs;
 
 export default function VisaStatusTabs() {
-    const chosenKey = useSelector(state => state.visastatusTab);
     const dispatch = useDispatch();
+    const chosenKey = useSelector(state => state.visastatusTab);
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
     return (
         <Tabs
