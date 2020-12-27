@@ -14,6 +14,7 @@ const resources = {
         translation: {
             countryCode: "{{countryName, country}}",
             visaStatus: "Visa Status",
+            webNotify: "Auto Web Notify",
             sysStatus: "System Status",
             checkee: "Check Reporter",
             filterDesc: "Choose Embassy/Consulate",
@@ -38,12 +39,15 @@ const resources = {
             notificationInitContent: "If a new position pops up, the browser will pop up a notification ASAP",
             notificationTitle: "{{visaTypeDetail}} Visa Status Changed",
             notificationContent: "{{embassyName}} changed from {{prevAvaiDate}} to {{currAvaiDate}}.",
+            notificationBlocked: "Notifications blocked. Please enable it in your browser.",
+            notificationNoSupport: "This browser does not support web notification.",
         },
     },
     zh: {
         translation: {
             countryCode: "{{countryName, country}}",
             visaStatus: "签证预约状态",
+            webNotify: "网页自动通知",
             sysStatus: "系统当前状态",
             checkee: "签证结果统计",
             filterDesc: "选择使馆/领事馆",
@@ -69,6 +73,8 @@ const resources = {
             notificationInitContent: "如果有新位置放出来，浏览器会第一时间弹出通知",
             notificationTitle: "{{visaTypeDetail}} 签证放新位置了",
             notificationContent: "{{embassyName}}: {{prevAvaiDate}} -> {{currAvaiDate}}",
+            notificationBlocked: "通知被浏览器屏蔽了，请手动打开它",
+            notificationNoSupport: "这个浏览器不支持网页版通知",
         },
     },
 };
