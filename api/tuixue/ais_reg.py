@@ -2,6 +2,7 @@ import sys
 import time
 import random
 import requests
+from threading import Lock
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,15 +21,20 @@ chrome_options.add_argument("--headless")
 
 cache = {}
 
-def register(country_code, email, password):
+def register(country_code, email, password, node):
     global cache
+    lock =  g.value(email + "_lock", Lock())
+    lock.acquire()
     # Login
     try:
         c_service = Service("/usr/bin/chromedriver")
         c_service.command_line_args()
         c_service.start()
-        selenium_list = [x.strip() for x in open("node.txt", "r").readlines()]
-        entry = random.choice(selenium_list)
+        if len(node) > 0:
+            entry = node
+        else:
+            selenium_list = [x.strip() for x in open("node.txt", "r").readlines()]
+            entry = random.choice(selenium_list)
         driver = webdriver.Remote(
             command_executor='http://%s:4444/wd/hub' % entry,
             desired_capabilities=chrome_options.to_capabilities()
@@ -111,11 +117,13 @@ def register(country_code, email, password):
             cache[email] = [session, schedule_id, group_id]
         else:
             del cache[email]
+        lock.release()
         return result, session, schedule_id
     except Exception as e:
         if email in cache:
             del cache[email]
         print(str(e))
+    lock.release()
     if driver:
         driver.quit()
     if c_service:
