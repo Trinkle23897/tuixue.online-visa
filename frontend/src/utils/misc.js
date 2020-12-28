@@ -23,3 +23,15 @@ export const getTimeFromISOString = s =>
         .split("T")[1]
         .split(":")
         .map(i => i.split(".")[0]);
+
+export const getLocalDateTimeFromISOString = s => {
+    const date = new Date(Date.UTC(...getDateFromISOString(s), ...getTimeFromISOString(s)));
+    return [
+        date.getFullYear(),
+        date.getMonth() + 1,
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds(),
+    ].map(o => o.toString().padStart(2, "0"));
+};

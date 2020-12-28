@@ -143,10 +143,7 @@ export default function Nav() {
                         </Col>
                         <Col xs={{ span: 4 }} md={{ span: 2 }}>
                             <div className="center-box">
-                                <Space>
-                                    <LanguageButton />
-                                    <NotifyButton />
-                                </Space>
+                                <LanguageButton />
                             </div>
                         </Col>
                     </Row>

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDateFromISOString, getTimeFromISOString } from "../utils/misc";
+import { getDateFromISOString, getLocalDateTimeFromISOString } from "../utils/misc";
 
 const visastatusNewestSlice = createSlice({
     name: "latestWritten",
@@ -10,7 +10,7 @@ const visastatusNewestSlice = createSlice({
             newest.forEach(({ embassyCode, availableDate, writeTime }) => {
                 state[visaType][embassyCode] = {
                     availableDate: availableDate ? getDateFromISOString(availableDate) : ["/"],
-                    writeTime: [...getDateFromISOString(writeTime), ...getTimeFromISOString(writeTime)],
+                    writeTime: getLocalDateTimeFromISOString(writeTime),
                 };
             });
         },
