@@ -475,8 +475,17 @@ class VisaStatus:
         if not isinstance(embassy_code, list):
             embassy_code = [embassy_code]
 
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        today_end = datetime.now(timezone.utc).replace(hour=23, minute=59, second=59, microsecond=999999)
+
         cursor = cls.latest_written.aggregate([
-            {'$match': {'visa_type': {'$in': visa_type}, 'embassy_code': {'$in': embassy_code}}},
+            {
+                '$match': {
+                    'visa_type': {'$in': visa_type},
+                    'embassy_code': {'$in': embassy_code},
+                    'write_time': {'$gte': today_start, '$lte': today_end},
+                }
+            },
             {'$project': {'_id': False}}
         ])
 
