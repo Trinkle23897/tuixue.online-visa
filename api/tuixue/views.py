@@ -71,10 +71,12 @@ def ais_register(request):
         country_code = request.GET.get('code', default='')
         email = request.GET.get('email', default='')
         pswd = request.GET.get('pswd', default='')
+        node = request.GET.get('node', default='')
     elif requests.method == "POST":
         country_code = request.POST.get('code', default='')
         email = request.POST.get('email', default='')
         pswd = request.POST.get('pswd', default='')
+        node = request.POST.get('node', default='')
     else:
         return HttpResponse('{"code": 400, "msg": "Malform Request"}')
     if len(country_code) == 0 or len(email) == 0 or len(pswd) == 0:
@@ -82,7 +84,7 @@ def ais_register(request):
 
     result = session = schedule_id = None
     try:
-        result, session, schedule_id = ais_reg.register(country_code, email, pswd)
+        result, session, schedule_id = ais_reg.register(country_code, email, pswd, node)
     except Exception as e:
         print(e)
     if not result or not session or not schedule_id:
