@@ -73,6 +73,10 @@ def get_meta_data():
         'visa_type_details': G.VISA_TYPE_DETAILS,
         'default_filter': ['bj', 'sh', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'bfs', 'lcy', 'gye'],
         'region_attr': G.REGION_ATTR,
+        'qq_tg_info': {
+            'qq': G.SECRET['qq']['info'],
+            'tg': G.SECRET['telegram']['info'],
+        }
     }
 
 

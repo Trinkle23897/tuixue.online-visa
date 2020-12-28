@@ -141,10 +141,10 @@ class Notifier:
         base_uri = extra["mirai_base_uri"]
         auth_key = extra["mirai_auth_key"]
         qq_num = extra["qq_num"]
-        if embassy.region == "DOMESTIC":  # need to be modified, different groups
-            group_id = extra["qq_group_id"]
+        if embassy.region == "DOMESTIC":
+            group_id = extra["qq_group_id"]["domestic"]
         else:
-            group_id = extra["qq_group_id"]
+            group_id = extra["qq_group_id"]["non_domestic"]
         r = requests.post(base_uri + "/auth",
                           data=json.dumps({"authKey": auth_key})).json()
         session = r["session"]
