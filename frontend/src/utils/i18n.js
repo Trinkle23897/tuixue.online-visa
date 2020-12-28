@@ -41,6 +41,11 @@ const resources = {
             notificationContent: "{{embassyName}} changed from {{prevAvaiDate}} to {{currAvaiDate}}.",
             notificationBlocked: "Notifications blocked. Please enable it in your browser.",
             notificationNoSupport: "This browser does not support web notification.",
+            QQTGModalTitle: "QQ Group and Telegram Channel Subscription for F1 Visa",
+            QQTGModalContentTG: "Telegram Channel link: ",
+            QQTGModalContentQQDesc:
+                "QQ group entry password is the site URL, a total of 13 characters t***e. All groups' content are the same.",
+            QQTGModalContentQQ: "QQ group #{{index}}: ",
         },
     },
     zh: {
@@ -75,6 +80,10 @@ const resources = {
             notificationContent: "{{embassyName}}: {{prevAvaiDate}} -> {{currAvaiDate}}",
             notificationBlocked: "通知被浏览器屏蔽了，请手动打开它",
             notificationNoSupport: "这个浏览器不支持网页版通知",
+            QQTGModalTitle: "QQ群/Telegram频道订阅F签信息",
+            QQTGModalContentTG: "Telegram频道链接：",
+            QQTGModalContentQQDesc: "QQ群入群密码是本站网址，共13个字符t***e，所有群内容一致",
+            QQTGModalContentQQ: "QQ群{{index}}群：",
         },
     },
 };

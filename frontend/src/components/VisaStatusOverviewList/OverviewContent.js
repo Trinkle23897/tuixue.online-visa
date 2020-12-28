@@ -1,37 +1,75 @@
 import React, { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { Row, Col, Button, Tooltip, Space, Collapse, Tag } from "antd";
+import { Row, Col, Button, Tooltip, Space, Collapse, Tag, Modal } from "antd";
 import { MailOutlined, QqOutlined, EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useScreenXS } from "../../hooks";
 import { makeNewestVisaStatusSelector } from "../../redux/selectors";
+import { findEmbassyAttributeByCode } from "../../utils/USEmbassy";
 import { overviewAttrProps, newestOverviewProps, overviewProps } from "./overviewPropTypes";
 import "./VisaStatusOverview.less";
 
 const { Panel } = Collapse;
 
-const ContentActions = ({ children, onEmailSubsClick, onQQSubsClick, onAddtionClick }) => {
+const QQTGSubsModalHook = (qq, tg) => {
     const { t } = useTranslation();
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    return [
+        <Modal
+            title={t("QQTGModalTitle")}
+            visible={isModalVisible}
+            onOk={() => setIsModalVisible(false)}
+            onCancel={() => setIsModalVisible(false)}
+        >
+            <p>
+                {t("QQTGModalContentTG")}
+                <a href={tg} target="_blank" rel="noreferrer">
+                    {tg}
+                </a>
+            </p>
+            <p>{t("QQTGModalContentQQDesc")}</p>
+            {qq.map((content, index) => (
+                <p>
+                    {t("QQTGModalContentQQ", { index: index + 1 })}
+                    {content}
+                </p>
+            ))}
+        </Modal>,
+        setIsModalVisible,
+    ];
+};
+
+const ContentActions = ({ children, embassyCode, onEmailSubsClick, onAddtionClick }) => {
+    const { t } = useTranslation();
+    const info = useSelector(state => state.metadata.qqTgInfo);
+    const embassyLst = useSelector(state => state.metadata.embassyLst);
+    const region = findEmbassyAttributeByCode("region", embassyCode, embassyLst);
+    const index = region === "DOMESTIC" ? "domestic" : "nonDomestic";
+    const [QQTGSubsModal, setQQTGSubsModalVisible] = QQTGSubsModalHook(info.qq[index], info.tg[index]);
+    const isVisaTypeF = useSelector(state => state.visastatusTab) === "F";
     return (
         <Space direction="horizontal">
             <Tooltip title={t("overviewEmailIcon")}>
                 <Button icon={<MailOutlined />} shape="circle" onClick={() => onEmailSubsClick()} />
             </Tooltip>
-            <Tooltip title={t("overviewQQIcon")}>
-                <Button icon={<QqOutlined />} shape="circle" onClick={() => onQQSubsClick()} />
-            </Tooltip>
+            {isVisaTypeF && (
+                <Tooltip title={t("overviewQQIcon")}>
+                    <Button icon={<QqOutlined />} shape="circle" onClick={() => setQQTGSubsModalVisible(true)} />
+                </Tooltip>
+            )}
             <Tooltip title={t("overviewAddtionalIcon")}>
                 <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => onAddtionClick()} />
             </Tooltip>
+            {isVisaTypeF && QQTGSubsModal}
             {children}
         </Space>
     );
 };
 ContentActions.propTypes = {
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
+    embassyCode: PropTypes.string.isRequired,
     onEmailSubsClick: PropTypes.func.isRequired,
-    onQQSubsClick: PropTypes.func.isRequired,
     onAddtionClick: PropTypes.func.isRequired,
 };
 
@@ -62,7 +100,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
                 </Tooltip>
             </Col>
             <Col md={{ span: 5 }}>
-                <ContentActions onEmailSubsClick={() => {}} onQQSubsClick={() => {}} onAddtionClick={() => {}} />
+                <ContentActions embassyCode={embassyCode} onEmailSubsClick={() => {}} onAddtionClick={() => {}} />
             </Col>
         </Row>
     );
@@ -93,8 +131,8 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
                     <Col>
                         {cardDrop ? (
                             <ContentActions
+                                embassyCode={embassyCode}
                                 onEmailSubsClick={() => {}}
-                                onQQSubsClick={() => {}}
                                 onAddtionClick={() => {}}
                             >
                                 <DropdownControlBtn />
