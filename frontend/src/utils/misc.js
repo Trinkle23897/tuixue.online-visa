@@ -25,8 +25,8 @@ export const getTimeFromISOString = s =>
         .map(i => i.split(".")[0]);
 
 export const getUTCFromISOString = s => {
-    const [yy, mm, dd] = getDateFromISOString(s).map(e => parseInt(e));
-    const [HH, MM, SS] = getTimeFromISOString(s).map(e => parseInt(e));
+    const [yy, mm, dd] = getDateFromISOString(s).map(e => parseInt(e, 10));
+    const [HH, MM, SS] = getTimeFromISOString(s).map(e => parseInt(e, 10));
     return Date.UTC(yy, mm - 1, dd, HH, MM, SS);
 };
 
