@@ -1,36 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import ReactEcharts from "echarts-for-react";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { getSingleVisaStatus } from "../services";
-import { getDateFromISOString, getTimeFromISOString } from "../utils/misc";
+import { makeFilterSelectorByVisaType } from "../redux/selectors";
+import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
+import { getDateFromISOString, getLocalDateTimeFromISOString } from "../utils/misc";
 
-export default function OverviewChart({ visaType, embassyCode }) {
+const dataZoom = [
+    {
+        type: "slider",
+        height: 8,
+        bottom: 20,
+        borderColor: "transparent",
+        backgroundColor: "#e2e2e2",
+        handleIcon:
+            "M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z",
+        handleSize: 20,
+        handleStyle: {
+            shadowBlur: 6,
+            shadowOffsetX: 1,
+            shadowOffsetY: 2,
+            shadowColor: "#aaa",
+        },
+    },
+    {
+        type: "inside",
+    },
+];
+
+/**
+ *
+ * @param {string} title EChart title
+ * @param {array} writeTime An array of ISODate string
+ * @param {array} availDateLst An array with { embassyCode, availableDate }
+ */
+const OverviewChart = ({ title, writeTime, availDateLst }) => {
     const [t] = useTranslation();
-    const [xAxis, setXAxis] = useState([]);
-    const [yAxis, setYAxis] = useState([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            const result = await getSingleVisaStatus(visaType, embassyCode, new Date());
-            setXAxis(
-                result.availableDates.map(({ writeTime }) => getTimeFromISOString(writeTime).slice(0, 2).join("/")),
-            );
-            setYAxis(result.availableDates.map(({ availableDate }) => getDateFromISOString(availableDate).join("/")));
-        };
-        fetchData();
-    }, [visaType, embassyCode]);
     return (
         <ReactEcharts
             option={{
                 xAxis: {
                     type: "category",
-                    data: xAxis,
+                    data: writeTime,
                 },
                 yAxis: {
                     type: "time",
                 },
                 legend: {
-                    data: [t(embassyCode)],
+                    data: availDateLst.map(({ embassyCode }) => t(embassyCode)),
                 },
                 tooltip: {
                     trigger: "axis",
@@ -42,39 +61,43 @@ export default function OverviewChart({ visaType, embassyCode }) {
                         return header + content;
                     },
                 },
-                dataZoom: [
-                    {
-                        type: "slider",
-                        height: 8,
-                        bottom: 20,
-                        borderColor: "transparent",
-                        backgroundColor: "#e2e2e2",
-                        handleIcon:
-                            "M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z",
-                        handleSize: 20,
-                        handleStyle: {
-                            shadowBlur: 6,
-                            shadowOffsetX: 1,
-                            shadowOffsetY: 2,
-                            shadowColor: "#aaa",
-                        },
-                    },
-                    {
-                        type: "inside",
-                    },
-                ],
-                series: [
-                    {
-                        name: t(embassyCode),
-                        type: "line",
-                        data: yAxis,
-                    },
-                ],
+                dataZoom,
+                series: availDateLst.map(({ embassyCode, availableDate }) => ({
+                    name: t(embassyCode),
+                    type: "line",
+                    data: getDateFromISOString(availableDate),
+                })),
             }}
         />
     );
-}
+};
+
 OverviewChart.propTypes = {
-    visaType: PropTypes.string,
-    embassyCode: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    writeTime: PropTypes.arrayOf(PropTypes.string.isRequired),
+    availDateLst: PropTypes.arrayOf(
+        PropTypes.shape({
+            embassyCode: PropTypes.string.isRequired,
+            availableDate: PropTypes.string.isRequired,
+        }),
+    ),
+};
+
+const mergeData = (chartType, detailData) => [[], []]; // TODO
+
+export const OverviewChartByMinute = ({ visaType }) => {
+    const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
+    const vsFilter = useSelector(state => filterSelector(state));
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        vsFilter.map(embassyCode => dispatch(fetchVisaStatusDetail(visaType, embassyCode)));
+    }, [visaType, vsFilter]);
+
+    const detailData = useSelector(state => state.visastatusDetail[visaType]);
+    const [writeTime, availDateLst] = mergeData("minute", detailData);
+    return <OverviewChart title="OverMinute" writeTime={writeTime} availDateLst={availDateLst} />;
+};
+OverviewChartByMinute.propTypes = {
+    visaType: PropTypes.string.isRequired,
 };
