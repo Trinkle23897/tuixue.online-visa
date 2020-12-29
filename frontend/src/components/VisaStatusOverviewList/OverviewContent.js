@@ -5,17 +5,16 @@ import { Row, Col, Button, Tooltip, Space, Collapse, Tag, Modal } from "antd";
 import { MailOutlined, QqOutlined, EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useScreenXS } from "../../hooks";
-import { makeNewestVisaStatusSelector } from "../../redux/selectors";
+import { makeNewestVisaStatusSelector, makeQqTgInfoSelector } from "../../redux/selectors";
 import { findEmbassyAttributeByCode } from "../../utils/USEmbassy";
 import { overviewAttrProps, newestOverviewProps, overviewProps } from "./overviewPropTypes";
 import "./VisaStatusOverview.less";
 
 const { Panel } = Collapse;
 
-const QQTGSubsModalHook = (qq, tg) => {
+const QQTGSubsModal = ({ qqGroups, tgLink, isModalVisible, setIsModalVisible }) => {
     const { t } = useTranslation();
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    return [
+    return (
         <Modal
             title={t("QQTGModalTitle")}
             visible={isModalVisible}
@@ -24,30 +23,33 @@ const QQTGSubsModalHook = (qq, tg) => {
         >
             <p>
                 {t("QQTGModalContentTG")}
-                <a href={tg} target="_blank" rel="noreferrer">
-                    {tg}
+                <a href={tgLink} target="_blank" rel="noreferrer">
+                    {tgLink}
                 </a>
             </p>
             <p>{t("QQTGModalContentQQDesc")}</p>
-            {qq.map((content, index) => (
-                <p>
-                    {t("QQTGModalContentQQ", { index: index + 1 })}
-                    {content}
-                </p>
+            {qqGroups.map((content, index) => (
+                <p>{`${t("QQTGModalContentQQ", { index: index + 1 })}${content}`}</p>
             ))}
-        </Modal>,
-        setIsModalVisible,
-    ];
+        </Modal>
+    );
+};
+QQTGSubsModal.propTypes = {
+    qqGroups: PropTypes.arrayOf(PropTypes.string),
+    tgLink: PropTypes.string,
+    isModalVisible: PropTypes.bool.isRequired,
+    setIsModalVisible: PropTypes.func.isRequired,
 };
 
 const ContentActions = ({ children, embassyCode, onEmailSubsClick, onAddtionClick }) => {
     const { t } = useTranslation();
-    const info = useSelector(state => state.metadata.qqTgInfo);
     const embassyLst = useSelector(state => state.metadata.embassyLst);
     const region = findEmbassyAttributeByCode("region", embassyCode, embassyLst);
     const index = region === "DOMESTIC" ? "domestic" : "nonDomestic";
-    const [QQTGSubsModal, setQQTGSubsModalVisible] = QQTGSubsModalHook(info.qq[index], info.tg[index]);
-    const isVisaTypeF = useSelector(state => state.visastatusTab) === "F";
+    const isVisaTypeF = useSelector(state => state.visastatusTab === "F");
+    const qqTgInfoSelector = useMemo(() => makeQqTgInfoSelector(index), [index]);
+    const [qqGroups, tgLink] = useSelector(state => qqTgInfoSelector(state));
+    const [QQTGSubsModalVisible, setQQTGSubsModalVisible] = useState(false);
     return (
         <Space direction="horizontal">
             <Tooltip title={t("overviewEmailIcon")}>
@@ -61,7 +63,14 @@ const ContentActions = ({ children, embassyCode, onEmailSubsClick, onAddtionClic
             <Tooltip title={t("overviewAddtionalIcon")}>
                 <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => onAddtionClick()} />
             </Tooltip>
-            {isVisaTypeF && QQTGSubsModal}
+            {isVisaTypeF && (
+                <QQTGSubsModal
+                    qqGroups={qqGroups}
+                    tgLink={tgLink}
+                    isModalVisible={QQTGSubsModalVisible}
+                    setIsModalVisible={setQQTGSubsModalVisible}
+                />
+            )}
             {children}
         </Space>
     );

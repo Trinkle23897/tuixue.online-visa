@@ -7,6 +7,8 @@ const overviewSelector = state => state.visastatusOverview;
 const newestSelector = state => state.visastatusNewest;
 const filterSelector = state => state.visastatusFilter;
 const embassyLstSelector = createSelector(metadataSelector, metadata => metadata.embassyLst);
+export const makeQqTgInfoSelector = region =>
+    createSelector(metadataSelector, metadata => [metadata.qqTgInfo.qq[region], metadata.qqTgInfo.tg[region]]);
 export const makeEmbassyBySysSelector = sys =>
     createSelector(embassyLstSelector, embassyLst =>
         sys === "all"
