@@ -41,9 +41,12 @@ const OverviewChart = ({ title, writeTime, availDateLst }) => {
     return (
         <ReactEcharts
             option={{
+                title: {
+                    text: title,
+                },
                 xAxis: {
                     type: "category",
-                    data: writeTime,
+                    data: writeTime.map(e => e.slice(-5)),
                 },
                 yAxis: {
                     type: "time",
@@ -62,10 +65,10 @@ const OverviewChart = ({ title, writeTime, availDateLst }) => {
                     },
                 },
                 dataZoom,
-                series: availDateLst.map(({ embassyCode, availableDate }) => ({
+                series: availDateLst.map(({ embassyCode, availableDates }) => ({
                     name: t(embassyCode),
                     type: "line",
-                    data: getDateFromISOString(availableDate),
+                    data: availableDates,
                 })),
             }}
         />
@@ -78,25 +81,48 @@ OverviewChart.propTypes = {
     availDateLst: PropTypes.arrayOf(
         PropTypes.shape({
             embassyCode: PropTypes.string.isRequired,
-            availableDate: PropTypes.string.isRequired,
+            availableDates: PropTypes.arrayOf(PropTypes.string.isRequired),
         }),
     ),
 };
 
-const mergeData = (chartType, detailData) => [[], []]; // TODO
+const mergeDetailData = detailData => {
+    let writeTimeAll = [];
+    for (const [embassyCode, data] of Object.entries(detailData)) {
+        writeTimeAll.push(...data.map(({ writeTime }) => writeTime.slice(0, -1).join(":")));
+    }
+    writeTimeAll = Array.from(new Set(writeTimeAll));
+    writeTimeAll.sort();
+    const availDateLst = [];
+    for (const [embassyCode, data] of Object.entries(detailData)) {
+        let dataIndex = 0;
+        const availableDates = writeTimeAll.map(writeTimeRef => {
+            if (dataIndex >= data.length) return null;
+            const { writeTime, availableDate } = data[dataIndex];
+            const writeTimeStr = writeTime.slice(0, -1).join(":");
+            if (writeTimeRef === writeTimeStr) {
+                dataIndex += 1;
+                return availableDate.join("/");
+            }
+            return null;
+        });
+        availDateLst.push({ embassyCode, availableDates });
+    }
+    return [writeTimeAll, availDateLst];
+};
 
 export const OverviewChartByMinute = ({ visaType }) => {
+    const [t] = useTranslation();
     const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
     const vsFilter = useSelector(state => filterSelector(state));
     const dispatch = useDispatch();
 
     useEffect(() => {
         vsFilter.map(embassyCode => dispatch(fetchVisaStatusDetail(visaType, embassyCode)));
-    }, [visaType, vsFilter]);
+    }, [visaType, vsFilter, dispatch]);
 
-    const detailData = useSelector(state => state.visastatusDetail[visaType]);
-    const [writeTime, availDateLst] = mergeData("minute", detailData);
-    return <OverviewChart title="OverMinute" writeTime={writeTime} availDateLst={availDateLst} />;
+    const [writeTime, availDateLst] = useSelector(state => mergeDetailData(state.visastatusDetail[visaType]));
+    return <OverviewChart title={t("overMinuteChartTitle")} writeTime={writeTime} availDateLst={availDateLst} />;
 };
 OverviewChartByMinute.propTypes = {
     visaType: PropTypes.string.isRequired,

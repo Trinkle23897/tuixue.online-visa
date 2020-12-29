@@ -23,6 +23,7 @@ const resources = {
             filterDomestic: "Domestic only",
             filterOverviewOpen: "Show Charts",
             filterOverviewClose: "Collapse Charts",
+            overMinuteChartTitle: "Over Minute", // TODO
             at: "at",
             all: "All",
             overviewTitle: "Visa Status Overview",
@@ -62,6 +63,7 @@ const resources = {
             filterDomestic: "只看国内",
             filterOverviewOpen: "展开图表",
             filterOverviewClose: "收起图表",
+            overMinuteChartTitle: "分钟粒度", // TODO
             at: "于",
             all: "全部",
             Location: "地点",
