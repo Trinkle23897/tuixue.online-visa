@@ -113,7 +113,7 @@ def get_visa_status_by_visa_type_and_embassy(
     visa_type: VisaType,
     embassy_code: EmbassyCode,
 ):
-    """ Return all of the historical data fetched for a givenv `(visa_type, embassy_code)` pair.
+    """ Return all of the historical data fetched for a given `(visa_type, embassy_code)` pair.
         If a given `since` or `or` date query is given, the historical data will be truncated to
         the specified dates.
         It's noteworthy that this endpoint consume a huge amount of resource in backend when `since`

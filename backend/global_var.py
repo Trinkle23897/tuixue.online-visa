@@ -119,11 +119,11 @@ SYS_LOCATION = {'cgi': CGI_LOCATION, 'ais': AIS_LOCATION}
 # filter of AIS visa data retrieved from cralwer backend by city
 AIS_MONITORING_CITY = [emb[1] for emb in EMBASSY_ATTR if emb[3] == 'ais']
 
-CGI_SESS_POOL_SIZE = {visa_type: 10 if visa_type == 'F' else 5 for visa_type in VISA_TYPES}
+CGI_SESS_POOL_SIZE = {visa_type: 10 for visa_type in VISA_TYPES}
 AIS_SESS_POOL_SIZE = {visa_type: 1 for visa_type in VISA_TYPES}
 SESS_POOL_SIZE = {'cgi': CGI_SESS_POOL_SIZE, 'ais': AIS_SESS_POOL_SIZE}
 
-CGI_FETCH_TIME_INTERVAL = {'F': 60, 'B': 120, 'H': 180, 'O': 180, 'L': 180}
+CGI_FETCH_TIME_INTERVAL = {visa_type: 60 for visa_type in VISA_TYPES}
 AIS_FETCH_TIME_INTERVAL = {visa_type: 60 for visa_type in VISA_TYPES}
 FETCH_TIME_INTERVAL = {'cgi': CGI_FETCH_TIME_INTERVAL, 'ais': AIS_FETCH_TIME_INTERVAL}
 
