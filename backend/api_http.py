@@ -90,11 +90,11 @@ def get_visa_status_overview(
     """ Get the available visa appointment status with given query.
         The `since` and `to` query params, if provided, MUST be in the timezone of UTC.
     """
-    # embassy = G.USEmbassy.get_embassy_by_code(embassy_code)
+    embassy = G.USEmbassy.get_embassy_by_code(embassy_code)
 
     # Convert `since` and `to` to embassy local time and get rid of tzinfo
-    since = since.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
-    to = to.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+    since = since.astimezone(embassy.timezone).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+    to = to.astimezone(embassy.timezone).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
     dt_range = [since + timedelta(days=d) for d in range((to - since).days + 1)]
 
     tabular_data = DB.VisaStatus.find_visa_status_overview(visa_type, embassy_code, dt_range)
