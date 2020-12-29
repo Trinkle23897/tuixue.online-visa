@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useScreenXS } from "../../hooks";
 import { makeNewestVisaStatusSelector, makeQqTgInfoSelector } from "../../redux/selectors";
 import { findEmbassyAttributeByCode } from "../../utils/USEmbassy";
+import { getTimeFromUTC } from "../../utils/misc";
 import { overviewAttrProps, newestOverviewProps, overviewProps } from "./overviewPropTypes";
 import "./VisaStatusOverview.less";
 
@@ -102,7 +103,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
                         </Col>
                         <Col xs={{ span: 13 }} md={{ span: 9 }}>
                             <Tag>{`${t("at")} ${
-                                writeTime.length === 1 ? writeTime[0] : writeTime.slice(3).join(":")
+                                writeTime.length === 1 ? writeTime[0] : getTimeFromUTC(writeTime).join(":")
                             }`}</Tag>
                         </Col>
                     </Row>

@@ -24,14 +24,13 @@ export const getTimeFromISOString = s =>
         .split(":")
         .map(i => i.split(".")[0]);
 
-export const getLocalDateTimeFromISOString = s => {
-    const date = new Date(Date.UTC(...getDateFromISOString(s), ...getTimeFromISOString(s)));
-    return [
-        date.getFullYear(),
-        date.getMonth() + 1,
-        date.getDate(),
-        date.getHours(),
-        date.getMinutes(),
-        date.getSeconds(),
-    ].map(o => o.toString().padStart(2, "0"));
+export const getUTCFromISOString = s => {
+    const [yy, mm, dd] = getDateFromISOString(s).map(e => parseInt(e));
+    const [HH, MM, SS] = getTimeFromISOString(s).map(e => parseInt(e));
+    return Date.UTC(yy, mm - 1, dd, HH, MM, SS);
+};
+
+export const getTimeFromUTC = u => {
+    const date = new Date(u);
+    return [date.getHours(), date.getMinutes(), date.getSeconds()].map(o => o.toString().padStart(2, "0"));
 };

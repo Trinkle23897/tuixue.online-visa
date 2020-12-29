@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import ReactEcharts from "echarts-for-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { getSingleVisaStatus } from "../services";
 import { makeFilterSelectorByVisaType } from "../redux/selectors";
 import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
-import { getDateFromISOString, getLocalDateTimeFromISOString } from "../utils/misc";
+import { getDateFromISOString, getTimeFromUTC } from "../utils/misc";
 
 const dataZoom = [
     {
@@ -46,7 +45,7 @@ const OverviewChart = ({ title, writeTime, availDateLst }) => {
                 },
                 xAxis: {
                     type: "category",
-                    data: writeTime.map(e => e.slice(-5)),
+                    data: writeTime.map(u => getTimeFromUTC(u).slice(0, -1).join(":")),
                 },
                 yAxis: {
                     type: "time",
@@ -77,7 +76,7 @@ const OverviewChart = ({ title, writeTime, availDateLst }) => {
 
 OverviewChart.propTypes = {
     title: PropTypes.string.isRequired,
-    writeTime: PropTypes.arrayOf(PropTypes.string.isRequired),
+    writeTime: PropTypes.arrayOf(PropTypes.number.isRequired),
     availDateLst: PropTypes.arrayOf(
         PropTypes.shape({
             embassyCode: PropTypes.string.isRequired,
@@ -87,20 +86,22 @@ OverviewChart.propTypes = {
 };
 
 const mergeDetailData = detailData => {
+    console.log(detailData);
     let writeTimeAll = [];
     for (const [embassyCode, data] of Object.entries(detailData)) {
-        writeTimeAll.push(...data.map(({ writeTime }) => writeTime.slice(0, -1).join(":")));
+        writeTimeAll.push(...data.map(({ writeTime }) => writeTime - (writeTime % 60000)));
     }
     writeTimeAll = Array.from(new Set(writeTimeAll));
     writeTimeAll.sort();
+    console.log(writeTimeAll);
     const availDateLst = [];
     for (const [embassyCode, data] of Object.entries(detailData)) {
         let dataIndex = 0;
         const availableDates = writeTimeAll.map(writeTimeRef => {
             if (dataIndex >= data.length) return null;
             const { writeTime, availableDate } = data[dataIndex];
-            const writeTimeStr = writeTime.slice(0, -1).join(":");
-            if (writeTimeRef === writeTimeStr) {
+            const writeTimeData = writeTime - (writeTime % 60000);
+            if (writeTimeRef === writeTimeData) {
                 dataIndex += 1;
                 return availableDate.join("/");
             }
@@ -108,6 +109,7 @@ const mergeDetailData = detailData => {
         });
         availDateLst.push({ embassyCode, availableDates });
     }
+    console.log(availDateLst);
     return [writeTimeAll, availDateLst];
 };
 
