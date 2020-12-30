@@ -219,6 +219,20 @@ class VisaFetcher:
         G.assign('checking_crawler_connection', False)
 
     @classmethod
+    def save_placeholder_at_exception(cls, visa_type: str, location: str):
+        """ When fetching visa status encounters failure like `Session Expired` and `Endpoint Timeout`
+            save the last successful fetch result into database.
+        """
+        embassy = G.USEmbassy.get_embassy_by_loc(location)
+        latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
+        avai_dt = None if len(latest_written) < 1 else latest_written[0]['available_date']
+        cls.save_fetched_data(
+            visa_type,
+            location,
+            [0, 0, 0] if avai_dt is None else [avai_dt.year, avai_dt.month, avai_dt.day]
+        )
+
+    @classmethod
     def fetch_visa_status(cls, visa_type: str, location: str, req: requests.Session):
         """ Fetch the latest visa status available from crawler server."""
         now = datetime.now().strftime('%H:%M:%S')
@@ -238,6 +252,7 @@ class VisaFetcher:
                 res = req.get(url, timeout=G.WAIT_TIME['refresh'], proxies=G.value('proxies', None))
             except requests.exceptions.Timeout:
                 LOGGER.warning('%s, %s, %s, FAILED - Endpoint Timeout.', now, visa_type, location)
+                cls.save_placeholder_at_exception(visa_type, location)
                 cls.check_crawler_server_connection()
                 return
             except requests.exceptions.ConnectionError:
@@ -257,14 +272,7 @@ class VisaFetcher:
                     LOGGER.warning('%s, %s, %s, FAILED - Session Expired', now, visa_type, location)
 
                     # session expired will trigger database update using the last successful fetch result
-                    embassy = G.USEmbassy.get_embassy_by_loc(location)
-                    latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
-                    avai_dt = None if len(latest_written) < 1 else latest_written[0]['available_date']
-                    cls.save_fetched_data(
-                        visa_type,
-                        location,
-                        [0, 0, 0] if avai_dt is None else [avai_dt.year, avai_dt.month, avai_dt.day]
-                    )
+                    cls.save_placeholder_at_exception(visa_type, location)
 
                     SESSION_CACHE.produce_new_session_request(visa_type, location, session)
                     return
