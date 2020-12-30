@@ -214,7 +214,7 @@ class SessionCache:
         return session.session in sess_str_lst
 
     def mark_unavailable(
-        self, visa_type: str, location: str, cd: timedelta = timedelta(hours=G.CD_HOURS)
+        self, visa_type: str, location: str, cd: timedelta = timedelta(minutes=G.CD_MINUTES)
     ) -> None:
         self.logger.warning(f"mark {visa_type} {location} unavailable for {cd.seconds}s")
         with G.LOCK:

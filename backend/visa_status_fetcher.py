@@ -224,13 +224,18 @@ class VisaFetcher:
             save the last successful fetch result into database.
         """
         embassy = G.USEmbassy.get_embassy_by_loc(location)
-        latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
-        avai_dt = None if len(latest_written) < 1 else latest_written[0]['available_date']
-        cls.save_fetched_data(
-            visa_type,
-            location,
-            [0, 0, 0] if avai_dt is None else [avai_dt.year, avai_dt.month, avai_dt.day]
-        )
+        if embassy is None:
+            embassyLst = G.USEmbassy.get_embassy_by_ais_code(location)
+        else:
+            embassyLst = [embassy]
+        for embassy in embassyLst:
+            latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
+            avai_dt = None if len(latest_written) < 1 else latest_written[0]['available_date']
+            cls.save_fetched_data(
+                visa_type,
+                embassy.location,
+                [0, 0, 0] if avai_dt is None else [avai_dt.year, avai_dt.month, avai_dt.day]
+            )
 
     @classmethod
     def fetch_visa_status(cls, visa_type: str, location: str, req: requests.Session):
