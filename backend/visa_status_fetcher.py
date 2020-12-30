@@ -259,7 +259,7 @@ class VisaFetcher:
                     # session expired will trigger database update using the last successful fetch result
                     embassy = G.USEmbassy.get_embassy_by_loc(location)
                     latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
-                    avai_dt = latest_written[0]['available_date']
+                    avai_dt = None if len(latest_written) < 1 else latest_written[0]['available_date']
                     cls.save_fetched_data(
                         visa_type,
                         location,
