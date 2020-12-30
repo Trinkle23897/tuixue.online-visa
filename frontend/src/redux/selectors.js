@@ -4,6 +4,7 @@ import { embassyAttributeIdx } from "../utils/USEmbassy";
 // basic selectors
 const metadataSelector = state => state.metadata;
 const overviewTodaySelector = state => state.visastatusOverview.today;
+const overviewSpanSelector = state => state.visastatusOverview.span;
 const newestSelector = state => state.visastatusNewest;
 const filterSelector = state => state.visastatusFilter;
 const detailSelector = state => state.visastatusDetail;
@@ -50,7 +51,7 @@ const makeSelectorMakerByVisaType = selector => visaType => createSelector(selec
 const makeOverviewSelectorByVisaType = makeSelectorMakerByVisaType(overviewTodaySelector);
 export const makeFilterSelectorByVisaType = makeSelectorMakerByVisaType(filterSelector);
 export const makeDetailSelectorByVisaType = makeSelectorMakerByVisaType(detailSelector);
-
+export const makeOverviewSpanSelectorByVisaType = makeSelectorMakerByVisaType(overviewSpanSelector);
 export const makeOverviewDetailSelector = visaType =>
     createSelector(
         [makeOverviewSelectorByVisaType(visaType), makeFilterSelectorByVisaType(visaType)],

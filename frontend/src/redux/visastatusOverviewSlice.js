@@ -4,10 +4,10 @@ import { getDateFromISOString } from "../utils/misc";
 
 const visastatusOverviewSlice = createSlice({
     name: "visastatusOverview",
-    initialState: { today: { F: [], B: [], O: [], H: [], L: [] } },
+    initialState: { today: { F: [], B: [], O: [], H: [], L: [] }, span: { F: [], B: [], H: [], O: [], L: [] } },
     reducers: {
         updateOverview: (state, action) => {
-            const { visaType, overviewLstToday } = action.payload;
+            const { visaType, overviewLstToday, overviewLstSpan } = action.payload;
             overviewLstToday.forEach(overview => {
                 const overviewIdx = state.today[visaType].findIndex(ov => ov.embassyCode === overview.embassyCode);
                 if (overviewIdx !== -1) {
@@ -16,6 +16,7 @@ const visastatusOverviewSlice = createSlice({
                     state.today[visaType].push(overview);
                 }
             });
+            state.span[visaType] = overviewLstSpan;
         },
     },
 });
@@ -39,14 +40,13 @@ export const fetchVisaStatusOverview = visaType => async (dispatch, getState) =>
         const vsOverview = await getVisaStatusOverview(visaType, selectedEmb, past, now);
         if (vsOverview) {
             const { visaStatus } = vsOverview;
-            console.log(visaType, visaStatus);
             const overviewLstToday = visaStatus[0].overview.map(({ embassyCode, earliestDate, latestDate }) => ({
                 visaType,
                 embassyCode,
                 earliestDate: getDateFromISOString(earliestDate),
                 latestDate: getDateFromISOString(latestDate),
             }));
-            dispatch(updateOverview({ visaType, overviewLstToday }));
+            dispatch(updateOverview({ visaType, overviewLstToday, overviewLstSpan: visaStatus }));
         }
     } catch (e) {
         console.error(`In fetchVisaStatusOverview: ${e}`);

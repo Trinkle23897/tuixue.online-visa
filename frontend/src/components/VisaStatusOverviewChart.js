@@ -3,9 +3,13 @@ import PropTypes from "prop-types";
 import ReactEcharts from "echarts-for-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { makeFilterSelectorByVisaType, makeDetailSelectorByVisaType } from "../redux/selectors";
+import {
+    makeFilterSelectorByVisaType,
+    makeDetailSelectorByVisaType,
+    makeOverviewSpanSelectorByVisaType,
+} from "../redux/selectors";
 import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
-import { getTimeFromUTC } from "../utils/misc";
+import { getTimeFromUTC, getDateFromISOString } from "../utils/misc";
 
 const dataZoom = [
     {
@@ -29,19 +33,69 @@ const dataZoom = [
     },
 ];
 
-/**
- *
- * @param {string} title EChart title
- * @param {array} writeTime An array of ISODate string
- * @param {array} availDateLst An array with { embassyCode, availableDate }
- */
-const OverviewChart = ({ title, writeTime, availDateLst }) => {
+const mergeDetailData = (rawData, vsFilter) => {
+    const detailData = vsFilter.map(embassyCode => ({ embassyCode, data: rawData[embassyCode] || [] }));
+    let writeTimeAll = [];
+    detailData.map(({ data }) => writeTimeAll.push(...data.map(({ writeTime }) => writeTime - (writeTime % 60000))));
+    writeTimeAll = Array.from(new Set(writeTimeAll));
+    writeTimeAll.sort();
+    const availDateLst = [];
+    detailData.map(({ embassyCode, data }) => {
+        let dataIndex = 0;
+        const availableDates = writeTimeAll.map(writeTimeRef => {
+            if (dataIndex >= data.length) return null;
+            const { writeTime, availableDate } = data[dataIndex];
+            const writeTimeData = writeTime - (writeTime % 60000); // exclude SS
+            if (writeTimeRef === writeTimeData) {
+                dataIndex += 1;
+                return availableDate.join("/");
+            }
+            if (dataIndex > 0 && writeTime - writeTimeRef < 60000 * 5) {
+                // within 5 minutes, automatically fill the gap
+                return data[dataIndex - 1].availableDate.join("/");
+            }
+            return null;
+        });
+        return availDateLst.push({ embassyCode, availableDates });
+    });
+    return [writeTimeAll, availDateLst];
+};
+
+const mergeOverviewData = (rawData, vsFilter) =>
+    rawData
+        .slice()
+        .reverse()
+        .map(({ date, overview }, index) => {
+            const earliestDateObj = {};
+            const latestDateObj = {};
+            overview.forEach(({ embassyCode, earliestDate, latestDate }) => {
+                earliestDateObj[embassyCode] = earliestDate;
+                latestDateObj[embassyCode] = latestDate;
+            });
+            const earliestDateLst = vsFilter.map(embassyCode => earliestDateObj[embassyCode] || null);
+            const latestDateLst = vsFilter.map(embassyCode => latestDateObj[embassyCode] || null);
+            return [index, getDateFromISOString(date).join("-")].concat(earliestDateLst).concat(latestDateLst);
+        });
+
+export const OverviewChartByMinute = ({ visaType }) => {
     const [t] = useTranslation();
+    const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
+    const detailSelector = useMemo(() => makeDetailSelectorByVisaType(visaType), [visaType]);
+    const vsFilter = useSelector(state => filterSelector(state));
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        vsFilter.map(embassyCode => dispatch(fetchVisaStatusDetail(visaType, embassyCode)));
+    }, [visaType, vsFilter, dispatch]);
+
+    const [writeTime, availDateLst] = useSelector(state =>
+        mergeDetailData(detailSelector(state), filterSelector(state)),
+    );
     return (
         <ReactEcharts
             option={{
                 title: {
-                    text: title,
+                    text: t("overMinuteChartTitle"),
                 },
                 xAxis: {
                     type: "category",
@@ -73,62 +127,125 @@ const OverviewChart = ({ title, writeTime, availDateLst }) => {
         />
     );
 };
-
-OverviewChart.propTypes = {
-    title: PropTypes.string.isRequired,
-    writeTime: PropTypes.arrayOf(PropTypes.number.isRequired),
-    availDateLst: PropTypes.arrayOf(
-        PropTypes.shape({
-            embassyCode: PropTypes.string.isRequired,
-            availableDates: PropTypes.arrayOf(PropTypes.string),
-        }),
-    ),
+OverviewChartByMinute.propTypes = {
+    visaType: PropTypes.string.isRequired,
 };
 
-const mergeDetailData = (rawData, vsFilter) => {
-    const detailData = vsFilter.map(embassyCode => ({ embassyCode, data: rawData[embassyCode] || [] }));
-    let writeTimeAll = [];
-    detailData.map(({ data }) => writeTimeAll.push(...data.map(({ writeTime }) => writeTime - (writeTime % 60000))));
-    writeTimeAll = Array.from(new Set(writeTimeAll));
-    writeTimeAll.sort();
-    const availDateLst = [];
-    detailData.map(({ embassyCode, data }) => {
-        let dataIndex = 0;
-        const availableDates = writeTimeAll.map(writeTimeRef => {
-            if (dataIndex >= data.length) return null;
-            const { writeTime, availableDate } = data[dataIndex];
-            const writeTimeData = writeTime - (writeTime % 60000); // exclude SS
-            if (writeTimeRef === writeTimeData) {
-                dataIndex += 1;
-                return availableDate.join("/");
-            }
-            if (dataIndex > 0 && writeTime - writeTimeRef < 60000 * 5) {
-                // within 5 minutes, automatically fill the gap
-                return data[dataIndex - 1].availableDate.join("/");
-            }
-            return null;
-        });
-        return availDateLst.push({ embassyCode, availableDates });
-    });
-    return [writeTimeAll, availDateLst];
+const renderItem = (params, api) => {
+    const xValue = api.value(0);
+    const earliestPoint = api.coord([xValue, api.value(1)]);
+    const latestPoint = api.coord([xValue, api.value(2)]);
+    // const halfWidth = api.size([1, 0])[0] * 0.35;
+    const style = api.style({ stroke: api.visual("color") });
+    return {
+        type: "group",
+        children: [
+            {
+                type: "line",
+                shape: {
+                    x1: earliestPoint[0],
+                    y1: earliestPoint[1],
+                    x2: latestPoint[0],
+                    y2: latestPoint[1],
+                },
+                style,
+            },
+            // {
+            //     type: "line",
+            //     shape: {
+            //         x1: earliestPoint[0] - halfWidth,
+            //         y1: earliestPoint[1],
+            //         x2: earliestPoint[0] + halfWidth,
+            //         y2: earliestPoint[1],
+            //     },
+            //     style,
+            // },
+            // {
+            //     type: "line",
+            //     shape: {
+            //         x1: latestPoint[0] - halfWidth,
+            //         y1: latestPoint[1],
+            //         x2: latestPoint[0] + halfWidth,
+            //         y2: latestPoint[1],
+            //     },
+            //     style,
+            // },
+        ],
+    };
 };
 
-export const OverviewChartByMinute = ({ visaType }) => {
+export const OverviewChartByDate = ({ visaType }) => {
     const [t] = useTranslation();
     const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
-    const detailSelector = useMemo(() => makeDetailSelectorByVisaType(visaType), [visaType]);
+    const spanSelector = useMemo(() => makeOverviewSpanSelectorByVisaType(visaType), [visaType]);
     const vsFilter = useSelector(state => filterSelector(state));
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        vsFilter.map(embassyCode => dispatch(fetchVisaStatusDetail(visaType, embassyCode)));
-    }, [visaType, vsFilter, dispatch]);
-
-    const [writeTime, availDateLst] = useSelector(state =>
-        mergeDetailData(detailSelector(state), filterSelector(state)),
+    const overviewData = useSelector(state => mergeOverviewData(spanSelector(state), vsFilter));
+    return (
+        <ReactEcharts
+            option={{
+                title: {
+                    text: t("overDateChartTitle"),
+                },
+                legend: {
+                    data: vsFilter.map(embassyCode => t(embassyCode)),
+                },
+                dataZoom,
+                xAxis: {
+                    type: "category",
+                    data: overviewData.map(d => d[1]),
+                },
+                yAxis: {
+                    type: "time",
+                },
+                tooltip: {
+                    trigger: "axis",
+                    formatter: pack => {
+                        const header = `${pack[0].name}<br/>`;
+                        const rangeStr = (earliestDate, latestDate) => {
+                            if (earliestDate === null && latestDate === null) return "/";
+                            const earliestDateStr = getDateFromISOString(earliestDate).join("/");
+                            const latestDateStr = getDateFromISOString(latestDate).join("/");
+                            if (earliestDateStr === latestDateStr) return earliestDateStr;
+                            return `${earliestDateStr} ~ ${latestDateStr}`;
+                        };
+                        const content = pack
+                            .filter(e => e.componentSubType === "custom")
+                            .map(
+                                ({ marker, seriesName, data }) =>
+                                    `${marker}${seriesName}: ${rangeStr(data[1], data[2])}`,
+                            )
+                            .join("<br>");
+                        return header + content;
+                    },
+                },
+                series: vsFilter
+                    .map((embassyCode, index) => [
+                        {
+                            name: t(embassyCode),
+                            type: "line",
+                            data: overviewData.map(d => [d[0], d[index + 2 + vsFilter.length]]),
+                            encode: {
+                                x: [0],
+                                y: [1],
+                            },
+                        },
+                        {
+                            name: t(embassyCode),
+                            type: "custom",
+                            renderItem,
+                            dimensions: [null, "Earliest", "Latest"],
+                            data: overviewData.map(d => [d[0], d[index + 2], d[index + 2 + vsFilter.length]]),
+                            encode: {
+                                x: [0],
+                                y: [1, 2],
+                            },
+                        },
+                    ])
+                    .flat(),
+            }}
+        />
     );
-    return <OverviewChart title={t("overMinuteChartTitle")} writeTime={writeTime} availDateLst={availDateLst} />;
 };
-OverviewChartByMinute.propTypes = {
+OverviewChartByDate.propTypes = {
     visaType: PropTypes.string.isRequired,
 };

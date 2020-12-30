@@ -6,7 +6,7 @@ import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
 import VisaStatusOverviewList from "./VisaStatusOverviewList";
 import EmbassySelector from "./EmbassySelector";
 import "./VisaStatusTabs.less";
-import { OverviewChartByMinute } from "./VisaStatusOverviewChart";
+import { OverviewChartByMinute, OverviewChartByDate } from "./VisaStatusOverviewChart";
 import { setCookie, getCookie } from "../utils/cookie";
 
 const { TabPane } = Tabs;
@@ -49,9 +49,14 @@ export default function VisaStatusTabs() {
                     <SelectOverviewType />
                 </Col>
                 {showChart && (
-                    <Col span={24}>
-                        <OverviewChartByMinute visaType={chosenKey} />
-                    </Col>
+                    <>
+                        <Col span={24}>
+                            <OverviewChartByMinute visaType={chosenKey} />
+                        </Col>
+                        <Col span={24}>
+                            <OverviewChartByDate visaType={chosenKey} />
+                        </Col>
+                    </>
                 )}
                 <Col span={24}>
                     <VisaStatusOverviewList visaType={chosenKey} />
