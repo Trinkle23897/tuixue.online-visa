@@ -113,7 +113,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
                         </Col>
                         <Col xs={{ span: 13 }} md={{ span: 9 }}>
                             <Tag>{`${t("at")} ${
-                                writeTime.length === 1 ? writeTime[0] : getTimeFromUTC(writeTime).join(":")
+                                writeTime.length === 1 ? writeTime : getTimeFromUTC(writeTime).join(":")
                             }`}</Tag>
                         </Col>
                     </Row>
@@ -192,7 +192,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
                             <Col span={12}>{availableDate.join("/")}</Col>
                             <Col span={12}>
                                 <Tag>{`${t("at")} ${
-                                    writeTime.length === 1 ? writeTime : writeTime.slice(3).join(":")
+                                    writeTime.length === 1 ? writeTime : getTimeFromUTC(writeTime).join(":")
                                 }`}</Tag>
                             </Col>
                         </Row>
