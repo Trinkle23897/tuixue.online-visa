@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import ReactEcharts from "echarts-for-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { makeFilterSelectorByVisaType } from "../redux/selectors";
+import { makeFilterSelectorByVisaType, makeDetailSelectorByVisaType } from "../redux/selectors";
 import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
 import { getTimeFromUTC } from "../utils/misc";
 
@@ -116,6 +116,7 @@ const mergeDetailData = (rawData, vsFilter) => {
 export const OverviewChartByMinute = ({ visaType }) => {
     const [t] = useTranslation();
     const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
+    const detailSelector = useMemo(() => makeDetailSelectorByVisaType(visaType), [visaType]);
     const vsFilter = useSelector(state => filterSelector(state));
     const dispatch = useDispatch();
 
@@ -123,7 +124,9 @@ export const OverviewChartByMinute = ({ visaType }) => {
         vsFilter.map(embassyCode => dispatch(fetchVisaStatusDetail(visaType, embassyCode)));
     }, [visaType, vsFilter, dispatch]);
 
-    const [writeTime, availDateLst] = useSelector(state => mergeDetailData(state.visastatusDetail[visaType], vsFilter));
+    const [writeTime, availDateLst] = useSelector(state =>
+        mergeDetailData(detailSelector(state), filterSelector(state)),
+    );
     return <OverviewChart title={t("overMinuteChartTitle")} writeTime={writeTime} availDateLst={availDateLst} />;
 };
 OverviewChartByMinute.propTypes = {

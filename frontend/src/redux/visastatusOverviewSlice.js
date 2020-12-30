@@ -4,16 +4,16 @@ import { getDateFromISOString } from "../utils/misc";
 
 const visastatusOverviewSlice = createSlice({
     name: "visastatusOverview",
-    initialState: { F: [], B: [], O: [], H: [], L: [] },
+    initialState: { today: { F: [], B: [], O: [], H: [], L: [] } },
     reducers: {
         updateOverview: (state, action) => {
-            const { visaType, overviewLst } = action.payload;
-            overviewLst.forEach(overview => {
-                const overviewIdx = state[visaType].findIndex(ov => ov.embassyCode === overview.embassyCode);
+            const { visaType, overviewLstToday } = action.payload;
+            overviewLstToday.forEach(overview => {
+                const overviewIdx = state.today[visaType].findIndex(ov => ov.embassyCode === overview.embassyCode);
                 if (overviewIdx !== -1) {
-                    state[visaType][overviewIdx] = overview;
+                    state.today[visaType][overviewIdx] = overview;
                 } else {
-                    state[visaType].push(overview);
+                    state.today[visaType].push(overview);
                 }
             });
         },
@@ -33,17 +33,20 @@ export const fetchVisaStatusOverview = visaType => async (dispatch, getState) =>
     }
 
     const now = new Date();
+    const past = new Date();
+    past.setDate(now.getDate() - 60);
     try {
-        const vsOverview = await getVisaStatusOverview(visaType, selectedEmb, now, now);
+        const vsOverview = await getVisaStatusOverview(visaType, selectedEmb, past, now);
         if (vsOverview) {
             const { visaStatus } = vsOverview;
-            const overviewLst = visaStatus[0].overview.map(({ embassyCode, earliestDate, latestDate }) => ({
+            console.log(visaType, visaStatus);
+            const overviewLstToday = visaStatus[0].overview.map(({ embassyCode, earliestDate, latestDate }) => ({
                 visaType,
                 embassyCode,
                 earliestDate: getDateFromISOString(earliestDate),
                 latestDate: getDateFromISOString(latestDate),
             }));
-            dispatch(updateOverview({ visaType, overviewLst }));
+            dispatch(updateOverview({ visaType, overviewLstToday }));
         }
     } catch (e) {
         console.error(`In fetchVisaStatusOverview: ${e}`);
