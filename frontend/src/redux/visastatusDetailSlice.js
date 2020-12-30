@@ -16,7 +16,13 @@ const visastatusDetailSlice = createSlice({
 const { reducer, actions } = visastatusDetailSlice;
 export const { updateDeatil } = actions;
 
-export const fetchVisaStatusDetail = (visaType, embassyCode) => async dispatch => {
+export const fetchVisaStatusDetail = (visaType, embassyCode) => async (dispatch, getState) => {
+    const {
+        visastatusDetail: { [visaType]: selectEmb },
+    } = getState();
+    if (embassyCode in selectEmb) {
+        return Promise.resolve();
+    }
     try {
         const vsDetail = await getSingleVisaStatus(visaType, embassyCode, new Date());
         if (vsDetail) {

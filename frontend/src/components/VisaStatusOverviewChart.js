@@ -85,15 +85,14 @@ OverviewChart.propTypes = {
     ),
 };
 
-const mergeDetailData = detailData => {
+const mergeDetailData = (rawData, vsFilter) => {
+    const detailData = vsFilter.map(embassyCode => ({ embassyCode, data: rawData[embassyCode] || [] }));
     let writeTimeAll = [];
-    Object.values(detailData).map(data =>
-        writeTimeAll.push(...data.map(({ writeTime }) => writeTime - (writeTime % 60000))),
-    );
+    detailData.map(({ data }) => writeTimeAll.push(...data.map(({ writeTime }) => writeTime - (writeTime % 60000))));
     writeTimeAll = Array.from(new Set(writeTimeAll));
     writeTimeAll.sort();
     const availDateLst = [];
-    for (const [embassyCode, data] of Object.entries(detailData)) {
+    detailData.map(({ embassyCode, data }) => {
         let dataIndex = 0;
         const availableDates = writeTimeAll.map(writeTimeRef => {
             if (dataIndex >= data.length) return null;
@@ -109,8 +108,8 @@ const mergeDetailData = detailData => {
             }
             return null;
         });
-        availDateLst.push({ embassyCode, availableDates });
-    }
+        return availDateLst.push({ embassyCode, availableDates });
+    });
     return [writeTimeAll, availDateLst];
 };
 
@@ -124,7 +123,7 @@ export const OverviewChartByMinute = ({ visaType }) => {
         vsFilter.map(embassyCode => dispatch(fetchVisaStatusDetail(visaType, embassyCode)));
     }, [visaType, vsFilter, dispatch]);
 
-    const [writeTime, availDateLst] = useSelector(state => mergeDetailData(state.visastatusDetail[visaType]));
+    const [writeTime, availDateLst] = useSelector(state => mergeDetailData(state.visastatusDetail[visaType], vsFilter));
     return <OverviewChart title={t("overMinuteChartTitle")} writeTime={writeTime} availDateLst={availDateLst} />;
 };
 OverviewChartByMinute.propTypes = {
