@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { Row, Col, Button, Tooltip, Space, Collapse, Tag, Modal } from "antd";
+import { Row, Col, Button, Tooltip, Space, Collapse, Tag, Modal, List } from "antd";
 import { MailOutlined, QqOutlined, EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useScreenXS } from "../../hooks";
@@ -15,6 +15,10 @@ const { Panel } = Collapse;
 
 const QQTGSubsModal = ({ qqGroups, tgLink, isModalVisible, setIsModalVisible }) => {
     const { t } = useTranslation();
+    const qqGroupsStr = qqGroups.map((content, index) => ({
+        index,
+        desc: `${t("QQTGModalContentQQ", { index: index + 1 })}${content}`,
+    }));
     return (
         <Modal
             title={t("QQTGModalTitle")}
@@ -29,9 +33,15 @@ const QQTGSubsModal = ({ qqGroups, tgLink, isModalVisible, setIsModalVisible }) 
                 </a>
             </p>
             <p>{t("QQTGModalContentQQDesc")}</p>
-            {qqGroups.map((content, index) => (
-                <p>{`${t("QQTGModalContentQQ", { index: index + 1 })}${content}`}</p>
-            ))}
+            <List
+                itemLayout="vertical"
+                dataSource={qqGroupsStr}
+                renderItem={s => (
+                    <List.Item key={s.index}>
+                        <p>{s.desc}</p>
+                    </List.Item>
+                )}
+            />
         </Modal>
     );
 };
@@ -182,7 +192,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
                             <Col span={12}>{availableDate.join("/")}</Col>
                             <Col span={12}>
                                 <Tag>{`${t("at")} ${
-                                    writeTime.length === 1 ? writeTime[0] : writeTime.slice(3).join(":")
+                                    writeTime.length === 1 ? writeTime : writeTime.slice(3).join(":")
                                 }`}</Tag>
                             </Col>
                         </Row>
@@ -246,7 +256,7 @@ export const OverviewContent = ({ overview }) => {
         [overview],
     );
     const newestVisaStatus = useSelector(state => newestVisaStatueSelector(state));
-    const newest = newestVisaStatus || { writeTime: ["/"], availableDate: ["/"] };
+    const newest = newestVisaStatus || { writeTime: "/", availableDate: ["/"] };
 
     return screenXS ? <ContentCard {...overview} newest={newest} /> : <ContentBar {...overview} newest={newest} />;
 };

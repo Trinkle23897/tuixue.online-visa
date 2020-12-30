@@ -27,7 +27,14 @@ export default function VisaStatus() {
                         xl={{ span: 14, push: 5 }}
                     >
                         <VisaStatusTabs />
-                        <DiscussionEmbed shortname="tuixue-online" />
+                        <DiscussionEmbed
+                            shortname="tuixue-online"
+                            config={{
+                                url: "https://tuixue.online/visa/",
+                                identifier: "tuixue-online",
+                                title: "tuixue-online",
+                            }}
+                        />
                     </Col>
                 </Row>
             </Content>

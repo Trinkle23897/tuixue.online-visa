@@ -80,7 +80,7 @@ OverviewChart.propTypes = {
     availDateLst: PropTypes.arrayOf(
         PropTypes.shape({
             embassyCode: PropTypes.string.isRequired,
-            availableDates: PropTypes.arrayOf(PropTypes.string.isRequired),
+            availableDates: PropTypes.arrayOf(PropTypes.string),
         }),
     ),
 };

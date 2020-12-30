@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 import { List } from "antd";
 import { useSelector } from "react-redux";
 import { makeOverviewDetailSelector } from "../../redux/selectors";
 import { OverviewContent, OverviewHeader } from "./OverviewContent";
-import { overviewAttrProps } from "./overviewPropTypes";
 import "./VisaStatusOverview.less";
 
 export default function VisaStatusOverviewList({ visaType }) {
@@ -24,5 +24,5 @@ export default function VisaStatusOverviewList({ visaType }) {
     );
 }
 VisaStatusOverviewList.propTypes = {
-    visaType: overviewAttrProps.overview,
+    visaType: PropTypes.string.isRequired,
 };

@@ -9,7 +9,7 @@ export const overviewAttrProps = {
 
 export const newestOverviewProps = {
     newest: PropTypes.shape({
-        writeTime: PropTypes.arrayOf(PropTypes.number).isRequired,
+        writeTime: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
         availableDate: PropTypes.arrayOf(PropTypes.string).isRequired,
     }),
 };

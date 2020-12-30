@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { HashLink as Link } from "react-router-hash-link";
 import { Row, Col, Button, Layout, Menu, Popover } from "antd";
-import { MenuOutlined, CloseOutlined, BellOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { IoLanguageOutline } from "react-icons/io5";
 import { useScreenXS } from "../hooks";
@@ -81,33 +81,33 @@ const LanguageButton = () => {
     );
 };
 
-const NotifyButton = () => {
-    const [t] = useTranslation();
-    const checkNotify = () => {
-        try {
-            if (Notification.permission === "granted") {
-                const notification = new Notification(t("notificationInitTitle"), {
-                    body: t("notificationInitContent"),
-                });
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        const notification = new Notification(t("notificationInitTitle"), {
-                            body: t("notificationInitContent"),
-                        });
-                    } else {
-                        alert("still not enable, TODO: https");
-                    }
-                });
-            } else {
-                alert(t("notificationBlocked"));
-            }
-        } catch (e) {
-            alert(t("notificationNoSupport"));
-        }
-    };
-    return <Button size="large" shape="circle" icon={<BellOutlined />} onClick={() => checkNotify()} />;
-};
+// const NotifyButton = () => {
+//     const [t] = useTranslation();
+//     const checkNotify = () => {
+//         try {
+//             if (Notification.permission === "granted") {
+//                 const notification = new Notification(t("notificationInitTitle"), {
+//                     body: t("notificationInitContent"),
+//                 });
+//             } else if (Notification.permission !== "denied") {
+//                 Notification.requestPermission().then(permission => {
+//                     if (permission === "granted") {
+//                         const notification = new Notification(t("notificationInitTitle"), {
+//                             body: t("notificationInitContent"),
+//                         });
+//                     } else {
+//                         alert("still not enable, TODO: https");
+//                     }
+//                 });
+//             } else {
+//                 alert(t("notificationBlocked"));
+//             }
+//         } catch (e) {
+//             alert(t("notificationNoSupport"));
+//         }
+//     };
+//     return <Button size="large" shape="circle" icon={<BellOutlined />} onClick={() => checkNotify()} />;
+// };
 
 export default function Nav() {
     const screenXS = useScreenXS();
