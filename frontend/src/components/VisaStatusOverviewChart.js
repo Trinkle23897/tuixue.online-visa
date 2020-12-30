@@ -188,6 +188,7 @@ export const OverviewChartByDate = ({ visaType }) => {
                 },
                 legend: {
                     data: vsFilter.map(embassyCode => t(embassyCode)),
+                    selected: Object.fromEntries(vsFilter.map((embassyCode, index) => [t(embassyCode), index === 0])),
                 },
                 dataZoom,
                 xAxis: {
