@@ -29,7 +29,20 @@ CRAWLER_API = {
 }
 WAIT_TIME = {'register': 50, 'refresh': 7}
 
-CD_MINUTES = 5
+CD_HOURS = 4
+CD_LIST = [
+    'B-成都',
+    'O-成都',
+    'O-福冈',
+    'O-札幌',
+    'L-福冈',
+    'L-沈阳',
+    'L-成都',
+    'H-福冈',
+    'H-成都',
+    'H-沈阳',
+    'F-成都',
+]
 
 SESSION_UPDATE_QUEUE = Queue()
 
@@ -113,7 +126,7 @@ VISA_TYPE_DETAILS = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L
 
 # CGI/AIS_LOCATION are the parameters sent to crawler backend to retrieve session data
 CGI_LOCATION = [emb[0] for emb in EMBASSY_ATTR if emb[3] == 'cgi']
-AIS_LOCATION = ['en-gb', 'en-ca', 'en-ae', 'en-rs', 'en-mx', 'en-fr', 'en-ec', 'en-tr', 'en-gr', 'en-co', 'en-bb']
+AIS_LOCATION = list(set(emb[8] for emb in EMBASSY_ATTR if emb[8] is not None))
 SYS_LOCATION = {'cgi': CGI_LOCATION, 'ais': AIS_LOCATION}
 
 # filter of AIS visa data retrieved from cralwer backend by city
