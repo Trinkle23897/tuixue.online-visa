@@ -1,4 +1,14 @@
-export const embassyAttributeLst = ["nameCn", "nameEn", "code", "sys", "region", "continent", "country", "tzInfo", "aisCode"];
+export const embassyAttributeLst = [
+    "nameCn",
+    "nameEn",
+    "code",
+    "sys",
+    "region",
+    "continent",
+    "country",
+    "tzInfo",
+    "aisCode",
+];
 export const embassyAttributeIdx = Object.fromEntries(embassyAttributeLst.map((attr, idx) => [attr, idx]));
 
 /**
