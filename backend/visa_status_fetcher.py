@@ -255,6 +255,17 @@ class VisaFetcher:
 
                 if result['code'] != 0:  # code == 0 stands for success in crawler api code
                     LOGGER.warning('%s, %s, %s, FAILED - Session Expired', now, visa_type, location)
+
+                    # session expired will trigger database update using the last successful fetch result
+                    embassy = G.USEmbassy.get_embassy_by_loc(location)
+                    latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
+                    avai_dt = latest_written[0]['available_date']
+                    cls.save_fetched_data(
+                        visa_type,
+                        location,
+                        [0, 0, 0] if avai_dt is None else [avai_dt.year, avai_dt.month, avai_dt.day]
+                    )
+
                     SESSION_CACHE.produce_new_session_request(visa_type, location, session)
                     return
 
