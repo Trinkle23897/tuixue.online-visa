@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { makeFilterSelectorByVisaType } from "../redux/selectors";
 import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
-import { getDateFromISOString, getTimeFromUTC } from "../utils/misc";
+import { getTimeFromUTC } from "../utils/misc";
 
 const dataZoom = [
     {
@@ -86,30 +86,31 @@ OverviewChart.propTypes = {
 };
 
 const mergeDetailData = detailData => {
-    console.log(detailData);
     let writeTimeAll = [];
-    for (const [embassyCode, data] of Object.entries(detailData)) {
-        writeTimeAll.push(...data.map(({ writeTime }) => writeTime - (writeTime % 60000)));
-    }
+    Object.values(detailData).map(data =>
+        writeTimeAll.push(...data.map(({ writeTime }) => writeTime - (writeTime % 60000))),
+    );
     writeTimeAll = Array.from(new Set(writeTimeAll));
     writeTimeAll.sort();
-    console.log(writeTimeAll);
     const availDateLst = [];
     for (const [embassyCode, data] of Object.entries(detailData)) {
         let dataIndex = 0;
         const availableDates = writeTimeAll.map(writeTimeRef => {
             if (dataIndex >= data.length) return null;
             const { writeTime, availableDate } = data[dataIndex];
-            const writeTimeData = writeTime - (writeTime % 60000);
+            const writeTimeData = writeTime - (writeTime % 60000); // exclude SS
             if (writeTimeRef === writeTimeData) {
                 dataIndex += 1;
                 return availableDate.join("/");
+            }
+            if (dataIndex > 0 && writeTime - writeTimeRef < 60000 * 5) {
+                // within 5 minutes, automatically fill the gap
+                return data[dataIndex - 1].availableDate.join("/");
             }
             return null;
         });
         availDateLst.push({ embassyCode, availableDates });
     }
-    console.log(availDateLst);
     return [writeTimeAll, availDateLst];
 };
 
