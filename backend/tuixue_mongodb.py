@@ -2,10 +2,9 @@
     pymongo gurantees that the MongoClient is thread-safe
 """
 
-import enum
 import os
-import pymongo
 import util
+import pymongo
 from collections import defaultdict
 from tuixue_typing import VisaType, EmbassyCode
 from datetime import datetime, timedelta, timezone
@@ -540,20 +539,23 @@ class VisaStatus:
                 '$facet': {
                     '{}{}'.format(tgt['visa_type'], tgt['embassy_code']): single_target_query(**tgt)
                     for tgt in overview_target
-                }, 
+                },
             },
             {
                 '$project': {
                     'facet_result': {
                         '$setUnion': ['${}{}'.format(tgt['visa_type'], tgt['embassy_code']) for tgt in overview_target]
-                    ,}
+                    }
                 },
             },
             {'$unwind': '$facet_result'},
             {'$replaceRoot': {'newRoot': '$facet_result'}}
         ]
         overview_embtz = list(cls.overview.aggregate(query))
-        overview_utc = [{**ov, 'write_date': embtz_utc_map[ov['embassy_code']][ov['write_date']]} for ov in overview_embtz]
+        overview_utc = [{
+            **ov,
+            'write_date': embtz_utc_map[ov['embassy_code']][ov['write_date']],
+        } for ov in overview_embtz]
 
         ov_groupby_date = defaultdict(list)
         for overview in overview_utc:
@@ -674,8 +676,9 @@ class VisaStatus:
         embassy = USEmbassy.get_embassy_by_code(embassy_code)
         interval = CGI_FETCH_TIME_INTERVAL[visa_type] if embassy.sys == 'cgi' else AIS_FETCH_TIME_INTERVAL[visa_type]
         interval *= 1000
+
         def convert(dt: datetime):
-            return int(dt.replace(second=0, microsecond=0, tzinfo=None).timestamp() * 1000)
+            return int(dt.replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000)
 
         available_dates = [{
             'write_time': convert(i['write_time']),

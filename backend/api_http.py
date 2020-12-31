@@ -118,8 +118,8 @@ def get_visa_status_by_visa_type_and_embassy(
         'visa_type': visa_type,
         'embassy_code': embassy_code,
         'time_range': [
-            (timestamp - timedelta(days=1)).replace(second=0, microsecond=0, tzinfo=None).timestamp() * 1000,
-            timestamp.replace(second=0, microsecond=0, tzinfo=None).timestamp() * 1000,
+            (timestamp - timedelta(days=1)).replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000,
+            timestamp.replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000,
         ],
         'available_dates': []
     }
