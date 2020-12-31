@@ -10,6 +10,7 @@ from tuixue_typing import VisaType, EmbassyCode
 from datetime import datetime, timedelta, timezone
 from typing import Union, List, Tuple, Optional, Dict
 from global_var import USEmbassy, VISA_TYPES, MONGO_CONFIG
+from pymongo import database, collection
 
 EmailSubscription = NewVisaStatus = Tuple[VisaType, EmbassyCode, datetime]
 EmailSubscriptionNoDate = NewVisaStatusNoDate = Tuple[VisaType, EmbassyCode]  # seeking for a better name...
@@ -17,7 +18,7 @@ EmailSubscriptionNoDate = NewVisaStatusNoDate = Tuple[VisaType, EmbassyCode]  # 
 MONGO_CLIENT = None
 
 
-def connect() -> pymongo.database.Database:
+def connect() -> database.Database:
     """ Connect to the local MongoDB server. Return a handle of tuixue database."""
     global MONGO_CLIENT
     if MONGO_CLIENT is None:  # keep one alive connection will be enough (and preferred)
@@ -27,7 +28,7 @@ def connect() -> pymongo.database.Database:
     return database
 
 
-def get_collection(collection_name: str) -> pymongo.collection.Collection:
+def get_collection(collection_name: str) -> collection.Collection:
     """ Return a MongoDB collection from the established client database."""
     db = connect()
     return db.get_collection(collection_name)
@@ -464,6 +465,106 @@ class VisaStatus:
         return list(cursor)  # tabular data on the fly
 
     @classmethod
+    def find_visa_status_overview_embtz(
+        cls,
+        visa_type: Union[VisaType, List[VisaType]],
+        embassy_code: Union[EmbassyCode, List[EmbassyCode]],
+        since_utc: datetime,
+        to_utc: datetime,
+    ):
+        """ This method fix the problem of `cls.find_visa_status_overview` as the previous method doesn't
+            convert the querying date into the embassy timezone.
+        """
+
+        dt_to_date = lambda dt: dt.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+        utc_to_embtz = lambda dt, embtz: dt_to_date(dt.astimezone(embtz))
+
+        # construct the sub-pipeline for mongodb aggregation `facet` stage
+        single_target_query = lambda visa_type, embassy_code, date_range: [
+            {'$match': {'visa_type': visa_type, 'embassy_code': embassy_code}},
+            {
+                '$project': {
+                    'visa_type': '$visa_type',
+                    'embassy_code': '$embassy_code',
+                    'overview': {
+                        '$filter': {
+                            'input': '$overview',
+                            'as': 'ov',
+                            'cond': {'$in': ['$$ov.write_date', date_range]}
+                        }
+                    }
+                }
+            },
+            {'$unwind': '$overview'},
+            {
+                '$project': {
+                    '_id': False,
+                    'visa_type': '$visa_type',
+                    'embassy_code': '$embassy_code',
+                    'write_date': '$overview.write_date',
+                    'earliest_date': '$overview.earliest_date',
+                    'latest_date': '$overview.latest_date',
+                }
+            },
+        ]
+
+        if not isinstance(visa_type, list):
+            visa_type = [visa_type]
+        if not isinstance(embassy_code, list):
+            embassy_code = [embassy_code]
+
+        overview_target = [
+            {
+                'visa_type': vt,
+                'embassy_code': emb.code,
+                'date_range': [
+                    utc_to_embtz(since_utc, emb.timezone) + timedelta(days=d)
+                    for d in range(
+                        (utc_to_embtz(to_utc, emb.timezone) - utc_to_embtz(since_utc, emb.timezone)).days + 1
+                    )
+                ],
+            } for vt in visa_type for emb in [USEmbassy.get_embassy_by_code(ec) for ec in embassy_code]
+        ]
+
+        utc_date_range = [
+            dt_to_date(since_utc) + timedelta(days=d)
+            for d in range((dt_to_date(to_utc) - dt_to_date(since_utc)).days + 1)
+        ]
+
+        embtz_utc_map = {tgt['embassy_code']: dict(zip(tgt['date_range'], utc_date_range)) for tgt in overview_target}
+
+        query = [
+            {
+                '$facet': {
+                    '{}{}'.format(tgt['visa_type'], tgt['embassy_code']): single_target_query(**tgt)
+                    for tgt in overview_target
+                }, 
+            },
+            {
+                '$project': {
+                    'facet_result': {
+                        '$setUnion': ['${}{}'.format(tgt['visa_type'], tgt['embassy_code']) for tgt in overview_target]
+                    ,}
+                },
+            },
+            {'$unwind': '$facet_result'},
+            {'$replaceRoot': {'newRoot': '$facet_result'}}
+        ]
+        overview_embtz = list(cls.overview.aggregate(query))
+        overview_utc = [{**ov, 'write_date': embtz_utc_map[ov['embassy_code']][ov['write_date']]} for ov in overview_embtz]
+
+        ov_groupby_date = defaultdict(list)
+        for overview in overview_utc:
+            write_date = overview.pop('write_date')
+            ov_groupby_date[write_date].append(overview)
+
+        return sorted(
+            [{'date': write_date, 'overview': overview} for write_date, overview in ov_groupby_date.items()],
+            key=lambda ov: ov['date'],
+            reverse=True,
+        )
+
+    @classmethod
     def find_latest_written_visa_status(
         cls,
         visa_type: Union[VisaType, List[VisaType]],
@@ -816,5 +917,17 @@ def simple_test_subscription():
 if __name__ == "__main__":
     # manual test
     # simple_test_visa_status()
-    simple_test_subscription()
+    # simple_test_subscription()
+    from pprint import pprint  # SORRY
+
+    start = datetime.now()
+    result = VisaStatus.find_visa_status_overview_embtz(
+        ['F', 'H', 'B', 'O', 'L'],
+        [emb.code for emb in USEmbassy.get_embassy_lst()],
+        datetime.now(timezone.utc) - timedelta(days=60),
+        datetime.now(timezone.utc),
+    )
+    end = datetime.now()
+    # pprint(result)
+    print('Used seconds: ', (end - start).total_seconds())
     pass

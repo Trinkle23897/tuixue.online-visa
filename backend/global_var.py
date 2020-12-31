@@ -151,17 +151,17 @@ class USEmbassy:
         return [cls(*embassy_attr) for embassy_attr in EMBASSY_ATTR]
 
     @classmethod
-    def get_embassy_by_loc(cls, loc: str) -> Optional['USEbassy']:
+    def get_embassy_by_loc(cls, loc: str) -> Optional['USEmbassy']:
         """ Return an USEbassy object by the location property."""
         return next((emb for emb in cls.get_embassy_lst() if emb.location == loc), None)
 
     @classmethod
-    def get_embassy_by_code(cls, code: str) -> Optional['USEbassy']:
+    def get_embassy_by_code(cls, code: str) -> Optional['USEmbassy']:
         """ Return an USEbassy object by the code property."""
         return next((emb for emb in cls.get_embassy_lst() if emb.code == code), None)
 
     @classmethod
-    def get_embassy_by_ais_code(cls, ais_code: str) -> List[Optional['USEbassy']]:
+    def get_embassy_by_ais_code(cls, ais_code: str) -> List[Optional['USEmbassy']]:
         return [emb for emb in cls.get_embassy_lst() if emb.ais_code == ais_code]
 
     @classmethod
