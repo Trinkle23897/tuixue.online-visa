@@ -34,31 +34,26 @@ const dataZoom = [
 ];
 
 const mergeDetailData = (rawData, vsFilter) => {
-    const detailData = vsFilter.map(embassyCode => ({ embassyCode, data: rawData[embassyCode] || [] }));
-    let writeTimeAll = [];
-    detailData.map(({ data }) => writeTimeAll.push(...data.map(({ writeTime }) => writeTime - (writeTime % 60000))));
-    writeTimeAll = Array.from(new Set(writeTimeAll));
-    writeTimeAll.sort();
-    const availDateLst = [];
-    detailData.map(({ embassyCode, data }) => {
+    const delta = 60000;
+    const { timeRange, detail } = rawData;
+    if (timeRange.length === 0) return [[], []];
+    const [tsStart, tsEnd] = timeRange;
+    const writeTime = [];
+    for (let t = tsStart; t <= tsEnd; t += delta) writeTime.push(t);
+    const availDateLst = vsFilter.map(embassyCode => {
+        const availableDates = detail[embassyCode];
         let dataIndex = 0;
-        const availableDates = writeTimeAll.map(writeTimeRef => {
-            if (dataIndex >= data.length) return null;
-            const { writeTime, availableDate } = data[dataIndex];
-            const writeTimeData = writeTime - (writeTime % 60000); // exclude SS
-            if (writeTimeRef === writeTimeData) {
+        let current = null;
+        const avaDates = writeTime.map(t => {
+            if (dataIndex < availableDates.length && availableDates[dataIndex].writeTime === t) {
+                current = availableDates[dataIndex].availableDate;
                 dataIndex += 1;
-                return availableDate.join("/");
             }
-            if (dataIndex > 0 && writeTime - writeTimeRef < 60000 * 5) {
-                // within 5 minutes, automatically fill the gap
-                return data[dataIndex - 1].availableDate.join("/");
-            }
-            return null;
+            return current === null ? null : current.join("/");
         });
-        return availDateLst.push({ embassyCode, availableDates });
+        return { embassyCode, availableDates: avaDates };
     });
-    return [writeTimeAll, availDateLst];
+    return [writeTime, availDateLst];
 };
 
 const mergeOverviewData = (rawData, vsFilter) =>
@@ -85,9 +80,8 @@ export const OverviewChartByMinute = ({ visaType }) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        vsFilter.map(embassyCode => dispatch(fetchVisaStatusDetail(visaType, embassyCode)));
+        dispatch(fetchVisaStatusDetail(visaType, vsFilter));
     }, [visaType, vsFilter, dispatch]);
-
     const [writeTime, availDateLst] = useSelector(state =>
         mergeDetailData(detailSelector(state), filterSelector(state)),
     );
@@ -150,26 +144,6 @@ const renderItem = (params, api) => {
                 },
                 style,
             },
-            // {
-            //     type: "line",
-            //     shape: {
-            //         x1: earliestPoint[0] - halfWidth,
-            //         y1: earliestPoint[1],
-            //         x2: earliestPoint[0] + halfWidth,
-            //         y2: earliestPoint[1],
-            //     },
-            //     style,
-            // },
-            // {
-            //     type: "line",
-            //     shape: {
-            //         x1: latestPoint[0] - halfWidth,
-            //         y1: latestPoint[1],
-            //         x2: latestPoint[0] + halfWidth,
-            //         y2: latestPoint[1],
-            //     },
-            //     style,
-            // },
         ],
     };
 };

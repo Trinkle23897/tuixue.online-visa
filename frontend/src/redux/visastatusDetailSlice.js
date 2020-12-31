@@ -1,14 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getSingleVisaStatus } from "../services";
+import { getDetailVisaStatus } from "../services";
 import { getDateFromISOString } from "../utils/misc";
 
 const visastatusDetailSlice = createSlice({
     name: "visastatusDetail",
-    initialState: { F: {}, B: {}, O: {}, H: {}, L: {} },
+    initialState: {
+        F: { timeRange: [], detail: {} },
+        B: { timeRange: [], detail: {} },
+        H: { timeRange: [], detail: {} },
+        O: { timeRange: [], detail: {} },
+        L: { timeRange: [], detail: {} },
+    },
     reducers: {
         updateDeatil: (state, action) => {
-            const { visaType, embassyCode, availableDates } = action.payload;
-            state[visaType][embassyCode] = availableDates;
+            const { visaType, timeRange, detail } = action.payload;
+            state[visaType].timeRange = timeRange;
+            detail.forEach(({ embassyCode, availableDates }) => {
+                state[visaType].detail[embassyCode] = availableDates;
+            });
         },
     },
 });
@@ -16,22 +25,20 @@ const visastatusDetailSlice = createSlice({
 const { reducer, actions } = visastatusDetailSlice;
 export const { updateDeatil } = actions;
 
-export const fetchVisaStatusDetail = (visaType, embassyCode) => async (dispatch, getState) => {
-    const {
-        visastatusDetail: { [visaType]: selectEmb },
-    } = getState();
-    if (embassyCode in selectEmb) {
-        return Promise.resolve();
-    }
+export const fetchVisaStatusDetail = (visaType, embassyCode) => async dispatch => {
+    if (Array.isArray(embassyCode) && embassyCode.length === 0) return Promise.resolve();
     try {
-        const vsDetail = await getSingleVisaStatus(visaType, embassyCode, new Date());
+        const vsDetail = await getDetailVisaStatus(visaType, embassyCode, new Date());
         if (vsDetail) {
-            const { availableDates: avaiDates } = vsDetail;
-            const availableDates = avaiDates.map(({ writeTime, availableDate }) => ({
-                writeTime,
-                availableDate: availableDate === null ? null : getDateFromISOString(availableDate),
+            const { timeRange, detail: rawDetail } = vsDetail;
+            const detail = rawDetail.map(({ embassyCode: embassyCodeSingle, availableDates }) => ({
+                embassyCode: embassyCodeSingle,
+                availableDates: availableDates.map(({ writeTime, availableDate }) => ({
+                    writeTime,
+                    availableDate: availableDate === null ? null : getDateFromISOString(availableDate),
+                })),
             }));
-            dispatch(updateDeatil({ visaType, embassyCode, availableDates }));
+            dispatch(updateDeatil({ visaType, timeRange, detail }));
         }
     } catch (e) {
         console.error(`In fetchVisaStatusDetail: ${e}`);

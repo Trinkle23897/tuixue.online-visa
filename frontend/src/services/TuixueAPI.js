@@ -4,8 +4,8 @@ import * as tp from "./typeCheck";
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 const metadata = "/visastatus/meta";
 const overview = "/visastatus/overview";
+const detail = "/visastatus/detail";
 const latest = "/ws/visastatus/latest";
-const singleStatus = (visaType, embassyCode) => `/visastatus/${visaType}/${embassyCode}`;
 
 const HEADERS = {
     Accept: "application/json",
@@ -57,7 +57,7 @@ export const getVisaStatusMetadata = async () => {
 /**
  * GET `${API_BASE_URL}/visastatus/overview`
  *
- * Get visa status' `{earliest_date, latest_date}` of a givenv `date`
+ * Get visa status' `{earliest_date, latest_date}` of a given `date`
  * @param {Array|string} visaType Array of string standing for types of Visa.
  * @param {Array|string} embassyCode Array of string standing for a unqiue U.S. Embassy/Consulate.
  * @param {Date} since Datetime that stands for the start date of retrieving data.
@@ -148,35 +148,37 @@ export const getLatestVisaStatus = async (visaType, embassyCode) => {
 };
 
 /**
- * Return an WebSocket connected to the backend WebSocket endpoint.
- */
-export const openLatestVisaStatusSocket = () => {
-    console.log("Returning a new WebSocket connection");
-    return new WebSocket(constructURL({ path: latest, protocol: "ws" }));
-};
-
-/**
- * GET `${API_BASE_URL}/visastatus/${visaType}/${embassyCode}`
+ * GET `${API_BASE_URL}/visastatus/detail`
  *
- * Get the full fetched records of a `(visaType, embassyCode)` pair.
+ * Get the detail records of `(visaType, embassyCode)`.
  * @param {string} visaType A single visaType string
- * @param {string} embassyCode A single embassyCode string
- * @param {Date} writeDate Date of the records for a `(visaType, embassyCode)` group
- * @return {Object} An object with shape of `{visa_type, embassy_code, write_date, available_dates}`
+ * @param {Array|string} embassyCode A single embassyCode string
+ * @param {Date} timestamp Date of the records for a `(visaType, embassyCode)` group
+ * @return {Object} An object with shape of `{visa_type, embassy_code, time_range, detail}`
  */
-export const getSingleVisaStatus = async (visaType, embassyCode, writeDate) => {
+export const getDetailVisaStatus = async (visaType, embassyCode, timestamp) => {
+    if (!visaType || !embassyCode) {
+        throw new Error(`visaTypes: ${visaType} or embassyCodes ${embassyCode} are not valid.`);
+    }
+    const embassyCodeLst = Array.isArray(embassyCode) ? embassyCode : [embassyCode];
     if (!tp.checkVisaType(visaType)) {
         throw new Error(`In getSingleVisaStatus: received invalid visaType: ${visaType}`);
     }
-    if (!tp.checkEmbassyCode(embassyCode)) {
+    if (!tp.checkEmbassyCodeLst(embassyCodeLst)) {
         throw new Error(`In getSingleVisaStatus: received invalid embassyCode: ${embassyCode}`);
     }
-    if (!tp.checkDateObj(writeDate)) {
-        throw new Error(`In getSingleVisaStatus: received invalid writeDate: ${writeDate}`);
+    if (!tp.checkDateObj(timestamp)) {
+        throw new Error(`In getSingleVisaStatus: received invalid timestamp: ${timestamp}`);
     }
 
-    const path = singleStatus(visaType, embassyCode);
-    const url = constructURL({ path, query: { write_date: writeDate.toISOString().slice(0, -1) } });
+    const url = constructURL({
+        path: detail,
+        query: {
+            visa_type: visaType,
+            embassy_code: embassyCode,
+            timestamp: timestamp.toISOString().slice(0, -1),
+        },
+    });
 
     let res;
     let responseJson;
@@ -188,4 +190,12 @@ export const getSingleVisaStatus = async (visaType, embassyCode, writeDate) => {
     }
 
     return responseJson || null;
+};
+
+/**
+ * Return an WebSocket connected to the backend WebSocket endpoint.
+ */
+export const openLatestVisaStatusSocket = () => {
+    console.log("Returning a new WebSocket connection");
+    return new WebSocket(constructURL({ path: latest, protocol: "ws" }));
 };
