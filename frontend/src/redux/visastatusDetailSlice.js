@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getSingleVisaStatus } from "../services";
-import { getDateFromISOString, getUTCFromISOString } from "../utils/misc";
+import { getDateFromISOString } from "../utils/misc";
 
 const visastatusDetailSlice = createSlice({
     name: "visastatusDetail",
@@ -28,8 +28,8 @@ export const fetchVisaStatusDetail = (visaType, embassyCode) => async (dispatch,
         if (vsDetail) {
             const { availableDates: avaiDates } = vsDetail;
             const availableDates = avaiDates.map(({ writeTime, availableDate }) => ({
-                writeTime: getUTCFromISOString(writeTime),
-                availableDate: getDateFromISOString(availableDate),
+                writeTime,
+                availableDate: availableDate === null ? null : getDateFromISOString(availableDate),
             }));
             dispatch(updateDeatil({ visaType, embassyCode, availableDates }));
         }
