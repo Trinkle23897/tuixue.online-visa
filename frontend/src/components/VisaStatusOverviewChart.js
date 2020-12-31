@@ -10,6 +10,7 @@ import {
 } from "../redux/selectors";
 import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
 import { getTimeFromUTC, getDateFromISOString } from "../utils/misc";
+import { useScreenXS } from "../hooks";
 
 const dataZoom = [
     {
@@ -74,6 +75,7 @@ const mergeOverviewData = (rawData, vsFilter) =>
 
 export const OverviewChartByMinute = ({ visaType }) => {
     const [t] = useTranslation();
+    const screenXS = useScreenXS();
     const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
     const detailSelector = useMemo(() => makeDetailSelectorByVisaType(visaType), [visaType]);
     const vsFilter = useSelector(state => filterSelector(state));
@@ -89,7 +91,7 @@ export const OverviewChartByMinute = ({ visaType }) => {
         <ReactEcharts
             option={{
                 title: {
-                    text: t("overMinuteChartTitle"),
+                    text: screenXS ? "" : t("overMinuteChartTitle"),
                 },
                 xAxis: {
                     type: "category",
@@ -104,7 +106,7 @@ export const OverviewChartByMinute = ({ visaType }) => {
                 tooltip: {
                     trigger: "axis",
                     formatter: pack => {
-                        const header = `${pack[0].name}<br/>`;
+                        const header = `${t("overMinuteChartTitle")}: ${pack[0].name}<br/>`;
                         const content = pack
                             .map(({ marker, seriesName, data }) => `${marker}${seriesName}: ${data}`)
                             .join("<br>");
@@ -150,6 +152,7 @@ const renderItem = (params, api) => {
 
 export const OverviewChartByDate = ({ visaType }) => {
     const [t] = useTranslation();
+    const screenXS = useScreenXS();
     const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
     const spanSelector = useMemo(() => makeOverviewSpanSelectorByVisaType(visaType), [visaType]);
     const vsFilter = useSelector(state => filterSelector(state));
@@ -158,7 +161,7 @@ export const OverviewChartByDate = ({ visaType }) => {
         <ReactEcharts
             option={{
                 title: {
-                    text: t("overDateChartTitle"),
+                    text: screenXS ? "" : t("overDateChartTitle"),
                 },
                 legend: {
                     data: vsFilter.map(embassyCode => t(embassyCode)),
@@ -175,7 +178,7 @@ export const OverviewChartByDate = ({ visaType }) => {
                 tooltip: {
                     trigger: "axis",
                     formatter: pack => {
-                        const header = `${pack[0].name}<br/>`;
+                        const header = `${t("overDateChartTitle")}: ${pack[0].name}<br/>`;
                         const rangeStr = (earliestDate, latestDate) => {
                             if (earliestDate === null && latestDate === null) return "/";
                             const earliestDateStr = getDateFromISOString(earliestDate).join("/");
