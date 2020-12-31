@@ -41,7 +41,7 @@ const mergeDetailData = (rawData, vsFilter) => {
     const writeTime = [];
     for (let t = tsStart; t <= tsEnd; t += delta) writeTime.push(t);
     const availDateLst = vsFilter.map(embassyCode => {
-        const availableDates = detail[embassyCode];
+        const availableDates = detail[embassyCode] || [];
         let dataIndex = 0;
         let current = null;
         const avaDates = writeTime.map(t => {
