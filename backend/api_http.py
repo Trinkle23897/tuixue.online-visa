@@ -101,34 +101,37 @@ def get_visa_status_overview(
     }
 
 
-@app.get('/visastatus/{visa_type}/{embassy_code}')
-def get_visa_status_by_visa_type_and_embassy(
-    visa_type: VisaType,
-    embassy_code: EmbassyCode,
+@app.get('/visastatus/detail')
+def get_visa_status_detail(
+    visa_type: VisaType = Query(...),
+    embassy_code: List[EmbassyCode] = Query(...),
+    timestamp: Optional[datetime] = datetime.now(timezone.utc),
 ):
     """ Return all of the historical data fetched for a given `(visa_type, embassy_code)` pair.
         If a given `since` or `or` date query is given, the historical data will be truncated to
         the specified dates.
-        It's noteworthy that this endpoint consume a huge amount of resource in backend when `since`
-        and `to` date range are too large. Use with caution.
     """
-    timestamp = datetime.now(timezone.utc)
-
-    empty_record = {
+    if not isinstance(embassy_code, list):
+        embassy_code = [embassy_code]
+    embassy_code = list(set(embassy_code))
+    time_range = [
+        int((timestamp - timedelta(days=1)).replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000),
+        int(timestamp.replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000),
+    ]
+    detail = []
+    for e in embassy_code:
+        single_result = DB.VisaStatus.find_visa_status_past24h_turning_point(visa_type, e, timestamp)
+        if single_result:
+            single_result = single_result['available_dates']
+        else:
+            single_result = [{'write_time': time_range[0], 'available_date': None}]
+        detail.append({'embassy_code': e, 'available_dates': single_result})
+    return {
         'visa_type': visa_type,
         'embassy_code': embassy_code,
-        'time_range': [
-            (timestamp - timedelta(days=1)).replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000,
-            timestamp.replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000,
-        ],
-        'available_dates': []
+        'time_range': time_range,
+        'detail': detail,
     }
-    hist_visa_status = (
-        DB.VisaStatus.find_visa_status_past24h_turning_point(visa_type, embassy_code, timestamp) or
-        empty_record
-    )
-
-    return hist_visa_status
 
 
 @app.post('/subscribe/email/{step}')
