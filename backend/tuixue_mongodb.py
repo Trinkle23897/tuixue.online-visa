@@ -11,6 +11,7 @@ from tuixue_typing import VisaType, EmbassyCode
 from datetime import datetime, timedelta, timezone
 from typing import Union, List, Tuple, Optional, Dict
 from global_var import USEmbassy, VISA_TYPES, MONGO_CONFIG
+from global_var import AIS_FETCH_TIME_INTERVAL, CGI_FETCH_TIME_INTERVAL
 from pymongo import database, collection
 
 EmailSubscription = NewVisaStatus = Tuple[VisaType, EmbassyCode, datetime]
@@ -670,27 +671,39 @@ class VisaStatus:
         visa_status = cls.find_visa_status_past24h(visa_type, embassy_code, timestamp)
         if visa_status is None:
             return
+        embassy = USEmbassy.get_embassy_by_code(embassy_code)
+        interval = CGI_FETCH_TIME_INTERVAL[visa_type] if embassy.sys == 'cgi' else AIS_FETCH_TIME_INTERVAL[visa_type]
+        interval *= 1000
+        def convert(dt: datetime):
+            return int(dt.replace(second=0, microsecond=0, tzinfo=None).timestamp() * 1000)
 
-        ts_start, ts_end = visa_status['time_range']
-        ts_start: datetime = ts_start.replace(second=0, microsecond=0, tzinfo=None)
-        ts_end: datetime = ts_end.replace(second=0, microsecond=0, tzinfo=None)
-        time_range = [ts_start + timedelta(minutes=m) for m in range(int((ts_end - ts_start).total_seconds() // 60) + 1)]
-
-        available_dates = {
-            adt['write_time'].replace(second=0, microsecond=0, tzinfo=None): adt['available_date']
-            for adt in visa_status['available_dates']
-        }
-        filled_available_dates = [
-            {'write_time': ts, 'available_date': available_dates.get(ts, None)} for ts in time_range
-        ]
-        purified_available_dates = [
-            {**adt, 'write_time': int(adt['write_time'].timestamp() * 1000)} for i, adt in enumerate(filled_available_dates)
-            if i == 0 or adt['available_date'] != filled_available_dates[i - 1]['available_date']
-        ]
+        available_dates = [{
+            'write_time': convert(i['write_time']),
+            'available_date': i['available_date'],
+        } for i in visa_status['available_dates']]
+        ts_start, ts_end = list(map(convert, visa_status['time_range']))
+        purified_available_dates = []
+        first_dp = available_dates[0]
+        if first_dp['write_time'] - ts_start > 1:
+            purified_available_dates = [{'write_time': ts_start, 'available_date': None}]
+        for i, (prev_dp, next_dp) in enumerate(zip(available_dates[:-1], available_dates[1:])):
+            if i == 0:
+                purified_available_dates.append(prev_dp)
+            if next_dp['write_time'] - prev_dp['write_time'] <= interval:
+                if prev_dp['available_date'] == next_dp['available_date']:
+                    continue
+                else:
+                    purified_available_dates.append(next_dp)
+            else:
+                purified_available_dates.append({'write_time': prev_dp['write_time'] + 60000, 'available_date': None})
+                purified_available_dates.append(next_dp)
+        last_dp = available_dates[-1]
+        if ts_end - last_dp['write_time'] > interval:
+            purified_available_dates.append({'write_time': last_dp['write_time'] + 60000, 'available_date': None})
 
         return {
             **visa_status,
-            'time_range': [int(ts_start.timestamp() * 1000), int(ts_end.timestamp() * 1000)],
+            'time_range': [ts_start, ts_end],
             'available_dates': purified_available_dates,
         }
 
