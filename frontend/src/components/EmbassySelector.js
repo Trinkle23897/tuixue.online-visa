@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { updateFilterAndFetch } from "../redux/visastatusFilterSlice";
 import { makeFilterSelectorByVisaType, makeEmbassyTreeSelector, makeEmbassyBySysSelector } from "../redux/selectors";
+import { useScreenXS } from "../hooks";
 
 export default function EmbassySelector({ visaType }) {
     const [t] = useTranslation();
@@ -31,7 +32,7 @@ export default function EmbassySelector({ visaType }) {
 
     const resetFilter = () => (setSys("all") || true) && dispatch(updateFilterAndFetch(visaType, defaultFilter));
     const searchEmbassy = (inputValue, treeNode) => treeNode.title.toLowerCase().includes(inputValue.toLowerCase());
-
+    const screenXS = useScreenXS();
     const renderDropdown = originalNode => (
         <div style={{ padding: 16 }}>
             <SysSelect />
@@ -88,7 +89,7 @@ export default function EmbassySelector({ visaType }) {
                 placeholder="Search or select U.S. Embassy or Consulate"
                 style={{ width: "100%" }}
                 size="large"
-                showSearch
+                showSearch={!screenXS}
                 multiple
                 allowClear
                 treeCheckable
