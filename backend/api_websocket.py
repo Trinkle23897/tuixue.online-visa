@@ -210,7 +210,7 @@ async def get_newest_visa_status(websocket: WebSocket):
             latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy_code)
             ws_data = {
                 'type': 'newest',
-                'data': latest_written
+                'data': [{**lw, 'write_time': int(lw['write_time'].timestamp() * 1000)} for lw in latest_written]
             }
             await websocket.send_json(jsonable_encoder(ws_data))
     except WebSocketDisconnect:

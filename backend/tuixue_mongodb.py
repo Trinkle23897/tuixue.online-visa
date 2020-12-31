@@ -2,6 +2,7 @@
     pymongo gurantees that the MongoClient is thread-safe
 """
 
+import enum
 import os
 import pymongo
 import util
@@ -659,6 +660,41 @@ class VisaStatus:
             return None
 
     @classmethod
+    def find_visa_status_past24h_turning_point(
+        cls,
+        visa_type: VisaType,
+        embassy_code: EmbassyCode,
+        timestamp: datetime,
+    ):
+        """ Fill in the missing minute and return the visa status detail with consecutive duplicate removed"""
+        visa_status = cls.find_visa_status_past24h(visa_type, embassy_code, timestamp)
+        if visa_status is None:
+            return
+
+        ts_start, ts_end = visa_status['time_range']
+        ts_start: datetime = ts_start.replace(second=0, microsecond=0, tzinfo=None)
+        ts_end: datetime = ts_end.replace(second=0, microsecond=0, tzinfo=None)
+        time_range = [ts_start + timedelta(minutes=m) for m in range(int((ts_end - ts_start).total_seconds() // 60) + 1)]
+
+        available_dates = {
+            adt['write_time'].replace(second=0, microsecond=0, tzinfo=None): adt['available_date']
+            for adt in visa_status['available_dates']
+        }
+        filled_available_dates = [
+            {'write_time': ts, 'available_date': available_dates.get(ts, None)} for ts in time_range
+        ]
+        purified_available_dates = [
+            {**adt, 'write_time': int(adt['write_time'].timestamp() * 1000)} for i, adt in enumerate(filled_available_dates)
+            if i == 0 or adt['available_date'] != filled_available_dates[i - 1]['available_date']
+        ]
+
+        return {
+            **visa_status,
+            'time_range': [int(ts_start.timestamp() * 1000), int(ts_end.timestamp() * 1000)],
+            'available_dates': purified_available_dates,
+        }
+
+    @classmethod
     def find_historical_visa_status(
         cls,
         visa_type: VisaType,
@@ -918,16 +954,4 @@ if __name__ == "__main__":
     # manual test
     # simple_test_visa_status()
     # simple_test_subscription()
-    from pprint import pprint  # SORRY
-
-    start = datetime.now()
-    result = VisaStatus.find_visa_status_overview_embtz(
-        ['F', 'H', 'B', 'O', 'L'],
-        [emb.code for emb in USEmbassy.get_embassy_lst()],
-        datetime.now(timezone.utc) - timedelta(days=60),
-        datetime.now(timezone.utc),
-    )
-    end = datetime.now()
-    # pprint(result)
-    print('Used seconds: ', (end - start).total_seconds())
     pass

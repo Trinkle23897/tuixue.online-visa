@@ -117,11 +117,14 @@ def get_visa_status_by_visa_type_and_embassy(
     empty_record = {
         'visa_type': visa_type,
         'embassy_code': embassy_code,
-        'time_range': [timestamp - timedelta(days=1), timestamp],
+        'time_range': [
+            (timestamp - timedelta(days=1)).replace(second=0, microsecond=0, tzinfo=None).timestamp() * 1000,
+            timestamp.replace(second=0, microsecond=0, tzinfo=None).timestamp() * 1000,
+        ],
         'available_dates': []
     }
     hist_visa_status = (
-        DB.VisaStatus.find_visa_status_past24h(visa_type, embassy_code, timestamp) or
+        DB.VisaStatus.find_visa_status_past24h_turning_point(visa_type, embassy_code, timestamp) or
         empty_record
     )
 
