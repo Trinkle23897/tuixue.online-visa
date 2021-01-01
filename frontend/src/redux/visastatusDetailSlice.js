@@ -26,7 +26,9 @@ const { reducer, actions } = visastatusDetailSlice;
 export const { updateDeatil } = actions;
 
 export const fetchVisaStatusDetail = (visaType, embassyCode) => async dispatch => {
-    if (Array.isArray(embassyCode) && embassyCode.length === 0) return Promise.resolve();
+    if (Array.isArray(embassyCode) && embassyCode.length === 0) {
+        return Promise.resolve();
+    }
     try {
         const vsDetail = await getDetailVisaStatus(visaType, embassyCode, new Date());
         if (vsDetail) {
