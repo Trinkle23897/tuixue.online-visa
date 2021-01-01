@@ -672,7 +672,7 @@ class VisaStatus:
     ):
         """ Fill in the missing minute and return the visa status detail with consecutive duplicate removed"""
         visa_status = cls.find_visa_status_past24h(visa_type, embassy_code, timestamp)
-        if visa_status is None:
+        if visa_status is None or len(visa_status['available_dates']) == 0:
             return
         embassy = USEmbassy.get_embassy_by_code(embassy_code)
         interval = CGI_FETCH_TIME_INTERVAL[visa_type] if embassy.sys == 'cgi' else AIS_FETCH_TIME_INTERVAL[visa_type]
