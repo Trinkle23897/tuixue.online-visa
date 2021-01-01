@@ -69,3 +69,53 @@ export const makeOverviewDetailSelector = visaType =>
 
 export const makeNewestVisaStatusSelector = (visaType, embassyCode) =>
     createSelector(newestSelector, newest => newest[visaType][embassyCode]);
+
+// Selectors for echart data
+export const makeMinuteChartData = visaType =>
+    createSelector(
+        [makeDetailSelectorByVisaType(visaType), makeFilterSelectorByVisaType(visaType)],
+        (rawData, vsFilter) => {
+            const delta = 60000;
+            const { timeRange, detail } = rawData;
+            if (timeRange.length === 0) return [[], [], []];
+            const [tsStart, tsEnd] = timeRange;
+            const writeTime = [];
+            for (let t = tsStart; t <= tsEnd; t += delta) writeTime.push(t);
+            const availDateLst = vsFilter.map(embassyCode => {
+                const availableDates = detail[embassyCode] || [];
+                let dataIndex = 0;
+                let current = null;
+                const avaDates = writeTime.map(t => {
+                    if (dataIndex < availableDates.length && availableDates[dataIndex].writeTime === t) {
+                        current = availableDates[dataIndex].availableDate;
+                        dataIndex += 1;
+                    }
+                    return current === null ? null : current.join("/");
+                });
+                return { embassyCode, availableDates: avaDates };
+            });
+            return [writeTime, availDateLst];
+        },
+    );
+
+export const makeDateChartData = visaType =>
+    createSelector(
+        [makeOverviewSpanSelectorByVisaType(visaType), makeFilterSelectorByVisaType(visaType)],
+        (rawData, vsFilter) => [
+            vsFilter,
+            rawData
+                .slice()
+                .reverse()
+                .map(({ date, overview }, index) => {
+                    const earliestDateObj = {};
+                    const latestDateObj = {};
+                    overview.forEach(({ embassyCode, earliestDate, latestDate }) => {
+                        earliestDateObj[embassyCode] = earliestDate;
+                        latestDateObj[embassyCode] = latestDate;
+                    });
+                    const earliestDateLst = vsFilter.map(embassyCode => earliestDateObj[embassyCode] || null);
+                    const latestDateLst = vsFilter.map(embassyCode => latestDateObj[embassyCode] || null);
+                    return [index, date].concat(earliestDateLst).concat(latestDateLst);
+                }),
+        ],
+    );

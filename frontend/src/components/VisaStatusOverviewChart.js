@@ -5,8 +5,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
     makeFilterSelectorByVisaType,
-    makeDetailSelectorByVisaType,
-    makeOverviewSpanSelectorByVisaType,
+    makeMinuteChartData,
+    makeDateChartData,
 } from "../redux/selectors";
 import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
 import { getTimeFromUTC, getDateFromISOString } from "../utils/misc";
@@ -34,59 +34,18 @@ const dataZoom = [
     },
 ];
 
-const mergeDetailData = (rawData, vsFilter) => {
-    const delta = 60000;
-    const { timeRange, detail } = rawData;
-    if (timeRange.length === 0) return [[], []];
-    const [tsStart, tsEnd] = timeRange;
-    const writeTime = [];
-    for (let t = tsStart; t <= tsEnd; t += delta) writeTime.push(t);
-    const availDateLst = vsFilter.map(embassyCode => {
-        const availableDates = detail[embassyCode] || [];
-        let dataIndex = 0;
-        let current = null;
-        const avaDates = writeTime.map(t => {
-            if (dataIndex < availableDates.length && availableDates[dataIndex].writeTime === t) {
-                current = availableDates[dataIndex].availableDate;
-                dataIndex += 1;
-            }
-            return current === null ? null : current.join("/");
-        });
-        return { embassyCode, availableDates: avaDates };
-    });
-    return [writeTime, availDateLst];
-};
-
-const mergeOverviewData = (rawData, vsFilter) =>
-    rawData
-        .slice()
-        .reverse()
-        .map(({ date, overview }, index) => {
-            const earliestDateObj = {};
-            const latestDateObj = {};
-            overview.forEach(({ embassyCode, earliestDate, latestDate }) => {
-                earliestDateObj[embassyCode] = earliestDate;
-                latestDateObj[embassyCode] = latestDate;
-            });
-            const earliestDateLst = vsFilter.map(embassyCode => earliestDateObj[embassyCode] || null);
-            const latestDateLst = vsFilter.map(embassyCode => latestDateObj[embassyCode] || null);
-            return [index, getDateFromISOString(date).join("-")].concat(earliestDateLst).concat(latestDateLst);
-        });
-
 export const OverviewChartByMinute = ({ visaType }) => {
     const [t] = useTranslation();
     const screenXS = useScreenXS();
     const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
-    const detailSelector = useMemo(() => makeDetailSelectorByVisaType(visaType), [visaType]);
+    const minuteChartDataSelector = useMemo(() => makeMinuteChartData(visaType), [visaType]);
     const vsFilter = useSelector(state => filterSelector(state));
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(fetchVisaStatusDetail(visaType, vsFilter));
     }, [visaType, vsFilter, dispatch]);
-    const [writeTime, availDateLst] = useSelector(state =>
-        mergeDetailData(detailSelector(state), filterSelector(state)),
-    );
+    const [writeTime, availDateLst] = useSelector(state => minuteChartDataSelector(state));
     return (
         <ReactEcharts
             option={{
@@ -153,10 +112,8 @@ const renderItem = (params, api) => {
 export const OverviewChartByDate = ({ visaType }) => {
     const [t] = useTranslation();
     const screenXS = useScreenXS();
-    const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
-    const spanSelector = useMemo(() => makeOverviewSpanSelectorByVisaType(visaType), [visaType]);
-    const vsFilter = useSelector(state => filterSelector(state));
-    const overviewData = useSelector(state => mergeOverviewData(spanSelector(state), vsFilter));
+    const dateChartDataSelector = useMemo(() => makeDateChartData(visaType), [visaType]);
+    const [vsFilter, overviewData] = useSelector(state => dateChartDataSelector(state));
     return (
         <ReactEcharts
             option={{
