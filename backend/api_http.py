@@ -72,7 +72,7 @@ def get_meta_data():
         'region_country_embassy_tree': G.USEmbassy.get_region_country_embassy_tree(),
         'embassy_lst': G.EMBASSY_ATTR,
         'visa_type_details': G.VISA_TYPE_DETAILS,
-        'default_filter': ['bj', 'sh', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'bfs', 'lcy', 'gye'],
+        'default_filter': ['bj', 'sh', 'gz', 'sy', 'hk', 'hkr', 'tp', 'pp', 'sg', 'bfs', 'lcy', 'gye'],
         'region_attr': G.REGION_ATTR,
         'qq_tg_info': {
             'qq': G.SECRET['qq']['info'],

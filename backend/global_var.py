@@ -73,8 +73,8 @@ EMBASSY_ATTR = [
     ('成都', 'Chengdu', 'cd', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '成都'),
     ('广州', 'Guangzhou', 'gz', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '广州'),
     ('沈阳', 'Shenyang', 'sy', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '沈阳'),
-    ('香港（非本地）', 'Hongkong (non-resident)', 'hk', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '香港'),
-    ('香港（本地）', 'Hongkong (resident)', 'hkr', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '香港r'),
+    ('香港（非本地）', 'Hong Kong (non-resident)', 'hk', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '香港'),
+    ('香港（本地）', 'Hong Kong (resident)', 'hkr', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '香港r'),
     ('台北', 'Taipei', 'tp', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '台北'),
     ('金边', 'Phnom Penh', 'pp', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'KHM', 7, '金边'),
     ('新加坡', 'Singapore', 'sg', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'SGP', 8, '新加坡'),
@@ -225,7 +225,7 @@ class USEmbassy:
     @property
     def location(self) -> str:
         """ Return the location value for data storage."""
-        return self.name_cn if self.sys == 'cgi' else self.name_en
+        return self.code if self.sys == 'cgi' else self.name_en
 
 
 class GlobalVar:  # Can we just define a dictionary for it?
