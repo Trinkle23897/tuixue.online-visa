@@ -3,11 +3,7 @@ import PropTypes from "prop-types";
 import ReactEcharts from "echarts-for-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import {
-    makeFilterSelectorByVisaType,
-    makeMinuteChartData,
-    makeDateChartData,
-} from "../redux/selectors";
+import { makeFilterSelectorByVisaType, makeMinuteChartData, makeDateChartData } from "../redux/selectors";
 import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
 import { getTimeFromUTC, getDateFromISOString } from "../utils/misc";
 import { useScreenXS } from "../hooks";
