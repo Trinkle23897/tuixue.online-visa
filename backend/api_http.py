@@ -63,7 +63,7 @@ def get_meta_data():
 
         ```json
         [
-            ["name_cn", "name_en", "code", "sys", "region", "continent", "country", "tz_info"]
+            ["name_cn", "name_en", "code", "sys", "region", "continent", "country", "tz_info", "crawler_code"]
         ]
         ```
     """

@@ -68,28 +68,28 @@ REGION_ATTR = [
 # Embassy/consulate attributes
 # Tuple[name_cn, name_en, code, sys, region, continent, country, timezone, ais_code]
 EMBASSY_ATTR = [
-    ('北京', 'Beijing', 'bj', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, None),
-    ('上海', 'Shanghai', 'sh', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, None),
-    ('成都', 'Chengdu', 'cd', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, None),
-    ('广州', 'Guangzhou', 'gz', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, None),
-    ('沈阳', 'Shenyang', 'sy', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, None),
-    ('香港', 'Hongkong', 'hk', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, None),
-    ('台北', 'Taipei', 'tp', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, None),
-    ('金边', 'Phnom Penh', 'pp', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'KHM', 7, None),
-    ('新加坡', 'Singapore', 'sg', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'SGP', 8, None),
-    ('首尔', 'Seoul', 'sel', 'cgi', 'EAST_ASIA', 'ASIA', 'KOR', 9, None),
-    ('墨尔本', 'Melbourne', 'mel', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, None),
-    ('珀斯', 'Perth', 'per', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, None),
-    ('悉尼', 'Sydney', 'syd', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, None),
-    ('伯尔尼', 'Bern', 'brn', 'cgi', 'WEST_EUROPE', 'EUROPE', 'CHE', 1, None),
-    ('福冈', 'Fukuoka', 'fuk', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, None),
-    ('大阪', 'Osaka', 'itm', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, None),
-    ('那霸', 'Naha', 'oka', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, None),
-    ('札幌', 'Sapporo', 'cts', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, None),
-    ('东京', 'Tokyo', 'hnd', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, None),
-    ('加德满都', 'Kathmandu', 'ktm', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'NPL', 5.75, None),
-    ('曼谷', 'Bangkok', 'bkk', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7, None),
-    ('清迈', 'Chiang Mai', 'cnx', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7, None),
+    ('北京', 'Beijing', 'bj', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '北京'),
+    ('上海', 'Shanghai', 'sh', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '上海'),
+    ('成都', 'Chengdu', 'cd', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '成都'),
+    ('广州', 'Guangzhou', 'gz', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '广州'),
+    ('沈阳', 'Shenyang', 'sy', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '沈阳'),
+    ('香港', 'Hongkong', 'hk', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '香港'),
+    ('台北', 'Taipei', 'tp', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '台北'),
+    ('金边', 'Phnom Penh', 'pp', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'KHM', 7, '金边'),
+    ('新加坡', 'Singapore', 'sg', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'SGP', 8, '新加坡'),
+    ('首尔', 'Seoul', 'sel', 'cgi', 'EAST_ASIA', 'ASIA', 'KOR', 9, '首尔'),
+    ('墨尔本', 'Melbourne', 'mel', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, '墨尔本'),
+    ('珀斯', 'Perth', 'per', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, '珀斯'),
+    ('悉尼', 'Sydney', 'syd', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, '悉尼'),
+    ('伯尔尼', 'Bern', 'brn', 'cgi', 'WEST_EUROPE', 'EUROPE', 'CHE', 1, '伯尔尼'),
+    ('福冈', 'Fukuoka', 'fuk', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '福冈'),
+    ('大阪', 'Osaka', 'itm', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '大阪'),
+    ('那霸', 'Naha', 'oka', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '那霸'),
+    ('札幌', 'Sapporo', 'cts', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '札幌'),
+    ('东京', 'Tokyo', 'hnd', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '东京'),
+    ('加德满都', 'Kathmandu', 'ktm', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'NPL', 5.75, '加德满都'),
+    ('曼谷', 'Bangkok', 'bkk', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7, '曼谷'),
+    ('清迈', 'Chiang Mai', 'cnx', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7, '清迈'),
     ('贝尔法斯特', 'Belfast', 'bfs', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR', 0, 'en-gb'),
     ('伦敦', 'London', 'lcy', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR', 0, 'en-gb'),
     ('卡尔加里', 'Calgary', 'yyc', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5, 'en-ca'),
@@ -125,8 +125,8 @@ VISA_TYPES = 'FBHOL'
 VISA_TYPE_DETAILS = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
 
 # CGI/AIS_LOCATION are the parameters sent to crawler backend to retrieve session data
-CGI_LOCATION = [emb[0] for emb in EMBASSY_ATTR if emb[3] == 'cgi']
-AIS_LOCATION = list(set(emb[8] for emb in EMBASSY_ATTR if emb[8] is not None))
+CGI_LOCATION = [emb[8] for emb in EMBASSY_ATTR if emb[3] == 'cgi']
+AIS_LOCATION = list(set(emb[8] for emb in EMBASSY_ATTR if emb[3] == 'ais'))
 SYS_LOCATION = {'cgi': CGI_LOCATION, 'ais': AIS_LOCATION}
 
 # filter of AIS visa data retrieved from cralwer backend by city
@@ -161,8 +161,8 @@ class USEmbassy:
         return next((emb for emb in cls.get_embassy_lst() if emb.code == code), None)
 
     @classmethod
-    def get_embassy_by_ais_code(cls, ais_code: str) -> List[Optional['USEmbassy']]:
-        return [emb for emb in cls.get_embassy_lst() if emb.ais_code == ais_code]
+    def get_embassy_list_by_crawler_code(cls, crawler_code: str) -> List[Optional['USEmbassy']]:
+        return [emb for emb in cls.get_embassy_lst() if emb.crawler_code == crawler_code]
 
     @classmethod
     def get_region_mapping(cls) -> List[dict]:
@@ -203,7 +203,7 @@ class USEmbassy:
         continent: str,
         country: str,
         utcoffset: Union[float, int],
-        ais_code: Optional[str],
+        crawler_code: str,
     ) -> None:
         self.name_cn = name_cn
         self.name_en = name_en
@@ -213,7 +213,7 @@ class USEmbassy:
         self.continent = continent
         self.country = country
         self.timezone = timezone(timedelta(hours=utcoffset))
-        self.ais_code = ais_code
+        self.crawler_code = crawler_code
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(name_cn={self.name_cn}, name_en={self.name_en}, code={self.code})'

@@ -7,7 +7,7 @@ export const embassyAttributeLst = [
     "continent",
     "country",
     "tzInfo",
-    "aisCode",
+    "crawlerCode",
 ];
 export const embassyAttributeIdx = Object.fromEntries(embassyAttributeLst.map((attr, idx) => [attr, idx]));
 

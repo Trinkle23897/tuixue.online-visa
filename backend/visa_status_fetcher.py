@@ -225,7 +225,7 @@ class VisaFetcher:
         """
         embassy = G.USEmbassy.get_embassy_by_loc(location)
         if embassy is None:
-            embassyLst = G.USEmbassy.get_embassy_by_ais_code(location)
+            embassyLst = G.USEmbassy.get_embassy_list_by_crawler_code(location)
         else:
             embassyLst = [embassy]
         for embassy in embassyLst:
