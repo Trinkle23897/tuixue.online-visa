@@ -225,7 +225,7 @@ class USEmbassy:
     @property
     def location(self) -> str:
         """ Return the location value for data storage."""
-        return self.code if self.sys == 'cgi' else self.name_en
+        return self.crawler_code if self.sys == 'cgi' else self.name_en
 
 
 class GlobalVar:  # Can we just define a dictionary for it?
