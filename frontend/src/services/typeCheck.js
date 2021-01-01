@@ -5,6 +5,7 @@ export const checkVisaType = visaType => {
 export const checkVisaTypeLst = visaTypeLst => visaTypeLst.every(vt => checkVisaType(vt));
 
 export const checkEmbassyCode = embssyCode => {
+    // TODO: do not hardcode here, use fetched metadata
     const embassyCodeLst = [
         "bj",
         "sh",
@@ -12,10 +13,14 @@ export const checkEmbassyCode = embssyCode => {
         "gz",
         "sy",
         "hk",
+        "hkr",
         "tp",
         "pp",
         "sg",
         "sel",
+        "han",
+        "sgn",
+        "pty",
         "mel",
         "per",
         "syd",
