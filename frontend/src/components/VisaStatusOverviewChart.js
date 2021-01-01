@@ -123,7 +123,7 @@ export const OverviewChartByDate = ({ visaType }) => {
                 dataZoom,
                 xAxis: {
                     type: "category",
-                    data: overviewData.map(d => d[1]),
+                    data: overviewData.map(d => getDateFromISOString(d[1]).join("-")),
                 },
                 yAxis: {
                     type: "time",
