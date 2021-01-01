@@ -12,6 +12,7 @@ import global_var as G
 import tuixue_mongodb as DB
 from notifier import Notifier
 from tuixue_typing import VisaType, EmbassyCode
+from util import dt_to_utc
 
 EMBASSY_LST = G.USEmbassy.get_embassy_lst()
 app = FastAPI()
@@ -115,8 +116,8 @@ def get_visa_status_detail(
         embassy_code = [embassy_code]
     embassy_code = list(set(embassy_code))
     time_range = [
-        int((timestamp - timedelta(days=1)).replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000),
-        int(timestamp.replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000),
+        dt_to_utc((timestamp - timedelta(days=1)), remove_second=True),
+        dt_to_utc(timestamp, remove_second=True),
     ]
     detail = []
     for e in embassy_code:

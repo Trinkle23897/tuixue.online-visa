@@ -12,6 +12,7 @@ from typing import Union, List, Tuple, Optional, Dict
 from global_var import USEmbassy, VISA_TYPES, MONGO_CONFIG
 from global_var import AIS_FETCH_TIME_INTERVAL, CGI_FETCH_TIME_INTERVAL
 from pymongo import database, collection
+from util import dt_to_utc
 
 EmailSubscription = NewVisaStatus = Tuple[VisaType, EmbassyCode, datetime]
 EmailSubscriptionNoDate = NewVisaStatusNoDate = Tuple[VisaType, EmbassyCode]  # seeking for a better name...
@@ -678,7 +679,7 @@ class VisaStatus:
         interval *= 1000
 
         def convert(dt: datetime):
-            return int(dt.replace(second=0, microsecond=0, tzinfo=timezone.utc).timestamp() * 1000)
+            return dt_to_utc(dt, remove_second=True)
 
         available_dates = [{
             'write_time': convert(i['write_time']),
@@ -686,9 +687,11 @@ class VisaStatus:
         } for i in visa_status['available_dates']]
         ts_start, ts_end = list(map(convert, visa_status['time_range']))
         purified_available_dates = []
+
         first_dp = available_dates[0]
         if first_dp['write_time'] - ts_start > 1:
             purified_available_dates = [{'write_time': ts_start, 'available_date': None}]
+
         for i, (prev_dp, next_dp) in enumerate(zip(available_dates[:-1], available_dates[1:])):
             if i == 0:
                 purified_available_dates.append(prev_dp)
@@ -700,6 +703,7 @@ class VisaStatus:
             else:
                 purified_available_dates.append({'write_time': prev_dp['write_time'] + 60000, 'available_date': None})
                 purified_available_dates.append(next_dp)
+
         last_dp = available_dates[-1]
         if ts_end - last_dp['write_time'] > interval:
             purified_available_dates.append({'write_time': last_dp['write_time'] + 60000, 'available_date': None})

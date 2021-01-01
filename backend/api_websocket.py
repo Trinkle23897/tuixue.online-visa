@@ -1,7 +1,7 @@
 """ WebSocket service for http://tuixue.online/visa/"""
 import typing
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime
 from contextlib import asynccontextmanager
 from fastapi.encoders import jsonable_encoder
 from starlette.concurrency import run_until_first_complete
@@ -9,6 +9,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 
 import tuixue_mongodb as DB
 import global_var as G
+from util import dt_to_utc
 
 EMBASSY_CODES = [emb.code for emb in G.USEmbassy.get_embassy_lst()]
 app = FastAPI(root_path='/ws')
@@ -210,10 +211,7 @@ async def get_newest_visa_status(websocket: WebSocket):
             latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy_code)
             ws_data = {
                 'type': 'newest',
-                'data': [{
-                    **lw,
-                    'write_time': int(lw['write_time'].replace(tzinfo=timezone.utc).timestamp() * 1000)
-                } for lw in latest_written]
+                'data': [{**lw, 'write_time': dt_to_utc(lw['write_time'])} for lw in latest_written]
             }
             await websocket.send_json(jsonable_encoder(ws_data))
     except WebSocketDisconnect:

@@ -2,7 +2,7 @@
 import os
 import logging
 from typing import Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 from logging.handlers import TimedRotatingFileHandler
 
 import global_var as G
@@ -45,3 +45,10 @@ def file_line_to_dt(line: str) -> Tuple[datetime, datetime]:
     """ Convert a line in data file to datetime object"""
     time_of_update, available_dt = line.strip().split()
     return datetime.strptime(time_of_update, '%H:%M').time(), datetime.strptime(available_dt, '%Y/%m/%d')
+
+
+def dt_to_utc(dt: datetime, remove_second: bool = False) -> int:
+    """ Convert datetime to utc timestamp, for write_time."""
+    if remove_second:
+        dt = dt.replace(second=0, microsecond=0)
+    return int(1000 * dt.replace(tzinfo=timezone.utc).timestamp())
