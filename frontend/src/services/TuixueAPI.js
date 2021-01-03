@@ -17,7 +17,7 @@ const HEADERS = {
  * @param {Object} query    Object used to construct query parameters
  * @return {string}         The constructed URL string
  */
-const constructURL = ({ path, query = null, protocol = "http" }) => {
+const constructURL = ({ path, query = null, protocol = "https" }) => {
     const url = new URL(path, `${protocol}://${API_BASE_URL}`);
     if (query) {
         for (const [paramKey, paramVal] of Object.entries(query)) {
