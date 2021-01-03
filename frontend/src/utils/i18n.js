@@ -49,6 +49,9 @@ const resources = {
             QQTGModalContentQQDesc:
                 "QQ group entry password is the site URL, a total of 13 characters t***e. All groups' content are the same.",
             QQTGModalContentQQ: "QQ group #{{index}}: ",
+            disqusDomestic: "Domestic version Disqus comments section",
+            disqusGlobal: "Global version Disqus comments section",
+            disqusLoadFail: "Unable to load Disqus comments :(",
         },
     },
     zh: {
@@ -90,6 +93,9 @@ const resources = {
             QQTGModalContentTG: "Telegram频道链接：",
             QQTGModalContentQQDesc: "QQ群入群密码是本站网址，共13个字符t***e，所有群内容一致",
             QQTGModalContentQQ: "QQ群{{index}}群：",
+            disqusDomestic: "原国内版评论区",
+            disqusGlobal: "原国际版评论区",
+            disqusLoadFail: "Disqus评论区无法加载 :(",
         },
     },
 };
