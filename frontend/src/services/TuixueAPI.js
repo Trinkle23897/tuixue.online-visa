@@ -197,5 +197,5 @@ export const getDetailVisaStatus = async (visaType, embassyCode, timestamp) => {
  */
 export const openLatestVisaStatusSocket = () => {
     console.log("Returning a new WebSocket connection");
-    return new WebSocket(constructURL({ path: latest, protocol: "ws" }));
+    return new WebSocket(constructURL({ path: latest, protocol: "wss" }));
 };
