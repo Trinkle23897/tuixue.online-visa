@@ -26,6 +26,9 @@ const NavMenu = ({ mode, theme, onClick }) => {
                     {t("checkee")}
                 </a>
             </Menu.Item>
+            <Menu.Item key="emailSubs">
+                <Link to="/subscription/email">Email Subscription</Link>
+            </Menu.Item>
         </Menu>
     );
 };
@@ -80,34 +83,6 @@ const LanguageButton = () => {
         />
     );
 };
-
-// const NotifyButton = () => {
-//     const [t] = useTranslation();
-//     const checkNotify = () => {
-//         try {
-//             if (Notification.permission === "granted") {
-//                 const notification = new Notification(t("notificationInitTitle"), {
-//                     body: t("notificationInitContent"),
-//                 });
-//             } else if (Notification.permission !== "denied") {
-//                 Notification.requestPermission().then(permission => {
-//                     if (permission === "granted") {
-//                         const notification = new Notification(t("notificationInitTitle"), {
-//                             body: t("notificationInitContent"),
-//                         });
-//                     } else {
-//                         alert("still not enable, TODO: https");
-//                     }
-//                 });
-//             } else {
-//                 alert(t("notificationBlocked"));
-//             }
-//         } catch (e) {
-//             alert(t("notificationNoSupport"));
-//         }
-//     };
-//     return <Button size="large" shape="circle" icon={<BellOutlined />} onClick={() => checkNotify()} />;
-// };
 
 export default function Nav() {
     const screenXS = useScreenXS();

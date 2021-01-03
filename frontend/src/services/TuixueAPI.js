@@ -6,6 +6,7 @@ const metadata = "/visastatus/meta";
 const overview = "/visastatus/overview";
 const detail = "/visastatus/detail";
 const latest = "/ws/visastatus/latest";
+const emailSubscription = step => `/subscribe/email/${step}`;
 
 const HEADERS = {
     Accept: "application/json",
@@ -109,45 +110,6 @@ export const getVisaStatusOverview = async (visaType, embassyCode, since, to) =>
 };
 
 /**
- * **DEPRECATED**: Use the WebSocket method
- * GET `${API_BASE_URL}/visastatus/latest`
- *
- * Get the latest fetched result of `[visaType] x [embassyCode]`
- * @param {Array|string} visaType Array of string standing for types of Visa.
- * @param {Array|string} embassyCode Array of string standing for a unqiue U.S. Embassy/Consulate.
- */
-export const getLatestVisaStatus = async (visaType, embassyCode) => {
-    if (!visaType || !embassyCode) {
-        throw new Error(`visaTypes: ${visaType} or embassyCodes ${embassyCode} are not valid.`);
-    }
-
-    const visaTypeLst = Array.isArray(visaType) ? visaType : [visaType];
-    const embassyCodeLst = Array.isArray(embassyCode) ? embassyCode : [embassyCode];
-    if (!tp.checkVisaTypeLst(visaTypeLst)) {
-        throw new Error(`In getVisaStatusOverview: received invalid visaType: ${visaType}`);
-    }
-    if (!tp.checkEmbassyCodeLst(embassyCodeLst)) {
-        throw new Error(`In getVisaStatusOverview: received invalid embassyCode: ${embassyCode}`);
-    }
-
-    // this line will throw an UNEXPECTED error
-    const url = constructURL(latest, { visa_type: visaType, embassy_code: embassyCode });
-
-    let res;
-    let responseJson;
-    try {
-        res = await fetch(url, { method: "GET", headers: HEADERS });
-        if (res.ok) {
-            responseJson = renameObjectKeys(await res.json());
-        }
-    } catch (e) {
-        console.error(`In getLatestVisaStatus: ${e}`);
-    }
-
-    return responseJson || null;
-};
-
-/**
  * GET `${API_BASE_URL}/visastatus/detail`
  *
  * Get the detail records of `(visaType, embassyCode)`.
@@ -198,4 +160,26 @@ export const getDetailVisaStatus = async (visaType, embassyCode, timestamp) => {
 export const openLatestVisaStatusSocket = () => {
     console.log("Returning a new WebSocket connection");
     return new WebSocket(constructURL({ path: latest, protocol: "wss" }));
+};
+
+export const postEmailSubscription = async (step, subscription) => {
+    if (!["confirming", "subscribed"].includes(step)) {
+        throw new Error("In postEmailSubscription: param step should be one of ['confirming', 'subscribed']");
+    }
+
+    if (!subscription || Object.keys(subscription).length === 0) {
+        throw new Error("In postEmailSubscription: no subscription object provided");
+    }
+
+    const url = constructURL({ path: emailSubscription(step) });
+
+    let res;
+    try {
+        res = await fetch(url, { method: "POST", headers: HEADERS, body: JSON.stringify({ subscription }) });
+        console.log(await res.text());
+    } catch (e) {
+        console.error(`In getVisaStatusMetadata: ${e}`);
+    }
+
+    return res.ok && step === "confirming" ? res.status === 202 : res.status === 200;
 };

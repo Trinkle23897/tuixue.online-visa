@@ -4,10 +4,11 @@ import { useSelector } from "react-redux";
 import { Row, Col, Button, Tooltip, Space, Collapse, Tag, Modal, List } from "antd";
 import { MailOutlined, QqOutlined, EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useScreenXS } from "../../hooks";
+import { useScreenXS, useSubscriptionFormControl } from "../../hooks";
 import { makeNewestVisaStatusSelector, makeQqTgInfoSelector } from "../../redux/selectors";
-import { findEmbassyAttributeByCode } from "../../utils/USEmbassy";
 import { getTimeFromUTC } from "../../utils/misc";
+import EmailSubscriptionForm from "../EmailSubscriptionForm";
+import PostSubscriptionResult from "../PostSubscriptionResult";
 import { overviewAttrProps, newestOverviewProps, overviewProps } from "./overviewPropTypes";
 import "./VisaStatusOverview.less";
 
@@ -19,6 +20,7 @@ const QQTGSubsModal = ({ qqGroups, tgLink, isModalVisible, setIsModalVisible }) 
         index,
         desc: `${t("QQTGModalContentQQ", { index: index + 1 })}${content}`,
     }));
+
     return (
         <Modal
             title={t("QQTGModalTitle")}
@@ -52,28 +54,68 @@ QQTGSubsModal.propTypes = {
     setIsModalVisible: PropTypes.func.isRequired,
 };
 
-const ContentActions = ({ children, embassyCode, onEmailSubsClick, onAddtionClick }) => {
+const ContentActions = ({ children, embassyCode, onAddtionClick }) => {
     const { t } = useTranslation();
-    const embassyLst = useSelector(state => state.metadata.embassyLst);
-    const region = findEmbassyAttributeByCode("region", embassyCode, embassyLst);
-    const index = region === "DOMESTIC" ? "domestic" : "nonDomestic";
-    const isVisaTypeF = useSelector(state => state.visastatusTab === "F");
-    const qqTgInfoSelector = useMemo(() => makeQqTgInfoSelector(index), [index]);
-    const [qqGroups, tgLink] = useSelector(state => qqTgInfoSelector(state));
     const [QQTGSubsModalVisible, setQQTGSubsModalVisible] = useState(false);
+
+    const [
+        { form, formState, dispatchFormAction, formStateActions },
+        pageInfo,
+        postSubscription,
+    ] = useSubscriptionFormControl(embassyCode);
+
+    const isVisaTypeF = useSelector(state => state.visastatusTab === "F");
+    const qqTgInfoSelector = useMemo(() => makeQqTgInfoSelector(embassyCode), [embassyCode]);
+    const [qqGroups, tgLink] = useSelector(state => qqTgInfoSelector(state));
+
     return (
-        <Space direction="horizontal">
-            <Tooltip title={t("overviewEmailIcon")}>
-                <Button icon={<MailOutlined />} shape="circle" onClick={() => onEmailSubsClick()} />
-            </Tooltip>
-            {isVisaTypeF && (
-                <Tooltip title={t("overviewQQIcon")}>
-                    <Button icon={<QqOutlined />} shape="circle" onClick={() => setQQTGSubsModalVisible(true)} />
+        <>
+            <Space direction="horizontal">
+                <Tooltip title={t("overviewEmailIcon")}>
+                    <Button
+                        icon={<MailOutlined />}
+                        shape="circle"
+                        onClick={() =>
+                            dispatchFormAction({ type: formStateActions.SET_MODAL_VISIBLE, payload: { visible: true } })
+                        }
+                    />
                 </Tooltip>
-            )}
-            <Tooltip title={t("overviewAddtionalIcon")}>
-                <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => onAddtionClick()} />
-            </Tooltip>
+                {isVisaTypeF && (
+                    <Tooltip title={t("overviewQQIcon")}>
+                        <Button icon={<QqOutlined />} shape="circle" onClick={() => setQQTGSubsModalVisible(true)} />
+                    </Tooltip>
+                )}
+                <Tooltip title={t("overviewAddtionalIcon")}>
+                    <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => onAddtionClick()} />
+                </Tooltip>
+                {children}
+            </Space>
+            <Modal
+                title="Email Subscription"
+                visible={formState.modalVisible}
+                confirmLoading={formState.postingSubscription}
+                onOk={() => form.submit()}
+                onCancel={() =>
+                    dispatchFormAction({ type: formStateActions.SET_MODAL_VISIBLE, payload: { visible: false } })
+                }
+                okText="Subscribe"
+                width={768}
+            >
+                {formState.postingSubscription ? (
+                    <PostSubscriptionResult
+                        success={formState.postSuccessful}
+                        step="confirming"
+                        inSubscriptionPage={pageInfo.inSubscriptionPage}
+                    />
+                ) : (
+                    <EmailSubscriptionForm
+                        formControl={{ form, formState }}
+                        pageInfo={pageInfo}
+                        cookieOption="email"
+                        onFinish={fieldValues => postSubscription(fieldValues)}
+                    />
+                )}
+            </Modal>
             {isVisaTypeF && (
                 <QQTGSubsModal
                     qqGroups={qqGroups}
@@ -82,20 +124,19 @@ const ContentActions = ({ children, embassyCode, onEmailSubsClick, onAddtionClic
                     setIsModalVisible={setQQTGSubsModalVisible}
                 />
             )}
-            {children}
-        </Space>
+        </>
     );
 };
 ContentActions.propTypes = {
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
     embassyCode: PropTypes.string.isRequired,
-    onEmailSubsClick: PropTypes.func.isRequired,
     onAddtionClick: PropTypes.func.isRequired,
 };
 
 const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
     const [t] = useTranslation();
     const { writeTime, availableDate } = newest;
+
     return (
         <Row align="middle" className="ovreview-content-row" gutter={16}>
             <Col md={{ span: 3 }}>{t(embassyCode)}</Col>
@@ -120,7 +161,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
                 </Tooltip>
             </Col>
             <Col md={{ span: 5 }}>
-                <ContentActions embassyCode={embassyCode} onEmailSubsClick={() => {}} onAddtionClick={() => {}} />
+                <ContentActions embassyCode={embassyCode} onAddtionClick={() => {}} />
             </Col>
         </Row>
     );
@@ -150,11 +191,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
                 <Row justify="end" align="middle">
                     <Col>
                         {cardDrop ? (
-                            <ContentActions
-                                embassyCode={embassyCode}
-                                onEmailSubsClick={() => {}}
-                                onAddtionClick={() => {}}
-                            >
+                            <ContentActions embassyCode={embassyCode} onAddtionClick={() => {}}>
                                 <DropdownControlBtn />
                             </ContentActions>
                         ) : (

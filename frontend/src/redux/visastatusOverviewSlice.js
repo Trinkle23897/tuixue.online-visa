@@ -36,13 +36,13 @@ export const fetchVisaStatusOverview = visaType => async (dispatch, getState) =>
     const now = new Date();
     const past = new Date();
     past.setDate(now.getDate() - 60);
+
     try {
         const vsOverview = await getVisaStatusOverview(visaType, selectedEmb, past, now);
         if (vsOverview) {
             const { visaStatus } = vsOverview;
-            const overviewLstToday = visaStatus[0].overview.map(({ embassyCode, earliestDate, latestDate }) => ({
-                visaType,
-                embassyCode,
+            const overviewLstToday = visaStatus[0].overview.map(({ earliestDate, latestDate, ...rest }) => ({
+                ...rest,
                 earliestDate: getDateFromISOString(earliestDate),
                 latestDate: getDateFromISOString(latestDate),
             }));

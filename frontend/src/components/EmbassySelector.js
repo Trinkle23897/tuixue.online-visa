@@ -1,18 +1,17 @@
 import React, { useMemo, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Card, Divider, Radio, Space, TreeSelect, Button, Row, Col } from "antd";
+import { Card, Space, Button, Row, Col } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { updateFilterAndFetch } from "../redux/visastatusFilterSlice";
-import { makeFilterSelectorByVisaType, makeEmbassyTreeSelector, makeEmbassyBySysSelector } from "../redux/selectors";
-import { useScreenXS } from "../hooks";
+import { makeFilterSelectorByVisaType, makeEmbassyBySysSelector } from "../redux/selectors";
+import EmbassyTreeSelect from "./EmbassyTreeSelect";
 
 export default function EmbassySelector({ visaType }) {
     const [t] = useTranslation();
     const [sys, setSys] = useState("all");
-    const embassyTreeSelector = useMemo(() => makeEmbassyTreeSelector(sys, t), [sys, t]);
+
     const embassyBySysSelector = useMemo(() => makeEmbassyBySysSelector(sys), [sys]);
-    const embassyTreeOptions = useSelector(state => embassyTreeSelector(state));
     const embassyBySys = useSelector(state => embassyBySysSelector(state));
 
     const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
@@ -31,28 +30,7 @@ export default function EmbassySelector({ visaType }) {
     }, [visaType, dispatch, dropdownOpen, displayValue, vsFilter]);
 
     const resetFilter = () => (setSys("all") || true) && dispatch(updateFilterAndFetch(visaType, defaultFilter));
-    const searchEmbassy = (inputValue, treeNode) => treeNode.title.toLowerCase().includes(inputValue.toLowerCase());
-    const screenXS = useScreenXS();
-    const renderDropdown = originalNode => (
-        <div style={{ padding: 16 }}>
-            <SysSelect />
-            <Divider />
-            {originalNode}
-        </div>
-    );
 
-    const SysSelect = () => (
-        <Space>
-            <span>{t("filterSystemDesc")}</span>
-            <Radio.Group onChange={e => setSys(e.target.value)} value={sys}>
-                {["all", "ais", "cgi"].map(s => (
-                    <Radio key={s} value={s}>
-                        {t(s)}
-                    </Radio>
-                ))}
-            </Radio.Group>
-        </Space>
-    );
     const SelectDefaultFilter = () => <Button onClick={() => resetFilter()}>{t("filterDefault")}</Button>;
     const SelectDomesticOnly = () => (
         <Button
@@ -78,20 +56,17 @@ export default function EmbassySelector({ visaType }) {
                 </Row>
             }
         >
-            <TreeSelect
-                dropdownRender={renderDropdown}
-                treeData={embassyTreeOptions}
+            <EmbassyTreeSelect
+                sys={sys}
+                setSys={s => setSys(s)}
                 value={displayValue}
                 onChange={value => dispatch(updateFilterAndFetch(visaType, value))}
                 onDropdownVisibleChange={open => setDropdownOpen(open)}
-                filterTreeNode={searchEmbassy}
                 treeDefaultExpandedKeys={["DOMESTIC"]}
                 placeholder="Search or select U.S. Embassy or Consulate"
                 style={{ width: "100%" }}
                 size="large"
-                showSearch={!screenXS}
                 multiple
-                allowClear
                 treeCheckable
             />
         </Card>

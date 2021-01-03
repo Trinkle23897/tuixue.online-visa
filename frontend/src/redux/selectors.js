@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { embassyAttributeIdx } from "../utils/USEmbassy";
+import { embassyAttributeIdx, findEmbassyAttributeByCode } from "../utils/USEmbassy";
 
 // basic selectors
 const metadataSelector = state => state.metadata;
@@ -8,9 +8,10 @@ const overviewSpanSelector = state => state.visastatusOverview.span;
 const newestSelector = state => state.visastatusNewest;
 const filterSelector = state => state.visastatusFilter;
 const detailSelector = state => state.visastatusDetail;
+
 const embassyLstSelector = createSelector(metadataSelector, metadata => metadata.embassyLst);
-export const makeQqTgInfoSelector = region =>
-    createSelector(metadataSelector, metadata => [metadata.qqTgInfo.qq[region], metadata.qqTgInfo.tg[region]]);
+const qqTgInfoSelector = createSelector(metadataSelector, metadata => metadata.qqTgInfo);
+
 export const makeEmbassyBySysSelector = sys =>
     createSelector(embassyLstSelector, embassyLst =>
         sys === "all"
@@ -21,7 +22,7 @@ const embassyOptionsSelector = createSelector(embassyLstSelector, embassyLst =>
     embassyLst.map(emb => ({ name: emb[embassyAttributeIdx.nameEn], code: emb[embassyAttributeIdx.code] })),
 );
 const rceTreeSelector = createSelector(metadataSelector, metadata => metadata.regionCountryEmbassyTree);
-export const makeEmbassyTreeSelector = (sys, t) =>
+export const makeEmbassyTreeSelector = (sys, t, forFilterSelect = true) =>
     createSelector(
         [embassyOptionsSelector, rceTreeSelector, makeEmbassyBySysSelector(sys)],
         (embassyOptions, rceTree, embassyBySys) =>
@@ -30,11 +31,13 @@ export const makeEmbassyTreeSelector = (sys, t) =>
                     title: t(region),
                     value: region,
                     key: region,
+                    selectable: forFilterSelect,
                     children: countryEmbassyMap
                         .map(({ country, embassyCodeLst }) => ({
                             title: t(country),
                             value: country,
                             key: country,
+                            selectable: forFilterSelect,
                             children: embassyOptions
                                 .filter(({ code }) => embassyCodeLst.includes(code) && embassyBySys.includes(code))
                                 .map(({ code }) => ({ title: t(code), value: code, key: code })),
@@ -69,6 +72,13 @@ export const makeOverviewDetailSelector = visaType =>
 
 export const makeNewestVisaStatusSelector = (visaType, embassyCode) =>
     createSelector(newestSelector, newest => newest[visaType][embassyCode]);
+
+export const makeQqTgInfoSelector = embassyCode =>
+    createSelector([embassyLstSelector, qqTgInfoSelector], (embassyLst, { qq, tg }) => {
+        const region = findEmbassyAttributeByCode("region", embassyCode, embassyLst);
+        const index = region === "DOMESTIC" ? "domestic" : "nonDomestic";
+        return [qq[index], tg[index]];
+    });
 
 // Selectors for echart data
 export const makeMinuteChartData = visaType =>
