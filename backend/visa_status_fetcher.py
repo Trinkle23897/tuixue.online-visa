@@ -61,6 +61,7 @@ def init():
     SESSION_CACHE = SessionCache()
 
     LOGGER.info('FETCHING TARGET: %s', args.target.upper())
+    DB.VisaStatus.initiate_latest_written()
 
 
 def set_fetching_interval(

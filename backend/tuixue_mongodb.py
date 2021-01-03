@@ -145,6 +145,19 @@ class VisaStatus:
                         )
 
     @classmethod
+    def initiate_latest_written(cls) -> None:
+        """ write an empty latest_written record for every embassy and visa type."""
+        dummy_record = {'write_time': datetime.now(timezone.utc), 'available_date': None}
+        visa_status_query = [
+            {'visa_type': vt, 'embassy_code': ec}
+            for vt in VISA_TYPES
+            for ec in [emb.code for emb in USEmbassy.get_embassy_lst()]
+        ]
+
+        for query in visa_status_query:
+            cls.latest_written.update_one(query, {'$set': dummy_record}, upsert=True)
+
+    @classmethod
     def initiate_collections_tz(cls, since: datetime) -> None:
         """ Initiate the database with following handling of datetime object regarding timezone.
 
@@ -478,37 +491,41 @@ class VisaStatus:
             convert the querying date into the embassy timezone.
         """
 
-        dt_to_date = lambda dt: dt.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
-        utc_to_embtz = lambda dt, embtz: dt_to_date(dt.astimezone(embtz))
+        def dt_to_date(dt: datetime) -> datetime:
+            return dt.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
 
-        # construct the sub-pipeline for mongodb aggregation `facet` stage
-        single_target_query = lambda visa_type, embassy_code, date_range: [
-            {'$match': {'visa_type': visa_type, 'embassy_code': embassy_code}},
-            {
-                '$project': {
-                    'visa_type': '$visa_type',
-                    'embassy_code': '$embassy_code',
-                    'overview': {
-                        '$filter': {
-                            'input': '$overview',
-                            'as': 'ov',
-                            'cond': {'$in': ['$$ov.write_date', date_range]}
+        def utc_to_embtz(dt: datetime, embtz: timezone) -> datetime:
+            return dt_to_date(dt.astimezone(embtz))
+
+        def single_target_query(visa_type: str, embassy_code: str, date_range: List[datetime]) -> List[dict]:
+            """ construct the sub-pipeline for mongodb aggregation `facet` stage."""
+            return [
+                {'$match': {'visa_type': visa_type, 'embassy_code': embassy_code}},
+                {
+                    '$project': {
+                        'visa_type': '$visa_type',
+                        'embassy_code': '$embassy_code',
+                        'overview': {
+                            '$filter': {
+                                'input': '$overview',
+                                'as': 'ov',
+                                'cond': {'$in': ['$$ov.write_date', date_range]}
+                            }
                         }
                     }
-                }
-            },
-            {'$unwind': '$overview'},
-            {
-                '$project': {
-                    '_id': False,
-                    'visa_type': '$visa_type',
-                    'embassy_code': '$embassy_code',
-                    'write_date': '$overview.write_date',
-                    'earliest_date': '$overview.earliest_date',
-                    'latest_date': '$overview.latest_date',
-                }
-            },
-        ]
+                },
+                {'$unwind': '$overview'},
+                {
+                    '$project': {
+                        '_id': False,
+                        'visa_type': '$visa_type',
+                        'embassy_code': '$embassy_code',
+                        'write_date': '$overview.write_date',
+                        'earliest_date': '$overview.earliest_date',
+                        'latest_date': '$overview.latest_date',
+                    }
+                },
+            ]
 
         if not isinstance(visa_type, list):
             visa_type = [visa_type]
