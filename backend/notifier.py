@@ -55,7 +55,7 @@ class Notifier:
     @classmethod
     def send_subscription_confirmation(cls, email: str, subs_lst: List[DB.EmailSubscription]):
         """ Send the email for confirmation of email subscription."""
-        query_dct = {'visa_type': [], 'code': [], 'till': []}
+        query_dct = {'visa_type': [], 'code': [], 'till': [], "email": email}
         for visa_type, code, till in subs_lst:
             query_dct['visa_type'].append(visa_type)
             query_dct['code'].append(code)

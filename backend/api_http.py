@@ -143,7 +143,7 @@ def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription
         (
             subs['visa_type'],
             subs['code'],
-            (subs['till'] or datetime.max).astimezone(tz=None)  # TODO: untested
+            (subs['till'] or datetime.max)
         ) for subs in subscription['subscription']
     ]
 
