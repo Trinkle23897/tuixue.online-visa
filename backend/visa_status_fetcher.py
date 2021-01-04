@@ -57,7 +57,7 @@ def init():
                 G.assign(k, v)
 
     if args.init_lw:
-        DB.VisaStatus.initiate_latest_written_sequential()
+        DB.VisaStatus.initiate_latest_written_sequential(args.target)
 
     global LOGGER
     global SESSION_CACHE

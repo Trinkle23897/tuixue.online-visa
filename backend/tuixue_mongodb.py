@@ -145,13 +145,14 @@ class VisaStatus:
                         )
 
     @classmethod
-    def initiate_latest_written_parallel(cls) -> None:
+    def initiate_latest_written_parallel(cls, sys: str) -> None:
         """ write an empty latest_written record for every embassy and visa type.
 
             this method pick the latest `write_date` for a `(visa_type, embassy_code)` pair, then get
             the last written record from `available_dates` array of it. And overwrite the whole
             `last_written` collection.
         """
+        embassy_code_lst = [emb.code for emb in USEmbassy.get_embassy_lst() if emb.sys == sys]
         query_param = list(cls.visa_status.aggregate([
             {
                 '$group': {
@@ -161,6 +162,8 @@ class VisaStatus:
             },
             {'$replaceRoot': {'newRoot': {'$mergeObjects': ['$_id', {'write_date': '$write_date'}]}}},
         ]))
+
+        query_param = [query for query in query_param if query['embassy_code'] in embassy_code_lst]
 
         last_effective_write = cls.visa_status.aggregate([
             {'$facet': {'{}{}'.format(q['visa_type'], q['embassy_code']): [
@@ -191,8 +194,10 @@ class VisaStatus:
         cls.latest_written.insert_many(list(last_effective_write))
 
     @classmethod
-    def initiate_latest_written_sequential(cls) -> None:
+    def initiate_latest_written_sequential(cls, sys: str) -> None:
         """ Initate latest_written in sequentail order."""
+        embassy_code_lst = [emb.code for emb in USEmbassy.get_embassy_lst() if emb.sys == sys]
+
         query_param = cls.visa_status.aggregate([
             {
                 '$group': {
@@ -204,6 +209,9 @@ class VisaStatus:
         ], allowDiskUse=True)
 
         for query in query_param:
+            if query['embassy_code'] not in embassy_code_lst:
+                continue
+
             cursor = cls.visa_status.aggregate([
                 {'$match': query},
                 {
@@ -217,9 +225,7 @@ class VisaStatus:
             ], allowDiskUse=True)
 
             for last_effective_fetch in cursor:
-                print(query)
                 cls.latest_written.update_one(query, {'$set' : last_effective_fetch}, upsert=True)
-
 
     @classmethod
     def initiate_collections_tz(cls, since: datetime) -> None:
