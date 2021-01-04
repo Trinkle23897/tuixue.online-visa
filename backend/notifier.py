@@ -132,8 +132,8 @@ class Notifier:
             if d is None:
                 return "/"
             if d.year == datetime.now().year:
-                return d.strftime("%m/%d")
-            return d.strftime("%Y/%m/%d")
+                return f'{d.month}/{d.day}'
+            return f'{d.year}/{d.month}/{d.day}'
         prev, curr = converter(prev), converter(curr)
         content = f"NEW {embassy.name_cn}: {prev} -> {curr}"
         # qq
