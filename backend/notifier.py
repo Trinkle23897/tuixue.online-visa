@@ -63,7 +63,13 @@ class Notifier:
 
         # Construct the redirect frontend url
         confirmation_url = urlunsplit(
-            ('https', 'dev.tuixue.online:3010', '/visa/subscription/email', urlencode(query_dct, doseq=True, quote_via=quote), '')
+            (
+                'https',
+                'dev.tuixue.online:3010',
+                '/visa/subscription/email',
+                urlencode(query_dct, doseq=True, quote_via=quote),
+                ''
+            )
         )
 
         subscription_str = '<ul>\n{}\n</ul>'.format(

@@ -135,7 +135,7 @@ def get_visa_status_detail(
     }
 
 
-@app.post('/subscribe/email/{step}')
+@app.post('/subscription/email/{step}')
 def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription = Body(..., embed=True)):
     """ Post email subscription."""
     subscription = subscription.dict()
@@ -156,6 +156,24 @@ def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription
         updated_subscriber = DB.Subscription.add_email_subscription(subscription['email'], subs_lst)
 
         return updated_subscriber
+
+
+@app.get('/subscription/email')
+def get_email_subscription(email: str = Query(...)):
+    """ Get the subscription record of a email address."""
+    return DB.Subscription.get_subscriptions_by_email(email)
+
+
+@app.delete('/subscription/email')
+def delete_email_subscription(
+    email: str = Query(...),
+    visa_type: List[VisaType] = Query(...),
+    embassy_code: List[EmbassyCode] = Query(...),
+):
+    """ Delete the subscription under the given email."""
+    unsubscription = list(zip(visa_type, embassy_code))
+    DB.Subscription.remove_email_subscription(email, unsubscription)
+    return Response(status_code=status.HTTP_200_OK)
 
 
 @app.get('/test')

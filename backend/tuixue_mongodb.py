@@ -2,7 +2,6 @@
     pymongo gurantees that the MongoClient is thread-safe
 """
 
-import enum
 import os
 import util
 import pymongo
@@ -232,7 +231,7 @@ class VisaStatus:
             ], allowDiskUse=True)
 
             for last_effective_fetch in cursor:
-                cls.latest_written.update_one(query, {'$set' : last_effective_fetch}, upsert=True)
+                cls.latest_written.update_one(query, {'$set': last_effective_fetch}, upsert=True)
 
     @classmethod
     def initiate_collections_tz(cls, since: datetime) -> None:
@@ -868,9 +867,26 @@ class Subscription:
     email = get_collection('email_subscription')
 
     @classmethod
-    def get_subscriptions_by_email(cls, email: str):
+    def get_subscriptions_by_email(cls, email: str) -> dict:
         """ Get all subscription of a given email"""
-        return cls.email.find_one({'email': email}, {'_id': False})
+        cursor = cls.email.aggregate([
+            {'$match': {'email': email}},
+            {'$unwind': '$subscription'},
+            {'$set': {'subscription.expired': {'$lt': ['$subscription.till', datetime.now()]}}},
+            {
+                '$group': {
+                    '_id': None,
+                    'email': {'$first': '$email'},
+                    'subscription': {'$push': '$subscription'},
+                },
+            },
+            {'$project': {'_id': False}},
+        ])
+
+        for result in cursor:
+            return result
+        else:
+            return {'email': email, 'subscription': []}
 
     @classmethod
     def get_email_list(
@@ -1068,5 +1084,4 @@ if __name__ == "__main__":
     # manual test
     # simple_test_visa_status()
     # simple_test_subscription()
-    VisaStatus.initiate_latest_written_backtrack('ais')
     pass
