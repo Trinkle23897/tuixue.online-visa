@@ -30,7 +30,8 @@ def init():
     parser.add_argument('--ais', type=str, default='ais.json', help='ais account in json format')
     parser.add_argument('--log_dir', type=str, default=os.path.join(os.curdir, 'logs'), help='directory to save logs')
     parser.add_argument('--log_name', type=str, default='visa_fetcher', help='name of log file')
-    parser.add_argument('--debug', action="store_true", default=False, help='log debug information')
+    parser.add_argument('--debug', action='store_true', default=False, help='log debug information')
+    parser.add_argument('--init_lw', action='store_true', default=False, help='whether to initiate the latest_written')
     args = parser.parse_args()
 
     if not os.path.exists(args.log_dir):
@@ -55,13 +56,15 @@ def init():
             for k, v in ais_accounts.items():
                 G.assign(k, v)
 
+    if args.init_lw:
+        DB.VisaStatus.initiate_latest_written()
+
     global LOGGER
     global SESSION_CACHE
     LOGGER = util.init_logger(f'{args.target}_{args.log_name}', args.log_dir, args.debug)
     SESSION_CACHE = SessionCache()
 
     LOGGER.info('FETCHING TARGET: %s', args.target.upper())
-    DB.VisaStatus.initiate_latest_written()
 
 
 def set_fetching_interval(
