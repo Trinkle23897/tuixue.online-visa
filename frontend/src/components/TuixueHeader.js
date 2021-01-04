@@ -16,10 +16,10 @@ const NavMenu = ({ mode, theme, onClick }) => {
     return (
         <Menu theme={theme} mode={mode} onClick={onClick ? () => onClick() : () => {}}>
             <Menu.Item key="visastatus">
-                <Link to="/">{t("visaStatus")}</Link>
+                <Link to="/visa">{t("visaStatus")}</Link>
             </Menu.Item>
             <Menu.Item key="sysinfo">
-                <Link to="/sysinfo">{t("sysStatus")}</Link>
+                <Link to="/visa/sysinfo">{t("sysStatus")}</Link>
             </Menu.Item>
             <Menu.Item key="checkee">
                 <a href="https://checkee.info/" target="_blank" rel="noreferrer">
@@ -27,7 +27,7 @@ const NavMenu = ({ mode, theme, onClick }) => {
                 </a>
             </Menu.Item>
             <Menu.Item key="emailSubs">
-                <Link to="/subscription/email">Email Subscription</Link>
+                <Link to="/visa/subscription/email">Email Subscription</Link>
             </Menu.Item>
         </Menu>
     );
@@ -89,8 +89,8 @@ export default function Nav() {
 
     const Logo = () => (
         <div className="logo" style={{ justifyContent: screenXS ? "center" : "flex-start" }}>
-            <img src="/favicon.ico" height="40" width="40" alt="real tuixue logo" />
-            <img src="/tuixue-logo.png" height="48" width="96" alt="fake tuixue logo" />
+            <img src="/visa/favicon.ico" height="40" width="40" alt="real tuixue logo" />
+            <img src="/visa/tuixue-logo.png" height="48" width="96" alt="fake tuixue logo" />
         </div>
     );
 
