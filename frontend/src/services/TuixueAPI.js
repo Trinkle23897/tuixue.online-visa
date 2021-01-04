@@ -6,7 +6,8 @@ const metadata = "/visastatus/meta";
 const overview = "/visastatus/overview";
 const detail = "/visastatus/detail";
 const latest = "/ws/visastatus/latest";
-const emailSubscription = step => `/subscribe/email/${step}`;
+const email = "/subscription/email";
+const emailSubscription = step => `${email}/${step}`;
 
 const HEADERS = {
     Accept: "application/json",
