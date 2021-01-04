@@ -145,7 +145,7 @@ class VisaStatus:
                         )
 
     @classmethod
-    def initiate_latest_written(cls) -> None:
+    def initiate_latest_written_parallel(cls) -> None:
         """ write an empty latest_written record for every embassy and visa type.
 
             this method pick the latest `write_date` for a `(visa_type, embassy_code)` pair, then get
@@ -167,9 +167,9 @@ class VisaStatus:
                 {'$match': q},
                 {
                     '$project': {
+                        '_id': False,
                         'visa_type': True,
                         'embassy_code': True,
-                        'write_date': True,
                         'available_date': {'$slice': ['$available_dates.available_date', -1]},
                     },
                 },
@@ -185,11 +185,41 @@ class VisaStatus:
             {'$unwind': '$facet_result'},
             {'$replaceRoot': {'newRoot': '$facet_result'}},
             {'$set': {'write_time': datetime.now(timezone.utc)}},
-            {'$project': {'_id': False, 'write_date': False}},
-        ])
+        ], allowDiskUse=True)
 
         cls.latest_written.drop()
         cls.latest_written.insert_many(list(last_effective_write))
+
+    @classmethod
+    def initiate_latest_written_sequential(cls) -> None:
+        """ Initate latest_written in sequentail order."""
+        query_param = cls.visa_status.aggregate([
+            {
+                '$group': {
+                    '_id': {'visa_type': '$visa_type', 'embassy_code': '$embassy_code'},
+                    'write_date': {'$max': '$write_date'},
+                },
+            },
+            {'$replaceRoot': {'newRoot': {'$mergeObjects': ['$_id', {'write_date': '$write_date'}]}}},
+        ], allowDiskUse=True)
+
+        for query in query_param:
+            cursor = cls.visa_status.aggregate([
+                {'$match': query},
+                {
+                    '$project': {
+                        '_id': False,
+                        'write_time': datetime.now(timezone.utc),
+                        'available_date': {'$slice': ['$available_dates.available_date', -1]},
+                    },
+                },
+                {'$unwind': '$available_date'},
+            ], allowDiskUse=True)
+
+            for last_effective_fetch in cursor:
+                print(query)
+                cls.latest_written.update_one(query, {'$set' : last_effective_fetch}, upsert=True)
+
 
     @classmethod
     def initiate_collections_tz(cls, since: datetime) -> None:
@@ -1025,5 +1055,4 @@ if __name__ == "__main__":
     # manual test
     # simple_test_visa_status()
     # simple_test_subscription()
-    VisaStatus.initiate_latest_written()
     pass
