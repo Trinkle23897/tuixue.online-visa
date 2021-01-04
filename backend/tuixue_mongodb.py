@@ -2,6 +2,7 @@
     pymongo gurantees that the MongoClient is thread-safe
 """
 
+import enum
 import os
 import util
 import pymongo
@@ -194,11 +195,17 @@ class VisaStatus:
         cls.latest_written.insert_many(list(last_effective_write))
 
     @classmethod
-    def initiate_latest_written_sequential(cls, sys: str) -> None:
+    def initiate_latest_written_sequential(cls, sys: str, backtrack_hr: int = 12) -> None:
         """ Initate latest_written in sequentail order."""
         embassy_code_lst = [emb.code for emb in USEmbassy.get_embassy_lst() if emb.sys == sys]
 
+        now = datetime(2020, 12, 30)
+        start = datetime.combine((now - timedelta(hours=backtrack_hr)).date(), datetime.min.time())
+        end = datetime.combine(now.date(), datetime.min.time())
+        dates = [start + timedelta(days=d) for d in range((end - start).days + 1)]
+
         query_param = cls.visa_status.aggregate([
+            {'$match': {'write_date': {'$in': dates}}},
             {
                 '$group': {
                     '_id': {'visa_type': '$visa_type', 'embassy_code': '$embassy_code'},
@@ -1061,4 +1068,5 @@ if __name__ == "__main__":
     # manual test
     # simple_test_visa_status()
     # simple_test_subscription()
+    VisaStatus.initiate_latest_written_backtrack('ais')
     pass
