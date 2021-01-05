@@ -198,7 +198,7 @@ class VisaStatus:
         """ Initate latest_written in sequentail order."""
         embassy_code_lst = [emb.code for emb in USEmbassy.get_embassy_lst() if emb.sys == sys]
 
-        now = datetime(2020, 12, 30)
+        now = datetime.now()
         start = datetime.combine((now - timedelta(hours=backtrack_hr)).date(), datetime.min.time())
         end = datetime.combine(now.date(), datetime.min.time())
         dates = [start + timedelta(days=d) for d in range((end - start).days + 1)]
@@ -230,6 +230,7 @@ class VisaStatus:
                 {'$unwind': '$available_date'},
             ], allowDiskUse=True)
 
+            query.pop('write_date')
             for last_effective_fetch in cursor:
                 cls.latest_written.update_one(query, {'$set': last_effective_fetch}, upsert=True)
 
@@ -1084,4 +1085,6 @@ if __name__ == "__main__":
     # manual test
     # simple_test_visa_status()
     # simple_test_subscription()
+    VisaStatus.initiate_latest_written_sequential('cgi')
+    VisaStatus.initiate_latest_written_sequential('ais')
     pass
