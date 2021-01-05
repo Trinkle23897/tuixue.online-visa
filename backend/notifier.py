@@ -11,7 +11,7 @@ from tuixue_typing import VisaType
 from typing import Any, Dict, List, Optional
 from fastapi.encoders import jsonable_encoder
 from urllib.parse import urlencode, urlunsplit, quote
-from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET
+from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, FRONTEND_BASE_URI
 
 
 VISA_STATUS_CHANGE_TITLE = '[tuixue.online] {visa_detail} Visa Status Change'
@@ -19,30 +19,30 @@ VISA_STATUS_CHANGE_CONTENT = """
     {send_time}<br>
     {location} changed from {old_status} to {new_status}.<br>
     <br>
-    See <a href="">Some link to the website</a> for more detail.<br>
+    See <a href="https://{base_uri}/visa">https://{base_uri}/visa</a>for more detail.<br>
     If you want to change your subscribe option, please re-submit a
     request over <a href="">Some link to the website</a>.
 """  # TODO: add the frontend href attr here.
 
 SUBSCRIPTION_CONFIRMATION_TITLE = '[tuixue.online] Subscription Confirmation of {email}'
 SUBSCRIPTION_CONFIRMATION_CONTENT = """
-    Dear subscriber:<br>
+    Dear {user}:<br>
     <br>
-    A faculty committee at tuixue.online has made a decision on your
-    application with email {email} for subcription of following visa types and embassies/consulate:<br>
+    A faculty committee at tuixue.online has made a decision on your application with email
+    {email} for subcription of following visa types and embassies/consulate:<br>
     {subscription_str}
-    Please review your decision by logging back into tuixue.online
-    application status page at <a href="{confirmation_url}"><strong>this link</strong></a>.<br>
+    <b>Please review your decision by logging back into tuixue.online application status
+    page at <a href="{confirmation_url}"><strong>this link</strong></a></b>. Otherwise,
+    your application will be cleared.<br>
     <br>
     Sincerely,<br>
     <br>
     tuixue.online Graduate Division<br>
     Diversity, Inclusion and Admissions<br>
     <br>
-    Please note: This e-mail message was sent from a notification-only<br>
-    address that cannot accept incoming e-mail. Please do not reply to<br>
-    this message. Please save or print your decision letter and any<br>
-    related online documents immediately for your records.<br>
+    Please note: This e-mail message was sent from a notification-only address that cannot
+    accept incoming e-mail. Please do not reply to this message. Please save or print your
+    decision letter and any related online documents immediately for your records.<br>
 """
 
 
@@ -65,7 +65,7 @@ class Notifier:
         confirmation_url = urlunsplit(
             (
                 'https',
-                'dev.tuixue.online:3010',
+                FRONTEND_BASE_URI,
                 '/visa/subscription/email',
                 urlencode(query_dct, doseq=True, quote_via=quote),
                 ''
@@ -81,6 +81,7 @@ class Notifier:
         )
 
         content = SUBSCRIPTION_CONFIRMATION_CONTENT.format(
+            user=email.split('@')[0],
             email=email,
             subscription_str=subscription_str,
             confirmation_url=confirmation_url,
@@ -201,10 +202,11 @@ class Notifier:
                     cls.send_email(
                         title=VISA_STATUS_CHANGE_TITLE.format(visa_detail=VISA_TYPE_DETAILS[visa_type]),
                         content=VISA_STATUS_CHANGE_CONTENT.format(
-                            send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
+                            send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S GMT+8'),
                             location=embassy.name_en,
                             old_status=old_status,
                             new_status=new_status,
+                            base_uri=FRONTEND_BASE_URI,
                         ),
                         receivers=email_lst,
                     )
