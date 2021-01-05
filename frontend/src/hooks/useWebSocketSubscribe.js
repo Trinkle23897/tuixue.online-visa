@@ -19,6 +19,11 @@ export default function useWebSocketSubscribe() {
     const websocketRef = useRef(null); // initiate with null doesn't trigger re-connect when re-renderin
     const [notificationTitle, setNotificationTitle] = useState(t("notificationInitTitle"));
     const [notificationOption, setNotificationOption] = useState({ body: t("notificationInitContent") });
+    const notifDateStr = s => {
+        const date = getDateFromISOString(s).map(e => parseInt(e, 10));
+        const now = new Date();
+        return date[0] === now.getFullYear() ? date.slice(1).join("/") : date.join("/");
+    };
 
     // This effect SHOULD keep web socket alive and reconnect when it's closed
     useEffect(() => {
@@ -43,8 +48,8 @@ export default function useWebSocketSubscribe() {
                     setNotificationOption({
                         body: t("notificationContent", {
                             embassyName: t(embassyCode),
-                            prevAvaiDate: prevAvaiDate ? getDateFromISOString(prevAvaiDate).join("/") : "/",
-                            currAvaiDate: getDateFromISOString(currAvaiDate).join("/"),
+                            prevAvaiDate: prevAvaiDate ? notifDateStr(prevAvaiDate) : "/",
+                            currAvaiDate: notifDateStr(currAvaiDate),
                         }),
                     });
                 }
