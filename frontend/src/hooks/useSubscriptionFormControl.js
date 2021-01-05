@@ -82,7 +82,7 @@ export default function useSubscriptionFormControl(embassyCode) {
     const [form] = useForm();
     const location = useLocation();
     const param = useMemo(() => new URLSearchParams(location.search), [location]);
-    const inSubscriptionPage = useMemo(() => location.pathname === "/subscription/email", [location]);
+    const inSubscriptionPage = useMemo(() => location.pathname === "/visa/subscription/email", [location]);
 
     // Set initial form fields values, use this instead of static `initialValues` prop
     useEffect(() => {
