@@ -6,7 +6,7 @@ import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
 import VisaStatusOverviewList from "./VisaStatusOverviewList";
 import EmbassySelector from "./EmbassySelector";
 import "./VisaStatusTabs.less";
-import { OverviewChartByMinute, OverviewChartByDate } from "./VisaStatusOverviewChart";
+import { OverviewChartByMinute, OverviewChartByDate } from "./VisaStatusOverviewList/OverviewChart";
 import { setCookie, getCookie } from "../utils/cookie";
 
 const { TabPane } = Tabs;
@@ -16,17 +16,7 @@ export default function VisaStatusTabs() {
     const dispatch = useDispatch();
     const chosenKey = useSelector(state => state.visastatusTab);
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
-    const [showChart, setShowChart] = useState(getCookie("showChart", false));
-    useEffect(() => {
-        setCookie("showChart", showChart);
-    }, [showChart]);
-    const SelectOverviewType = () => {
-        return (
-            <Button type="primary" onClick={() => setShowChart(!showChart)}>
-                {t(showChart ? "filterOverviewClose" : "filterOverviewOpen")}
-            </Button>
-        );
-    };
+    // const SelectOverviewType = () => <></>;
 
     return (
         <>
@@ -46,18 +36,8 @@ export default function VisaStatusTabs() {
                     <EmbassySelector visaType={chosenKey} />
                 </Col>
                 <Col span={24}>
-                    <SelectOverviewType />
+                    <OverviewChartByMinute visaType={chosenKey} />
                 </Col>
-                {showChart && (
-                    <>
-                        <Col span={24}>
-                            <OverviewChartByMinute visaType={chosenKey} />
-                        </Col>
-                        <Col span={24}>
-                            <OverviewChartByDate visaType={chosenKey} />
-                        </Col>
-                    </>
-                )}
                 <Col span={24}>
                     <VisaStatusOverviewList visaType={chosenKey} />
                 </Col>

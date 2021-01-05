@@ -3,10 +3,9 @@ import PropTypes from "prop-types";
 import ReactEcharts from "echarts-for-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { makeFilterSelectorByVisaType, makeMinuteChartData, makeDateChartData } from "../redux/selectors";
-import { fetchVisaStatusDetail } from "../redux/visastatusDetailSlice";
-import { getTimeFromUTC, getDateFromISOString } from "../utils/misc";
-import { useScreenXS } from "../hooks";
+import { makeFilterSelectorByVisaType, makeMinuteChartData, makeDateChartData } from "../../redux/selectors";
+import { fetchVisaStatusDetail } from "../../redux/visastatusDetailSlice";
+import { getTimeFromUTC, getDateFromISOString } from "../../utils/misc";
 
 const dataZoom = [
     {
@@ -32,7 +31,6 @@ const dataZoom = [
 
 export const OverviewChartByMinute = ({ visaType }) => {
     const [t] = useTranslation();
-    const screenXS = useScreenXS();
     const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
     const minuteChartDataSelector = useMemo(() => makeMinuteChartData(visaType), [visaType]);
     const vsFilter = useSelector(state => filterSelector(state));
@@ -46,7 +44,7 @@ export const OverviewChartByMinute = ({ visaType }) => {
         <ReactEcharts
             option={{
                 title: {
-                    text: screenXS ? "" : t("overMinuteChartTitle"),
+                    text: "",
                 },
                 xAxis: {
                     type: "category",
@@ -105,20 +103,18 @@ const renderItem = (params, api) => {
     };
 };
 
-export const OverviewChartByDate = ({ visaType }) => {
+export const OverviewChartByDate = ({ visaType, embassyCode }) => {
     const [t] = useTranslation();
-    const screenXS = useScreenXS();
-    const dateChartDataSelector = useMemo(() => makeDateChartData(visaType), [visaType]);
-    const [vsFilter, overviewData] = useSelector(state => dateChartDataSelector(state));
+    const dateChartDataSelector = useMemo(() => makeDateChartData(visaType, embassyCode), [visaType, embassyCode]);
+    const overviewData = useSelector(state => dateChartDataSelector(state));
     return (
         <ReactEcharts
             option={{
                 title: {
-                    text: screenXS ? "" : t("overDateChartTitle"),
+                    text: "",
                 },
                 legend: {
-                    data: vsFilter.map(embassyCode => t(embassyCode)),
-                    selected: Object.fromEntries(vsFilter.map((embassyCode, index) => [t(embassyCode), index === 0])),
+                    data: [],
                 },
                 dataZoom,
                 xAxis: {
@@ -149,34 +145,33 @@ export const OverviewChartByDate = ({ visaType }) => {
                         return header + content;
                     },
                 },
-                series: vsFilter
-                    .map((embassyCode, index) => [
-                        {
-                            name: t(embassyCode),
-                            type: "line",
-                            data: overviewData.map(d => [d[0], d[index + 2 + vsFilter.length]]),
-                            encode: {
-                                x: [0],
-                                y: [1],
-                            },
+                series: [
+                    {
+                        name: t(embassyCode),
+                        type: "line",
+                        data: overviewData.map(d => [d[0], d[3]]),
+                        encode: {
+                            x: [0],
+                            y: [1],
                         },
-                        {
-                            name: t(embassyCode),
-                            type: "custom",
-                            renderItem,
-                            dimensions: [null, "Earliest", "Latest"],
-                            data: overviewData.map(d => [d[0], d[index + 2], d[index + 2 + vsFilter.length]]),
-                            encode: {
-                                x: [0],
-                                y: [1, 2],
-                            },
+                    },
+                    {
+                        name: t(embassyCode),
+                        type: "custom",
+                        renderItem,
+                        dimensions: [null, "Earliest", "Latest"],
+                        data: overviewData.map(d => [d[0], d[2], d[3]]),
+                        encode: {
+                            x: [0],
+                            y: [1, 2],
                         },
-                    ])
-                    .flat(),
+                    },
+                ],
             }}
         />
     );
 };
 OverviewChartByDate.propTypes = {
     visaType: PropTypes.string.isRequired,
+    embassyCode: PropTypes.string.isRequired,
 };

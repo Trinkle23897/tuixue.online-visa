@@ -10,6 +10,7 @@ import { getTimeFromUTC } from "../../utils/misc";
 import EmailSubscriptionForm from "../EmailSubscriptionForm";
 import PostSubscriptionResult from "../PostSubscriptionResult";
 import { overviewAttrProps, newestOverviewProps, overviewProps } from "./overviewPropTypes";
+import { OverviewChartByDate } from "./OverviewChart";
 import "./VisaStatusOverview.less";
 
 const { Panel } = Collapse;
@@ -64,6 +65,7 @@ const ContentActions = ({ children, embassyCode, onAddtionClick }) => {
         postSubscription,
     ] = useSubscriptionFormControl(embassyCode);
 
+    const visaType = useSelector(state => state.visastatusTab);
     const isVisaTypeF = useSelector(state => state.visastatusTab === "F");
     const qqTgInfoSelector = useMemo(() => makeQqTgInfoSelector(embassyCode), [embassyCode]);
     const [qqGroups, tgLink] = useSelector(state => qqTgInfoSelector(state));
@@ -85,9 +87,6 @@ const ContentActions = ({ children, embassyCode, onAddtionClick }) => {
                         <Button icon={<QqOutlined />} shape="circle" onClick={() => setQQTGSubsModalVisible(true)} />
                     </Tooltip>
                 )}
-                <Tooltip title={t("overviewAddtionalIcon")}>
-                    <Button icon={<EllipsisOutlined rotate={90} />} shape="circle" onClick={() => onAddtionClick()} />
-                </Tooltip>
                 {children}
             </Space>
             <Modal
@@ -133,11 +132,22 @@ ContentActions.propTypes = {
     onAddtionClick: PropTypes.func.isRequired,
 };
 
-const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
+const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType }) => {
     const [t] = useTranslation();
+    const [cardDrop, setCardDrop] = useState(false);
     const { writeTime, availableDate } = newest;
 
-    return (
+    const DropdownControlBtn = () => (
+        <Tooltip title={t("overviewAddtionalIcon")}>
+            <Button
+                icon={<PlusOutlined rotate={cardDrop ? 45 : 0} />}
+                shape="circle"
+                onClick={() => setCardDrop(!cardDrop)}
+            />
+        </Tooltip>
+    );
+
+    const BriefOverview = () => (
         <Row align="middle" className="ovreview-content-row" gutter={16}>
             <Col md={{ span: 3 }}>{t(embassyCode)}</Col>
             <Col md={{ span: 4 }}>
@@ -161,20 +171,39 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest }) => {
                 </Tooltip>
             </Col>
             <Col md={{ span: 5 }}>
-                <ContentActions embassyCode={embassyCode} onAddtionClick={() => {}} />
+                <ContentActions embassyCode={embassyCode} onAddtionClick={() => {}}>
+                    <DropdownControlBtn />
+                </ContentActions>
             </Col>
         </Row>
+    );
+
+    return (
+        <Collapse
+            activeKey={cardDrop ? [embassyCode] : []}
+            className="overview-dropdown-card"
+            ghost
+            onChange={() => setCardDrop(!cardDrop)}
+        >
+            <Panel key={embassyCode} header={<BriefOverview />} showArrow={false}>
+                <Row>
+                    <Col span={24}>
+                        <OverviewChartByDate visaType={visaType} embassyCode={embassyCode} />
+                    </Col>
+                </Row>
+            </Panel>
+        </Collapse>
     );
 };
 ContentBar.propTypes = { ...overviewAttrProps, ...newestOverviewProps };
 
-const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
+const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }) => {
     const { t } = useTranslation();
     const [cardDrop, setCardDrop] = useState(false);
     const { writeTime, availableDate } = newest;
 
     const DropdownControlBtn = () => (
-        <Tooltip title="Open Detail">
+        <Tooltip title={t("overviewAddtionalIcon")}>
             <Button
                 icon={<PlusOutlined rotate={cardDrop ? 45 : 0} />}
                 shape="circle"
@@ -204,8 +233,13 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
     );
 
     return (
-        <Collapse activeKey={cardDrop ? [embassyCode] : []} className="overview-dropdown-card" ghost>
-            <Panel key={embassyCode} header={<BriefOverview />} showArrow={false} forceRender>
+        <Collapse
+            activeKey={cardDrop ? [embassyCode] : []}
+            className="overview-dropdown-card"
+            ghost
+            onChange={() => setCardDrop(!cardDrop)}
+        >
+            <Panel key={embassyCode} header={<BriefOverview />} showArrow={false}>
                 <Row>
                     <Col span={8}>
                         <strong>{t("overviewEarliestDate")}: </strong>
@@ -233,6 +267,9 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest }) => {
                                 }`}</Tag>
                             </Col>
                         </Row>
+                    </Col>
+                    <Col span={24}>
+                        <OverviewChartByDate visaType={visaType} embassyCode={embassyCode} />
                     </Col>
                 </Row>
             </Panel>

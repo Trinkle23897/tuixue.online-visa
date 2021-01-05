@@ -112,24 +112,20 @@ export const makeMinuteChartData = visaType =>
         },
     );
 
-export const makeDateChartData = visaType =>
-    createSelector(
-        [makeOverviewSpanSelectorByVisaType(visaType), makeFilterSelectorByVisaType(visaType)],
-        (rawData, vsFilter) => [
-            vsFilter,
-            rawData
-                .slice()
-                .reverse()
-                .map(({ date, overview }, index) => {
-                    const earliestDateObj = {};
-                    const latestDateObj = {};
-                    overview.forEach(({ embassyCode, earliestDate, latestDate }) => {
-                        earliestDateObj[embassyCode] = earliestDate;
-                        latestDateObj[embassyCode] = latestDate;
-                    });
-                    const earliestDateLst = vsFilter.map(embassyCode => earliestDateObj[embassyCode] || null);
-                    const latestDateLst = vsFilter.map(embassyCode => latestDateObj[embassyCode] || null);
-                    return [index, date].concat(earliestDateLst).concat(latestDateLst);
-                }),
-        ],
+export const makeDateChartData = (visaType, embassyCode) =>
+    createSelector([makeOverviewSpanSelectorByVisaType(visaType)], rawData =>
+        rawData
+            .slice()
+            .reverse()
+            .map(({ date, overview }, index) => {
+                const earliestDateObj = {};
+                const latestDateObj = {};
+                overview.forEach(({ embassyCode: e, earliestDate, latestDate }) => {
+                    earliestDateObj[e] = earliestDate;
+                    latestDateObj[e] = latestDate;
+                });
+                const earliestDateLst = earliestDateObj[embassyCode] || null;
+                const latestDateLst = latestDateObj[embassyCode] || null;
+                return [index, date, earliestDateLst, latestDateLst];
+            }),
     );
