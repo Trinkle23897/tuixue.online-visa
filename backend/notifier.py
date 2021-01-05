@@ -19,10 +19,12 @@ VISA_STATUS_CHANGE_CONTENT = """
     {send_time}<br>
     {location} changed from {old_status} to {new_status}.<br>
     <br>
-    See <a href="https://{base_uri}/visa">https://{base_uri}/visa</a>for more detail.<br>
-    If you want to change your subscribe option, please re-submit a
-    request over <a href="">Some link to the website</a>.
-"""  # TODO: add the frontend href attr here.
+    See <a href="https://{base_uri}/visa">https://{base_uri}/visa</a> for more detail.<br>
+    If you want to change your subscribe option, please re-submit a request over
+    <a href="">Some link to the website</a>.
+"""
+# TODO: add the frontend href attr here.
+# TODO: unsubscribe link
 
 SUBSCRIPTION_CONFIRMATION_TITLE = '[tuixue.online] Subscription Confirmation of {email}'
 SUBSCRIPTION_CONFIRMATION_CONTENT = """
@@ -32,8 +34,8 @@ SUBSCRIPTION_CONFIRMATION_CONTENT = """
     {email} for subcription of following visa types and embassies/consulate:<br>
     {subscription_str}
     <b>Please review your decision by logging back into tuixue.online application status
-    page at <a href="{confirmation_url}"><strong>this link</strong></a></b>. Otherwise,
-    your application will be cleared.<br>
+    page at <a href="{confirmation_url}">this link</a></b>. Otherwise, the above application
+    record will be cleared.<br>
     <br>
     Sincerely,<br>
     <br>
