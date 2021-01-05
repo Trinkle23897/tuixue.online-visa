@@ -26,9 +26,6 @@ const NavMenu = ({ mode, theme, onClick }) => {
                     {t("checkee")}
                 </a>
             </Menu.Item>
-            <Menu.Item key="emailSubs">
-                <Link to="/visa/subscription/email">Email Subscription</Link>
-            </Menu.Item>
         </Menu>
     );
 };

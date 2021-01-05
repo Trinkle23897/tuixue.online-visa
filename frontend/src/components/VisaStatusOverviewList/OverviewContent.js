@@ -15,47 +15,7 @@ import "./VisaStatusOverview.less";
 
 const { Panel } = Collapse;
 
-const QQTGSubsModal = ({ qqGroups, tgLink, isModalVisible, setIsModalVisible }) => {
-    const { t } = useTranslation();
-    const qqGroupsStr = qqGroups.map((content, index) => ({
-        index,
-        desc: `${t("QQTGModalContentQQ", { index: index + 1 })}${content}`,
-    }));
-
-    return (
-        <Modal
-            title={t("QQTGModalTitle")}
-            visible={isModalVisible}
-            onOk={() => setIsModalVisible(false)}
-            onCancel={() => setIsModalVisible(false)}
-        >
-            <p>
-                {t("QQTGModalContentTG")}
-                <a href={tgLink} target="_blank" rel="noreferrer">
-                    {tgLink}
-                </a>
-            </p>
-            <p>{t("QQTGModalContentQQDesc")}</p>
-            <List
-                itemLayout="vertical"
-                dataSource={qqGroupsStr}
-                renderItem={s => (
-                    <List.Item key={s.index}>
-                        <p>{s.desc}</p>
-                    </List.Item>
-                )}
-            />
-        </Modal>
-    );
-};
-QQTGSubsModal.propTypes = {
-    qqGroups: PropTypes.arrayOf(PropTypes.string),
-    tgLink: PropTypes.string,
-    isModalVisible: PropTypes.bool.isRequired,
-    setIsModalVisible: PropTypes.func.isRequired,
-};
-
-const ContentActions = ({ children, embassyCode, onAddtionClick }) => {
+const ContentActions = ({ children, embassyCode }) => {
     const { t } = useTranslation();
     const [QQTGSubsModalVisible, setQQTGSubsModalVisible] = useState(false);
 
@@ -129,7 +89,6 @@ const ContentActions = ({ children, embassyCode, onAddtionClick }) => {
 ContentActions.propTypes = {
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
     embassyCode: PropTypes.string.isRequired,
-    onAddtionClick: PropTypes.func.isRequired,
 };
 
 const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType }) => {
@@ -148,7 +107,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
     );
 
     const BriefOverview = () => (
-        <Row align="middle" className="ovreview-content-row" gutter={16}>
+        <Row align="middle" className="ovreview-content-row" gutter={32}>
             <Col md={{ span: 3 }}>{t(embassyCode)}</Col>
             <Col md={{ span: 4 }}>
                 <Tooltip title={t("overviewEarliest")}>{earliestDate.join("/")}</Tooltip>
@@ -171,9 +130,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
                 </Tooltip>
             </Col>
             <Col md={{ span: 5 }}>
-                <ContentActions embassyCode={embassyCode} onAddtionClick={() => {}}>
-                    <DropdownControlBtn />
-                </ContentActions>
+                <DropdownControlBtn />
             </Col>
         </Row>
     );
@@ -219,13 +176,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
             <Col span={cardDrop ? 16 : 8}>
                 <Row justify="end" align="middle">
                     <Col>
-                        {cardDrop ? (
-                            <ContentActions embassyCode={embassyCode} onAddtionClick={() => {}}>
-                                <DropdownControlBtn />
-                            </ContentActions>
-                        ) : (
-                            <DropdownControlBtn />
-                        )}
+                        <DropdownControlBtn />
                     </Col>
                 </Row>
             </Col>

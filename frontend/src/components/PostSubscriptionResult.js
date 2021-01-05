@@ -29,7 +29,7 @@ export default function PostSubscriptionResult({ success, step, inSubscriptionPa
             </Col>
             <Col>
                 <Typography.Text style={{ textAlign: "center", fontStyle: "italic" }}>
-                    {inSubscriptionPage ? "Redirecting to home page in 3 seconds..." : "Closing modal in 3 seconds..."}
+                    {inSubscriptionPage ? "Redirecting to home page in 3 seconds..." : "Closing in 3 seconds..."}
                 </Typography.Text>
             </Col>
         </Row>
