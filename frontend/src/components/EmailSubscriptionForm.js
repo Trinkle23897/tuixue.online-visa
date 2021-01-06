@@ -15,7 +15,7 @@ const SubscriptionFormItem = ({ field, remove, disabled }) => {
 
     return (
         <Row align="middle" justify="space-between">
-            <Col xs={{ span: 24 }} md={{ span: 7 }}>
+            <Col xs={{ span: 24 }} md={{ span: 3 }}>
                 <Form.Item
                     label="Visa Type"
                     name={[field.name, "visaType"]}
@@ -32,7 +32,7 @@ const SubscriptionFormItem = ({ field, remove, disabled }) => {
                     />
                 </Form.Item>
             </Col>
-            <Col xs={{ span: 24 }} md={{ span: 7 }}>
+            <Col xs={{ span: 24 }} md={{ span: 13 }}>
                 <Form.Item
                     label="Embassy"
                     name={[field.name, "embassyCode"]}
@@ -44,10 +44,11 @@ const SubscriptionFormItem = ({ field, remove, disabled }) => {
                         setSys={s => setSys(s)}
                         placeholder="Select Embassy"
                         disabled={disabled}
+                        multiple
                     />
                 </Form.Item>
             </Col>
-            <Col xs={{ span: 24 }} md={{ span: 7 }}>
+            <Col xs={{ span: 24 }} md={{ span: 5 }}>
                 <Form.Item label="Till" name={[field.name, "till"]} fieldKey={[field.fieldKey, "till"]}>
                     <DatePicker style={{ width: "100%" }} placeholder="Select Till" disabled={disabled} />
                 </Form.Item>
