@@ -46,6 +46,8 @@ CD_LIST = [
     'F-成都',
 ]
 
+DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'sg', 'bfs', 'lcy', 'gye']
+
 SESSION_UPDATE_QUEUE = Queue()
 
 COUTNRY_CODE_TO_UTC_OFFSET = {
