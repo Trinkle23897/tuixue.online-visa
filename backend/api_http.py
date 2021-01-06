@@ -1,7 +1,7 @@
 """ RESTful API for http://tuixue.online/visa/"""
 
 from enum import Enum
-from typing import Optional, List
+from typing import Optional, List, Union
 from datetime import datetime, timedelta, timezone
 
 from fastapi import FastAPI, Body, Query, Response, status
@@ -32,7 +32,7 @@ class EmailSubsStep(str, Enum):
 # These classes serve for the purpose of request body type chechking for FastAPI
 class SingleSubscription(BaseModel):
     visa_type: str
-    code: str
+    code: Union[str, List[str]]
     till: Optional[datetime]
 
 
@@ -139,13 +139,13 @@ def get_visa_status_detail(
 def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription = Body(..., embed=True)):
     """ Post email subscription."""
     subscription = subscription.dict()
-    subs_lst = [
-        (
-            subs['visa_type'],
-            subs['code'],
-            (subs['till'] or datetime.max)
-        ) for subs in subscription['subscription']
-    ]
+    subs_lst = []
+    for subs in subscription['subscription']:
+        visa_type, code, till = subs['visa_type'], subs['code'], (subs['till'] or datetime.max)
+        if not isinstance(code, list):
+            code = [code]
+        for c in code:
+            subs_lst.append((visa_type, c, till))
 
     if step == EmailSubsStep.confirming:
         # TODO: construct the email addresses. send the email. new unsubscribe route
