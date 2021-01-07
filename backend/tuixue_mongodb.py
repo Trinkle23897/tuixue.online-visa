@@ -770,7 +770,7 @@ class VisaStatus:
             return
         embassy = USEmbassy.get_embassy_by_code(embassy_code)
         interval = CGI_FETCH_TIME_INTERVAL[visa_type] if embassy.sys == 'cgi' else AIS_FETCH_TIME_INTERVAL[visa_type]
-        interval *= 1000
+        interval = (interval + 60) * 1000  # add 1min tolerance
 
         def convert(dt: datetime):
             return dt_to_utc(dt, remove_second=True)
