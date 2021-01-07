@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { IoLanguageOutline } from "react-icons/io5";
 import { useScreenXS } from "../hooks";
 import { setCookie } from "../utils/cookie";
+import realTuixueLogo from "../assets/img/favicon.ico";
+import fakeTuixueLogo from "../assets/img/tuixue-logo.png";
 import "./TuixueHeader.less";
 
 const { Header } = Layout;
@@ -86,8 +88,8 @@ export default function Nav() {
 
     const Logo = () => (
         <div className="logo" style={{ justifyContent: screenXS ? "center" : "flex-start" }}>
-            <img src="/visa/favicon.ico" height="40" width="40" alt="real tuixue logo" />
-            <img src="/visa/tuixue-logo.png" height="48" width="96" alt="fake tuixue logo" />
+            <img src={realTuixueLogo} height="40" width="40" alt="real tuixue logo" />
+            <img src={fakeTuixueLogo} height="48" width="96" alt="fake tuixue logo" />
         </div>
     );
 
