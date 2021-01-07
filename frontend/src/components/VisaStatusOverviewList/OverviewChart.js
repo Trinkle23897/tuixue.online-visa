@@ -34,6 +34,7 @@ export const OverviewChartByMinute = ({ visaType }) => {
     const [writeTime, availDateLst] = useSelector(state => minuteChartDataSelector(state));
     return (
         <ReactEcharts
+            notMerge
             option={{
                 title: {
                     text: "",
@@ -101,6 +102,7 @@ export const OverviewChartByDate = ({ visaType, embassyCode }) => {
     const overviewData = useSelector(state => dateChartDataSelector(state));
     return (
         <ReactEcharts
+            notMerge
             option={{
                 title: {
                     text: "",
