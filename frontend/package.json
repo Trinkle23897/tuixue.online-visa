@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/visa",
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
     "@craco/craco": "^5.7.0",
