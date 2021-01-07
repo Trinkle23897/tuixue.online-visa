@@ -29,10 +29,15 @@ class EmailSubsStep(str, Enum):
     subscribed = 'subscribed'
 
 
+class EmailUnsubsStep(str, Enum):
+    confirming = 'confirming'
+    deleted = 'deleted'
+
+
 # These classes serve for the purpose of request body type chechking for FastAPI
 class SingleSubscription(BaseModel):
-    visa_type: str
-    code: Union[str, List[str]]
+    visa_type: VisaType
+    code: List[EmbassyCode]
     till: Optional[datetime]
 
 
@@ -139,13 +144,13 @@ def get_visa_status_detail(
 def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription = Body(..., embed=True)):
     """ Post email subscription."""
     subscription = subscription.dict()
-    subs_lst = []
-    for subs in subscription['subscription']:
-        visa_type, code, till = subs['visa_type'], subs['code'], (subs['till'] or datetime.max)
-        if not isinstance(code, list):
-            code = [code]
-        for c in code:
-            subs_lst.append((visa_type, c, till))
+    subs_lst = [
+        (
+            subs['visa_type'],
+            code,
+            (subs['till'] or datetime.max)
+        ) for subs in subscription['subscription'] for code in subs['code']
+    ]
 
     if step == EmailSubsStep.confirming:
         # TODO: construct the email addresses. send the email. new unsubscribe route
@@ -158,13 +163,13 @@ def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription
         return updated_subscriber
 
 
-@app.get('/subscription/email')
+# @app.get('/subscription/email')
 def get_email_subscription(email: str = Query(...)):
     """ Get the subscription record of a email address."""
     return DB.Subscription.get_subscriptions_by_email(email)
 
 
-@app.delete('/subscription/email')
+@app.delete('/subscription/email') # TODO: change this route to @app.post('/unsubscription/email')
 def delete_email_subscription(
     email: str = Query(...),
     visa_type: List[VisaType] = Query(...),
