@@ -25,16 +25,21 @@ const visastatusDetailSlice = createSlice({
 const { reducer, actions } = visastatusDetailSlice;
 export const { updateDeatil } = actions;
 
-export const fetchVisaStatusDetail = (visaType, embassyCode) => async dispatch => {
-    if (Array.isArray(embassyCode) && embassyCode.length === 0) {
+export const fetchVisaStatusDetail = visaType => async (dispatch, getState) => {
+    const {
+        visastatusFilter: { [visaType]: selectedEmb },
+    } = getState();
+
+    if (selectedEmb.length === 0) {
         return Promise.resolve();
     }
+
     try {
-        const vsDetail = await getDetailVisaStatus(visaType, embassyCode, new Date());
+        const vsDetail = await getDetailVisaStatus(visaType, selectedEmb, new Date());
         if (vsDetail) {
             const { timeRange, detail: rawDetail } = vsDetail;
-            const detail = rawDetail.map(({ embassyCode: embassyCodeSingle, availableDates }) => ({
-                embassyCode: embassyCodeSingle,
+            const detail = rawDetail.map(({ embassyCode, availableDates }) => ({
+                embassyCode,
                 availableDates: availableDates.map(({ writeTime, availableDate }) => ({
                     writeTime,
                     availableDate: availableDate === null ? null : getDateFromISOString(availableDate),

@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getCookie, setCookie } from "../utils/cookie";
+import { fetchVisaStatusDetail } from "./visastatusDetailSlice";
+import { fetchVisaStatusOverview } from "./visastatusOverviewSlice";
 
 const visastatusTabSlice = createSlice({
     name: "visastatusTab",
@@ -16,6 +18,8 @@ const { changeTab } = actions;
 export const changeTabAndSetCookie = activeKey => async dispatch => {
     setCookie("visaType", activeKey);
     dispatch(changeTab({ activeKey }));
+    dispatch(fetchVisaStatusOverview(activeKey));
+    dispatch(fetchVisaStatusDetail(activeKey));
     return Promise.resolve();
 };
 

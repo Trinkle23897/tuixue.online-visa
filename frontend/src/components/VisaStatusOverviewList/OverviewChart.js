@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import ReactEcharts from "echarts-for-react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { makeFilterSelectorByVisaType, makeMinuteChartData, makeDateChartData } from "../../redux/selectors";
-import { fetchVisaStatusDetail } from "../../redux/visastatusDetailSlice";
+import { makeMinuteChartData, makeDateChartData } from "../../redux/selectors";
 import { getTimeFromUTC, getDateFromISOString } from "../../utils/misc";
 
 const dataZoom = [
@@ -31,14 +30,7 @@ const dataZoom = [
 
 export const OverviewChartByMinute = ({ visaType }) => {
     const [t] = useTranslation();
-    const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
     const minuteChartDataSelector = useMemo(() => makeMinuteChartData(visaType), [visaType]);
-    const vsFilter = useSelector(state => filterSelector(state));
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(fetchVisaStatusDetail(visaType, vsFilter));
-    }, [visaType, vsFilter, dispatch]);
     const [writeTime, availDateLst] = useSelector(state => minuteChartDataSelector(state));
     return (
         <ReactEcharts
