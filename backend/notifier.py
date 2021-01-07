@@ -26,16 +26,16 @@ VISA_STATUS_CHANGE_CONTENT = """
 # TODO: add the frontend href attr here.
 # TODO: unsubscribe link
 
-SUBSCRIPTION_CONFIRMATION_TITLE = '[tuixue.online] Subscription Confirmation of {email}'
+SUBSCRIPTION_CONFIRMATION_TITLE = '(PLEASE CONFIRM) - Your Application Decision from tuixue.online'
 SUBSCRIPTION_CONFIRMATION_CONTENT = """
     Dear {user}:<br>
     <br>
     A faculty committee at tuixue.online has made a decision on your application with email
-    {email} for subcription of following visa types and embassies/consulate:<br>
-    {subscription_str}
+    {email} for subcription of following visa types and embassies/consulate.<br>
     <b>Please review your decision by logging back into tuixue.online application status
     page at <a href="{confirmation_url}">this link</a></b>. Otherwise, the above application
     record will be cleared.<br>
+    {subscription_str}
     <br>
     Sincerely,<br>
     <br>
@@ -68,7 +68,7 @@ class Notifier:
             (
                 'https',
                 FRONTEND_BASE_URI,
-                '/visa/subscription/email',
+                '/visa/email/subscription',
                 urlencode(query_dct, doseq=True, quote_via=quote),
                 ''
             )
