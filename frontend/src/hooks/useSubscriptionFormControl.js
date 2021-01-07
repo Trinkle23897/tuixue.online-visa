@@ -32,14 +32,19 @@ const reqBodyFromForm = ({ email, subscription }) => ({
  * @param {URLSearchParams} param The passed url search param.
  * @returns {Object} request body
  */
-const reqBodyFromParam = param => ({
-    email: param.get("email"),
-    subscription: zip(
-        param.getAll("visa_type"),
-        param.getAll("code"),
-        param.getAll("till"),
-    ).map(([vt, code, till]) => ({ visa_type: vt, code, till })),
-});
+const reqBodyFromParam = param => {
+    const email = param.get("email");
+    const subscriptionCollector = param
+        .getAll("visa_type")
+        .reduce((subsObj, visaType) => ({ ...subsObj, [visaType]: { visa_type: visaType, code: [], till: null } }), {});
+
+    zip(param.getAll("visa_type"), param.getAll("code"), param.getAll("till")).forEach(([vt, code, till]) => {
+        subscriptionCollector[vt].code.push(code);
+        subscriptionCollector[vt].till = till; // the till time WILL BE THE SAME for a single visaType
+    });
+
+    return { email, subscription: Object.values(subscriptionCollector) };
+};
 
 const { useForm } = Form;
 

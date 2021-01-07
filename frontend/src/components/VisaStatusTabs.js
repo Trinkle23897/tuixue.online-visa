@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Tabs, Row, Col, Button, List, Divider } from "antd";
 import { useTranslation } from "react-i18next";
@@ -7,8 +7,7 @@ import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
 import VisaStatusOverviewList from "./VisaStatusOverviewList";
 import EmbassySelector from "./EmbassySelector";
 import "./VisaStatusTabs.less";
-import { OverviewChartByMinute, OverviewChartByDate } from "./VisaStatusOverviewList/OverviewChart";
-import { setCookie, getCookie } from "../utils/cookie";
+import { OverviewChartByMinute } from "./VisaStatusOverviewList/OverviewChart";
 import { useScreenXS, useSubscriptionFormControl } from "../hooks";
 import EmailSubscriptionForm from "./EmailSubscriptionForm";
 import PostSubscriptionResult from "./PostSubscriptionResult";
@@ -62,11 +61,7 @@ const QQTGSubs = () => {
 };
 
 const EmailSubs = () => {
-    const [
-        { form, formState, dispatchFormAction, formStateActions },
-        pageInfo,
-        postSubscription,
-    ] = useSubscriptionFormControl();
+    const [{ form, formState }, pageInfo, postSubscription] = useSubscriptionFormControl();
     return formState.postingSubscription ? (
         <PostSubscriptionResult
             success={formState.postSuccessful}
@@ -87,7 +82,6 @@ const EmailSubs = () => {
 };
 
 export default function VisaStatusTabs() {
-    const [t] = useTranslation();
     const dispatch = useDispatch();
     const visaType = useSelector(state => state.visastatusTab);
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);

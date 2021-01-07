@@ -45,6 +45,7 @@ const SubscriptionFormItem = ({ field, remove, disabled }) => {
                         placeholder="Select Embassy"
                         disabled={disabled}
                         multiple
+                        treeCheckable
                     />
                 </Form.Item>
             </Col>
@@ -118,7 +119,10 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
             labelCol={{ span: 0 }}
             size="large"
             onValuesChange={onValuesChange}
-            onFinish={fieldValues => onFinish(fieldValues)}
+            onFinish={fieldValues => {
+                console.log(fieldValues);
+                onFinish(fieldValues);
+            }}
         >
             <Form.Item
                 name="email"

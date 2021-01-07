@@ -1,14 +1,11 @@
 import React, { useMemo, useState } from "react";
-import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { Row, Col, Button, Tooltip, Space, Collapse, Tag, Modal, List } from "antd";
-import { MailOutlined, QqOutlined, EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
+import { Row, Col, Button, Tooltip, Collapse, Tag } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useScreenXS, useSubscriptionFormControl } from "../../hooks";
-import { makeNewestVisaStatusSelector, makeQqTgInfoSelector } from "../../redux/selectors";
+import { useScreenXS } from "../../hooks";
+import { makeNewestVisaStatusSelector } from "../../redux/selectors";
 import { getTimeFromUTC } from "../../utils/misc";
-import EmailSubscriptionForm from "../EmailSubscriptionForm";
-import PostSubscriptionResult from "../PostSubscriptionResult";
 import { overviewAttrProps, newestOverviewProps, overviewProps } from "./overviewPropTypes";
 import { OverviewChartByDate } from "./OverviewChart";
 import "./VisaStatusOverview.less";
