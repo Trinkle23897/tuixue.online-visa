@@ -936,37 +936,31 @@ class Subscription:
         if not isinstance(subscription, list):
             subscription = [subscription]
 
-        if cls.email.find_one({'email': email}) is None:  # create new subscriber
-            cls.email.insert_one({
-                'email': email,
-                'subscription': [
-                    {
-                        'visa_type': visa_type,
-                        'embassy_code': embassy_code,
-                        'till': till,
-                    } for visa_type, embassy_code, till in subscription
+        input_subscription = {(visa_type, embassy_code): till for visa_type, embassy_code, till in subscription}
+
+        old_subscription = list(cls.email.aggregate([
+            {'$match': {'email': email}},
+            {'$unwind': '$subscription'},
+            {'$replaceRoot': {'newRoot': '$subscription'}},
+        ]))
+
+        new_subscription = []
+        for subs in old_subscription:
+            if (subs['visa_type'], subs['embassy_code']) in input_subscription:
+                new_subscription.append({**subs, 'till': input_subscription[(subs['visa_type'], subs['embassy_code'])]})
+                del input_subscription[(subs['visa_type'], subs['embassy_code'])]
+            else:
+                new_subscription.append({**subs})
+
+        if input_subscription:
+            new_subscription.extend(
+                [
+                    {'visa_type': visa_type, 'embassy_code': embassy_code, 'till': till}
+                    for (visa_type, embassy_code), till in input_subscription.items()
                 ]
-            })
-        else:  # udpate subscription list of existed subscriber
-            for visa_type, embassy_code, till in subscription:
-                subs = {'visa_type': visa_type, 'embassy_code': embassy_code, 'till': till}
-                existed_subs = cls.email.find_one(
-                    {
-                        'email': email,
-                        'subscription': {'$elemMatch': {'visa_type': visa_type, 'embassy_code': embassy_code}}
-                    }
-                )  # this query return a subscriber ONLY IF the subscriber subscribes this (visa_type, embassy_code)
-                if existed_subs is None:
-                    cls.email.update_one({'email': email}, {'$push': {'subscription': subs}})
-                else:
-                    cls.email.update_one(
-                        {
-                            'email': email,
-                            'subscription.visa_type': visa_type,  # these two lines is equvilent to $elemMatch
-                            'subscription.embassy_code': embassy_code
-                        },
-                        {'$set': {'subscription.$.till': till}}
-                    )
+            )
+
+        cls.email.update_one({'email': email}, {'$set': {'subscription': new_subscription}}, upsert=True)
 
         return cls.email.find_one({'email': email}, projection={'_id': False})
 
@@ -1085,6 +1079,11 @@ if __name__ == "__main__":
     # manual test
     # simple_test_visa_status()
     # simple_test_subscription()
-    VisaStatus.initiate_latest_written_sequential('cgi')
-    VisaStatus.initiate_latest_written_sequential('ais')
+    from pprint import pprint
+    cursor = Subscription.email.aggregate([
+        {'$match': {'email': 'baiyh+tuixue@gmail.com'}},
+        {'$unwind': '$subscription'},
+        {'$replaceRoot': {'newRoot': '$subscription'}}
+    ])
+    pprint(list(cursor))
     pass
