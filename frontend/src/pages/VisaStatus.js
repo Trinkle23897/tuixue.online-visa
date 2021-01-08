@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Layout, Typography, Row, Col, Tabs } from "antd";
 import { DiscussionEmbed } from "disqus-react";
 import { useTranslation } from "react-i18next";
-import { TuixueHeader, VisaStatusTabs } from "../components";
+import { TuixueHeader, VisaStatusTabs, CounterFooter } from "../components";
 import "./VisaStatus.less";
 
 const { Content } = Layout;
@@ -28,6 +28,7 @@ export default function VisaStatus() {
                         xl={{ span: 14, push: 5 }}
                     >
                         <VisaStatusTabs />
+                        <CounterFooter />
                         <Tabs centered activeKey={disqusType} onChange={activeKey => setDisqusType(activeKey)}>
                             <TabPane tab={t("disqusDomestic")} key="visa" />
                             <TabPane tab={t("disqusGlobal")} key="global" />
