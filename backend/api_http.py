@@ -1,7 +1,7 @@
 """ RESTful API for http://tuixue.online/visa/"""
 
 from enum import Enum
-from typing import Optional, List, Union
+from typing import Optional, List
 from datetime import datetime, timedelta, timezone
 
 from fastapi import FastAPI, Body, Query, Response, status
@@ -169,7 +169,7 @@ def get_email_subscription(email: str = Query(...)):
     return DB.Subscription.get_subscriptions_by_email(email)
 
 
-@app.delete('/subscription/email') # TODO: change this route to @app.post('/unsubscription/email')
+@app.delete('/subscription/email')  # TODO: change this route to @app.post('/unsubscription/email')
 def delete_email_subscription(
     email: str = Query(...),
     visa_type: List[VisaType] = Query(...),

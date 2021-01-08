@@ -947,7 +947,10 @@ class Subscription:
         new_subscription = []
         for subs in old_subscription:
             if (subs['visa_type'], subs['embassy_code']) in input_subscription:
-                new_subscription.append({**subs, 'till': input_subscription[(subs['visa_type'], subs['embassy_code'])]})
+                new_subscription.append({
+                    **subs,
+                    'till': input_subscription[(subs['visa_type'], subs['embassy_code'])]
+                })
                 del input_subscription[(subs['visa_type'], subs['embassy_code'])]
             else:
                 new_subscription.append({**subs})

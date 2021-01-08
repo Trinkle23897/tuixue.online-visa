@@ -11,7 +11,7 @@ from tuixue_typing import VisaType
 from typing import Any, Dict, List, Optional
 from fastapi.encoders import jsonable_encoder
 from urllib.parse import urlencode, urlunsplit, quote
-from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, FRONTEND_BASE_URI
+from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, FRONTEND_BASE_URI, DEFAULT_FILTER
 
 
 VISA_STATUS_CHANGE_TITLE = '[tuixue.online] {visa_detail} Visa Status Change'
@@ -144,7 +144,7 @@ class Notifier:
                 return f'{d.month}/{d.day}'
             return f'{d.year}/{d.month}/{d.day}'
         prev, curr = converter(prev), converter(curr)
-        content = f"NEW {embassy.name_cn}: {prev} -> {curr}"
+        content = f"{embassy.name_cn}: {prev} -> {curr}"
         # qq
         extra = SECRET["qq"]
         base_uri = extra["mirai_base_uri"]
@@ -152,18 +152,24 @@ class Notifier:
         qq_num = extra["qq_num"]
         if embassy.region == "DOMESTIC":
             group_id = extra["qq_group_id"]["domestic"]
-        else:
+        elif embassy.code in DEFAULT_FILTER:
             group_id = extra["qq_group_id"]["non_domestic"]
-        r = requests.post(base_uri + "/auth",
-                          data=json.dumps({"authKey": auth_key})).json()
-        session = r["session"]
-        requests.post(base_uri + "/verify",
-                      data=json.dumps({"sessionKey": session, "qq": qq_num}))
-        for g in group_id:
-            requests.post(base_uri + "/sendGroupMessage", data=json.dumps(
-                {"sessionKey": session, "target": g, "messageChain": [{"type": "Plain", "text": content}]}))
-        requests.post(base_uri + "/release",
-                      data=json.dumps({"sessionKey": session, "qq": qq_num}))
+        else:
+            group_id = []
+        if group_id:
+            r = requests.post(base_uri + "/auth",
+                              data=json.dumps({"authKey": auth_key})).json()
+            session = r["session"]
+            requests.post(base_uri + "/verify",
+                          data=json.dumps({"sessionKey": session, "qq": qq_num}))
+            for g in group_id:
+                requests.post(base_uri + "/sendGroupMessage", data=json.dumps(
+                    {"sessionKey": session, "target": g, "messageChain": [{
+                        "type": "Plain",
+                        "text": f"{content}\n详情：https://{FRONTEND_BASE_URI}/visa/"
+                    }]}))
+            requests.post(base_uri + "/release",
+                          data=json.dumps({"sessionKey": session, "qq": qq_num}))
         # tg
         # TODO
 
