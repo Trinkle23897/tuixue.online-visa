@@ -4,6 +4,7 @@ import { Tabs, Row, Col, Button, List, Divider } from "antd";
 import { useTranslation } from "react-i18next";
 import { MailOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
+import { nonDomesticEmbassyInDefaultFilterSelector } from "../redux/selectors";
 import VisaStatusOverviewList from "./VisaStatusOverviewList";
 import EmbassySelector from "./EmbassySelector";
 import "./VisaStatusTabs.less";
@@ -17,19 +18,7 @@ const { TabPane } = Tabs;
 const QQTGSubs = () => {
     const [t] = useTranslation();
     const [qqGroups, tgLink] = useSelector(state => [state.metadata.qqTgInfo.qq, state.metadata.qqTgInfo.tg]);
-    // TODO qqGroup: domestic, hotGlobal, nonDomestic
-    const qqGroupsStr = qqGroups.domestic
-        .map((content, index) => ({
-            index: `qqDomestic-${index}`,
-            desc: `${t("QQGroupDomestic", { index: index + 1 })}${content}`,
-        }))
-        .concat(
-            qqGroups.nonDomestic.map((content, index) => ({
-                index: `qqNonDomestic-${index}`,
-                desc: `${t("QQGroupNonDomestic", { index: index + 1 })}${content}`,
-            })),
-        );
-
+    const nonDomesticEmbassyInDefaultFilter = useSelector(state => nonDomesticEmbassyInDefaultFilterSelector(state));
     return (
         <>
             <p>
@@ -45,17 +34,15 @@ const QQTGSubs = () => {
                 </a>
             </p>
             <Divider />
-            <p>{t("QQDesc")}</p>
-            <List
-                itemLayout="vertical"
-                dataSource={qqGroupsStr}
-                renderItem={s => (
-                    <List.Item key={s.index}>
-                        <p>{s.desc}</p>
-                    </List.Item>
-                )}
-                split={false}
-            />
+            <p>{t("QQDescDomestic")}</p>
+            {qqGroups.domestic.map((content, index) => (
+                <p key={`qqDomestic-${content}`}>{`${t("QQGroupDomestic", { index: index + 1 })}${content}`}</p>
+            ))}
+            <Divider />
+            <p>{t("QQDescNonDomestic", { cities: nonDomesticEmbassyInDefaultFilter.map(e => t(e)).join(" / ") })}</p>
+            {qqGroups.nonDomestic.map((content, index) => (
+                <p key={`qqNonDomestic-${content}`}>{`${t("QQGroupNonDomestic", { index: index + 1 })}${content}`}</p>
+            ))}
         </>
     );
 };

@@ -11,6 +11,11 @@ const detailSelector = state => state.visastatusDetail;
 
 const embassyLstSelector = createSelector(metadataSelector, metadata => metadata.embassyLst);
 const qqTgInfoSelector = createSelector(metadataSelector, metadata => metadata.qqTgInfo);
+export const nonDomesticEmbassyInDefaultFilterSelector = createSelector(
+    [embassyLstSelector, metadataSelector],
+    (embassyLst, { defaultFilter }) =>
+        defaultFilter.filter(embassyCode => findEmbassyAttributeByCode("region", embassyCode, embassyLst) !== "DOMESTIC")
+    );
 
 export const makeEmbassyBySysSelector = sys =>
     createSelector(embassyLstSelector, embassyLst =>
