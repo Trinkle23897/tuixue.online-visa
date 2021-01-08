@@ -14,8 +14,10 @@ const qqTgInfoSelector = createSelector(metadataSelector, metadata => metadata.q
 export const nonDomesticEmbassyInDefaultFilterSelector = createSelector(
     [embassyLstSelector, metadataSelector],
     (embassyLst, { defaultFilter }) =>
-        defaultFilter.filter(embassyCode => findEmbassyAttributeByCode("region", embassyCode, embassyLst) !== "DOMESTIC")
-    );
+        defaultFilter.filter(
+            embassyCode => findEmbassyAttributeByCode("region", embassyCode, embassyLst) !== "DOMESTIC",
+        ),
+);
 
 export const makeEmbassyBySysSelector = sys =>
     createSelector(embassyLstSelector, embassyLst =>
