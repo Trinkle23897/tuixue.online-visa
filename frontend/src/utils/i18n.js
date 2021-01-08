@@ -27,6 +27,7 @@ const resources = {
             overDateChartTitle: "Over Date", // TODO
             at: "at",
             all: "All",
+            refreshDone: "Done with refresh",
             overviewTitle: "Visa Status Overview",
             overviewEarliest: "Earliest availabe appointment date of today",
             overviewNewest: "Latest fetching result of available appointment date",
@@ -73,6 +74,8 @@ const resources = {
             overDateChartTitle: "日期粒度", // TODO
             at: "于",
             all: "全部",
+            Refresh: "刷新数据",
+            refreshDone: "已刷新至最新数据",
             Location: "地点",
             overviewTitle: "美国签证预约时间",
             overviewEarliest: "今天出现的最早可预约日期",

@@ -1,10 +1,12 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
+import { notification } from "antd";
 import ReactEcharts from "echarts-for-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { makeMinuteChartData, makeDateChartData } from "../../redux/selectors";
 import { getTimeFromUTC, getDateFromISOString } from "../../utils/misc";
+import { fetchVisaStatusDetail } from "../../redux/visastatusDetailSlice";
 
 const dataZoom = [
     {
@@ -30,6 +32,7 @@ const dataZoom = [
 
 export const OverviewChartByMinute = ({ visaType }) => {
     const [t] = useTranslation();
+    const dispatch = useDispatch();
     const minuteChartDataSelector = useMemo(() => makeMinuteChartData(visaType), [visaType]);
     const [writeTime, availDateLst] = useSelector(state => minuteChartDataSelector(state));
     return (
@@ -57,6 +60,22 @@ export const OverviewChartByMinute = ({ visaType }) => {
                             .map(({ marker, seriesName, data }) => `${marker}${seriesName}: ${data}`)
                             .join("<br>");
                         return header + content;
+                    },
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        myRefresh: {
+                            title: t("Refresh"),
+                            icon:
+                                "M3.8,33.4 M47,18.9h9.8V8.7 M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M13,41.1H3.1v10.2 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5",
+                            onclick: () => {
+                                dispatch(fetchVisaStatusDetail(visaType));
+                                notification.open({
+                                    message: t("refreshDone"),
+                                });
+                            },
+                        },
                     },
                 },
                 dataZoom,
