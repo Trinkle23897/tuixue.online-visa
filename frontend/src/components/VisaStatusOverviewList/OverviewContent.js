@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import ReactMarkdown from "react-markdown";
 import { Row, Col, Button, Tooltip, Collapse, Tag } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, MailOutlined, QqOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useScreenXS } from "../../hooks";
 import { makeNewestVisaStatusSelector, makeCountryCodeSelector } from "../../redux/selectors";
@@ -27,6 +27,24 @@ const DropdownContent = ({ visaType, embassyCode }) => {
             </Col>
             <Col span={24}>
                 <p style={{ textAlign: "center" }}>{t("overDateChartTitle", { embassyName: t(embassyCode) })}</p>
+            </Col>
+            {visaType === "F" && (
+                <Col span={24}>
+                    <h2>{t("overviewQQIcon")}</h2>
+                    <p>
+                        {t("additionalInfoTop.part1")}
+                        <QqOutlined />
+                        {t("additionalInfoTop.part2")}
+                    </p>
+                </Col>
+            )}
+            <Col span={24}>
+                <h2>{t("overviewEmailIcon")}</h2>
+                <p>
+                    {t("additionalInfoTop.part1")}
+                    <MailOutlined />
+                    {t("additionalInfoTop.part2")}
+                </p>
             </Col>
             <Col span={24}>
                 <ReactMarkdown>{additionalInfoMarkdown}</ReactMarkdown>

@@ -48,6 +48,9 @@ export const OverviewChartByMinute = ({ visaType }) => {
                 },
                 yAxis: {
                     type: "time",
+                    name: t("overviewEarliestDate"),
+                    nameLocation: "middle",
+                    nameGap: 50,
                 },
                 legend: {
                     data: availDateLst.map(({ embassyCode }) => t(embassyCode)),
@@ -136,6 +139,9 @@ export const OverviewChartByDate = ({ visaType, embassyCode }) => {
                 },
                 yAxis: {
                     type: "time",
+                    name: `${t("overviewEarliestDate")} ~ ${t("overviewLatestDate")}`,
+                    nameLocation: "middle",
+                    nameGap: 50,
                 },
                 tooltip: {
                     trigger: "axis",

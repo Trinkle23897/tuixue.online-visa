@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Tabs, Row, Col, Button, List, Divider } from "antd";
+import { Tabs, Row, Col, Button, List, Divider, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import { MailOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
@@ -69,6 +69,7 @@ const EmailSubs = () => {
 };
 
 export default function VisaStatusTabs() {
+    const [t] = useTranslation();
     const dispatch = useDispatch();
     const visaType = useSelector(state => state.visastatusTab);
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
@@ -99,14 +100,35 @@ export default function VisaStatusTabs() {
                         tabPosition={screenXS ? "top" : "left"}
                         centered={screenXS}
                     >
-                        <TabPane tab={<LineChartOutlined />} key={"chart"}>
+                        <TabPane
+                            tab={
+                                <Tooltip title={t("overMinuteChartTitle")}>
+                                    <LineChartOutlined />
+                                </Tooltip>
+                            }
+                            key={"chart"}
+                        >
                             <OverviewChartByMinute visaType={visaType} />
                         </TabPane>
-                        <TabPane tab={<MailOutlined />} key={"email"}>
+                        <TabPane
+                            tab={
+                                <Tooltip title={t("overviewEmailIcon")}>
+                                    <MailOutlined />
+                                </Tooltip>
+                            }
+                            key={"email"}
+                        >
                             <EmailSubs />
                         </TabPane>
                         {visaType === "F" && (
-                            <TabPane tab={<QqOutlined />} key={"qqtg"}>
+                            <TabPane
+                                tab={
+                                    <Tooltip title={t("overviewQQIcon")}>
+                                        <QqOutlined />
+                                    </Tooltip>
+                                }
+                                key={"qqtg"}
+                            >
                                 <QQTGSubs />
                             </TabPane>
                         )}
