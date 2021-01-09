@@ -166,7 +166,7 @@ class Notifier:
                 requests.post(base_uri + "/sendGroupMessage", data=json.dumps(
                     {"sessionKey": session, "target": g, "messageChain": [{
                         "type": "Plain",
-                        "text": f"{content}\n详情：https://{FRONTEND_BASE_URI}/visa/"
+                        "text": f"{content}\n详情: https://{FRONTEND_BASE_URI}/visa/"
                     }]}))
             requests.post(base_uri + "/release",
                           data=json.dumps({"sessionKey": session, "qq": qq_num}))
