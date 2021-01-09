@@ -152,12 +152,12 @@ ADDITIONAL_INFO = {}
 
 for lng in ['zh', 'en']:
     path = os.path.join('additional_info', lng)
-    ADDITIONAL_INFO[lng] = {}
+    ADDITIONAL_INFO[lng] = []
 
     for country in os.listdir(path):
         file_path = os.path.join(path, country)
         with open(file_path) as f:
-            ADDITIONAL_INFO[lng][country.replace('.md', '')] = f.read()
+            ADDITIONAL_INFO[lng].append([country.replace('.md', ''), f.read()])
 
 LOCK = Lock()
 
