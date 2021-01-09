@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Layout, Typography, Modal, Row, Col } from "antd";
 import { TuixueHeader, EmailSubscriptionForm } from "../components";
 import { useSubscriptionFormControl } from "../hooks";
@@ -10,6 +11,7 @@ const { Content } = Layout;
 const { Title } = Typography;
 
 export default function Subscription() {
+    const [t] = useTranslation();
     const [redirect, setRedirect] = useState(false);
     const [{ form, formState }, pageInfo, postSubscription, param] = useSubscriptionFormControl();
 
@@ -33,7 +35,7 @@ export default function Subscription() {
             <TuixueHeader />
             <Content className="tuixue-content">
                 <Title level={2} style={{ textAlign: "center", margin: "8px", padding: "8px" }}>
-                    Email Subscription
+                    {t("emailForm.title")}
                 </Title>
                 <Row>
                     <Col

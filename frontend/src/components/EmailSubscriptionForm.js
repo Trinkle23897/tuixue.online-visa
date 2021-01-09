@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Button, DatePicker, Form, Input, Row, Col, Select } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useScreenXS } from "../hooks";
@@ -9,6 +10,7 @@ import { setCookie } from "../utils/cookie";
 import EmbassyTreeSelect from "./EmbassyTreeSelect";
 
 const SubscriptionFormItem = ({ field, remove, disabled }) => {
+    const [t] = useTranslation();
     const [sys, setSys] = useState("all"); // I HATE THIS, NEED TO BE FIXED ASAP
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
     const screenXS = useScreenXS();
@@ -20,14 +22,14 @@ const SubscriptionFormItem = ({ field, remove, disabled }) => {
                     label="Visa Type"
                     name={[field.name, "visaType"]}
                     fieldKey={[field.fieldKey, "visaType"]}
-                    rules={[{ required: true, message: "Visa Type field is required!" }]}
+                    rules={[{ required: true, message: t("emailForm.requireVisaType") }]}
                 >
                     <Select
                         options={Object.entries(visaTypeDetails).map(([vt, vtDetail]) => ({
                             label: vtDetail,
                             value: vt,
                         }))}
-                        placeholder="Select Visa Type"
+                        placeholder={t("emailForm.selectVisaType")}
                         disabled={disabled}
                     />
                 </Form.Item>
@@ -37,12 +39,12 @@ const SubscriptionFormItem = ({ field, remove, disabled }) => {
                     label="Embassy"
                     name={[field.name, "embassyCode"]}
                     fieldKey={[field.fieldKey, "embassyCode"]}
-                    rules={[{ required: true, message: "Embassy field is required!" }]}
+                    rules={[{ required: true, message: t("emailForm.requireEmbassy") }]}
                 >
                     <EmbassyTreeSelect
                         sys={sys}
                         setSys={s => setSys(s)}
-                        placeholder="Select Embassy"
+                        placeholder={t("emailForm.selectEmbassy")}
                         disabled={disabled}
                         multiple
                         treeCheckable
@@ -51,7 +53,7 @@ const SubscriptionFormItem = ({ field, remove, disabled }) => {
             </Col>
             <Col xs={{ span: 24 }} md={{ span: 5 }}>
                 <Form.Item label="Till" name={[field.name, "till"]} fieldKey={[field.fieldKey, "till"]}>
-                    <DatePicker style={{ width: "100%" }} placeholder="Select Till" disabled={disabled} />
+                    <DatePicker style={{ width: "100%" }} placeholder={t("emailForm.selectTill")} disabled={disabled} />
                 </Form.Item>
             </Col>
             <Col>
@@ -81,6 +83,7 @@ SubscriptionFormItem.propTypes = {
 };
 
 export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOption, onFinish, ...otherFormProps }) {
+    const [t] = useTranslation();
     const { form, formState } = formControl;
     const { visaType, inSubscriptionPage } = pageInfo;
     // store user input in cookie
@@ -127,9 +130,9 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
             <Form.Item
                 name="email"
                 label="Email"
-                rules={[{ type: "email", required: true, message: "Email address is required!" }]}
+                rules={[{ type: "email", required: true, message: t("emailForm.requireEmail") }]}
             >
-                <Input placeholder="Email address" disabled={formState.postingSubscription} />
+                <Input placeholder={t("emailForm.emailAddress")} disabled={formState.postingSubscription} />
             </Form.Item>
 
             <Form.List
@@ -163,7 +166,7 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
                                 icon={<PlusOutlined />}
                                 disabled={formState.postingSubscription}
                             >
-                                Add Subscription Item
+                                {t("emailForm.addSubsItem")}
                             </Button>
                         </Form.Item>
                     </>
@@ -172,7 +175,7 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
             {inSubscriptionPage && (
                 <Form.Item>
                     <Button type="primary" htmlType="submit" block>
-                        Subscribe
+                        {t("emailForm.subscribe")}
                     </Button>
                 </Form.Item>
             )}

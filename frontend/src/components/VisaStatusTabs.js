@@ -48,6 +48,7 @@ const QQTGSubs = () => {
 };
 
 const EmailSubs = () => {
+    const [t] = useTranslation();
     const [{ form, formState }, pageInfo, postSubscription] = useSubscriptionFormControl();
     return formState.postingSubscription ? (
         <PostSubscriptionResult
@@ -63,7 +64,7 @@ const EmailSubs = () => {
                 cookieOption="email"
                 onFinish={fieldValues => postSubscription(fieldValues)}
             />
-            <Button onClick={() => form.submit()}>Submit</Button>
+            <Button onClick={() => form.submit()}>{t("emailForm.subscribe")}</Button>
         </>
     );
 };
