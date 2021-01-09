@@ -157,7 +157,10 @@ for lng in ['zh', 'en']:
     for country in os.listdir(path):
         file_path = os.path.join(path, country)
         with open(file_path) as f:
-            ADDITIONAL_INFO[lng].append([country.replace('.md', ''), f.read()])
+            ADDITIONAL_INFO[lng].append({
+                'country': country.replace('.md', ''),
+                'content': f.read(),
+            })
 
 LOCK = Lock()
 
