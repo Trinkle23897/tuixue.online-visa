@@ -1,15 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Typography, Row, Col } from "antd";
+import { useTranslation } from "react-i18next";
 import { CheckCircleTwoTone, CloseCircleTwoTone, LoadingOutlined } from "@ant-design/icons";
 
 export default function PostSubscriptionResult({ success, step, inSubscriptionPage }) {
+    const [t] = useTranslation();
     const successText = {
-        confirming: "Subscription request sent. Please check your email.",
-        subscribed: "Successfully subscribed. Thank you!",
+        confirming: t("emailForm.successText.confirming"),
+        subscribed: t("emailForm.successText.subscribed"),
     };
-    const failureText = "Something goes wrong, we are sorry. Please try again.";
-    const loadingText = "We are processing your subscription";
+    const failureText = t("emailForm.failureText");
+    const loadingText = t("emailForm.loadingText");
 
     return (
         <Row justify="center" align="middle" gutter={[16, { xs: 16, md: 32 }]}>
@@ -29,7 +31,7 @@ export default function PostSubscriptionResult({ success, step, inSubscriptionPa
             </Col>
             <Col>
                 <Typography.Text style={{ textAlign: "center", fontStyle: "italic" }}>
-                    {inSubscriptionPage ? "Redirecting to home page in 3 seconds..." : "Closing in 3 seconds..."}
+                    {t(inSubscriptionPage ? "emailForm.redirecting" : "emailForm.closing")}
                 </Typography.Text>
             </Col>
         </Row>
