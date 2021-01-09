@@ -148,6 +148,17 @@ CGI_FETCH_TIME_INTERVAL = {'F': 60, 'B': 120, 'H': 180, 'O': 180, 'L': 180}
 AIS_FETCH_TIME_INTERVAL = {visa_type: 60 for visa_type in VISA_TYPES}
 FETCH_TIME_INTERVAL = {'cgi': CGI_FETCH_TIME_INTERVAL, 'ais': AIS_FETCH_TIME_INTERVAL}
 
+ADDITIONAL_INFO = {}
+
+for lng in ['zh', 'en']:
+    path = os.path.join('additional_info', lng)
+    ADDITIONAL_INFO[lng] = {}
+
+    for country in os.listdir(path):
+        file_path = os.path.join(path, country)
+        with open(file_path) as f:
+            ADDITIONAL_INFO[lng][country.replace('.md', '')] = f.read()
+
 LOCK = Lock()
 
 

@@ -82,7 +82,8 @@ def get_meta_data():
         'qq_tg_info': {
             'qq': G.SECRET['qq']['info'],
             'tg': G.SECRET['telegram']['info'],
-        }
+        },
+        'additional_info': G.ADDITIONAL_INFO,
     }
 
 
