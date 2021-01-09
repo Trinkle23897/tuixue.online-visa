@@ -31,12 +31,12 @@ export default function EmbassySelector({ visaType }) {
 
     const resetFilter = () => (setSys("all") || true) && dispatch(updateFilterAndFetch(visaType, defaultFilter));
 
-    const SelectDefaultFilter = () => <Button onClick={() => resetFilter()}>{t("filterDefault")}</Button>;
+    const SelectDefaultFilter = () => <Button onClick={() => resetFilter()}>{t("filter.default")}</Button>;
     const SelectDomesticOnly = () => (
         <Button
             onClick={() => domesticRegion && dispatch(updateFilterAndFetch(visaType, domesticRegion.embassyCodeLst))}
         >
-            {t("filterDomestic")}
+            {t("filter.domestic")}
         </Button>
     );
 
@@ -45,7 +45,7 @@ export default function EmbassySelector({ visaType }) {
             title={
                 <Row justify="space-between">
                     <Col xs={{ span: 24 }} md={{ span: 10 }}>
-                        {t("filterDesc")}
+                        {t("filter.desc")}
                     </Col>
                     <Col>
                         <Space>

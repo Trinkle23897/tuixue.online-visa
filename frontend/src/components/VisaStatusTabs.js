@@ -113,7 +113,7 @@ export default function VisaStatusTabs() {
                         </TabPane>
                         <TabPane
                             tab={
-                                <Tooltip title={t("overviewEmailIcon")}>
+                                <Tooltip title={t("overview.emailIcon")}>
                                     <MailOutlined />
                                 </Tooltip>
                             }
@@ -124,7 +124,7 @@ export default function VisaStatusTabs() {
                         {visaType === "F" && (
                             <TabPane
                                 tab={
-                                    <Tooltip title={t("overviewQQIcon")}>
+                                    <Tooltip title={t("overview.QQIcon")}>
                                         <QqOutlined />
                                     </Tooltip>
                                 }

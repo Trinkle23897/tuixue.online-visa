@@ -48,7 +48,7 @@ export const OverviewChartByMinute = ({ visaType }) => {
                 },
                 yAxis: {
                     type: "time",
-                    name: t("overviewEarliestDate"),
+                    name: t("overview.earliestDate"),
                     nameLocation: "middle",
                     nameGap: 50,
                 },
@@ -139,7 +139,7 @@ export const OverviewChartByDate = ({ visaType, embassyCode }) => {
                 },
                 yAxis: {
                     type: "time",
-                    name: `${t("overviewEarliestDate")} ~ ${t("overviewLatestDate")}`,
+                    name: `${t("overview.earliestDate")} ~ ${t("overview.latestDate")}`,
                     nameLocation: "middle",
                     nameGap: 50,
                 },

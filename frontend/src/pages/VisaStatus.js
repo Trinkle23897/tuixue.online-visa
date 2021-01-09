@@ -17,7 +17,7 @@ export default function VisaStatus() {
             <TuixueHeader />
             <Content className="tuixue-content">
                 <Title level={2} style={{ textAlign: "center", margin: "8px", padding: "8px" }}>
-                    {t("overviewTitle")}
+                    {t("overview.title")}
                 </Title>
                 <Row>
                     <Col
@@ -30,8 +30,8 @@ export default function VisaStatus() {
                         <VisaStatusTabs />
                         <CounterFooter />
                         <Tabs centered activeKey={disqusType} onChange={activeKey => setDisqusType(activeKey)}>
-                            <TabPane tab={t("disqusDomestic")} key="visa" />
-                            <TabPane tab={t("disqusGlobal")} key="global" />
+                            <TabPane tab={t("disqus.domestic")} key="visa" />
+                            <TabPane tab={t("disqus.global")} key="global" />
                         </Tabs>
                         <DiscussionEmbed
                             shortname="tuixue-online"
@@ -41,7 +41,7 @@ export default function VisaStatus() {
                                 title: "tuixue-online",
                             }}
                         >
-                            {t("disqusLoadFail")}
+                            {t("disqus.loadFail")}
                         </DiscussionEmbed>
                     </Col>
                 </Row>

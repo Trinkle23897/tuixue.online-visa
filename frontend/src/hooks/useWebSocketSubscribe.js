@@ -17,8 +17,8 @@ export default function useWebSocketSubscribe() {
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
     const [wsConnected, setWsConnected] = useState(false);
     const websocketRef = useRef(null); // initiate with null doesn't trigger re-connect when re-renderin
-    const [notificationTitle, setNotificationTitle] = useState(t("notificationInitTitle"));
-    const [notificationOption, setNotificationOption] = useState({ body: t("notificationInitContent") });
+    const [notificationTitle, setNotificationTitle] = useState(t("notification.initTitle"));
+    const [notificationOption, setNotificationOption] = useState({ body: t("notification.initContent") });
     const notifDateStr = s => {
         const date = getDateFromISOString(s).map(e => parseInt(e, 10));
         const now = new Date();
@@ -44,9 +44,9 @@ export default function useWebSocketSubscribe() {
 
                 // only send notification for selected visa type and embassy
                 if (visastatusTab === visaType && visastatusFilter[visaType].includes(embassyCode)) {
-                    setNotificationTitle(t("notificationTitle", { visaTypeDetail }));
+                    setNotificationTitle(t("notification.title", { visaTypeDetail }));
                     setNotificationOption({
-                        body: t("notificationContent", {
+                        body: t("notification.content", {
                             embassyName: t(embassyCode),
                             prevAvaiDate: prevAvaiDate ? notifDateStr(prevAvaiDate) : "/",
                             currAvaiDate: notifDateStr(currAvaiDate),

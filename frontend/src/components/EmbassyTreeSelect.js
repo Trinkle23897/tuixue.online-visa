@@ -22,7 +22,7 @@ export default function EmbassyTreeSelect({ sys, setSys, ...treeSelectProps }) {
     );
     const SysSelect = () => (
         <Space>
-            <span>{t("filterSystemDesc")}</span>
+            <span>{t("filter.systemDesc")}</span>
             <Radio.Group onChange={e => setSys(e.target.value)} value={sys}>
                 {["all", "ais", "cgi"].map(s => (
                     <Radio key={s} value={s}>

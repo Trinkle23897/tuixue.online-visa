@@ -30,7 +30,7 @@ const DropdownContent = ({ visaType, embassyCode }) => {
             </Col>
             {visaType === "F" && (
                 <Col span={24}>
-                    <h2>{t("overviewQQIcon")}</h2>
+                    <h2>{t("overview.QQIcon")}</h2>
                     <p>
                         {t("additionalInfoTop.part1")}
                         <QqOutlined />
@@ -39,7 +39,7 @@ const DropdownContent = ({ visaType, embassyCode }) => {
                 </Col>
             )}
             <Col span={24}>
-                <h2>{t("overviewEmailIcon")}</h2>
+                <h2>{t("overview.emailIcon")}</h2>
                 <p>
                     {t("additionalInfoTop.part1")}
                     <MailOutlined />
@@ -60,7 +60,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
     const { writeTime, availableDate } = newest;
 
     const DropdownControlBtn = () => (
-        <Tooltip title={t("overviewAddtionalIcon")}>
+        <Tooltip title={t("overview.addtionalIcon")}>
             <Button
                 icon={<PlusOutlined rotate={cardDrop ? 45 : 0} />}
                 shape="circle"
@@ -73,13 +73,13 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
         <Row align="middle" className="ovreview-content-row" gutter={32}>
             <Col md={{ span: 3 }}>{t(embassyCode)}</Col>
             <Col md={{ span: 4 }}>
-                <Tooltip title={t("overviewEarliest")}>{earliestDate.join("/")}</Tooltip>
+                <Tooltip title={t("overview.earliest")}>{earliestDate.join("/")}</Tooltip>
             </Col>
             <Col md={{ span: 4 }}>
-                <Tooltip title={t("overviewLatest")}>{latestDate.join("/")}</Tooltip>
+                <Tooltip title={t("overview.latest")}>{latestDate.join("/")}</Tooltip>
             </Col>
             <Col md={{ span: 8 }}>
-                <Tooltip title={t("overviewNewest")}>
+                <Tooltip title={t("overview.newest")}>
                     <Row justify="center" align="middle">
                         <Col xs={{ span: 11 }} md={{ span: 9 }}>
                             {availableDate.join("/")}
@@ -119,7 +119,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
     const { writeTime, availableDate } = newest;
 
     const DropdownControlBtn = () => (
-        <Tooltip title={t("overviewAddtionalIcon")}>
+        <Tooltip title={t("overview.addtionalIcon")}>
             <Button
                 icon={<PlusOutlined rotate={cardDrop ? 45 : 0} />}
                 shape="circle"
@@ -152,21 +152,21 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
             <Panel key={embassyCode} header={<BriefOverview />} showArrow={false}>
                 <Row>
                     <Col span={8}>
-                        <strong>{t("overviewEarliestDate")}: </strong>
+                        <strong>{t("overview.earliestDate")}: </strong>
                     </Col>
                     <Col span={8} className="content-data">
                         {earliestDate.join("/")}
                     </Col>
                     <Col span={8} />
                     <Col span={8}>
-                        <strong>{t("overviewLatestDate")}: </strong>
+                        <strong>{t("overview.latestDate")}: </strong>
                     </Col>
                     <Col span={8} className="content-data">
                         {latestDate.join("/")}
                     </Col>
                     <Col span={8} />
                     <Col span={8}>
-                        <strong>{t("overviewNewestFetch")}: </strong>
+                        <strong>{t("overview.newestFetch")}: </strong>
                     </Col>
                     <Col span={16} className="content-data">
                         <Row justify="center" align="middle">
@@ -194,16 +194,16 @@ const HeaderBar = () => {
                 <strong>{t("Location")}</strong>
             </Col>
             <Col xs={{ span: 0 }} md={{ span: 4 }}>
-                <strong>{t("overviewEarliestDate")}</strong>
+                <strong>{t("overview.earliestDate")}</strong>
             </Col>
             <Col xs={{ span: 0 }} md={{ span: 4 }}>
-                <strong>{t("overviewLatestDate")}</strong>
+                <strong>{t("overview.latestDate")}</strong>
             </Col>
             <Col xs={{ span: 0 }} md={{ span: 8 }}>
-                <strong>{t("overviewNewestFetch")}</strong>
+                <strong>{t("overview.newestFetch")}</strong>
             </Col>
             <Col xs={{ span: 0 }} md={{ span: 5 }}>
-                <strong>{t("overviewActions")}</strong>
+                <strong>{t("overview.actions")}</strong>
             </Col>
         </Row>
     );
@@ -217,10 +217,10 @@ const HeaderCard = () => {
                 <strong>{t("Location")}</strong>
             </Col>
             <Col span={8}>
-                <strong>{t("overviewNewestFetch")}</strong>
+                <strong>{t("overview.newestFetch")}</strong>
             </Col>
             <Col span={8}>
-                <strong>{t("overviewActions")}</strong>
+                <strong>{t("overview.actions")}</strong>
             </Col>
         </Row>
     );
