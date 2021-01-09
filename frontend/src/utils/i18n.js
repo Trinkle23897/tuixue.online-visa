@@ -75,7 +75,7 @@ const resources = {
             filterOverviewOpen: "展开图表",
             filterOverviewClose: "收起图表",
             overMinuteChartTitle: "24h内可预约日期变动情况",
-            overDateChartTitle: "{{embassyName}} 60天内预约日期变动情况",
+            overDateChartTitle: "{{embassyName}}60天内预约日期变动情况",
             at: "于",
             all: "全部",
             Refresh: "刷新数据",
