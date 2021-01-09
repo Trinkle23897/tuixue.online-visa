@@ -17,3 +17,8 @@ export const newestOverviewProps = {
 export const overviewProps = {
     overview: PropTypes.shape(overviewAttrProps).isRequired,
 };
+
+export const dropdownProps = {
+    visaType: PropTypes.string.isRequired,
+    embassyCode: PropTypes.string.isRequired,
+};

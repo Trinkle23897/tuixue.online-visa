@@ -23,8 +23,8 @@ const resources = {
             filterDomestic: "Domestic only",
             filterOverviewOpen: "Show Charts",
             filterOverviewClose: "Collapse Charts",
-            overMinuteChartTitle: "Over Minute", // TODO
-            overDateChartTitle: "Over Date", // TODO
+            overMinuteChartTitle: "First available appointment change within 24h",
+            overDateChartTitle: "Appointment change within 60 days - {{embassyName}}",
             at: "at",
             all: "All",
             refreshDone: "Done with refresh",
@@ -74,8 +74,8 @@ const resources = {
             filterDomestic: "只看国内",
             filterOverviewOpen: "展开图表",
             filterOverviewClose: "收起图表",
-            overMinuteChartTitle: "分钟粒度", // TODO
-            overDateChartTitle: "日期粒度", // TODO
+            overMinuteChartTitle: "24h内可预约日期变动情况",
+            overDateChartTitle: "{{embassyName}} 60天内预约日期变动情况",
             at: "于",
             all: "全部",
             Refresh: "刷新数据",

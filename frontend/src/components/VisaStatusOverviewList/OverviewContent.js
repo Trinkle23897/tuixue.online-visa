@@ -1,16 +1,40 @@
 import React, { useMemo, useState } from "react";
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
+import ReactMarkdown from "react-markdown";
 import { Row, Col, Button, Tooltip, Collapse, Tag } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useScreenXS } from "../../hooks";
-import { makeNewestVisaStatusSelector } from "../../redux/selectors";
+import { makeNewestVisaStatusSelector, makeCountryCodeSelector } from "../../redux/selectors";
 import { getTimeFromUTC } from "../../utils/misc";
-import { overviewAttrProps, newestOverviewProps, overviewProps } from "./overviewPropTypes";
+import { overviewAttrProps, newestOverviewProps, overviewProps, dropdownProps } from "./overviewPropTypes";
 import { OverviewChartByDate } from "./OverviewChart";
 import "./VisaStatusOverview.less";
 
 const { Panel } = Collapse;
+
+const DropdownContent = ({ visaType, embassyCode }) => {
+    const [t] = useTranslation();
+    const countryCodeSelector = useMemo(() => makeCountryCodeSelector(embassyCode), [embassyCode]);
+    const countryCode = useSelector(state => countryCodeSelector(state));
+    const additionalInfoKey = `additionalInfo${countryCode}`;
+    const additionalInfoMarkdown = t(additionalInfoKey) === additionalInfoKey ? "" : t(additionalInfoKey);
+    return (
+        <Row>
+            <Col span={24}>
+                <OverviewChartByDate visaType={visaType} embassyCode={embassyCode} />
+            </Col>
+            <Col span={24}>
+                <p style={{ textAlign: "center" }}>{t("overDateChartTitle", { embassyName: t(embassyCode) })}</p>
+            </Col>
+            <Col span={24}>
+                <ReactMarkdown>{additionalInfoMarkdown}</ReactMarkdown>
+            </Col>
+        </Row>
+    );
+};
+DropdownContent.propTypes = dropdownProps;
 
 const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType }) => {
     const [t] = useTranslation();
@@ -64,11 +88,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
             onChange={() => setCardDrop(!cardDrop)}
         >
             <Panel key={embassyCode} header={<BriefOverview />} showArrow={false}>
-                <Row>
-                    <Col span={24}>
-                        <OverviewChartByDate visaType={visaType} embassyCode={embassyCode} />
-                    </Col>
-                </Row>
+                <DropdownContent embassyCode={embassyCode} visaType={visaType} />
             </Panel>
         </Collapse>
     );
@@ -140,10 +160,8 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
                             </Col>
                         </Row>
                     </Col>
-                    <Col span={24}>
-                        <OverviewChartByDate visaType={visaType} embassyCode={embassyCode} />
-                    </Col>
                 </Row>
+                <DropdownContent embassyCode={embassyCode} visaType={visaType} />
             </Panel>
         </Collapse>
     );

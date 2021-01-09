@@ -19,6 +19,9 @@ export const nonDomesticEmbassyInDefaultFilterSelector = createSelector(
         ),
 );
 
+export const makeCountryCodeSelector = embassyCode =>
+    createSelector(embassyLstSelector, embassyLst => findEmbassyAttributeByCode("country", embassyCode, embassyLst));
+
 export const makeEmbassyBySysSelector = sys =>
     createSelector(embassyLstSelector, embassyLst =>
         sys === "all"

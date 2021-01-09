@@ -140,7 +140,7 @@ export const OverviewChartByDate = ({ visaType, embassyCode }) => {
                 tooltip: {
                     trigger: "axis",
                     formatter: pack => {
-                        const header = `${t("overDateChartTitle")}: ${pack[0].name}<br/>`;
+                        const header = `${pack[0].name}<br/>`;
                         const rangeStr = (earliestDate, latestDate) => {
                             if (earliestDate === null && latestDate === null) return "/";
                             const earliestDateStr = getDateFromISOString(earliestDate).join("/");

@@ -30,7 +30,7 @@ export const fetchMetadata = () => async dispatch => {
         console.error(`In metadataSlice: ${e}`);
     }
 
-    const { defaultFilter, embassyLst, regionAttr } = metadata;
+    const { defaultFilter, embassyLst, regionAttr, additionalInfo } = metadata;
     dispatch(updateMetadata({ metadata }));
     Array.from("FBOHL").forEach(visaType =>
         dispatch(updateFilter({ visaType, newFilter: getCookie(`filter-${visaType}`, defaultFilter) })),
@@ -53,8 +53,14 @@ export const fetchMetadata = () => async dispatch => {
     );
     const regionNameEn = Object.fromEntries(regionAttr.map(({ code, nameEn }) => [code, nameEn]));
     const regionNameCn = Object.fromEntries(regionAttr.map(({ code, nameCn }) => [code, nameCn]));
-    i18n.addResources(lngs.en, namespace, { ...countryNameEn, ...embassyNameEn, ...regionNameEn });
-    i18n.addResources(lngs.zh, namespace, { ...countryNameCn, ...embassyNameCn, ...regionNameCn });
+    const additionalInfoEn = Object.fromEntries(
+        additionalInfo.en.map(({ country, content }) => [`additionalInfo${country}`, content]),
+    );
+    const additionalInfoCn = Object.fromEntries(
+        additionalInfo.zh.map(({ country, content }) => [`additionalInfo${country}`, content]),
+    );
+    i18n.addResources(lngs.en, namespace, { ...countryNameEn, ...embassyNameEn, ...regionNameEn, ...additionalInfoEn });
+    i18n.addResources(lngs.zh, namespace, { ...countryNameCn, ...embassyNameCn, ...regionNameCn, ...additionalInfoCn });
     i18n.changeLanguage(i18n.language);
 
     return Promise.resolve();
