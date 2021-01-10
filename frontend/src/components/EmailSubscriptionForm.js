@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import ReactMarkdown from "react-markdown";
 import { Button, DatePicker, Form, Input, Row, Col, Select } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useScreenXS } from "../hooks";
@@ -127,6 +128,9 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
                 onFinish(fieldValues);
             }}
         >
+            <Form.Item name="description" label="description">
+                <ReactMarkdown>{t("emailForm.description")}</ReactMarkdown>
+            </Form.Item>
             <Form.Item
                 name="email"
                 label="Email"
