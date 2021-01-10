@@ -64,9 +64,14 @@ const resources = {
                 part1: "Just go up and click on the icon (",
                 part2: ") next to the chart.",
             },
-            counterFooter: {
+            footer: {
+                prjDesc: [
+                    "Project Info: [GitHub Page](https://github.com/Trinkle23897/tuixue.online-visa); Author list: [Trinkle23897](https://github.com/Trinkle23897/), [z3dd1cu5](https://github.com/z3dd1cu5), [BenjiTheC](https://github.com/BenjiTheC)",
+                    "If you think tuixue.online is helpful, please donate for our website, we appreciate your support!",
+                ].join("\n\n"),
                 part1: "This website has witnessed a total of ",
                 part2: " tuixue (withdrawals).",
+                part3: "About the poor author",
             },
             disqus: {
                 domestic: "Disqus (Domestic version)",
@@ -157,9 +162,14 @@ const resources = {
                 part1: "最上方点击图表旁边的图标（",
                 part2: "）即可",
             },
-            counterFooter: {
+            footer: {
+                prjDesc: [
+                    "项目信息：[GitHub项目地址](https://github.com/Trinkle23897/tuixue.online-visa)、[作者GitHub](https://github.com/Trinkle23897/)、改进版爬虫作者 [z3dd1cu5](https://github.com/z3dd1cu5)、新版网站贡献者 [BenjiTheC](https://github.com/BenjiTheC)",
+                    "写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏",
+                ].join("\n\n"),
                 part1: "本网站一共见证了",
                 part2: "人次的失学。",
+                part3: "关于可怜的差点被全聚德的作者",
             },
             disqus: {
                 domestic: "原国内版评论区",
