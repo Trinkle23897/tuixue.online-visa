@@ -1,4 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
+import { dateDiff } from "../utils/misc";
 import { embassyAttributeIdx, findEmbassyAttributeByCode } from "../utils/USEmbassy";
 
 // basic selectors
@@ -123,8 +124,8 @@ export const makeMinuteChartData = visaType =>
     );
 
 export const makeDateChartData = (visaType, embassyCode) =>
-    createSelector([makeOverviewSpanSelectorByVisaType(visaType)], rawData =>
-        rawData
+    createSelector([makeOverviewSpanSelectorByVisaType(visaType)], rawData => {
+        const chartData = rawData
             .slice()
             .reverse()
             .map(({ date, overview }, index) => {
@@ -137,5 +138,9 @@ export const makeDateChartData = (visaType, embassyCode) =>
                 const earliestDateLst = earliestDateObj[embassyCode] || null;
                 const latestDateLst = latestDateObj[embassyCode] || null;
                 return [index, date, earliestDateLst, latestDateLst];
-            }),
-    );
+            });
+        const earliestDateDiffLst = chartData.filter(e => e[2] !== null).map(e => dateDiff(e[1], e[2]));
+        const latestDateDiffLst = chartData.filter(e => e[3] !== null).map(e => dateDiff(e[1], e[3]));
+        const getAvg = arr => (arr.length > 0 ? (arr.reduce((acc, c) => acc + c, 0) / arr.length).toFixed(0) : null);
+        return [chartData, getAvg(earliestDateDiffLst), getAvg(latestDateDiffLst)];
+    });

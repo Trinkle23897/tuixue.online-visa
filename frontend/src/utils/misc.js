@@ -31,6 +31,10 @@ export const getTimeFromUTC = u => {
     return [date.getHours(), date.getMinutes(), date.getSeconds()].map(o => o.toString().padStart(2, "0"));
 };
 
+export const dateDiff = (start, end) => {
+    return end ? (new Date(end) - new Date(start)) / 86400000 : null;
+};
+
 /**
  * Convert a moment object to ISO string using the year, month, day part. moment().format() output is actually
  * local time, but we treat the [year, month, day] as UTC date for practical purpose.

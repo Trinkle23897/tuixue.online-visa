@@ -25,6 +25,9 @@ const resources = {
             },
             overMinuteChartTitle: "First available appointment change within 24h",
             overDateChartTitle: "Appointment change within 60 days - {{embassyName}}",
+            overDateChartSubtitle:
+                ", appointments should be made {{earliestDiffMean}} ~ {{latestDiffMean}} days in advance",
+            overDateChartSubtitleNull: ", without any available appointment",
             at: "at",
             all: "All",
             refreshDone: "Done with refresh",
@@ -115,6 +118,8 @@ const resources = {
             },
             overMinuteChartTitle: "24h内可预约日期变动情况",
             overDateChartTitle: "{{embassyName}}60天内预约日期变动情况",
+            overDateChartSubtitle: "，平均需要提前{{earliestDiffMean}}到{{latestDiffMean}}天预约",
+            overDateChartSubtitleNull: "，没有任何预约名额",
             at: "于",
             all: "全部",
             Refresh: "刷新数据",
@@ -149,7 +154,7 @@ const resources = {
             QQGroupDomestic: "国内{{index}}群：",
             QQGroupNonDomestic: "国际{{index}}群：",
             additionalInfoTop: {
-                part1: "往上点击图表旁边的图标（",
+                part1: "最上方点击图表旁边的图标（",
                 part2: "）即可",
             },
             counterFooter: {

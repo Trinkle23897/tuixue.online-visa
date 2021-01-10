@@ -25,9 +25,6 @@ const DropdownContent = ({ visaType, embassyCode }) => {
             <Col span={24}>
                 <OverviewChartByDate visaType={visaType} embassyCode={embassyCode} />
             </Col>
-            <Col span={24}>
-                <p style={{ textAlign: "center" }}>{t("overDateChartTitle", { embassyName: t(embassyCode) })}</p>
-            </Col>
             {visaType === "F" && (
                 <Col span={24}>
                     <h2>{t("overview.QQIcon")}</h2>

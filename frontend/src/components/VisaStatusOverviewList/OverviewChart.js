@@ -121,73 +121,81 @@ const renderItem = (params, api) => {
 export const OverviewChartByDate = ({ visaType, embassyCode }) => {
     const [t] = useTranslation();
     const dateChartDataSelector = useMemo(() => makeDateChartData(visaType, embassyCode), [visaType, embassyCode]);
-    const overviewData = useSelector(state => dateChartDataSelector(state));
+    const [overviewData, earliestDiffMean, latestDiffMean] = useSelector(state => dateChartDataSelector(state));
     return (
-        <ReactEcharts
-            notMerge
-            option={{
-                title: {
-                    text: "",
-                },
-                legend: {
-                    data: [],
-                },
-                dataZoom,
-                xAxis: {
-                    type: "category",
-                    data: overviewData.map(d => getDateFromISOString(d[1]).join("-")),
-                },
-                yAxis: {
-                    type: "time",
-                    name: `${t("overview.earliestDate")} ~ ${t("overview.latestDate")}`,
-                    nameLocation: "middle",
-                    nameGap: 50,
-                },
-                tooltip: {
-                    trigger: "axis",
-                    formatter: pack => {
-                        const header = `${pack[0].name}<br/>`;
-                        const rangeStr = (earliestDate, latestDate) => {
-                            if (earliestDate === null && latestDate === null) return "/";
-                            const earliestDateStr = getDateFromISOString(earliestDate).join("/");
-                            const latestDateStr = getDateFromISOString(latestDate).join("/");
-                            if (earliestDateStr === latestDateStr) return earliestDateStr;
-                            return `${earliestDateStr} ~ ${latestDateStr}`;
-                        };
-                        const content = pack
-                            .filter(e => e.componentSubType === "custom")
-                            .map(
-                                ({ marker, seriesName, data }) =>
-                                    `${marker}${seriesName}: ${rangeStr(data[1], data[2])}`,
-                            )
-                            .join("<br>");
-                        return header + content;
+        <>
+            <ReactEcharts
+                notMerge
+                option={{
+                    title: {
+                        text: "",
                     },
-                },
-                series: [
-                    {
-                        name: t(embassyCode),
-                        type: "line",
-                        data: overviewData.map(d => [d[0], d[3]]),
-                        encode: {
-                            x: [0],
-                            y: [1],
+                    legend: {
+                        data: [],
+                    },
+                    dataZoom,
+                    xAxis: {
+                        type: "category",
+                        data: overviewData.map(d => getDateFromISOString(d[1]).join("-")),
+                    },
+                    yAxis: {
+                        type: "time",
+                        name: `${t("overview.earliestDate")} ~ ${t("overview.latestDate")}`,
+                        nameLocation: "middle",
+                        nameGap: 50,
+                    },
+                    tooltip: {
+                        trigger: "axis",
+                        formatter: pack => {
+                            const header = `${pack[0].name}<br/>`;
+                            const rangeStr = (earliestDate, latestDate) => {
+                                if (earliestDate === null && latestDate === null) return "/";
+                                const earliestDateStr = getDateFromISOString(earliestDate).join("/");
+                                const latestDateStr = getDateFromISOString(latestDate).join("/");
+                                if (earliestDateStr === latestDateStr) return earliestDateStr;
+                                return `${earliestDateStr} ~ ${latestDateStr}`;
+                            };
+                            const content = pack
+                                .filter(e => e.componentSubType === "custom")
+                                .map(
+                                    ({ marker, seriesName, data }) =>
+                                        `${marker}${seriesName}: ${rangeStr(data[1], data[2])}`,
+                                )
+                                .join("<br>");
+                            return header + content;
                         },
                     },
-                    {
-                        name: t(embassyCode),
-                        type: "custom",
-                        renderItem,
-                        dimensions: [null, "Earliest", "Latest"],
-                        data: overviewData.map(d => [d[0], d[2], d[3]]),
-                        encode: {
-                            x: [0],
-                            y: [1, 2],
+                    series: [
+                        {
+                            name: t(embassyCode),
+                            type: "line",
+                            data: overviewData.map(d => [d[0], d[3]]),
+                            encode: {
+                                x: [0],
+                                y: [1],
+                            },
                         },
-                    },
-                ],
-            }}
-        />
+                        {
+                            name: t(embassyCode),
+                            type: "custom",
+                            renderItem,
+                            dimensions: [null, "Earliest", "Latest"],
+                            data: overviewData.map(d => [d[0], d[2], d[3]]),
+                            encode: {
+                                x: [0],
+                                y: [1, 2],
+                            },
+                        },
+                    ],
+                }}
+            />
+            <p style={{ textAlign: "center" }}>
+                {t("overDateChartTitle", { embassyName: t(embassyCode) })}
+                {earliestDiffMean === null
+                    ? t("overDateChartSubtitleNull")
+                    : t("overDateChartSubtitle", { earliestDiffMean, latestDiffMean })}
+            </p>
+        </>
     );
 };
 OverviewChartByDate.propTypes = {
