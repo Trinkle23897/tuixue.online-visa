@@ -66,11 +66,12 @@ const resources = {
             },
             footer: {
                 prjDesc: [
+                    "Features: Auto-notification at webpage (no need to keep an eye on it), customize the location filter that only you concerned about, update data in real-time, new QQ groups with 3rd countries (Ecuador, Singapore, UK) and add the corresponding issues going there",
                     "Project Info: [GitHub Page](https://github.com/Trinkle23897/tuixue.online-visa); Author list: [Trinkle23897](https://github.com/Trinkle23897/), [z3dd1cu5](https://github.com/z3dd1cu5), [BenjiTheC](https://github.com/BenjiTheC)",
                     "If you think tuixue.online is helpful, please donate for our website, we appreciate your support!",
                 ].join("\n\n"),
                 part1: "This website has witnessed a total of ",
-                part2: " tuixue (withdrawals).",
+                part2: " tuixue (withdrawals). ",
                 part3: "About the poor author",
             },
             disqus: {
@@ -164,6 +165,7 @@ const resources = {
             },
             footer: {
                 prjDesc: [
+                    "功能概览：网页版能够穿透通知（不用一直盯着或者手动刷了），可以只选自己关注的城市（不用像现在这样一次刷这么多），数据实时更新，新加了国外的qq群和去往对应第三国各种注意事项（厄瓜多尔、新加坡、英国）",
                     "项目信息：[GitHub项目地址](https://github.com/Trinkle23897/tuixue.online-visa)、[作者GitHub](https://github.com/Trinkle23897/)、改进版爬虫作者 [z3dd1cu5](https://github.com/z3dd1cu5)、新版网站贡献者 [BenjiTheC](https://github.com/BenjiTheC)",
                     "写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏",
                 ].join("\n\n"),

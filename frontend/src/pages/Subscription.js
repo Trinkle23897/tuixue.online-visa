@@ -52,16 +52,16 @@ export default function Subscription() {
                             onFinish={fieldValues => postSubscription(fieldValues)}
                         />
                     </Col>
+                    <Modal visible={formState.modalVisible} footer={null}>
+                        <PostSubscriptionResult
+                            success={formState.postSuccessful}
+                            step="subscribed"
+                            inSubscriptionPage={pageInfo.inSubscriptionPage}
+                        />
+                    </Modal>
+                    {redirect && <Redirect to="/" />}
                 </Row>
             </Content>
-            <Modal visible={formState.modalVisible} footer={null}>
-                <PostSubscriptionResult
-                    success={formState.postSuccessful}
-                    step="subscribed"
-                    inSubscriptionPage={pageInfo.inSubscriptionPage}
-                />
-            </Modal>
-            {redirect && <Redirect to="/" />}
         </Layout>
     );
 }

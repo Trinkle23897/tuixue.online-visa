@@ -20,9 +20,6 @@ const NavMenu = ({ mode, theme, onClick }) => {
             <Menu.Item key="visastatus">
                 <Link to="/visa">{t("visaStatus")}</Link>
             </Menu.Item>
-            <Menu.Item key="sysinfo">
-                <Link to="/visa/sysinfo">{t("sysStatus")}</Link>
-            </Menu.Item>
             <Menu.Item key="checkee">
                 <a href="https://checkee.info/" target="_blank" rel="noreferrer">
                     {t("checkee")}

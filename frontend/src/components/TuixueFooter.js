@@ -3,6 +3,7 @@ import { Divider, Tabs, Image } from "antd";
 import { useTranslation } from "react-i18next";
 import { DiscussionEmbed } from "disqus-react";
 import ReactMarkdown from "react-markdown";
+import { useScreenXS } from "../hooks";
 import payCode from "../assets/img/pay.png";
 import "./TuixueFooter.less";
 
@@ -10,13 +11,14 @@ const { TabPane } = Tabs;
 
 export default function TuixueFooter() {
     const [t] = useTranslation();
+    const screenXS = useScreenXS();
     const [disqusType, setDisqusType] = useState("visa");
     return (
         <>
             <Divider />
             <ReactMarkdown>{t("footer.prjDesc")}</ReactMarkdown>
             <div className="tuixue-footer">
-                <Image src={payCode} alt="payCode" width="60%" />
+                <Image src={payCode} alt="payCode" width={screenXS ? "100%" : "60%"} />
             </div>
             <Divider dashed />
             <p className="tuixue-footer">
