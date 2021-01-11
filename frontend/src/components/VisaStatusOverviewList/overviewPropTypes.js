@@ -21,4 +21,5 @@ export const overviewProps = {
 export const dropdownProps = {
     visaType: PropTypes.string.isRequired,
     embassyCode: PropTypes.string.isRequired,
+    countryCode: PropTypes.string.isRequired,
 };

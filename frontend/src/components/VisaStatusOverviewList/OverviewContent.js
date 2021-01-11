@@ -14,10 +14,8 @@ import "./VisaStatusOverview.less";
 
 const { Panel } = Collapse;
 
-const DropdownContent = ({ visaType, embassyCode }) => {
+const DropdownContent = ({ visaType, embassyCode, countryCode }) => {
     const [t] = useTranslation();
-    const countryCodeSelector = useMemo(() => makeCountryCodeSelector(embassyCode), [embassyCode]);
-    const countryCode = useSelector(state => countryCodeSelector(state));
     const additionalInfoKey = `additionalInfo${countryCode}`;
     const additionalInfoMarkdown = t(additionalInfoKey) === additionalInfoKey ? "" : t(additionalInfoKey);
     return (
@@ -53,6 +51,8 @@ DropdownContent.propTypes = dropdownProps;
 
 const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType }) => {
     const [t] = useTranslation();
+    const countryCodeSelector = useMemo(() => makeCountryCodeSelector(embassyCode), [embassyCode]);
+    const countryCode = useSelector(state => countryCodeSelector(state));
     const [cardDrop, setCardDrop] = useState(false);
     const { writeTime, availableDate } = newest;
 
@@ -68,7 +68,9 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
 
     const BriefOverview = () => (
         <Row align="middle" className="ovreview-content-row" gutter={32}>
-            <Col md={{ span: 3 }}>{t(embassyCode)}</Col>
+            <Col md={{ span: 3 }}>
+                <Tooltip title={t(countryCode)}>{t(embassyCode)}</Tooltip>
+            </Col>
             <Col md={{ span: 4 }}>
                 <Tooltip title={t("overview.earliest")}>{earliestDate.join("/")}</Tooltip>
             </Col>
@@ -103,7 +105,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
             onChange={() => setCardDrop(!cardDrop)}
         >
             <Panel key={embassyCode} header={<BriefOverview />} showArrow={false}>
-                <DropdownContent embassyCode={embassyCode} visaType={visaType} />
+                <DropdownContent embassyCode={embassyCode} visaType={visaType} countryCode={countryCode} />
             </Panel>
         </Collapse>
     );
@@ -112,6 +114,8 @@ ContentBar.propTypes = { ...overviewAttrProps, ...newestOverviewProps };
 
 const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }) => {
     const { t } = useTranslation();
+    const countryCodeSelector = useMemo(() => makeCountryCodeSelector(embassyCode), [embassyCode]);
+    const countryCode = useSelector(state => countryCodeSelector(state));
     const [cardDrop, setCardDrop] = useState(false);
     const { writeTime, availableDate } = newest;
 
@@ -127,7 +131,9 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
 
     const BriefOverview = () => (
         <Row align="middle">
-            <Col span={8}>{t(embassyCode)}</Col>
+            <Col span={8}>
+                <Tooltip title={t(countryCode)}>{t(embassyCode)}</Tooltip>
+            </Col>
             <Col span={cardDrop ? 0 : 8}>{availableDate.join("/")}</Col>
             <Col span={cardDrop ? 16 : 8}>
                 <Row justify="end" align="middle">
@@ -176,7 +182,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
                         </Row>
                     </Col>
                 </Row>
-                <DropdownContent embassyCode={embassyCode} visaType={visaType} />
+                <DropdownContent embassyCode={embassyCode} visaType={visaType} countryCode={countryCode} />
             </Panel>
         </Collapse>
     );
