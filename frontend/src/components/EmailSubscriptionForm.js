@@ -66,7 +66,7 @@ const SubscriptionFormItem = ({ field, remove, disabled }) => {
                     disabled={disabled}
                 >
                     <MinusOutlined />
-                    {screenXS && "Remove Subscription Item"}
+                    {screenXS && t("emailForm.removeItem")}
                 </Button>
             </Col>
         </Row>

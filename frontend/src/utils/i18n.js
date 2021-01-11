@@ -88,6 +88,7 @@ const resources = {
                 requireVisaType: "Visa Type field is required!",
                 requireEmbassy: "Embassy field is required!",
                 requireEmail: "Email address is required!",
+                removeItem: "Remove this item",
                 addSubsItem: "Add another Subscription Rule",
                 subscribe: "Submit",
                 successText: {
@@ -187,6 +188,7 @@ const resources = {
                 requireVisaType: "签证类型不能为空",
                 requireEmbassy: "使领馆不能为空",
                 requireEmail: "邮箱不能为空",
+                removeItem: "删除该条规则",
                 addSubsItem: "添加另一条订阅规则",
                 subscribe: "点击订阅",
                 successText: {
