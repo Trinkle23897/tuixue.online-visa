@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Tabs, Row, Col, Button, List, Divider, Tooltip } from "antd";
+import { Tabs, Row, Col, Button, Divider, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import { MailOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";

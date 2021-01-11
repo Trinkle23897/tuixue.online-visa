@@ -1,12 +1,11 @@
 import React from "react";
-import { Layout, Typography, Row, Col, Tabs } from "antd";
+import { Layout, Typography, Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
 import { TuixueHeader, VisaStatusTabs, TuixueFooter } from "../components";
 import "./VisaStatus.less";
 
 const { Content } = Layout;
 const { Title } = Typography;
-const { TabPane } = Tabs;
 
 export default function VisaStatus() {
     const [t] = useTranslation();

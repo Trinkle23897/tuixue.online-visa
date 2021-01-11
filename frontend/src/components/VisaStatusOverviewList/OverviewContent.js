@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import ReactMarkdown from "react-markdown";
 import { Row, Col, Button, Tooltip, Collapse, Tag } from "antd";
@@ -55,6 +54,9 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
     const countryCode = useSelector(state => countryCodeSelector(state));
     const [cardDrop, setCardDrop] = useState(false);
     const { writeTime, availableDate } = newest;
+    const earliestStr = earliestDate.join("/");
+    const latestStr = latestDate.join("/");
+    const availStr = availableDate.join("/");
 
     const DropdownControlBtn = () => (
         <Tooltip title={t("overview.addtionalIcon")}>
@@ -72,16 +74,16 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
                 <Tooltip title={t(countryCode)}>{t(embassyCode)}</Tooltip>
             </Col>
             <Col md={{ span: 4 }}>
-                <Tooltip title={t("overview.earliest")}>{earliestDate.join("/")}</Tooltip>
+                <Tooltip title={t("overview.earliest")}>{earliestStr}</Tooltip>
             </Col>
             <Col md={{ span: 4 }}>
-                <Tooltip title={t("overview.latest")}>{latestDate.join("/")}</Tooltip>
+                <Tooltip title={t("overview.latest")}>{latestStr}</Tooltip>
             </Col>
             <Col md={{ span: 8 }}>
                 <Tooltip title={t("overview.newest")}>
                     <Row justify="center" align="middle">
                         <Col xs={{ span: 11 }} md={{ span: 9 }}>
-                            {availableDate.join("/")}
+                            {availStr}
                         </Col>
                         <Col xs={{ span: 13 }} md={{ span: 9 }}>
                             <Tag>{`${t("at")} ${
@@ -118,6 +120,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
     const countryCode = useSelector(state => countryCodeSelector(state));
     const [cardDrop, setCardDrop] = useState(false);
     const { writeTime, availableDate } = newest;
+    const availStr = availableDate.join("/");
 
     const DropdownControlBtn = () => (
         <Tooltip title={t("overview.addtionalIcon")}>
@@ -134,7 +137,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
             <Col span={8}>
                 <Tooltip title={t(countryCode)}>{t(embassyCode)}</Tooltip>
             </Col>
-            <Col span={cardDrop ? 0 : 8}>{availableDate.join("/")}</Col>
+            <Col span={cardDrop ? 0 : 8}>{availStr}</Col>
             <Col span={cardDrop ? 16 : 8}>
                 <Row justify="end" align="middle">
                     <Col>
