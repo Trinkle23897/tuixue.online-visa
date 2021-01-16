@@ -7,11 +7,11 @@ import requests
 import websockets
 import tuixue_mongodb as DB
 from datetime import datetime
-from tuixue_typing import VisaType
-from typing import Any, Dict, List, Optional
+from tuixue_typing import EmbassyCode, VisaType
+from typing import Any, Dict, List, Optional, Tuple
 from fastapi.encoders import jsonable_encoder
-from urllib.parse import urlencode, urlunsplit, quote
 from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, FRONTEND_BASE_URI, DEFAULT_FILTER
+from url import URL
 
 
 VISA_STATUS_CHANGE_TITLE = '[tuixue.online] {visa_detail} Visa Status Change'
@@ -47,6 +47,25 @@ SUBSCRIPTION_CONFIRMATION_CONTENT = """
     decision letter and any related online documents immediately for your records.<br>
 """
 
+UNSUBSCRIPTION_CONFIRMATION_TITLE = '(PLEASE CONFIRM) - Your Unsubscription from tuixue.online'
+UNSUBSCRIPTION_CONFIRMATION_CONTENT = """
+    Dear {user}:<br>
+    <br>
+    This email is to confirm {email} for unsubcription of following visa types and embassies/consulate.<br>
+    {unsubscription_str}
+    <br>
+    Or click <a href="{unsubscribe_all_url}">this link</a> to unsubscribe all subscription.
+    <br>
+    Sincerely,<br>
+    <br>
+    tuixue.online Graduate Division<br>
+    Diversity, Inclusion and Admissions<br>
+    <br>
+    Please note: This e-mail message was sent from a notification-only address that cannot
+    accept incoming e-mail. Please do not reply to this message. Please save or print your
+    decision letter and any related online documents immediately for your records.<br>
+"""
+
 
 class Notifier:
     """ A class that contains methods for sending notifications visa emails
@@ -57,26 +76,16 @@ class Notifier:
     @classmethod
     def send_subscription_confirmation(cls, email: str, subs_lst: List[DB.EmailSubscription]):
         """ Send the email for confirmation of email subscription."""
-        query_dct = {'visa_type': [], 'code': [], 'till': [], "email": email}
+        confirmation_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/subscription')
+        confirmation_url.query_param.set('email', email)
         for visa_type, code, till in subs_lst:
-            query_dct['visa_type'].append(visa_type)
-            query_dct['code'].append(code)
-            query_dct['till'].append(till)
-
-        # Construct the redirect frontend url
-        confirmation_url = urlunsplit(
-            (
-                'https',
-                FRONTEND_BASE_URI,
-                '/visa/email/subscription',
-                urlencode(query_dct, doseq=True, quote_via=quote),
-                ''
-            )
-        )
+            confirmation_url.query_param.append('visa_type', visa_type)
+            confirmation_url.query_param.append('code', code)
+            confirmation_url.query_param.append('till', till)
 
         subscription_str = '<ul>\n{}\n</ul>'.format(
             '\n'.join(['<li>{} Visa at {} till {}.</li>'.format(
-                vt,
+                VISA_TYPE_DETAILS[vt],
                 next((e.name_en for e in USEmbassy.get_embassy_lst() if e.code == ec), 'None'),
                 tl.strftime('%Y/%m/%d') if tl != datetime.max else 'FOREVER',
             ) for vt, ec, tl in subs_lst])
@@ -97,6 +106,52 @@ class Notifier:
             )
             if sent:
                 break
+
+        return sent
+
+    @classmethod
+    def send_unsubscription_confirmation(cls, email: str, unsubs_lst: List[DB.EmailSubscriptionNoDate]):
+        """ Send the email for confirmation of email unsubscription. """
+        unsub_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/unsubscription')  # Unsubscription confirmation url
+        unsub_url.query_param.set('email', email)
+
+        single_unsub_info: List[Tuple[VisaType, EmbassyCode, URL]] = []
+        unsub_all_url = unsub_url.copy()
+        for visa_type, code in unsubs_lst:
+            url = unsub_url.copy()
+            url.query_param.set('visa_type', visa_type)
+            url.query_param.set('code', code)
+            single_unsub_info.append((visa_type, code, url))
+
+            unsub_all_url.query_param.append('visa_type', visa_type)
+            unsub_all_url.query_param.append('code', code)
+
+        unsubscription_str = '<ul>\n{}\n</ul>'.format(
+            '\n'.join(['<li>{} Visa at {}: click <a href="{}">this link</a> to unsubscribe.</li>'.format(
+                VISA_TYPE_DETAILS[vt],
+                next((e.name_en for e in USEmbassy.get_embassy_lst() if e.code == ec), 'None'),
+                url,
+            ) for vt, ec, url in single_unsub_info])
+        )
+
+        content = UNSUBSCRIPTION_CONFIRMATION_CONTENT.format(
+            user=email.split('@')[0],
+            email=email,
+            unsubscription_str=unsubscription_str,
+            unsubscribe_all_url=unsub_all_url,
+        )
+
+        for _ in range(10):
+            sent = cls.send_email(
+                title=UNSUBSCRIPTION_CONFIRMATION_TITLE,
+                content=content,
+                receivers=[email]
+            )
+
+            if sent:
+                break
+        else:
+            sent = False
 
         return sent
 

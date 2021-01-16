@@ -46,6 +46,16 @@ class EmailSubscription(BaseModel):
     subscription: List[SingleSubscription]
 
 
+class SingleUnsubscription(BaseModel):
+    visa_type: str
+    code: List[str]
+
+
+class EmailUnsubscription(BaseModel):
+    email: str
+    unsubscription: List[SingleUnsubscription]
+
+
 @app.get('/')
 def handshake():
     """ Index page that returns a 200 status with a OK message."""
@@ -170,16 +180,21 @@ def get_email_subscription(email: str = Query(...)):
     return DB.Subscription.get_subscriptions_by_email(email)
 
 
-@app.delete('/subscription/email')  # TODO: change this route to @app.post('/unsubscription/email')
-def delete_email_subscription(
-    email: str = Query(...),
-    visa_type: List[VisaType] = Query(...),
-    embassy_code: List[EmbassyCode] = Query(...),
-):
+@app.post('/unsubscription/email/{step}')
+def delete_email_subscription(step: EmailUnsubsStep, unsusbscription: EmailUnsubscription = Body(..., embed=True)):
     """ Delete the subscription under the given email."""
-    unsubscription = list(zip(visa_type, embassy_code))
-    DB.Subscription.remove_email_subscription(email, unsubscription)
-    return Response(status_code=status.HTTP_200_OK)
+    unsusbscription = unsusbscription.dict()
+    unsubs_lst = [
+        (unsubs['visa_type'], code) for unsubs in unsusbscription['unsubscription'] for code in unsubs['code']
+    ]
+
+    if step == EmailUnsubsStep.confirming:
+        Notifier.send_unsubscription_confirmation(unsusbscription['email'], unsubs_lst)
+        return Response(status_code=status.HTTP_202_ACCEPTED)
+
+    elif step == EmailUnsubsStep.deleted:
+        DB.Subscription.remove_email_subscription(unsusbscription['email'], unsubs_lst)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get('/test')

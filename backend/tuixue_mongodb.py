@@ -979,20 +979,19 @@ class Subscription:
         if not isinstance(unsubscription, list):
             unsubscription = [unsubscription]
 
-        if cls.email.find_one({'email': email}) is None:
-            return  # would LOVE to hear about insights on raising an exception here.
+        current_subscription = list(cls.email.aggregate([
+            {'$match': {'email': email}},
+            {'$unwind': '$subscription'},
+            {'$replaceRoot': {'newRoot': '$subscription'}},
+        ]))
 
-        for visa_type, embassy_code in unsubscription:
-            # trust the Mongo to handle the missing (visa_type, embassy_code) here
-            # not using $pullAll here as $pullAll requires a fully matchnig document
-            # where as $pull is matching the given query
-            # read more: https://docs.mongodb.com/manual/reference/operator/update/pullAll/#behavior
-            cls.email.update_one(
-                {'email': email},
-                {'$pull': {'subscription': {'visa_type': visa_type, 'embassy_code': embassy_code}}}
-            )
-
-        if cls.email.find_one({'email': email, 'subscription': {'$size': 0}}) is not None:
+        updated_subscription = [
+            subs for subs in current_subscription
+            if (subs['visa_type'], subs['embassy_code']) not in unsubscription
+        ]
+        if len(updated_subscription) > 0:
+            cls.email.update_one({'email': email}, {'$set': {'subscription': updated_subscription}})
+        else:
             cls.email.find_one_and_delete({'email': email})
 
 
