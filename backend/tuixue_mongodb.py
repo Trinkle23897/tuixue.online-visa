@@ -936,13 +936,12 @@ class Subscription:
         if not isinstance(subscription, list):
             subscription = [subscription]
 
-        subscription = [{
-            "visa_type": visa_type,
-            "embassy_code": embassy_code,
-            "till": till
-        } for (visa_type, embassy_code, till) in subscription]
+        new_subscription = [
+            {'visa_type': visa_type, 'embassy_code': embassy_code, 'till': till}
+            for visa_type, embassy_code, till in subscription
+        ]
 
-        cls.email.update_one({'email': email}, {'$set': {'subscription': subscription}})
+        cls.email.update_one({'email': email}, {'$set': {'subscription': new_subscription}}, upsert=True)
 
         return cls.email.find_one({'email': email}, projection={'_id': False})
 
