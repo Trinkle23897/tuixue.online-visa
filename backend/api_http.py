@@ -151,7 +151,7 @@ def get_visa_status_detail(
     }
 
 
-@app.post('/subscription/email/{step}')
+@app.post('/email/subscription/{step}')
 def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription = Body(..., embed=True)):
     """ Post email subscription."""
     subscription = subscription.dict()
@@ -180,20 +180,20 @@ def get_email_subscription(email: str = Query(...)):
     return DB.Subscription.get_subscriptions_by_email(email)
 
 
-@app.post('/unsubscription/email/{step}')
-def delete_email_subscription(step: EmailUnsubsStep, unsusbscription: EmailUnsubscription = Body(..., embed=True)):
+@app.post('/email/unsubscription/{step}')
+def delete_email_subscription(step: EmailUnsubsStep, unsubscription: EmailUnsubscription = Body(..., embed=True)):
     """ Delete the subscription under the given email."""
-    unsusbscription = unsusbscription.dict()
+    unsubscription = unsubscription.dict()
     unsubs_lst = [
-        (unsubs['visa_type'], code) for unsubs in unsusbscription['unsubscription'] for code in unsubs['code']
+        (unsubs['visa_type'], code) for unsubs in unsubscription['unsubscription'] for code in unsubs['code']
     ]
 
     if step == EmailUnsubsStep.confirming:
-        Notifier.send_unsubscription_confirmation(unsusbscription['email'], unsubs_lst)
+        Notifier.send_unsubscription_confirmation(unsubscription['email'], unsubs_lst)
         return Response(status_code=status.HTTP_202_ACCEPTED)
 
     elif step == EmailUnsubsStep.deleted:
-        DB.Subscription.remove_email_subscription(unsusbscription['email'], unsubs_lst)
+        DB.Subscription.remove_email_subscription(unsubscription['email'], unsubs_lst)
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

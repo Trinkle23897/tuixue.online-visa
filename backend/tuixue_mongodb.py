@@ -868,26 +868,16 @@ class Subscription:
     email = get_collection('email_subscription')
 
     @classmethod
-    def get_subscriptions_by_email(cls, email: str) -> dict:
+    def get_subscriptions_by_email(cls, email: str) -> list:
         """ Get all subscription of a given email"""
         cursor = cls.email.aggregate([
             {'$match': {'email': email}},
             {'$unwind': '$subscription'},
             {'$set': {'subscription.expired': {'$lt': ['$subscription.till', datetime.now()]}}},
-            {
-                '$group': {
-                    '_id': None,
-                    'email': {'$first': '$email'},
-                    'subscription': {'$push': '$subscription'},
-                },
-            },
-            {'$project': {'_id': False}},
+            {'$replaceRoot': {'newRoot': '$subscription'}},
         ])
 
-        for result in cursor:
-            return result
-        else:
-            return {'email': email, 'subscription': []}
+        return list(cursor)
 
     @classmethod
     def get_email_list(
