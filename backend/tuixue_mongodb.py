@@ -922,6 +922,42 @@ class Subscription:
         return dict(email_list)
 
     @classmethod
+    def initiate_email(cls, path: str) -> None:
+        """ Initialize the database with old version of email records."""
+        cls.email.drop()
+        visa_type_list = [v for v in os.listdir(path) if len(v) == 1]
+        user_choice = defaultdict(list)
+        for visa_type in visa_type_list:
+            city_list = os.listdir(os.path.join(path, visa_type))
+            for city in city_list:
+                # get the user list under visa_type + code
+                user_list = os.listdir(os.path.join(path, visa_type, city))
+                for user in user_list:
+                    user_choice[user].append((visa_type.upper(), city))
+        # at this time, the user_choice has the format
+        # { email: [visa_type, embassy_code]}
+        for email in user_choice:
+            # read `till` under /tmp/{email}
+            with open(os.path.join(path, 'tmp', email)) as f:
+                dt = f.read().strip()
+            if len(dt) == 0:  # FOREVER
+                till = datetime.max
+            else:
+                try:
+                    till = datetime.strptime(dt, '%Y/%m/%d')
+                except ValueError:
+                    till = datetime.strptime(dt, '%m/%d/%Y')
+            subscription = []
+            for (visa_type, embassy_code) in user_choice[email]:
+                subscription.append({
+                    "visa_type": visa_type,
+                    "embassy_code": embassy_code,
+                    "till": till,
+                })
+            if till > datetime.now() and len(subscription) > 0:
+                cls.email.update_one({'email': email}, {'$set': {'subscription': subscription}}, upsert=True)
+
+    @classmethod
     def add_email_subscription(
         cls,
         email: str,
