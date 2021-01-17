@@ -353,7 +353,11 @@ class VisaFetcher:
 
                 url = '{}{}'.format(G.value('current_crawler_node', ''), endpoint)
                 res = requests.get(url, timeout=G.WAIT_TIME['register'], proxies=G.value('proxies', None))
-                result = res.json()
+                try:
+                    result = res.json()
+                except:
+                    print(res.content)
+                    continue
                 LOGGER.debug(
                     'consume_new_session_request - Endpoint: %s | Response json: %s',
                     endpoint,
