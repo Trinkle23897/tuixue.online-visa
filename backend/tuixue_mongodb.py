@@ -928,8 +928,8 @@ class Subscription:
         subscription: Union[EmailSubscription, List[EmailSubscription]],
     ) -> dict:
         """ Add one or more email subscription, create the subscriber document if
-            one doesn't exist. And SILENTLY update the subscription if there is a
-            same `(visa_type, embassy_code)` subscription exists.
+            one doesn't exist. And overwrite provious subscription record if there
+            is a same email subscription exists.
 
             Return the subscriber after subscipriton edition.
         """
@@ -938,32 +938,7 @@ class Subscription:
 
         input_subscription = {(visa_type, embassy_code): till for visa_type, embassy_code, till in subscription}
 
-        old_subscription = list(cls.email.aggregate([
-            {'$match': {'email': email}},
-            {'$unwind': '$subscription'},
-            {'$replaceRoot': {'newRoot': '$subscription'}},
-        ]))
-
-        new_subscription = []
-        for subs in old_subscription:
-            if (subs['visa_type'], subs['embassy_code']) in input_subscription:
-                new_subscription.append({
-                    **subs,
-                    'till': input_subscription[(subs['visa_type'], subs['embassy_code'])]
-                })
-                del input_subscription[(subs['visa_type'], subs['embassy_code'])]
-            else:
-                new_subscription.append({**subs})
-
-        if input_subscription:
-            new_subscription.extend(
-                [
-                    {'visa_type': visa_type, 'embassy_code': embassy_code, 'till': till}
-                    for (visa_type, embassy_code), till in input_subscription.items()
-                ]
-            )
-
-        cls.email.update_one({'email': email}, {'$set': {'subscription': new_subscription}}, upsert=True)
+        cls.email.update_one({'email': email}, {'$set': {'subscription': input_subscription}})
 
         return cls.email.find_one({'email': email}, projection={'_id': False})
 
