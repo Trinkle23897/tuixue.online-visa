@@ -73,13 +73,18 @@ if __name__ == "__main__":
         '--operation', '-o',
         required=True,
         type=str,
-        choices=['fetch', 'write'], help='Choose what function to run'
+        choices=['fetch', 'write', 'email'], help='Choose what function to run'
     )
     parser.add_argument(
         '--since', '-s',
         type=str,
         default='2020/4/8',
         help='Date string indicating the start date of fetching data'
+    )
+    parser.add_argument(
+        '--email-path', '-e',
+        type=str,
+        help='The old version email record folder (/var/www/html/asiv/email)'
     )
     args = parser.parse_args()
 
@@ -93,3 +98,5 @@ if __name__ == "__main__":
         infinite_fetch(args.since)
     elif args.operation == 'write':
         initiate_database(args.since)  # havn't fetched all data before 2020/9/16
+    elif args.operation == 'email':
+        DB.Subscription.initiate_email(args.email_path)
