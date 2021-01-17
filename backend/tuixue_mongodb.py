@@ -928,7 +928,7 @@ class Subscription:
         subscription: Union[EmailSubscription, List[EmailSubscription]],
     ) -> dict:
         """ Add one or more email subscription, create the subscriber document if
-            one doesn't exist. And overwrite provious subscription record if there
+            one doesn't exist. And overwrite previous subscription record if there
             is a same email subscription exists.
 
             Return the subscriber after subscipriton edition.

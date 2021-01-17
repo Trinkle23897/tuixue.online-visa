@@ -1,7 +1,6 @@
 """ Class and functions to handle url manipulation."""
-from typing import Any, AnyStr, Optional, Union, Generator
-from collections.abc import Iterable
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
+from typing import Any, AnyStr, Optional, Union, Generator, Dict, List, Tuple, Iterable
 
 
 class URLQueryParam:
@@ -9,7 +8,7 @@ class URLQueryParam:
         URLSearchParam class in a pythonic way.
     """
     @staticmethod
-    def parse_query(query: str) -> dict[str, Union[str, int, float, list[Union[str, int, float]]]]:
+    def parse_query(query: str) -> Dict[str, Union[str, int, float, List[Union[str, int, float]]]]:
         """ Parse the query, return a dictionary. The keys of returned dict
             will ALWAYS be `str`. The values can be list of str or list of
             number (int or float).
@@ -58,7 +57,7 @@ class URLQueryParam:
             else:
                 yield value
 
-    def items(self) -> Iterable[tuple[str, Union[str, list]]]:
+    def items(self) -> Iterable[Tuple[str, Union[str, list]]]:
         """ URLSearchParam.entries in a pythonic way ;-) """
         return self.query_param.items()
 
@@ -139,7 +138,7 @@ class URL:
     @staticmethod
     def parse_url(
         url: str
-    ) -> tuple[Optional[AnyStr], Optional[AnyStr], Optional[AnyStr], Optional[AnyStr], Optional[AnyStr]]:
+    ) -> Tuple[Optional[AnyStr], Optional[AnyStr], Optional[AnyStr], Optional[AnyStr], Optional[AnyStr]]:
         """ Parse the attributes of url."""
         parsed = urlsplit(url)
         return parsed[:]
