@@ -936,9 +936,7 @@ class Subscription:
         if not isinstance(subscription, list):
             subscription = [subscription]
 
-        input_subscription = {(visa_type, embassy_code): till for visa_type, embassy_code, till in subscription}
-
-        cls.email.update_one({'email': email}, {'$set': {'subscription': input_subscription}})
+        cls.email.update_one({'email': email}, {'$set': {'subscription': subscription}})
 
         return cls.email.find_one({'email': email}, projection={'_id': False})
 
