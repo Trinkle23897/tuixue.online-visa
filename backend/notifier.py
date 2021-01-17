@@ -95,8 +95,8 @@ class Notifier:
     @classmethod
     def send_subscription_confirmation(cls, email: str, subs_lst: List[DB.EmailSubscription]):
         """ Send the email for confirmation of email subscription."""
-        # confirmation_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/subscription')
-        confirmation_url = URL(f'http://localhost:3000/visa/email/subscription')
+        confirmation_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/subscription')
+        # confirmation_url = URL(f'http://localhost:3000/visa/email/subscription')
         confirmation_url.query_param.set('email', email)
         for visa_type, code, till in subs_lst:
             confirmation_url.query_param.append('visa_type', visa_type)
@@ -126,6 +126,8 @@ class Notifier:
             )
             if sent:
                 break
+        else:
+            sent = False
 
         return sent
 
@@ -133,8 +135,8 @@ class Notifier:
     def send_unsubscription_confirmation(cls, email: str, unsubs_lst: List[DB.EmailSubscriptionNoDate]):
         """ Send the email for confirmation of email unsubscription. """
         subs_lst_by_email = DB.Subscription.get_subscriptions_by_email(email)
-        # unsub_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/unsubscription')  # Unsubscription confirmation url
-        unsubs_url = URL(f'http://localhost:3000/visa/email/unsubscription')  # Unsubscription confirmation url
+        unsubs_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/unsubscription')  # Unsubscription confirmation url
+        # unsubs_url = URL(f'http://localhost:3000/visa/email/unsubscription')  # Unsubscription confirmation url
         unsubs_url.query_param.set('email', email)
 
         
