@@ -925,7 +925,6 @@ class Subscription:
     def initiate_email(cls, path: str) -> None:
         """ Initialize the database with old version of email records."""
         cls.email.drop()
-        all_users_dir = os.path.join(path, 'tmp')
         visa_type_list = [v for v in os.listdir(path) if len(v) == 1]
         user_choice = defaultdict(list)
         for visa_type in visa_type_list:
@@ -946,7 +945,7 @@ class Subscription:
             else:
                 try:
                     till = datetime.strptime(dt, '%Y/%m/%d')
-                except:
+                except ValueError:
                     till = datetime.strptime(dt, '%m/%d/%Y')
             subscription = []
             for (visa_type, embassy_code) in user_choice[email]:

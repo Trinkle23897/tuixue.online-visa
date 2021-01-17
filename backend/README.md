@@ -103,14 +103,17 @@ To migrate the fetched data from files into the MongoDB, I wrote a script, `sync
 
 ```sh
 $ python3 sync_data.py --help
-usage: sync_data.py [-h] --operation {fetch,write} [--since SINCE]
+usage: sync_data.py [-h] --operation {fetch,write,email} [--since SINCE] [--email-path EMAIL_PATH]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --operation {fetch,write}, -o {fetch,write}
+  --operation {fetch,write,email}, -o {fetch,write,email}
                         Choose what function to run
   --since SINCE, -s SINCE
                         Date string indicating the start date of fetching data
+  --email-path EMAIL_PATH, -e EMAIL_PATH
+                        The old version email record folder
+                        (/var/www/html/asiv/email)
 ```
 
 To write the data into MongoDB, run
@@ -169,10 +172,11 @@ With the help of [official documentation](https://www.uvicorn.org/deployment/#ru
 
 ```nginx
 server {
-        listen       80 default_server;
-        listen       [::]:80 default_server;
+        listen       443 default_server;
+        listen       [::]:443 default_server;
         server_name  _ 127.0.0.1;
-
+        ssl_certificate /path/to/fullchain.pem;
+        ssl_certificate_key /path/to/privkey.pem;
         location = /status {
                 stub_status on;
         }
@@ -280,7 +284,7 @@ HTTP/1.1 200 OK
 {
     "region": [
         {"region": "DOMESTIC", "embassy_code_lst": ["bj", "sh", "cd", "gz", "sy", "hk", "tp"]},
-        {"region":"SOUTH_EAST_ASIA","embassy_code_lst":["pp","sg","ktm","bkk","cnx"]}
+        {"region":"SOUTH_EAST_ASIA", "embassy_code_lst": ["pp","sg","ktm","bkk","cnx"]}
     ],
     "embassy": [
         ["北京", "Beijing", "bj", "cgi", "DOMESTIC", "ASIA", "CHN"],
