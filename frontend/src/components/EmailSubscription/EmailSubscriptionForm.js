@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import ReactMarkdown from "react-markdown";
 import { Button, DatePicker, Form, Input, Row, Col, Select } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
-import { useScreenXS } from "../hooks";
-import { momentToISOString } from "../utils/misc";
-import { setCookie } from "../utils/cookie";
-import EmbassyTreeSelect from "./EmbassyTreeSelect";
+import { useScreenXS } from "../../hooks";
+import { momentToISOString } from "../../utils/misc";
+import { setCookie } from "../../utils/cookie";
+import EmbassyTreeSelect from "../EmbassyTreeSelect";
 
 const SubscriptionFormItem = ({ field, remove, disabled }) => {
     const [t] = useTranslation();
@@ -86,7 +85,8 @@ SubscriptionFormItem.propTypes = {
 export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOption, onFinish, ...otherFormProps }) {
     const [t] = useTranslation();
     const { form, formState } = formControl;
-    const { visaType, inSubscriptionPage } = pageInfo;
+    const { visaType } = pageInfo;
+
     // store user input in cookie
     const onValuesChange = (changedValue, allValues) => {
         const setEmailCookie = () => changedValue.email && setCookie("email", { email: allValues.email });
@@ -128,15 +128,12 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
                 onFinish(fieldValues);
             }}
         >
-            <Form.Item name="description" label="description">
-                <ReactMarkdown>{t("emailForm.description")}</ReactMarkdown>
-            </Form.Item>
             <Form.Item
                 name="email"
                 label="Email"
                 rules={[{ type: "email", required: true, message: t("emailForm.requireEmail") }]}
             >
-                <Input placeholder={t("emailForm.emailAddress")} disabled={formState.postingSubscription} />
+                <Input placeholder={t("emailForm.emailAddress")} disabled={formState.posting} />
             </Form.Item>
 
             <Form.List
@@ -159,7 +156,7 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
                                 key={field.name}
                                 field={field}
                                 remove={fn => remove(fn)}
-                                disabled={formState.postingSubscription}
+                                disabled={formState.posting}
                             />
                         ))}
                         <Form.Item>
@@ -168,7 +165,7 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
                                 onClick={() => add({ visaType })}
                                 block
                                 icon={<PlusOutlined />}
-                                disabled={formState.postingSubscription}
+                                disabled={formState.posting}
                             >
                                 {t("emailForm.addSubsItem")}
                             </Button>
@@ -176,13 +173,11 @@ export default function EmailSubscriptionForm({ formControl, pageInfo, cookieOpt
                     </>
                 )}
             </Form.List>
-            {inSubscriptionPage && (
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" block>
-                        {t("emailForm.subscribe")}
-                    </Button>
-                </Form.Item>
-            )}
+            <Form.Item>
+                <Button type="primary" htmlType="submit" block>
+                    {t("emailForm.subscribe")}
+                </Button>
+            </Form.Item>
         </Form>
     );
 }
@@ -193,7 +188,8 @@ EmailSubscriptionForm.propTypes = {
     }).isRequired,
     pageInfo: PropTypes.shape({
         visaType: PropTypes.string.isRequired,
-        inSubscriptionPage: PropTypes.bool.isRequired,
+        inEmailPage: PropTypes.bool.isRequired,
+        subscriptionOp: PropTypes.oneOf(["subscription", "unsubscription"]),
     }).isRequired,
     cookieOption: PropTypes.oneOf(["email", "subscription", "both"]).isRequired,
     onFinish: PropTypes.func.isRequired,

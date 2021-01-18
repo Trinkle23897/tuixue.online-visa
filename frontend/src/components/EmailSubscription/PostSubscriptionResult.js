@@ -4,12 +4,9 @@ import { Typography, Row, Col } from "antd";
 import { useTranslation } from "react-i18next";
 import { CheckCircleTwoTone, CloseCircleTwoTone, LoadingOutlined } from "@ant-design/icons";
 
-export default function PostSubscriptionResult({ success, step, inSubscriptionPage }) {
+export default function PostSubscriptionResult({ success, step, inEmailPage }) {
     const [t] = useTranslation();
-    const successText = {
-        confirming: t("emailForm.successText.confirming"),
-        subscribed: t("emailForm.successText.subscribed"),
-    };
+    const successText = t(`emailForm.successText.${step}`);
     const failureText = t("emailForm.failureText");
     const loadingText = t("emailForm.loadingText");
 
@@ -26,12 +23,12 @@ export default function PostSubscriptionResult({ success, step, inSubscriptionPa
             </Col>
             <Col span={24}>
                 <Typography.Title level={3} style={{ textAlign: "center" }}>
-                    {success === null ? loadingText : success ? successText[step] : failureText}
+                    {success === null ? loadingText : success ? successText : failureText}
                 </Typography.Title>
             </Col>
             <Col>
                 <Typography.Text style={{ textAlign: "center", fontStyle: "italic" }}>
-                    {t(inSubscriptionPage ? "emailForm.redirecting" : "emailForm.closing")}
+                    {t(inEmailPage ? "emailForm.redirecting" : "emailForm.closing")}
                 </Typography.Text>
             </Col>
         </Row>
@@ -40,5 +37,5 @@ export default function PostSubscriptionResult({ success, step, inSubscriptionPa
 PostSubscriptionResult.propTypes = {
     success: PropTypes.bool.isRequired,
     step: PropTypes.oneOf(["confirming", "subscribed"]).isRequired,
-    inSubscriptionPage: PropTypes.bool.isRequired,
+    inEmailPage: PropTypes.bool.isRequired,
 };

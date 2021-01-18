@@ -6,8 +6,10 @@ const metadata = "/visastatus/meta";
 const overview = "/visastatus/overview";
 const detail = "/visastatus/detail";
 const latest = "/ws/visastatus/latest";
-const email = "/subscription/email";
-const emailSubscription = step => `${email}/${step}`;
+const email = {
+    subscription: step => `/email/subscription/${step}`,
+    unsubscription: step => `/email/unsubscription/${step}`,
+};
 
 const HEADERS = {
     Accept: "application/json",
@@ -19,7 +21,7 @@ const HEADERS = {
  * @param {Object} query    Object used to construct query parameters
  * @return {string}         The constructed URL string
  */
-const constructURL = ({ path, query = null, protocol = "https" }) => {
+const constructURL = ({ path, query = null, protocol = "http" }) => {
     const url = new URL(path, `${protocol}://${API_BASE_URL}`);
     if (query) {
         for (const [paramKey, paramVal] of Object.entries(query)) {
@@ -163,24 +165,42 @@ export const openLatestVisaStatusSocket = () => {
     return new WebSocket(constructURL({ path: latest, protocol: "wss" }));
 };
 
-export const postEmailSubscription = async (step, subscription) => {
-    if (!["confirming", "subscribed"].includes(step)) {
-        throw new Error("In postEmailSubscription: param step should be one of ['confirming', 'subscribed']");
+export const postEmailSubscription = async (subscriptionOp, step, requestBody) => {
+    if (!["subscription", "unsubscription"].includes(subscriptionOp)) {
+        throw new Error(
+            "In postEmailSubscription: param subscriptionOp should be one of ['subscription', 'unsubscription']",
+        );
     }
 
-    if (!subscription || Object.keys(subscription).length === 0) {
+    if (!["confirming", "subscribed", "deleted"].includes(step)) {
+        throw new Error(
+            "In postEmailSubscription: param step should be one of ['confirming', 'subscribed', 'deleted']",
+        );
+    }
+
+    if (
+        (subscriptionOp === "subscription" && step === "deleted") ||
+        (subscriptionOp === "unsubscription" && step === "subscribed")
+    ) {
+        throw new Error("In postEmailSubscription: invalid combination of subscriptionOp and step!");
+    }
+
+    if (!requestBody || Object.keys(requestBody).length === 0) {
         throw new Error("In postEmailSubscription: no subscription object provided");
     }
 
-    const url = constructURL({ path: emailSubscription(step) });
+    const url = constructURL({ path: email[subscriptionOp](step) });
 
     let res;
     try {
-        res = await fetch(url, { method: "POST", headers: HEADERS, body: JSON.stringify({ subscription }) });
-        console.log(await res.text());
+        res = await fetch(url, {
+            method: "POST",
+            headers: HEADERS,
+            body: JSON.stringify({ [subscriptionOp]: requestBody }),
+        });
     } catch (e) {
         console.error(`In getVisaStatusMetadata: ${e}`);
     }
 
-    return res.ok && step === "confirming" ? res.status === 202 : res.status === 200;
+    return res.ok && step === "confirming" ? res.status === 202 : res.status === 204;
 };

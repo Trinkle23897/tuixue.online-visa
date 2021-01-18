@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Tabs, Row, Col, Button, Divider, Tooltip } from "antd";
+import { Tabs, Row, Col, Divider, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import { MailOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
 import { nonDomesticEmbassyInDefaultFilterSelector } from "../redux/selectors";
 import VisaStatusOverviewList from "./VisaStatusOverviewList";
 import EmbassySelector from "./EmbassySelector";
+import EmailSubscription from "./EmailSubscription";
 import "./VisaStatusTabs.less";
 import { OverviewChartByMinute } from "./VisaStatusOverviewList/OverviewChart";
-import { useScreenXS, useSubscriptionFormControl } from "../hooks";
-import EmailSubscriptionForm from "./EmailSubscriptionForm";
-import PostSubscriptionResult from "./PostSubscriptionResult";
+import { useScreenXS } from "../hooks";
 
 const { TabPane } = Tabs;
 
@@ -43,28 +42,6 @@ const QQTGSubs = () => {
             {qqGroups.nonDomestic.map((content, index) => (
                 <p key={`qqNonDomestic-${content}`}>{`${t("QQGroupNonDomestic", { index: index + 1 })}${content}`}</p>
             ))}
-        </>
-    );
-};
-
-const EmailSubs = () => {
-    const [t] = useTranslation();
-    const [{ form, formState }, pageInfo, postSubscription] = useSubscriptionFormControl();
-    return formState.postingSubscription ? (
-        <PostSubscriptionResult
-            success={formState.postSuccessful}
-            step="confirming"
-            inSubscriptionPage={pageInfo.inSubscriptionPage}
-        />
-    ) : (
-        <>
-            <EmailSubscriptionForm
-                formControl={{ form, formState }}
-                pageInfo={pageInfo}
-                cookieOption="email"
-                onFinish={fieldValues => postSubscription(fieldValues)}
-            />
-            <Button onClick={() => form.submit()}>{t("emailForm.subscribe")}</Button>
         </>
     );
 };
@@ -119,7 +96,7 @@ export default function VisaStatusTabs() {
                             }
                             key={"email"}
                         >
-                            <EmailSubs />
+                            <EmailSubscription />
                         </TabPane>
                         {visaType === "F" && (
                             <TabPane

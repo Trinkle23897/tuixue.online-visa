@@ -8,7 +8,7 @@ export default function Pages() {
         <Router>
             <Switch>
                 <Route exact path="/visa" component={() => <VisaStatus />} />
-                <Route exact path="/visa/email/subscription" component={() => <Subscription />} />
+                <Route exact path="/visa/email/:subscriptionOp" component={() => <Subscription />} />
                 <Redirect to="/visa" />
             </Switch>
         </Router>
