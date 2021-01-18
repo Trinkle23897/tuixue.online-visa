@@ -46,14 +46,9 @@ class EmailSubscription(BaseModel):
     subscription: List[SingleSubscription]
 
 
-class SingleUnsubscription(BaseModel):
-    visa_type: str
-    code: List[str]
-
-
 class EmailUnsubscription(BaseModel):
     email: str
-    unsubscription: List[SingleUnsubscription]
+    unsubscription: Optional[List[SingleSubscription]] = []
 
 
 @app.get('/')
@@ -169,9 +164,8 @@ def post_email_subscription(step: EmailSubsStep, subscription: EmailSubscription
         return Response(status_code=status.HTTP_202_ACCEPTED)
 
     elif step == EmailSubsStep.subscribed:
-        updated_subscriber = DB.Subscription.add_email_subscription(subscription['email'], subs_lst)
-
-        return updated_subscriber
+        DB.Subscription.add_email_subscription(subscription['email'], subs_lst)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # @app.get('/subscription/email')
@@ -189,7 +183,7 @@ def delete_email_subscription(step: EmailUnsubsStep, unsubscription: EmailUnsubs
     ]
 
     if step == EmailUnsubsStep.confirming:
-        Notifier.send_unsubscription_confirmation(unsubscription['email'], unsubs_lst)
+        Notifier.send_unsubscription_confirmation(unsubscription['email'])
         return Response(status_code=status.HTTP_202_ACCEPTED)
 
     elif step == EmailUnsubsStep.deleted:

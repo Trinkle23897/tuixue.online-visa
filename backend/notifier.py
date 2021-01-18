@@ -69,8 +69,7 @@ UNSUBSCRIPTION_EMPTY_SUBS_TITLE = '(CATCHA ;-) - You don\'t have any subscriptio
 UNSUBSCRIPTION_EMPTY_SUBS_CONTENT = """
     Dear {user}:<br>
     <br>
-    Thie email address {email} either has 0 subscription from tuixue.online or the Visa type and embassy you
-    are unsubscribing are not subscribed at the first place.
+    Thie email address {email} either has 0 subscription from tuixue.online.
     <br>
     Feel free to check out <a href="https://dev.tuixue.online/visa">our website</a> for info of U.S. Visa interview appointment around
     the global!
@@ -96,7 +95,6 @@ class Notifier:
     def send_subscription_confirmation(cls, email: str, subs_lst: List[DB.EmailSubscription]):
         """ Send the email for confirmation of email subscription."""
         confirmation_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/subscription')
-        # confirmation_url = URL(f'http://localhost:3000/visa/email/subscription')
         confirmation_url.query_param.set('email', email)
         for visa_type, code, till in subs_lst:
             confirmation_url.query_param.append('visa_type', visa_type)
@@ -132,27 +130,10 @@ class Notifier:
         return sent
 
     @classmethod
-    def send_unsubscription_confirmation(cls, email: str, unsubs_lst: List[DB.EmailSubscriptionNoDate]):
+    def send_unsubscription_confirmation(cls, email: str):
         """ Send the email for confirmation of email unsubscription. """
         subs_lst_by_email = DB.Subscription.get_subscriptions_by_email(email)
-        unsubs_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/unsubscription')  # Unsubscription confirmation url
-        # unsubs_url = URL(f'http://localhost:3000/visa/email/unsubscription')  # Unsubscription confirmation url
-        unsubs_url.query_param.set('email', email)
-
-        
-        unsubs_all_url = unsubs_url.copy()
-        unsubs_info = []
-        for subs in subs_lst_by_email:
-            if (subs['visa_type'], subs['embassy_code']) in unsubs_lst:
-                url = unsubs_url.copy()
-                url.query_param.set('visa_type', subs['visa_type'])
-                url.query_param.set('embassy_code', subs['embassy_code'])
-                unsubs_info.append((subs['visa_type'], subs['embassy_code'], subs['till'], subs['expired'], url))
-
-                unsubs_all_url.query_param.append('visa_type', subs['visa_type'])
-                unsubs_all_url.query_param.append('embassy_code', subs['embassy_code'])
-
-        if len(unsubs_info) == 0:  # If the user has no subscription or is messing with us, we will know
+        if len(subs_lst_by_email) == 0:  # If the user has no subscription/email doesn't exist
             for _ in range(10):
                 sent = cls.send_email(
                     title=UNSUBSCRIPTION_EMPTY_SUBS_TITLE.format(email=email),
@@ -165,6 +146,22 @@ class Notifier:
                 sent = False
 
             return sent
+
+        unsubs_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/unsubscription')  # Unsubscription confirmation url
+        unsubs_url.query_param.set('email', email)
+
+        unsubs_all_url = unsubs_url.copy()
+        unsubs_info = []
+        for subs in subs_lst_by_email:
+            url = unsubs_url.copy()
+            url.query_param.set('visa_type', subs['visa_type'])
+            url.query_param.set('code', subs['embassy_code'])
+            url.query_param.set('till', subs['till'])
+            unsubs_info.append((subs['visa_type'], subs['embassy_code'], subs['till'], subs['expired'], url))
+
+            unsubs_all_url.query_param.append('visa_type', subs['visa_type'])
+            unsubs_all_url.query_param.append('code', subs['embassy_code'])
+            unsubs_all_url.query_param.append('till', subs['till'])
 
         unsubscription_str = '<ul>\n{}\n</ul>'.format(
             '\n'.join(['<li>{} Visa at {} {} on {}: click <a href="{}">this link</a> to unsubscribe.</li>'.format(
