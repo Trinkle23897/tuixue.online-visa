@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Tabs, Row, Col, Divider, Tooltip, Menu } from "antd";
+import { Tabs, Row, Col, Divider, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import { MailOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
@@ -56,18 +56,17 @@ export default function VisaStatusTabs() {
 
     return (
         <>
-            <Menu
-                onClick={e => dispatch(changeTabAndSetCookie(e.key))}
-                selectedKeys={[visaType]}
-                mode="horizontal"
-                style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}
+            <Tabs
+                activeKey={visaType}
+                onChange={activeKey => dispatch(changeTabAndSetCookie(activeKey))}
+                type="card"
+                size="large"
+                renderTabBar={(props, DefaultTabBar) => <DefaultTabBar {...props} className="autofill-tab-bar" />}
             >
                 {Array.from("FBHOL").map(vt => (
-                    <Menu.Item key={vt} style={{ flexGrow: 1 }}>
-                        {visaTypeDetails[vt]}
-                    </Menu.Item>
+                    <TabPane key={vt} tab={visaTypeDetails[vt]} style={{ flexGrow: 1 }} />
                 ))}
-            </Menu>
+            </Tabs>
             <Row gutter={[16, { xs: 16, md: 32 }]}>
                 <Col span={24}>
                     <EmbassySelector visaType={visaType} />

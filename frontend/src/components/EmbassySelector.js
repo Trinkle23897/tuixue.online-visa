@@ -63,7 +63,7 @@ export default function EmbassySelector({ visaType }) {
                 onChange={value => dispatch(updateFilterAndFetch(visaType, value))}
                 onDropdownVisibleChange={open => setDropdownOpen(open)}
                 treeDefaultExpandedKeys={["DOMESTIC"]}
-                placeholder="Search or select U.S. Embassy or Consulate"
+                placeholder={t("filter.placeholder")}
                 style={{ width: "100%" }}
                 size="large"
                 multiple
