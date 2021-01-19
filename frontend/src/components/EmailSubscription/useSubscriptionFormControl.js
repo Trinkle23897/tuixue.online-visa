@@ -41,14 +41,22 @@ const reqBodyFromParam = (param, subscriptionOp) => {
     const email = param.get("email");
     const subscriptionRuleCollector = param
         .getAll("visa_type")
-        .reduce((subsObj, visaType) => ({ ...subsObj, [visaType]: { visa_type: visaType, code: [], till: null } }), {});
+        .reduce((subsObj, visaType) => ({ ...subsObj, [visaType]: {} }), {});
 
     zip(param.getAll("visa_type"), param.getAll("code"), param.getAll("till")).forEach(([vt, code, till]) => {
-        subscriptionRuleCollector[vt].code.push(code);
-        subscriptionRuleCollector[vt].till = till; // the till time WILL BE THE SAME for a single visaType
+        subscriptionRuleCollector[vt][till] = subscriptionRuleCollector[vt][till]
+            ? [...subscriptionRuleCollector[vt][till], code]
+            : [code];
     });
 
-    return { email, [subscriptionOp]: Object.values(subscriptionRuleCollector) };
+    return {
+        email,
+        [subscriptionOp]: Object.entries(subscriptionRuleCollector)
+            .map(([vt, tillToCode]) =>
+                Object.entries(tillToCode).map(([till, code]) => ({ visa_type: vt, code, till })),
+            )
+            .flat(),
+    };
 };
 
 const { useForm } = Form;
