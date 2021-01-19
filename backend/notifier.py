@@ -21,7 +21,7 @@ VISA_STATUS_CHANGE_CONTENT = """
     <br>
     See <a href="https://{base_uri}/visa">https://{base_uri}/visa</a> for more detail.<br>
     If you want to change your subscribe option, please re-submit a request over
-    <a href="">Some link to the website</a>.
+    <a href="https://{base_uri}/visa">https://{base_uri}/visa</a>.
 """
 # TODO: add the frontend href attr here.
 # TODO: unsubscribe link
@@ -52,9 +52,11 @@ UNSUBSCRIPTION_CONFIRMATION_CONTENT = """
     Dear {user}:<br>
     <br>
     This email is to confirm {email} for unsubcription of following visa types and embassies/consulate.<br>
+
+    <ul>
+    <li>ALL: Click <a href="{unsubscribe_all_url}">this link</a> to unsubscribe all subscription.</li>
     {unsubscription_str}
-    <br>
-    Or click <a href="{unsubscribe_all_url}">this link</a> to unsubscribe all subscription.
+    </ul>
     <br>
     Sincerely,<br>
     <br>
@@ -71,7 +73,7 @@ UNSUBSCRIPTION_EMPTY_SUBS_CONTENT = """
     <br>
     Thie email address {email} either has 0 subscription from tuixue.online.
     <br>
-    Feel free to check out <a href="https://dev.tuixue.online/visa">our website</a> for info of U.S. Visa interview appointment around
+    Feel free to check out <a href="https://{base_uri}/visa">our website</a> for info of U.S. Visa interview appointment around
     the global!
     <br>
     Sincerely,<br>
@@ -137,7 +139,8 @@ class Notifier:
             for _ in range(10):
                 sent = cls.send_email(
                     title=UNSUBSCRIPTION_EMPTY_SUBS_TITLE.format(email=email),
-                    content=UNSUBSCRIPTION_EMPTY_SUBS_CONTENT.format(user=email.split('@')[0], email=email),
+                    content=UNSUBSCRIPTION_EMPTY_SUBS_CONTENT.format(
+                        user=email.split('@')[0], email=email, base_uri=FRONTEND_BASE_URI),
                     receivers=[email],
                 )
                 if sent:
@@ -163,12 +166,12 @@ class Notifier:
             unsubs_all_url.query_param.append('code', subs['embassy_code'])
             unsubs_all_url.query_param.append('till', subs['till'])
 
-        unsubscription_str = '<ul>\n{}\n</ul>'.format(
+        unsubscription_str = '{}'.format(
             '\n'.join(['<li>{} Visa at {} {} on {}: click <a href="{}">this link</a> to unsubscribe.</li>'.format(
                 VISA_TYPE_DETAILS[vt],
                 next((e.name_en for e in USEmbassy.get_embassy_lst() if e.code == ec), 'None'),
                 'expired' if exp else 'expiring',
-                tl.strftime('%Y/%m/%d') if tl != datetime.max else 'FOREVER',
+                tl.strftime('%Y/%m/%d') if tl.year < 9999 else 'FOREVER',
                 url,
             ) for vt, ec, tl, exp, url in unsubs_info])
         )
