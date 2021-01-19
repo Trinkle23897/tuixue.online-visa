@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useReducer, useCallback } from "react";
 import { Form } from "antd";
 import { useLocation, useRouteMatch, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { makeFilterSelectorByVisaType } from "../../redux/selectors";
 import { postEmailSubscription } from "../../services";
 import { isoStringToMoment, momentToISOString, zip } from "../../utils/misc";
 import { deleteCookie, getCookie, setCookie } from "../../utils/cookie";
@@ -87,8 +88,11 @@ const formStateReducer = (state, action) => {
  */
 export default function useSubscriptionFormControl(parentSubscriptionOp) {
     const [formState, dispatchFormAction] = useReducer(formStateReducer, initialFormState);
-    const visaType = useSelector(state => state.visastatusTab);
     const [form] = useForm();
+
+    const visaType = useSelector(state => state.visastatusTab);
+    const filterSelector = useMemo(() => makeFilterSelectorByVisaType(visaType), [visaType]);
+    const visastatusFilter = useSelector(state => filterSelector(state));
 
     const match = useRouteMatch("/visa/email/:subscriptionOp");
     const inEmailPage = useMemo(() => !!match && match.isExact, [match]);
@@ -120,7 +124,9 @@ export default function useSubscriptionFormControl(parentSubscriptionOp) {
     useEffect(() => {
         if (!param.toString()) {
             const email = getCookie("email", { email: "" });
-            const { subscription } = getCookie("subscription", { subscription: [] });
+            const { subscription } = getCookie("subscription", {
+                subscription: [{ visaType, embassyCode: [...visastatusFilter], till: null }],
+            });
             form.setFieldsValue(
                 subscriptionOp === "subscription"
                     ? {
@@ -144,7 +150,7 @@ export default function useSubscriptionFormControl(parentSubscriptionOp) {
                 });
             }
         };
-    }, [form, param, visaType, inEmailPage, subscriptionOp]);
+    }, [form, param, visaType, visastatusFilter, inEmailPage, subscriptionOp]);
 
     const postSubscription = useCallback(
         async reqBodyMaterial => {
