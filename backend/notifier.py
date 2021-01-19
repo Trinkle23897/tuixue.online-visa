@@ -268,7 +268,15 @@ class Notifier:
             requests.post(base_uri + "/release",
                           data=json.dumps({"sessionKey": session, "qq": qq_num}))
         # tg
-        # TODO
+        extra = SECRET["telegram"]
+        bot_token = extra["tg_bot_token"]
+        if embassy.region == "DOMESTIC":
+            chat_id = extra["tg_chat_id"]["domestic"]
+        else:
+            chat_id = extra["tg_chat_id"]["non_domestic"]
+        proxies = dict(http=extra['proxy'], https=extra['proxy'])
+        r = requests.get("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s" %
+                         (bot_token, chat_id, content), proxies=proxies).json()
 
     @classmethod
     def notify_visa_status_change(
