@@ -141,6 +141,6 @@ export const makeDateChartData = (visaType, embassyCode) =>
             });
         const earliestDateDiffLst = chartData.filter(e => e[2] !== null).map(e => dateDiff(e[1], e[2]));
         const latestDateDiffLst = chartData.filter(e => e[3] !== null).map(e => dateDiff(e[1], e[3]));
-        const getAvg = arr => (arr.length > 0 ? (arr.reduce((acc, c) => acc + c, 0) / arr.length).toFixed(0) : null);
+        const getAvg = arr => (arr.length >= 10 ? (arr.reduce((acc, c) => acc + c, 0) / arr.length).toFixed(0) : null);
         return [chartData, getAvg(earliestDateDiffLst), getAvg(latestDateDiffLst)];
     });

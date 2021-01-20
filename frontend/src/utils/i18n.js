@@ -44,6 +44,8 @@ const resources = {
                 latestDate: "Latest Date",
                 newestFetch: "Newest Fetch",
                 actions: "Actions",
+                aheadDay: "Date Ahead",
+                ahead: "Average appointment date in advance",
             },
             notification: {
                 initTitle: "Auto-notification is enabled",
@@ -152,6 +154,8 @@ const resources = {
                 latestDate: "最晚日期",
                 newestFetch: "当前日期",
                 actions: "操作",
+                aheadDay: "提前天数",
+                ahead: "平均需要提前预约天数",
             },
             notification: {
                 initTitle: "已开启自动通知功能",
