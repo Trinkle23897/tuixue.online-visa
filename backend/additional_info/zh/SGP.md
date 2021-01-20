@@ -2,6 +2,8 @@
 
 (转发)
 
+修改CGI信息至新加坡：如果你的CGI Profile在国内，打 (703)665-7346之后告知护照号姓名生日，选English、Non-Immigrant、Schedule、Have DS-160转接，说要求transfer record profile to Singapore就行，两分钟操作完成；可以参考 [https://www.ustraveldocs.com/cn_zh/cn-main-contactus.asp](https://www.ustraveldocs.com/cn_zh/cn-main-contactus.asp) 获取更多联系方式，大概需要两个工作日转移完毕
+
 新加坡关于过去14天身处中国大陆的外国人的入境政策：[https://safetravel.ica.gov.sg/china/atp/requirements-and-process](https://safetravel.ica.gov.sg/china/atp/requirements-and-process)
 
 以下为简要信息（更新日期2020/12），任何情况下包括中介提供与以下内容有悖的信息，请以上述网页的英文原文为准。
