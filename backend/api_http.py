@@ -36,8 +36,8 @@ class EmailUnsubsStep(str, Enum):
 
 # These classes serve for the purpose of request body type chechking for FastAPI
 class SingleSubscription(BaseModel):
-    visa_type: str
-    code: List[str]
+    visa_type: VisaType
+    code: List[EmbassyCode]
     till: Optional[datetime]
 
 

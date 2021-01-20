@@ -963,7 +963,7 @@ class Subscription:
             subscription = [subscription]
 
         new_subscription = [
-            {'visa_type': visa_type, 'embassy_code': embassy_code, 'till': till}
+            {'visa_type': visa_type.value, 'embassy_code': embassy_code.value, 'till': till}
             for visa_type, embassy_code, till in subscription
         ]
 

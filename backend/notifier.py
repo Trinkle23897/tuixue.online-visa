@@ -99,8 +99,8 @@ class Notifier:
         confirmation_url = URL(f'https://{FRONTEND_BASE_URI}/visa/email/subscription')
         confirmation_url.query_param.set('email', email)
         for visa_type, code, till in subs_lst:
-            confirmation_url.query_param.append('visa_type', visa_type)
-            confirmation_url.query_param.append('code', code)
+            confirmation_url.query_param.append('visa_type', visa_type.value)
+            confirmation_url.query_param.append('code', code.value)
             confirmation_url.query_param.append('till', till)
 
         subscription_str = '<ul>\n{}\n</ul>'.format(
