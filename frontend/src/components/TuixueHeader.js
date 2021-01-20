@@ -8,6 +8,7 @@ import { IoLanguageOutline } from "react-icons/io5";
 import { useScreenXS } from "../hooks";
 import { setCookie } from "../utils/cookie";
 import fakeTuixueLogo from "../assets/img/tuixue-logo.png";
+import realTuixueLogo from "../assets/img/favicon.ico";
 import "./TuixueHeader.less";
 
 const { Header } = Layout;
@@ -84,7 +85,7 @@ export default function Nav() {
 
     const Logo = () => (
         <div className="logo" style={{ justifyContent: screenXS ? "center" : "flex-start" }}>
-            <img src="/favicon.ico" height="40" width="40" alt="real tuixue logo" />
+            <img src={realTuixueLogo} height="40" width="40" alt="real tuixue logo" />
             <img src={fakeTuixueLogo} height="48" width="96" alt="fake tuixue logo" />
         </div>
     );
