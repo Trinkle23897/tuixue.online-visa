@@ -7,8 +7,8 @@ import requests
 import websockets
 import tuixue_mongodb as DB
 from datetime import datetime
-from tuixue_typing import EmbassyCode, VisaType
-from typing import Any, Dict, List, Optional, Tuple
+from tuixue_typing import VisaType
+from typing import Any, Dict, List, Optional
 from fastapi.encoders import jsonable_encoder
 from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, FRONTEND_BASE_URI, DEFAULT_FILTER
 from url import URL
@@ -284,6 +284,7 @@ class Notifier:
         visa_type: VisaType,
         embassy: USEmbassy,
         available_date: Optional[datetime],
+        latest_written_lst: List[dict],
     ) -> bool:
         """ Determine whether or not a email notification should be sent. And send the notification
             if needed. Return a flag indicating wheter the email is sent or not.
@@ -292,7 +293,6 @@ class Notifier:
             1. `last_available_date` is None and `available_date` is not None
             2. `last_available_date` is datetime and `available_date` is an earlier datetime
         """
-        latest_written_lst = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
         if len(latest_written_lst) == 0:  # when the new code deploy into production
             return False
 

@@ -149,15 +149,7 @@ class VisaFetcher:
         embassy = G.USEmbassy.get_embassy_by_loc(location)
 
         # decide if a notification should be send BEFORE writing the new data into file
-        sent_notification = Notifier.notify_visa_status_change(visa_type, embassy, available_date)
-        if sent_notification:
-            LOGGER.info(
-                'Sent notification for %s - %s-%s %s',
-                logging_time,
-                visa_type,
-                location,
-                available_date
-            )
+        latest_written_lst = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
 
         try:
             LOGGER.debug(
@@ -186,6 +178,16 @@ class VisaFetcher:
                 available_date
             )
             LOGGER.debug('WRITTING TAKES %f seconds', (writting_finish - writting_start).total_seconds())
+
+        sent_notification = Notifier.notify_visa_status_change(visa_type, embassy, available_date, latest_written_lst)
+        if sent_notification:
+            LOGGER.info(
+                'Sent notification for %s - %s-%s %s',
+                logging_time,
+                visa_type,
+                location,
+                available_date
+            )
 
     @staticmethod
     def check_crawler_server_connection():
@@ -355,8 +357,8 @@ class VisaFetcher:
                 res = requests.get(url, timeout=G.WAIT_TIME['register'], proxies=G.value('proxies', None))
                 try:
                     result = res.json()
-                except:
-                    print(res.content)
+                except ValueError:
+                    print(time.asctime(), res.content)
                     continue
                 LOGGER.debug(
                     'consume_new_session_request - Endpoint: %s | Response json: %s',
