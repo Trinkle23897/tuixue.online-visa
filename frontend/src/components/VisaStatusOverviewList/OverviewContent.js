@@ -88,7 +88,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
             <Col md={{ span: 4 }}>
                 <Tooltip title={t("overview.earliest")}>{earliestStr}</Tooltip>
             </Col>
-            <Col md={{ span: 8 }}>
+            <Col md={{ span: 9 }}>
                 <Tooltip title={t("overview.newest")}>
                     <Row justify="center" align="middle">
                         <Col xs={{ span: 11 }} md={{ span: 9 }}>
@@ -102,7 +102,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
                     </Row>
                 </Tooltip>
             </Col>
-            <Col md={{ span: 4 }}>
+            <Col md={{ span: 3 }}>
                 <Tooltip title={t("overview.ahead")}>{aheadStr}</Tooltip>
             </Col>
             <Col md={{ span: 5 }}>
@@ -217,10 +217,10 @@ const HeaderBar = () => {
             <Col xs={{ span: 0 }} md={{ span: 4 }}>
                 <strong>{t("overview.earliestDate")}</strong>
             </Col>
-            <Col xs={{ span: 0 }} md={{ span: 8 }}>
+            <Col xs={{ span: 0 }} md={{ span: 9 }}>
                 <strong>{t("overview.newestFetch")}</strong>
             </Col>
-            <Col xs={{ span: 0 }} md={{ span: 4 }}>
+            <Col xs={{ span: 0 }} md={{ span: 3 }}>
                 <strong>{t("overview.aheadDay")}</strong>
             </Col>
             <Col xs={{ span: 0 }} md={{ span: 5 }}>
