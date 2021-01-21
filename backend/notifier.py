@@ -7,6 +7,7 @@ import requests
 import websockets
 import tuixue_mongodb as DB
 from datetime import datetime
+from multiprocessing import Pool
 from tuixue_typing import VisaType
 from typing import Any, Dict, List, Optional
 from fastapi.encoders import jsonable_encoder
@@ -73,8 +74,8 @@ UNSUBSCRIPTION_EMPTY_SUBS_CONTENT = """
     <br>
     Thie email address {email} either has 0 subscription from tuixue.online.
     <br>
-    Feel free to check out <a href="https://{base_uri}/visa">our website</a> for info of U.S. Visa interview appointment around
-    the global!
+    Feel free to check out <a href="https://{base_uri}/visa">our website</a> for info of
+    U.S. Visa interview appointment around the global!
     <br>
     Sincerely,<br>
     <br>
@@ -240,6 +241,11 @@ class Notifier:
             if d.year == datetime.now().year:
                 return f'{d.month}/{d.day}'
             return f'{d.year}/{d.month}/{d.day}'
+
+        def qq_group_post_wrapper(args: tuple) -> None:
+            url, data = args
+            requests.post(url, data=data)
+
         prev, curr = converter(prev), converter(curr)
         content = f"{embassy.name_cn}: {prev} -> {curr}"
         # qq
@@ -259,12 +265,15 @@ class Notifier:
             session = r["session"]
             requests.post(base_uri + "/verify",
                           data=json.dumps({"sessionKey": session, "qq": qq_num}))
+            post_args = []
             for g in group_id:
-                requests.post(base_uri + "/sendGroupMessage", data=json.dumps(
+                data = json.dumps(
                     {"sessionKey": session, "target": g, "messageChain": [{
                         "type": "Plain",
                         "text": f"{content}\n详情: https://{FRONTEND_BASE_URI}/visa/"
-                    }]}))
+                    }]})
+                post_args.append((base_uri + "/sendGroupMessage", data))
+            Pool(len(post_args)).map(qq_group_post_wrapper, post_args)
             requests.post(base_uri + "/release",
                           data=json.dumps({"sessionKey": session, "qq": qq_num}))
         # tg
@@ -315,7 +324,7 @@ class Notifier:
                     cls.send_email(
                         title=VISA_STATUS_CHANGE_TITLE.format(visa_detail=VISA_TYPE_DETAILS[visa_type]),
                         content=VISA_STATUS_CHANGE_CONTENT.format(
-                            send_time=datetime.now().strftime('%Y/%m/%d %H:%M:%S GMT+8'),
+                            send_time=datetime.now().astimezone(embassy.timezone).strftime('%Y/%m/%d %H:%M:%S'),
                             location=embassy.name_en,
                             old_status=old_status,
                             new_status=new_status,
