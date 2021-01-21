@@ -88,6 +88,11 @@ UNSUBSCRIPTION_EMPTY_SUBS_CONTENT = """
 """
 
 
+def qq_group_post_wrapper(args: tuple) -> None:
+    url, data = args
+    requests.post(url, data=data)
+
+
 class Notifier:
     """ A class that contains methods for sending notifications visa emails
         and other social media platforms.
@@ -241,10 +246,6 @@ class Notifier:
             if d.year == datetime.now().year:
                 return f'{d.month}/{d.day}'
             return f'{d.year}/{d.month}/{d.day}'
-
-        def qq_group_post_wrapper(args: tuple) -> None:
-            url, data = args
-            requests.post(url, data=data)
 
         prev, curr = converter(prev), converter(curr)
         content = f"{embassy.name_cn}: {prev} -> {curr}"
