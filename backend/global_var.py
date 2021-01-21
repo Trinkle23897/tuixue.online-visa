@@ -46,10 +46,11 @@ CD_LIST = [
     'F-成都',
 ]
 
-DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'sg', 'gye', 'lcy', 'bfs', 'pp']
+DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'sg', 'gye', 'lcy', 'bfs']
 
 SESSION_UPDATE_QUEUE = Queue()
 
+# isn't it useless?
 COUTNRY_CODE_TO_UTC_OFFSET = {
     'ARE': 4, 'AUS': 10, 'BRB': -4, 'CAN': -5, 'CHE': 1,
     'CHN': 8, 'COL': -5, 'ECU': -5, 'FRA': 1, 'GBR': 0,
@@ -86,9 +87,9 @@ EMBASSY_ATTR = [
     ('河内', 'Hanoi', 'han', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'VNM', 7, '河内'),
     ('胡志明', 'Ho Chi Minh City', 'sgn', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'VNM', 7, '胡志明'),
     ('巴拿马', 'Panama City', 'pty', 'cgi', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'PAN', -5, '巴拿马'),
-    ('墨尔本', 'Melbourne', 'mel', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, '墨尔本'),
-    ('珀斯', 'Perth', 'per', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, '珀斯'),
-    ('悉尼', 'Sydney', 'syd', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, '悉尼'),
+    ('墨尔本', 'Melbourne', 'mel', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 11, '墨尔本'),
+    ('珀斯', 'Perth', 'per', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 8, '珀斯'),
+    ('悉尼', 'Sydney', 'syd', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 11, '悉尼'),
     ('伯尔尼', 'Bern', 'brn', 'cgi', 'WEST_EUROPE', 'EUROPE', 'CHE', 1, '伯尔尼'),
     ('福冈', 'Fukuoka', 'fuk', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '福冈'),
     ('大阪', 'Osaka', 'itm', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '大阪'),
@@ -100,13 +101,13 @@ EMBASSY_ATTR = [
     ('清迈', 'Chiang Mai', 'cnx', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7, '清迈'),
     ('贝尔法斯特', 'Belfast', 'bfs', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR', 0, 'en-gb'),
     ('伦敦', 'London', 'lcy', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR', 0, 'en-gb'),
-    ('卡尔加里', 'Calgary', 'yyc', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5, 'en-ca'),
-    ('哈利法克斯', 'Halifax', 'yhz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5, 'en-ca'),
+    ('卡尔加里', 'Calgary', 'yyc', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -7, 'en-ca'),
+    ('哈利法克斯', 'Halifax', 'yhz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -4, 'en-ca'),
     ('蒙特利尔', 'Montreal', 'yul', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5, 'en-ca'),
     ('渥太华', 'Ottawa', 'yow', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5, 'en-ca'),
     ('魁北克城', 'Quebec City', 'yqb', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5, 'en-ca'),
     ('多伦多', 'Toronto', 'yyz', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5, 'en-ca'),
-    ('温哥华', 'Vancouver', 'yvr', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -5, 'en-ca'),
+    ('温哥华', 'Vancouver', 'yvr', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'CAN', -8, 'en-ca'),
     ('阿布扎比', 'Abu Dhabi', 'auh', 'ais', 'WEST_ASIA', 'ASIA', 'ARE', 4, 'en-ae'),
     ('迪拜', 'Dubai', 'dxb', 'ais', 'WEST_ASIA', 'ASIA', 'ARE', 4, 'en-ae'),
     ('贝尔格莱德', 'Belgrade', 'beg', 'ais', 'EAST_EUROPE', 'EUROPE', 'SRB', 1, 'en-rs'),
@@ -118,15 +119,15 @@ EMBASSY_ATTR = [
     ('雅典', 'Athens', 'ath', 'ais', 'WEST_EUROPE', 'EUROPE', 'GRC', 2, 'en-gr'),
     ('波哥大', 'Bogota', 'bog', 'ais', 'SOUTH_AMERICA', 'SOUTH_AMERICA', 'COL', -5, 'en-co'),
     ('布里奇顿', 'Bridgetown', 'bgi', 'ais', 'NORTH_AMERICA', 'SOUTH_AMERICA', 'BRB', -4, 'en-bb'),
-    ('华雷斯城', 'Ciudad Juarez', 'cjs', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
+    ('华雷斯城', 'Ciudad Juarez', 'cjs', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -7, 'en-mx'),
     ('瓜达拉哈拉', 'Guadalajara', 'gdl', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
-    ('埃莫西约', 'Hermosillo', 'hmo', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
+    ('埃莫西约', 'Hermosillo', 'hmo', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -7, 'en-mx'),
     ('马塔莫罗斯', 'Matamoros', 'cvj', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
     ('墨西哥城', 'Mexico City', 'mex', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
     ('蒙特雷', 'Monterrey', 'mty', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
-    ('诺加莱斯', 'Nogales', 'ols', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
+    ('诺加莱斯', 'Nogales', 'ols', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -7, 'en-mx'),
     ('新拉雷多', 'Nuevo Laredo', 'nld', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
-    ('蒂华纳', 'Tijuana', 'tij', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -6, 'en-mx'),
+    ('蒂华纳', 'Tijuana', 'tij', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -8, 'en-mx'),
 ]
 
 VISA_TYPES = 'FBHOL'
