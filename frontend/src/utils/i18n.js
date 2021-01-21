@@ -100,7 +100,7 @@ const resources = {
                     unsubscription: "Unsubscription",
                 },
                 successText: {
-                    confirming: "Subscription request sent. Please check your email.",
+                    confirming: "Subscription request sent. Please check your email and click the confirmation link.",
                     subscribed: "Successfully subscribed. Thank you!",
                     deleted: "Successfully unsubscribed. Thank you!",
                 },
@@ -131,7 +131,7 @@ const resources = {
                 systemDesc: "选择系统：",
                 default: "恢复默认",
                 domestic: "只看国内",
-                placeholder: "搜选使领馆",
+                placeholder: "搜选使领馆（网页版可输入搜索）",
             },
             overMinuteChartTitle: "24h内可预约日期变动情况",
             overDateChartTitle: "{{embassyName}}60天内预约日期变动情况",
@@ -209,7 +209,7 @@ const resources = {
                     unsubscription: "取消订阅",
                 },
                 successText: {
-                    confirming: "已收到订阅请求，请检查确认邮件",
+                    confirming: "已收到订阅请求，请检查确认邮件并点击确认链接",
                     subscribed: "已成功订阅",
                     deleted: "已成功取消订阅",
                 },
