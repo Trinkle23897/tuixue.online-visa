@@ -697,9 +697,10 @@ class VisaStatus:
         visa_type: VisaType,
         embassy_code: EmbassyCode,
         timestamp: datetime,
+        minutes: int = 1440,
     ) -> Optional[dict]:
         """ Return historical data of a given `visa_type`-`embassy_cde` pair for the past 24 hours"""
-        ts_start, ts_end = timestamp - timedelta(days=1), timestamp
+        ts_start, ts_end = timestamp - timedelta(minutes=minutes), timestamp
 
         today = datetime.combine(timestamp.date(), datetime.min.time())
         yesterday = today - timedelta(days=1)
