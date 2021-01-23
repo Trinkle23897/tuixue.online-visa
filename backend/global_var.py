@@ -15,7 +15,7 @@ with open(os.path.join(os.curdir, 'config', 'secret.json')) as f:
 
 MAX_EMAIL_SENT = 512  # maximum number of emails sent for one POST to email server
 
-FRONTEND_BASE_URI = "dev.tuixue.online:3010"
+FRONTEND_BASE_URI = "tuixue.online"
 
 MONGO_CONFIG = {'host': '127.0.0.1', 'port': 27017, 'database': 'tuixue'}
 
