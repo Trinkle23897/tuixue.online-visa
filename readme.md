@@ -9,21 +9,21 @@
 
 ## Overview
 
-目前采用的是部分前后端分离，姑且将其称之为前端服务器和爬虫服务器。整体逻辑为前端服务器定时向爬虫服务器发送数据请求，拉取到其本地、更新静态页面和推送通知。
+目前采用的是部分前后端分离，姑且将其称之为前端服务器和爬虫服务器。整体逻辑为前端服务器定时向爬虫服务器发送数据请求，拉取到其本地、更新数据库、推送通知。
 
-爬虫服务器使用Django构建，代码位于[/api](/api)文件夹下，cgi系统使用纯requests拉取数据，ais使用requests和selenium/xdotool混合模式拉取数据（感谢[z3dd1cu5](https://github.com/z3dd1cu5)）
+爬虫服务器使用Django构建，代码位于 [api](/api) 文件夹下，CGI系统使用纯requests拉取数据，AIS系统由于有recaptcha2，使用requests和selenium/xdotool混合模式拉取数据（感谢[z3dd1cu5](https://github.com/z3dd1cu5)）
 
 ~~前端服务器采用nginx部署，使用python和爬虫服务器进行交互（详见lite_visa.py），和用户交互使用静态html或者php~~
 
-前端服务器采用Nginx部署，使用FastAPI前后端分离，使用python和爬虫服务器进行交互（详见`backend/visa_status_fetcher.py`），使用mongo存储数据，前端网页使用React+Redux，展示表格使用EChart，评论区使用Disqus第三方服务，使用WebSocket+WebNotification实现网页版穿透通知（感谢[BenjiTheC](https://github.com/BenjiTheC)）
+前端服务器采用Nginx部署，使用FastAPI前后端分离，使用python和爬虫服务器进行交互（详见[backend/visa_status_fetcher.py](/backend/visa_status_fetcher.py)），使用mongo存储数据，前端网页使用React+Redux，展示表格使用EChart，评论区使用Disqus第三方服务，使用WebSocket+WebNotification实现网页版穿透通知（感谢[BenjiTheC](https://github.com/BenjiTheC)）
 
-邮件通知、QQ群和Telegram channel通知均使用python实现，详见`backend/Notifier.py`
+邮件通知、QQ群和Telegram channel通知均使用python实现，详见[backend/Notifier.py](/backend/Notifier.py)
 
 ## Usage
 
-爬虫的使用请移步 [/api](/api)，包括各种请求字段，甚至免费的cgi验证码破解器也有（准确率大概98%）
+爬虫的使用请移步 [api](/api)，包括各种请求字段，甚至免费的CGI验证码破解器也有（准确率大概98%）
 
-前端部署详见 [/backend](/backend) 和 [/frontend](/frontend)
+前端部署详见 [backend](/backend) 和 [frontend](/frontend)
 
 ## API
 
