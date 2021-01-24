@@ -58,17 +58,14 @@ const aheadInfo = ({ earliestDiffMean, latestDiffMean }) => {
     return `${earliestDiffMean}~${latestDiffMean}`;
 };
 
-const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType }) => {
+const ContentBar = ({ embassyCode, earliestDate, newest, visaType }) => {
     const [t] = useTranslation();
     const countryCodeSelector = useMemo(() => makeCountryCodeSelector(embassyCode), [embassyCode]);
     const countryCode = useSelector(state => countryCodeSelector(state));
     const dateChartDataSelector = useMemo(() => makeDateChartData(visaType, embassyCode), [visaType, embassyCode]);
-    const [overviewData, earliestDiffMean, latestDiffMean] = useSelector(state => dateChartDataSelector(state));
+    const [, earliestDiffMean, latestDiffMean] = useSelector(state => dateChartDataSelector(state));
     const [cardDrop, setCardDrop] = useState(false);
     const { writeTime, availableDate } = newest;
-    const earliestStr = earliestDate.join("/");
-    const aheadStr = aheadInfo({ earliestDiffMean, latestDiffMean });
-    const availStr = availableDate.join("/");
 
     const DropdownControlBtn = () => (
         <Tooltip title={t("overview.addtionalIcon")}>
@@ -86,13 +83,13 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
                 <Tooltip title={t(countryCode)}>{t(embassyCode)}</Tooltip>
             </Col>
             <Col md={{ span: 4 }}>
-                <Tooltip title={t("overview.earliest")}>{earliestStr}</Tooltip>
+                <Tooltip title={t("overview.earliest")}>{earliestDate.join("/")}</Tooltip>
             </Col>
             <Col md={{ span: 9 }}>
                 <Tooltip title={t("overview.newest")}>
                     <Row justify="center" align="middle">
                         <Col xs={{ span: 11 }} md={{ span: 9 }}>
-                            {availStr}
+                            {availableDate.join("/")}
                         </Col>
                         <Col xs={{ span: 13 }} md={{ span: 9 }}>
                             <Tag>{`${t("at")} ${
@@ -103,7 +100,7 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
                 </Tooltip>
             </Col>
             <Col md={{ span: 3 }}>
-                <Tooltip title={t("overview.ahead")}>{aheadStr}</Tooltip>
+                <Tooltip title={t("overview.ahead")}>{aheadInfo({ earliestDiffMean, latestDiffMean })}</Tooltip>
             </Col>
             <Col md={{ span: 5 }}>
                 <DropdownControlBtn />
@@ -126,16 +123,14 @@ const ContentBar = ({ embassyCode, earliestDate, latestDate, newest, visaType })
 };
 ContentBar.propTypes = { ...overviewAttrProps, ...newestOverviewProps };
 
-const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }) => {
+const ContentCard = ({ embassyCode, earliestDate, newest, visaType }) => {
     const { t } = useTranslation();
     const countryCodeSelector = useMemo(() => makeCountryCodeSelector(embassyCode), [embassyCode]);
     const countryCode = useSelector(state => countryCodeSelector(state));
     const dateChartDataSelector = useMemo(() => makeDateChartData(visaType, embassyCode), [visaType, embassyCode]);
-    const [overviewData, earliestDiffMean, latestDiffMean] = useSelector(state => dateChartDataSelector(state));
+    const [, earliestDiffMean, latestDiffMean] = useSelector(state => dateChartDataSelector(state));
     const [cardDrop, setCardDrop] = useState(false);
     const { writeTime, availableDate } = newest;
-    const availStr = availableDate.join("/");
-    const aheadStr = aheadInfo({ earliestDiffMean, latestDiffMean });
 
     const DropdownControlBtn = () => (
         <Tooltip title={t("overview.addtionalIcon")}>
@@ -152,7 +147,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
             <Col span={8}>
                 <Tooltip title={t(countryCode)}>{t(embassyCode)}</Tooltip>
             </Col>
-            <Col span={cardDrop ? 0 : 8}>{availStr}</Col>
+            <Col span={cardDrop ? 0 : 8}>{availableDate.join("/")}</Col>
             <Col span={cardDrop ? 16 : 8}>
                 <Row justify="end" align="middle">
                     <Col>
@@ -196,7 +191,7 @@ const ContentCard = ({ embassyCode, earliestDate, latestDate, newest, visaType }
                         <strong>{t("overview.aheadDay")}: </strong>
                     </Col>
                     <Col span={8} className="content-data">
-                        {aheadStr}
+                        {aheadInfo({ earliestDiffMean, latestDiffMean })}
                     </Col>
                     <Col span={8} />
                 </Row>
