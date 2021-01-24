@@ -17,7 +17,7 @@
 
 前端服务器采用Nginx部署，使用FastAPI前后端分离，使用python和爬虫服务器进行交互（详见[backend/visa_status_fetcher.py](/backend/visa_status_fetcher.py)），使用mongo存储数据，前端网页使用React+Redux，展示表格使用EChart，评论区使用Disqus第三方服务，使用WebSocket+WebNotification实现网页版穿透通知（感谢[BenjiTheC](https://github.com/BenjiTheC)）
 
-邮件通知、QQ群和Telegram channel通知均使用python实现，详见[backend/Notifier.py](/backend/Notifier.py)
+邮件通知、QQ群和Telegram channel通知均使用python实现，详见[backend/notifier.py](/backend/notifier.py)
 
 ## Usage
 
