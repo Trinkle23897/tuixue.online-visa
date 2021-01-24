@@ -18,7 +18,7 @@ This folder contains the code that:
 >
 > It's noteworthy that it's _NOT_ what the backend api server orignally designed to run. **In the production the api server and React frontend will be deployed in the same machine and the api server will _NOT_ be exposed to the public until further decision is made.**
 
-**This code base is developed with Python >= 3.6**
+**This code base is developed with Python >= 3.7**
 
 #### Python dependency
 
@@ -83,6 +83,8 @@ The newly developed backend uses [MongoDB Communitry Edition v4.4](https://docs.
 
 #### MongoDB data migration
 
+##### Write from scratch with file-based data
+
 Previously, all the fetched data are stored in a folder structured as follow:
 
 ```sh
@@ -101,14 +103,17 @@ To migrate the fetched data from files into the MongoDB, I wrote a script, `sync
 
 ```sh
 $ python3 sync_data.py --help
-usage: sync_data.py [-h] --operation {fetch,write} [--since SINCE]
+usage: sync_data.py [-h] --operation {fetch,write,email} [--since SINCE] [--email-path EMAIL_PATH]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --operation {fetch,write}, -o {fetch,write}
+  --operation {fetch,write,email}, -o {fetch,write,email}
                         Choose what function to run
   --since SINCE, -s SINCE
                         Date string indicating the start date of fetching data
+  --email-path EMAIL_PATH, -e EMAIL_PATH
+                        The old version email record folder
+                        (/var/www/html/asiv/email)
 ```
 
 To write the data into MongoDB, run
@@ -121,6 +126,42 @@ It will write all the data fetched after the given `since` date till yesterday.
 
 **P.S.**: You will need to move the data from other places to ./data folder. Or change the value of `DATA_PATH` variable in `global_var.py`
 
+##### Use `mongodump` and `mongorestore` for database backup
+
+> Both `mongodump` and `mongorestore` are installed when we install MongoDB
+
+**Backup `tuixue.visa_status`**
+
+The dev server has been running for a while, the data fetched by `visa_status_fetcher.py` is proved to be trusted and has a different granularity to microseconds. Therefore a new database initialization method has been written to use with combination of `mongodump` and `mongorestore` utilities.
+
+Logically speaking, the only data worth for backing up is the successful fetched result of visa status, namely the MongoDB collection `tuixue.visa_status`, the other collection `tuixue.overview` is essentially computed from the data in `tuixue.visa_status`. To dump the data from database into a BSON file, run the following command.
+
+```sh
+mongodump --db tuixue --collection visa_status --out path/to/empty/dir
+```
+
+This command will export all the data in `tuixue.visa_status` collection to the **empty** directory given in the option `--out`.
+
+To restore the data from dumped directory into the database. We can use `mongorestore` command as follow:
+
+```sh
+mongorestore --db tuixue path/to/empty/dir/tuixue --drop
+```
+
+This command restore the database `tuixue` from the backup.
+
+> _P.S: `path/to/empty/dir` needs to be empty. In the dev server the `path/to/empty/dir` is set to `/root/mongodb_backup`_
+
+**Restore `tuixue.overview`**
+
+A new class method, `restore_overview`, is added into the class `tuixue_mongodb.VisaStatus`. **After restoring the `tuixue.visa_status` as instructed above**, run a single line of python command:
+
+```sh
+python3 -c "import tuixue_mongodb as DB; DB.VisaStatus.restore_overview();"
+```
+
+And it will read and compute the `tuixue.overview` collection (with a bunch of printed info on the screen ;-)
+
 #### Nginx proxy and run the api server with `uvicorn`
 
 The api server is developed with [FastAPI](https://fastapi.tiangolo.com/), which is said to be one of the most performant api framework in Python, better than Flask and Django. Personally I find it more pythonic (than Django) and better documented (than Flask).
@@ -130,37 +171,47 @@ The FastAPI use the [uvicorn](https://www.uvicorn.org/) as ASGI server. But firs
 With the help of [official documentation](https://www.uvicorn.org/deployment/#running-behind-nginx), I inserts the following block in my `http` context in `nginx.conf`
 
 ```nginx
-    server {
-        listen       443 ssl http2;
-        listen       [::]:443 ssl http2;
-        server_name  api.tuixue.online 127.0.0.1; # managed by Certbot
+server {
+        listen       443 default_server;
+        listen       [::]:443 default_server;
+        server_name  _ 127.0.0.1;
+        ssl_certificate /path/to/fullchain.pem;
+        ssl_certificate_key /path/to/privkey.pem;
+        location = /status {
+                stub_status on;
+        }
 
-
-        ssl_certificate /etc/letsencrypt/live/api.tuixue.online/fullchain.pem; # managed by Certbot
-        ssl_certificate_key /etc/letsencrypt/live/api.tuixue.online/privkey.pem; # managed by Certbot
-        ssl_session_cache shared:SSL:1m;
-        ssl_session_timeout  10m;
-        ssl_ciphers HIGH:!aNULL:!MD5;
-        ssl_prefer_server_ciphers on;
-
-        # Load configuration files for the default server block.
-        include /etc/nginx/default.d/*.conf;
-
+        location /ws/ {  # The trailing slash MATTERS!!
+                proxy_http_version 1.1;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "Upgrade";
+                proxy_set_header Host $host;
+                proxy_buffering off;
+                proxy_pass http://uvicorn_ws/;  # The trailing slash MATTERS!!
+        }
 
         location / {
-          proxy_set_header Host $http_host;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-          proxy_redirect off;
-          proxy_buffering off;
-          proxy_pass http://uvicorn;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_redirect off;
+                proxy_buffering off;
+                proxy_pass http://uvicorn_http;
         }
-    }
+}
 
-    upstream uvicorn {
-        server unix:/tmp/uvicorn.sock;
-    }
+upstream uvicorn_ws {
+        server unix:/tmp/uvicorn_ws.sock;
+}
+
+upstream uvicorn_http {
+        server unix:/tmp/uvicorn_http.sock;
+}
 ```
+
+**Important Note**: You must notice here we have two `upstream` block which essentially are two Uvicorn server running two FastAPI, **One for HTTP RESTful API and another one for WebSocket connection.**. And the location `/` and `/ws/` proxy the requests to these two servers accordingly. This is because mixing the code of RESTful API and WebSocket and proxying on in route doesn't work in FastAPI, the request headers setting for HTTP and WS protocol are different and will result in malfunction of the server.
 
 After update the Nginx configuration file, reload the Nginx
 
@@ -168,11 +219,19 @@ After update the Nginx configuration file, reload the Nginx
 sudo nginx -s reload
 ```
 
-And run the uvicorn in a tmux window (didn't use the process manager or anything, just make it run then detach the session) with following option:
+And run the uvicorn in two tmux windows (didn't use the process manager or anything, just make it run then detach the session) with following commands:
 
-```shell
-uvicorn api:app --uds /tmp/uvicorn.sock --proxy-headers --forwarded-allow-ips '*'
-```
+- HTTP server
+
+    ```shell
+    python3 -m uvicorn api_http:app --uds /tmp/uvicorn_http.sock --proxy-headers --forwarded-allow-ips '*'
+    ```
+
+- WebSocket server
+
+    ```shell
+    python3 -m uvicorn api_websocket:app --uds /tmp/uvicorn_ws.sock --proxy-headers --forwarded-allow-ips '*' --ws websockets
+    ```
 
 ### Configuration Files
 
@@ -225,7 +284,7 @@ HTTP/1.1 200 OK
 {
     "region": [
         {"region": "DOMESTIC", "embassy_code_lst": ["bj", "sh", "cd", "gz", "sy", "hk", "tp"]},
-        {"region":"SOUTH_EAST_ASIA","embassy_code_lst":["pp","sg","ktm","bkk","cnx"]}
+        {"region":"SOUTH_EAST_ASIA", "embassy_code_lst": ["pp","sg","ktm","bkk","cnx"]}
     ],
     "embassy": [
         ["北京", "Beijing", "bj", "cgi", "DOMESTIC", "ASIA", "CHN"],
@@ -246,7 +305,7 @@ Return the overview: earliest and latest available appointment date for any give
 #### Parameters
 
 | Param | Type | Description |
-|---|---|---|---|
+|---|---|---|
 |`visa_type`|`list`|Required. List of types of visa for the returning visa status. One of `['B', 'F', 'H', 'O', 'L']`.|
 |`embassy_code`|`list`|Required. List of codes of embassy/consulate for returning visa status. One of `['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'sel', 'mel', 'per', 'syd', 'brn', 'fuk', 'itm', 'oka', 'cts', 'hnd', 'ktm', 'bkk', 'cnx', 'bfs', 'lcy', 'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr', 'auh', 'dxb', 'beg', 'cdg', 'gye', 'uio', 'esb', 'ist', 'ath', 'bog', 'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mex', 'mty', 'ols', 'nld', 'tij']`|
 |`since`|`string`|Default to 15 days before today. The endpoint will return the data after `since` date. The string **MUST** in the format of a UTC time string, e.g. `2020-10-17T22:13:54.617098`.|
@@ -289,7 +348,7 @@ Return the latest fetch record of all given Visa types and embassy codes. Return
 #### Parameters
 
 | Param | Type | Description |
-|---|---|---|---|
+|---|---|---|
 |`visa_type`|`list`|Required. List of types of visa for the returning visa status. One of `['B', 'F', 'H', 'O', 'L']`.|
 |`embassy_code`|`list`|Required. List of codes of embassy/consulate for returning visa status. One of `['bj', 'sh', 'cd', 'gz', 'sy', 'hk', 'tp', 'pp', 'sg', 'sel', 'mel', 'per', 'syd', 'brn', 'fuk', 'itm', 'oka', 'cts', 'hnd', 'ktm', 'bkk', 'cnx', 'bfs', 'lcy', 'yyc', 'yhz', 'yul', 'yow', 'yqb', 'yyz', 'yvr', 'auh', 'dxb', 'beg', 'cdg', 'gye', 'uio', 'esb', 'ist', 'ath', 'bog', 'bgi', 'cjs', 'gdl', 'hmo', 'cvj', 'mex', 'mty', 'ols', 'nld', 'tij']`|
 

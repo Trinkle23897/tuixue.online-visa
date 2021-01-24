@@ -12,9 +12,12 @@ pycodestyle==2.6.0
 pydantic==1.6.1
 pyflakes==2.2.0
 pymongo==3.11.0
+PySocks==1.7.1
 requests==2.24.0
+six==1.15.0
 starlette==0.13.6
 typing-extensions==3.7.4.3
 urllib3==1.25.10
 uvicorn==0.12.1
+websockets==8.1
 zipp==3.3.1

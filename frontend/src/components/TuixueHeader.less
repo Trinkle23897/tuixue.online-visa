@@ -1,0 +1,53 @@
+.tuixue-header {
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+
+    // display: flex;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-bottom: 1px solid #f0f0f0;
+
+    .ant-row {
+        height: 100%;
+    }
+
+    .ant-menu {
+        line-height: 62px, !important
+    }
+}
+
+.center-box {
+    min-width: 100%;
+    min-height: 100%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    display: flex !important;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+
+    & > img {
+        padding: 2px;
+
+        &:first-child {
+            margin-right: 2px;
+        }
+
+        &:last-child {
+            margin-left: 2px;
+        }
+    }
+}
+
+.nav-popover {
+    .ant-popover {
+        min-width: 0.5vw;
+    }
+}

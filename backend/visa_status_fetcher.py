@@ -30,7 +30,13 @@ def init():
     parser.add_argument('--ais', type=str, default='ais.json', help='ais account in json format')
     parser.add_argument('--log_dir', type=str, default=os.path.join(os.curdir, 'logs'), help='directory to save logs')
     parser.add_argument('--log_name', type=str, default='visa_fetcher', help='name of log file')
-    parser.add_argument('--debug', action="store_true", default=False, help='log debug information')
+    parser.add_argument('--debug', action='store_true', default=False, help='log debug information')
+    parser.add_argument(
+        '--noinit_lw',
+        action='store_true',
+        default=False,
+        help='whether not to initiate the latest_written'
+    )
     args = parser.parse_args()
 
     if not os.path.exists(args.log_dir):
@@ -54,6 +60,9 @@ def init():
             ais_accounts = json.load(f)
             for k, v in ais_accounts.items():
                 G.assign(k, v)
+
+    if not args.noinit_lw:
+        DB.VisaStatus.initiate_latest_written_sequential(args.target)
 
     global LOGGER
     global SESSION_CACHE
@@ -140,15 +149,7 @@ class VisaFetcher:
         embassy = G.USEmbassy.get_embassy_by_loc(location)
 
         # decide if a notification should be send BEFORE writing the new data into file
-        sent_notification = Notifier.notify_visa_status_change(visa_type, embassy, available_date)
-        if sent_notification:
-            LOGGER.info(
-                'Sent notification for %s - %s-%s %s',
-                logging_time,
-                visa_type,
-                location,
-                available_date
-            )
+        latest_written_lst = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
 
         try:
             LOGGER.debug(
@@ -166,7 +167,7 @@ class VisaFetcher:
                 available_date=available_date
             )
             writting_finish = datetime.now()
-        except:
+        except Exception:
             LOGGER.error('Catch an error when saveing fetched result to database', traceback.format_exc())
         else:
             LOGGER.debug(
@@ -178,6 +179,16 @@ class VisaFetcher:
             )
             LOGGER.debug('WRITTING TAKES %f seconds', (writting_finish - writting_start).total_seconds())
 
+        sent_notification = Notifier.notify_visa_status_change(visa_type, embassy, available_date, latest_written_lst)
+        if sent_notification:
+            LOGGER.info(
+                'Sent notification for %s - %s-%s %s',
+                logging_time,
+                visa_type,
+                location,
+                available_date
+            )
+
     @staticmethod
     def check_crawler_server_connection():
         """ Check the connection of all the crawler server.
@@ -185,10 +196,16 @@ class VisaFetcher:
         """
         if G.value('checking_crawler_connection', False):
             return
+        previous_crawler_node = G.value('current_crawler_node', '')
+        try:
+            res = requests.get(previous_crawler_node, timeout=5)
+            if res.status_code == 200:
+                return  # current cralwer node is ok
+        except Exception:
+            pass
 
         G.assign('checking_crawler_connection', True)
         crawler_path = G.value('crawler_path', None)
-        previous_crawler_node = G.value('current_crawler_node', '')
 
         if crawler_path is None or not os.path.exists(crawler_path):
             LOGGER.warning('GlobalVar crawler file path is not found or path not valid.')
@@ -213,6 +230,25 @@ class VisaFetcher:
         G.assign('checking_crawler_connection', False)
 
     @classmethod
+    def save_placeholder_at_exception(cls, visa_type: str, location: str):
+        """ When fetching visa status encounters failure like `Session Expired` and `Endpoint Timeout`
+            save the last successful fetch result into database.
+        """
+        embassy = G.USEmbassy.get_embassy_by_loc(location)
+        if embassy is None:
+            embassyLst = G.USEmbassy.get_embassy_list_by_crawler_code(location)
+        else:
+            embassyLst = [embassy]
+        for embassy in embassyLst:
+            latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy.code)
+            avai_dt = None if len(latest_written) < 1 else latest_written[0]['available_date']
+            cls.save_fetched_data(
+                visa_type,
+                embassy.location,
+                [0, 0, 0] if avai_dt is None else [avai_dt.year, avai_dt.month, avai_dt.day]
+            )
+
+    @classmethod
     def fetch_visa_status(cls, visa_type: str, location: str, req: requests.Session):
         """ Fetch the latest visa status available from crawler server."""
         now = datetime.now().strftime('%H:%M:%S')
@@ -232,6 +268,7 @@ class VisaFetcher:
                 res = req.get(url, timeout=G.WAIT_TIME['refresh'], proxies=G.value('proxies', None))
             except requests.exceptions.Timeout:
                 LOGGER.warning('%s, %s, %s, FAILED - Endpoint Timeout.', now, visa_type, location)
+                cls.save_placeholder_at_exception(visa_type, location)
                 cls.check_crawler_server_connection()
                 return
             except requests.exceptions.ConnectionError:
@@ -249,6 +286,10 @@ class VisaFetcher:
 
                 if result['code'] != 0:  # code == 0 stands for success in crawler api code
                     LOGGER.warning('%s, %s, %s, FAILED - Session Expired', now, visa_type, location)
+
+                    # session expired will trigger database update using the last successful fetch result
+                    cls.save_placeholder_at_exception(visa_type, location)
+
                     SESSION_CACHE.produce_new_session_request(visa_type, location, session)
                     return
 
@@ -314,7 +355,11 @@ class VisaFetcher:
 
                 url = '{}{}'.format(G.value('current_crawler_node', ''), endpoint)
                 res = requests.get(url, timeout=G.WAIT_TIME['register'], proxies=G.value('proxies', None))
-                result = res.json()
+                try:
+                    result = res.json()
+                except ValueError:
+                    print(time.asctime(), res.content)
+                    continue
                 LOGGER.debug(
                     'consume_new_session_request - Endpoint: %s | Response json: %s',
                     endpoint,
@@ -329,7 +374,10 @@ class VisaFetcher:
                         location,
                         result['msg']
                     )
-                    cls.check_crawler_server_connection()
+                    if result['msg'] == "Network Error":
+                        SESSION_CACHE.mark_unavailable(visa_type, location)
+                    else:
+                        cls.check_crawler_server_connection()
                     continue
 
                 # Generate new session object and update cache
