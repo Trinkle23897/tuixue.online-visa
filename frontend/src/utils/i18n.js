@@ -58,7 +58,7 @@ const resources = {
             TGDomestic: "Telegram Channel link (domestic): ",
             TGNonDomestic: "Telegram Channel link (global): ",
             QQDescDomestic:
-                "QQ group entry password is the site URL, a total of 13 characters t***e. All groups' content are the same.",
+                'QQ group entry password is the site URL, a total of 13 characters "tuixue.online". All groups\' content are the same.',
             QQDescNonDomestic:
                 "The global version includes popular areas for getting visa in third country, including {{cities}}",
             QQGroupDomestic: "Domestic #{{index}}: ",
@@ -167,7 +167,7 @@ const resources = {
             },
             TGDomestic: "Telegram 频道（国内版）链接：",
             TGNonDomestic: "Telegram 频道（国际版）链接：",
-            QQDescDomestic: "QQ群入群密码是本站网址，共13个字符t***e，所有群内容一致",
+            QQDescDomestic: 'QQ群入群密码是本站网址，共13个字符"tuixue.online"，所有群内容一致',
             QQDescNonDomestic: "国际版仅包含目前第三国签证热门地区，包括：{{cities}}",
             QQTGModalContentQQ: "QQ群{{index}}群：",
             QQGroupDomestic: "国内{{index}}群：",
