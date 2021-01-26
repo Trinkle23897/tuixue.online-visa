@@ -42,6 +42,7 @@ export default function EmbassyTreeSelect({ sys, setSys, ...treeSelectProps }) {
             showSearch={!screenXS}
             allowClear
             maxTagCount={screenXS ? 3 : 9999}
+            listHeight={9999}
         />
     );
 }
