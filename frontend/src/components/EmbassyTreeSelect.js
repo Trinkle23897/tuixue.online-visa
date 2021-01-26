@@ -11,6 +11,7 @@ export default function EmbassyTreeSelect({ sys, setSys, ...treeSelectProps }) {
     const screenXS = useScreenXS();
     const embassyTreeSelector = useMemo(() => makeEmbassyTreeSelector(sys, t, false), [sys, t]);
     const embassyTreeOptions = useSelector(state => embassyTreeSelector(state));
+    const regionLst = useSelector(state => state.metadata.region.map(({ region }) => region));
 
     const searchEmbassy = (inputValue, treeNode) => treeNode.title.toLowerCase().includes(inputValue.toLowerCase());
     const renderDropdown = originalNode => (
@@ -43,6 +44,7 @@ export default function EmbassyTreeSelect({ sys, setSys, ...treeSelectProps }) {
             allowClear
             maxTagCount={screenXS ? 3 : 9999}
             listHeight={9999}
+            treeDefaultExpandedKeys={regionLst}
         />
     );
 }
