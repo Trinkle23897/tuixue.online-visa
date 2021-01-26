@@ -7,13 +7,13 @@ from datetime import datetime, timezone
 
 
 if __name__ == '__main__':
-    last_result = None
+    last_result = []
     admin = SECRET['admin_email_list']
     while True:
         try:
             result = VisaStatus.find_visa_status_past24h(
-                'F', 'gye', datetime.now(timezone.utc), minutes=10)
-            if last_result is not None and result is None:
+                'F', 'gye', datetime.now(timezone.utc), minutes=10)['available_dates']
+            if len(last_result) > 0 and len(result) == 0:
                 print(f"{time.asctime()} send email to {admin}")
                 Notifier.send_email(title="tuixue error",
                                     content=time.asctime(), receivers=admin)
