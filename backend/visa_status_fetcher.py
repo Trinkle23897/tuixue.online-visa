@@ -32,6 +32,7 @@ def init():
     parser.add_argument('--log_dir', type=str, default=os.path.join(os.curdir, 'logs'), help='directory to save logs')
     parser.add_argument('--log_name', type=str, default='visa_fetcher', help='name of log file')
     parser.add_argument('--debug', action='store_true', default=False, help='log debug information')
+    parser.add_argument('--log-mongo', action='store_true', default=False, help='log mongodb')
     parser.add_argument(
         '--noinit_lw',
         action='store_true',
@@ -68,7 +69,8 @@ def init():
     global LOGGER
     global SESSION_CACHE
     LOGGER = util.init_logger(f'{args.target}_{args.log_name}', args.log_dir, args.debug)
-    monitoring.register(DB.ConnectionPoolListener(util.init_logger('tuixue_mongo_conn', args.log_dir, args.debug)))
+    if args.log_mongo:
+        monitoring.register(DB.ConnectionPoolListener(util.init_logger('tuixue_mongo_conn', args.log_dir, args.debug)))
     SESSION_CACHE = SessionCache()
 
     LOGGER.info('FETCHING TARGET: %s', args.target.upper())
