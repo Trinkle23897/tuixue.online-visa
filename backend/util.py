@@ -1,11 +1,14 @@
 """ Some utility functions and class."""
 import os
+import re
 import logging
 from typing import Tuple
 from datetime import datetime, timezone
 from logging.handlers import TimedRotatingFileHandler
 
 import global_var as G
+
+CAMEL_CASE_REGEX = re.compile(r'(?<!^)(?=[A-Z])')
 
 
 def init_logger(log_name: str, log_dir: str, debug: bool = False):
@@ -52,3 +55,18 @@ def dt_to_utc(dt: datetime, remove_second: bool = False) -> int:
     if remove_second:
         dt = dt.replace(second=0, microsecond=0)
     return int(1000 * dt.replace(tzinfo=timezone.utc).timestamp())
+
+
+def snake_case_json_key(obj):
+    """ When loading json into python, the dictionary/list of dictionary can be
+        camelCase-keyed. we should convert it before further process/usage.
+        originally written in https://github.com/BenjiTheC/TopCoderDataCollector/blob/master/util.py
+        comes in handy for mongoDB log...
+    """
+    if not isinstance(obj, (list, dict)):
+        return obj
+
+    if isinstance(obj, list):
+        return [snake_case_json_key(o) for o in obj]
+
+    return {CAMEL_CASE_REGEX.sub('_', k).lower(): snake_case_json_key(v) for k, v in obj.items()}

@@ -13,6 +13,7 @@ from queue import Queue
 from datetime import datetime
 
 import requests
+from pymongo import monitoring
 
 import util
 import global_var as G
@@ -67,6 +68,7 @@ def init():
     global LOGGER
     global SESSION_CACHE
     LOGGER = util.init_logger(f'{args.target}_{args.log_name}', args.log_dir, args.debug)
+    monitoring.register(DB.ConnectionPoolListener(util.init_logger('tuixue_mongo_conn', args.log_dir, args.debug)))
     SESSION_CACHE = SessionCache()
 
     LOGGER.info('FETCHING TARGET: %s', args.target.upper())

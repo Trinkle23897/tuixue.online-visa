@@ -4,27 +4,40 @@
 
 import os
 import util
+import typing
 import pymongo
-from collections import defaultdict
+import logging
+from collections import defaultdict, namedtuple
 from tuixue_typing import VisaType, EmbassyCode
 from datetime import datetime, timedelta, timezone
 from typing import Union, List, Tuple, Optional, Dict
 from global_var import USEmbassy, VISA_TYPES, MONGO_CONFIG
 from global_var import AIS_FETCH_TIME_INTERVAL, CGI_FETCH_TIME_INTERVAL
-from pymongo import database, collection
-from util import dt_to_utc
+from pymongo import database, collection, monitoring
+from util import dt_to_utc, snake_case_json_key
 
 EmailSubscription = NewVisaStatus = Tuple[VisaType, EmbassyCode, datetime]
 EmailSubscriptionNoDate = NewVisaStatusNoDate = Tuple[VisaType, EmbassyCode]  # seeking for a better name...
 
 MONGO_CLIENT = None
+DATABASE = None
+
+ServerStatus = namedtuple(
+    'ServerStatus',
+    [
+        'active', 'available', 'awaiting_topology_changes',
+        'current', 'exhaust_is_master', 'total_created',
+    ]
+)
 
 
 def connect() -> database.Database:
     """ Connect to the local MongoDB server. Return a handle of tuixue database."""
     global MONGO_CLIENT
+    global DATABASE
     if MONGO_CLIENT is None:  # keep one alive connection will be enough (and preferred)
         MONGO_CLIENT = pymongo.MongoClient(host=MONGO_CONFIG['host'], port=MONGO_CONFIG['port'])
+        DATABASE = MONGO_CLIENT.get_database(MONGO_CONFIG['database'])  # specifically for server status query
 
     database = MONGO_CLIENT.get_database(MONGO_CONFIG['database'])
     return database
@@ -34,6 +47,98 @@ def get_collection(collection_name: str) -> collection.Collection:
     """ Return a MongoDB collection from the established client database."""
     db = connect()
     return db.get_collection(collection_name)
+
+
+class ConnectionPoolListener(monitoring.ConnectionPoolListener):
+    """ **Global** listener for mongodb connection pooling
+        https://pymongo.readthedocs.io/en/stable/api/pymongo/monitoring.html
+    """
+    def __init__(self, logger: logging.Logger) -> None:
+        super().__init__()
+        self.logger: logging.Logger = logger
+
+    def get_server_status(self) -> typing.Optional[ServerStatus]:
+        """ Get the server status for extra logging info."""
+        if DATABASE:
+            return ServerStatus(**snake_case_json_key(DATABASE.command('serverStatus')['connections']))
+
+    def pool_created(self, event):
+        self.logger.info('[pool {0.address}] pool created'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def pool_cleared(self, event):
+        self.logger.info('[pool {0.address}] pool cleared'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def pool_closed(self, event):
+        self.logger.info('[pool {0.address}] pool closed'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def connection_created(self, event):
+        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
+                     'connection created'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def connection_ready(self, event):
+        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
+                     'connection setup succeeded'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def connection_closed(self, event):
+        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
+                     'connection closed, reason: '
+                     '{0.reason}'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def connection_check_out_started(self, event):
+        self.logger.info('[pool {0.address}] connection check out '
+                     'started'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def connection_check_out_failed(self, event):
+        self.logger.info('[pool {0.address}] connection check out '
+                     'failed, reason: {0.reason}'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def connection_checked_out(self, event):
+        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
+                     'connection checked out of pool'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+
+    def connection_checked_in(self, event):
+        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
+                     'connection checked into pool'
+                     '[active:{1.active}|'
+                     'current:{1.current}|'
+                     'available:{1.available}|'
+                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
 
 
 class VisaStatus:
@@ -998,99 +1103,3 @@ class Subscription:
             cls.email.update_one({'email': email}, {'$set': {'subscription': updated_subscription}})
         else:
             cls.email.find_one_and_delete({'email': email})
-
-
-def simple_test_visa_status():
-    """ Just a SUPER SIMPLE test..."""
-    import random  # SORRY
-    from pprint import pprint  # SORRY
-
-    available_dts = [datetime.strptime('2020/10/30', '%Y/%m/%d') + timedelta(days=d) for d in range(20)] + [None]
-    write_times_date = [datetime.strptime('2020/9/25', '%Y/%m/%d') + timedelta(days=d) for d in range(5)]
-
-    VisaStatus.drop()
-    for visa_type in 'FB':
-        for embassy_code in ('pp', 'bj', 'syd'):
-            for wtd in write_times_date:
-                write_time_by_min = [wtd + timedelta(minutes=m) for m in range(15)]
-                random.shuffle(write_time_by_min)
-                for write_time in write_time_by_min:
-                    VisaStatus.save_fetched_visa_status(
-                        visa_type,
-                        embassy_code,
-                        write_time,
-                        random.choice(available_dts)
-                    )
-
-    result = VisaStatus.find_historical_visa_status('F', 'pp', datetime(2020, 9, 25), datetime(2020, 9, 26))
-    pprint(result)
-
-    result = VisaStatus.find_earliest_visa_status(
-        ['F', 'B'],
-        ['pp', 'syd'],
-        [datetime.strptime('2020/9/27', '%Y/%m/%d') + timedelta(days=d) for d in range(3)]
-    )
-    pprint(result)
-
-    VisaStatus.save_fetched_visa_status('F', 'pp', datetime.now(), None)
-    result = VisaStatus.find_latest_written_visa_status('F', 'pp')
-    pprint(result)
-
-
-def simple_test_subscription():
-    """ Just a SIMPLE test"""
-    from pprint import pprint  # SORRY
-
-    Subscription.email.drop()
-
-    email = 'benjamincaiyh+tuixuetest@gmail.com'
-    subs = [
-        ('F', 'pp', datetime.max),
-        ('O', 'beg', datetime.max),
-        ('H', 'lcy', datetime.max),
-        ('B', 'sel', datetime.max)
-    ]
-    Subscription.add_email_subscription(email, subs)
-    pprint(Subscription.get_subscriptions_by_email(email))
-
-    update_susbs = ('F', 'sh', datetime(2020, 11, 30))
-    Subscription.add_email_subscription(email, update_susbs)
-    pprint(Subscription.get_subscriptions_by_email(email))
-
-    unsubs = ('F', 'sh')
-    Subscription.remove_email_subscription(email, unsubs)
-    pprint(Subscription.get_subscriptions_by_email(email))
-
-    unsubs_all = [('F', 'pp'), ('F', 'sh'), ('H', 'bj')]
-    Subscription.remove_email_subscription(email, unsubs_all)
-    pprint(Subscription.get_subscriptions_by_email(email))
-
-    Subscription.email.drop()
-    emails = ['em0@example.com', 'em1@example.com']
-    subses = [
-        [('F', 'pp', datetime(2020, 10, 23)), ['H', 'pp', datetime.max]],
-        [('F', 'pp', datetime(2020, 10, 26))],
-    ]
-    Subscription.add_email_subscription(emails[0], subses[0])
-    Subscription.add_email_subscription(emails[1], subses[1])
-
-    print('-' * 10)
-    pprint(Subscription.get_email_list(('F', 'pp', datetime(2020, 10, 24))))
-    print('-' * 10)
-    pprint(Subscription.get_email_list(('F', 'pp', datetime(2020, 10, 24)), 'expired_only'))
-    print('-' * 10)
-    pprint(Subscription.get_email_list(('F', 'pp', datetime(2020, 10, 24)), 'effective_only'))
-
-
-if __name__ == "__main__":
-    # manual test
-    # simple_test_visa_status()
-    # simple_test_subscription()
-    from pprint import pprint
-    cursor = Subscription.email.aggregate([
-        {'$match': {'email': 'baiyh+tuixue@gmail.com'}},
-        {'$unwind': '$subscription'},
-        {'$replaceRoot': {'newRoot': '$subscription'}}
-    ])
-    pprint(list(cursor))
-    pass
