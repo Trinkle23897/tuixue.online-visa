@@ -13,8 +13,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Union, List, Tuple, Optional, Dict
 from global_var import USEmbassy, VISA_TYPES, MONGO_CONFIG
 from global_var import AIS_FETCH_TIME_INTERVAL, CGI_FETCH_TIME_INTERVAL
-from pymongo import database, collection, monitoring
-from util import dt_to_utc, snake_case_json_key
+from pymongo import database, collection, monitoring, event_loggers
+from util import dt_to_utc, init_logger, snake_case_json_key
 
 EmailSubscription = NewVisaStatus = Tuple[VisaType, EmbassyCode, datetime]
 EmailSubscriptionNoDate = NewVisaStatusNoDate = Tuple[VisaType, EmbassyCode]  # seeking for a better name...
@@ -49,7 +49,7 @@ def get_collection(collection_name: str) -> collection.Collection:
     return db.get_collection(collection_name)
 
 
-class ConnectionPoolListener(monitoring.ConnectionPoolListener):
+class ConnectionPoolListener(event_loggers.ConnectionPoolLogger):
     """ **Global** listener for mongodb connection pooling
         https://pymongo.readthedocs.io/en/stable/api/pymongo/monitoring.html
     """
@@ -57,88 +57,46 @@ class ConnectionPoolListener(monitoring.ConnectionPoolListener):
         super().__init__()
         self.logger: logging.Logger = logger
 
-    def get_server_status(self) -> typing.Optional[ServerStatus]:
-        """ Get the server status for extra logging info."""
-        if DATABASE:
-            return ServerStatus(**snake_case_json_key(DATABASE.command('serverStatus')['connections']))
-
     def pool_created(self, event):
-        self.logger.info('[pool {0.address}] pool created'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}] pool created".format(event))
 
     def pool_cleared(self, event):
-        self.logger.info('[pool {0.address}] pool cleared'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}] pool cleared".format(event))
 
     def pool_closed(self, event):
-        self.logger.info('[pool {0.address}] pool closed'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}] pool closed".format(event))
 
     def connection_created(self, event):
-        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
-                     'connection created'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}][conn #{0.connection_id}] "
+                     "connection created".format(event))
 
     def connection_ready(self, event):
-        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
-                     'connection setup succeeded'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}][conn #{0.connection_id}] "
+                     "connection setup succeeded".format(event))
 
     def connection_closed(self, event):
-        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
-                     'connection closed, reason: '
-                     '{0.reason}'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}][conn #{0.connection_id}] "
+                     "connection closed, reason: "
+                     "{0.reason}".format(event))
 
     def connection_check_out_started(self, event):
-        self.logger.info('[pool {0.address}] connection check out '
-                     'started'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}] connection check out "
+                     "started".format(event))
 
     def connection_check_out_failed(self, event):
-        self.logger.info('[pool {0.address}] connection check out '
-                     'failed, reason: {0.reason}'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}] connection check out "
+                     "failed, reason: {0.reason}".format(event))
 
     def connection_checked_out(self, event):
-        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
-                     'connection checked out of pool'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}][conn #{0.connection_id}] "
+                     "connection checked out of pool".format(event))
 
     def connection_checked_in(self, event):
-        self.logger.info('[pool {0.address}][conn #{0.connection_id}] '
-                     'connection checked into pool'
-                     '[active:{1.active}|'
-                     'current:{1.current}|'
-                     'available:{1.available}|'
-                     'total_created:{1.total_created}]'.format(event, self.get_server_status()))
+        self.logger.info("[pool {0.address}][conn #{0.connection_id}] "
+                     "connection checked into pool".format(event))
+
+
+monitoring.register(ConnectionPoolListener(init_logger('tuixue_mongo_conn', './logs', True)))
 
 
 class VisaStatus:
@@ -185,7 +143,7 @@ class VisaStatus:
             'available_date': datetime,
         }
         ```
-   """
+    """
     visa_status = get_collection('visa_status')
     overview = get_collection('overview')
     latest_written = get_collection('latest_written')
