@@ -46,7 +46,7 @@ CD_LIST = [
     'F-成都',
 ]
 
-DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'sg', 'gye', 'lcy', 'bfs']
+DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'sg', 'gye', 'lcy']
 
 SESSION_UPDATE_QUEUE = Queue()
 
