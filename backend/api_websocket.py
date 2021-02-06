@@ -191,31 +191,28 @@ async def visa_status_notification_receiver(websocket: WebSocket):
 
 async def get_newest_visa_status(websocket: WebSocket):
     """ Get the latest fetched visa status with the given query"""
-    try:
-        while True:
-            visa_type, embassy_code = await websocket.receive_json()
-            if not isinstance(visa_type, list):
-                visa_type = [visa_type]
-            if not isinstance(embassy_code, list):
-                embassy_code = [embassy_code]
+    while True:
+        visa_type, embassy_code = await websocket.receive_json()
+        if not isinstance(visa_type, list):
+            visa_type = [visa_type]
+        if not isinstance(embassy_code, list):
+            embassy_code = [embassy_code]
 
-            if not (
-                all([vt in G.VISA_TYPES for vt in visa_type]) and
-                all([ec in EMBASSY_CODES for ec in embassy_code])
-            ):
-                await websocket.send_json(
-                    {'error': f'In valid visa_type ({visa_type}) or embsssy_code ({embassy_code}) is given'}
-                )
-                continue
+        if not (
+            all([vt in G.VISA_TYPES for vt in visa_type]) and
+            all([ec in EMBASSY_CODES for ec in embassy_code])
+        ):
+            await websocket.send_json(
+                {'error': f'In valid visa_type ({visa_type}) or embsssy_code ({embassy_code}) is given'}
+            )
+            continue
 
-            latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy_code)
-            ws_data = {
-                'type': 'newest',
-                'data': [{**lw, 'write_time': dt_to_utc(lw['write_time'])} for lw in latest_written]
-            }
-            await websocket.send_json(jsonable_encoder(ws_data))
-    except WebSocketDisconnect:
-        pass
+        latest_written = DB.VisaStatus.find_latest_written_visa_status(visa_type, embassy_code)
+        ws_data = {
+            'type': 'newest',
+            'data': [{**lw, 'write_time': dt_to_utc(lw['write_time'])} for lw in latest_written]
+        }
+        await websocket.send_json(jsonable_encoder(ws_data))
 
 
 @app.websocket('/visastatus/latest')
