@@ -231,4 +231,4 @@ async def get_newest_visa_status_update(websocket: WebSocket, token: str = Query
                 (get_newest_visa_status, {'websocket': websocket})
             )
     except WebSocketDisconnect:
-        print('OUTTER: Catch websocket disconnect')
+        pass
