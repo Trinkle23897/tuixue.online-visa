@@ -215,7 +215,7 @@ async def get_newest_visa_status(websocket: WebSocket):
             }
             await websocket.send_json(jsonable_encoder(ws_data))
     except WebSocketDisconnect:
-        pass
+        print('INNER: Catch websocket disconnect')
 
 
 @app.websocket('/visastatus/latest')
@@ -234,4 +234,4 @@ async def get_newest_visa_status_update(websocket: WebSocket, token: str = Query
                 (get_newest_visa_status, {'websocket': websocket})
             )
     except WebSocketDisconnect:
-        pass
+        print('OUTTER: Catch websocket disconnect')
