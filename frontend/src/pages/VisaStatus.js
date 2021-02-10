@@ -17,6 +17,7 @@ export default function VisaStatus() {
                 <Title level={2} style={{ textAlign: "center", margin: "8px", padding: "8px" }}>
                     {t("overview.title")}
                 </Title>
+                <p style={{ textAlign: "center" }}>{t("overview.cancel")}</p>
                 <Row>
                     <Col
                         xs={{ span: 22, push: 1 }}
