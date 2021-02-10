@@ -30,7 +30,7 @@ export const fetchMetadata = () => async dispatch => {
         console.error(`In metadataSlice: ${e}`);
     }
 
-    const { defaultFilter, embassyLst, regionAttr, additionalInfo } = metadata;
+    const { defaultFilter, embassyLst, regionAttr, additionalInfo, cancelDate } = metadata;
     dispatch(updateMetadata({ metadata }));
     Array.from("FBOHL").forEach(visaType =>
         dispatch(updateFilter({ visaType, newFilter: getCookie(`filter-${visaType}`, defaultFilter) })),
@@ -59,8 +59,22 @@ export const fetchMetadata = () => async dispatch => {
     const additionalInfoCn = Object.fromEntries(
         additionalInfo.zh.map(({ country, content }) => [`additionalInfo${country}`, content]),
     );
-    i18n.addResources(lngs.en, namespace, { ...countryNameEn, ...embassyNameEn, ...regionNameEn, ...additionalInfoEn });
-    i18n.addResources(lngs.zh, namespace, { ...countryNameCn, ...embassyNameCn, ...regionNameCn, ...additionalInfoCn });
+    const cancelDateCn = { cancelDate };
+    const cancelDateEn = { cancelDate: "" }; // no need to illustrate cancel date for foreign users
+    i18n.addResources(lngs.en, namespace, {
+        ...countryNameEn,
+        ...embassyNameEn,
+        ...regionNameEn,
+        ...additionalInfoEn,
+        ...cancelDateEn,
+    });
+    i18n.addResources(lngs.zh, namespace, {
+        ...countryNameCn,
+        ...embassyNameCn,
+        ...regionNameCn,
+        ...additionalInfoCn,
+        ...cancelDateCn,
+    });
     i18n.changeLanguage(i18n.language);
 
     return Promise.resolve();

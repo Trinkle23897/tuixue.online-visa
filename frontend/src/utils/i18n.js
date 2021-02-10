@@ -46,8 +46,8 @@ const resources = {
                 actions: "Actions",
                 aheadDay: "Date Ahead",
                 ahead: "Average appointment date in advance",
-                cancel: "",
             },
+            cancelDate: "",
             notification: {
                 initTitle: "Auto-notification is enabled",
                 initContent: "If a new position pops up, the browser will pop up a notification ASAP",
@@ -157,8 +157,8 @@ const resources = {
                 actions: "操作",
                 aheadDay: "提前天数",
                 ahead: "平均需要提前预约天数",
-                cancel: "目前国内签证预约日期取消到2021/2/19（2.3发送取消通知）",
             },
+            cancelDate: "",
             notification: {
                 initTitle: "已开启自动通知功能",
                 initContent: "如果有新位置放出来，浏览器会第一时间弹出通知",
