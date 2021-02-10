@@ -89,6 +89,7 @@ def get_meta_data():
             'tg': G.SECRET['telegram']['info'],
         },
         'additional_info': G.ADDITIONAL_INFO,
+        'cancel_date': G.CANCEL_DATE,
     }
 
 

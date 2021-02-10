@@ -163,6 +163,8 @@ for lng in ['zh', 'en']:
                 'content': f.read(),
             })
 
+CANCEL_DATE = open(os.path.join('additional_info', 'zh', 'cancel_date.md')).read()
+
 LOCK = Lock()
 
 
