@@ -1,5 +1,11 @@
 import moment from "moment";
 
+export const fromEntries = obj => {
+    const result = {};
+    obj.map(([key, val]) => result[key] = val);
+    return result;
+};
+
 const snakeToCamel = str => str.replace(/_(.)/g, s => s[1].toUpperCase());
 
 export const renameObjectKeys = obj => {
@@ -11,7 +17,7 @@ export const renameObjectKeys = obj => {
         return obj.map(o => renameObjectKeys(o));
     }
 
-    return Object.fromEntries(Object.entries(obj).map(([key, val]) => [snakeToCamel(key), renameObjectKeys(val)]));
+    return fromEntries(Object.entries(obj).map(([key, val]) => [snakeToCamel(key), renameObjectKeys(val)]));
 };
 
 /**

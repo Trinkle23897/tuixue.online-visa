@@ -1,3 +1,5 @@
+import { fromEntries } from "./misc";
+
 export const embassyAttributeLst = [
     "nameCn",
     "nameEn",
@@ -9,7 +11,7 @@ export const embassyAttributeLst = [
     "tzInfo",
     "crawlerCode",
 ];
-export const embassyAttributeIdx = Object.fromEntries(embassyAttributeLst.map((attr, idx) => [attr, idx]));
+export const embassyAttributeIdx = fromEntries(embassyAttributeLst.map((attr, idx) => [attr, idx]));
 
 /**
  *

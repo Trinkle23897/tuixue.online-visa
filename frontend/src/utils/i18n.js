@@ -205,7 +205,7 @@ const resources = {
                 removeItem: "删除该条规则",
                 addSubsItem: "添加另一条订阅规则",
                 subscribe: "点击订阅",
-                unsubscribe: "取消订阅",
+                unsubscribe: "取消订阅（请点击确认邮件中链接使其生效）",
                 tab: {
                     subscription: "增加订阅",
                     unsubscription: "取消订阅",

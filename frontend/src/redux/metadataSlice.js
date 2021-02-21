@@ -4,6 +4,7 @@ import { getVisaStatusMetadata } from "../services";
 import { embassyAttributeIdx } from "../utils/USEmbassy";
 import { getCookie } from "../utils/cookie";
 import i18n, { namespace, lngs, countries } from "../utils/i18n";
+import { fromEntries } from "../utils/misc";
 
 const metadataSlice = createSlice({
     name: "metadata",
@@ -37,26 +38,26 @@ export const fetchMetadata = () => async dispatch => {
     ); // no need to set cookie here
 
     // programatically add i18n resource
-    const embassyNameEn = Object.fromEntries(
+    const embassyNameEn = fromEntries(
         embassyLst.map(emb => [emb[embassyAttributeIdx.code], emb[embassyAttributeIdx.nameEn]]),
     );
-    const embassyNameCn = Object.fromEntries(
+    const embassyNameCn = fromEntries(
         embassyLst.map(emb => [emb[embassyAttributeIdx.code], emb[embassyAttributeIdx.nameCn]]),
     );
 
     const countryCodes = Array.from(new Set(embassyLst.map(emb => emb[embassyAttributeIdx.country])));
-    const countryNameEn = Object.fromEntries(
+    const countryNameEn = fromEntries(
         countryCodes.map(countryCode => [countryCode, countries.getName(countryCode, lngs.en, { select: "official" })]),
     );
-    const countryNameCn = Object.fromEntries(
+    const countryNameCn = fromEntries(
         countryCodes.map(countryCode => [countryCode, countries.getName(countryCode, lngs.zh, { select: "official" })]),
     );
-    const regionNameEn = Object.fromEntries(regionAttr.map(({ code, nameEn }) => [code, nameEn]));
-    const regionNameCn = Object.fromEntries(regionAttr.map(({ code, nameCn }) => [code, nameCn]));
-    const additionalInfoEn = Object.fromEntries(
+    const regionNameEn = fromEntries(regionAttr.map(({ code, nameEn }) => [code, nameEn]));
+    const regionNameCn = fromEntries(regionAttr.map(({ code, nameCn }) => [code, nameCn]));
+    const additionalInfoEn = fromEntries(
         additionalInfo.en.map(({ country, content }) => [`additionalInfo${country}`, content]),
     );
-    const additionalInfoCn = Object.fromEntries(
+    const additionalInfoCn = fromEntries(
         additionalInfo.zh.map(({ country, content }) => [`additionalInfo${country}`, content]),
     );
     const cancelDateCn = { cancelDate };
