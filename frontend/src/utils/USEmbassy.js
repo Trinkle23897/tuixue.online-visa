@@ -1,4 +1,4 @@
-import { fromEntries } from "./misc";
+import fromEntries from "fromentries";
 
 export const embassyAttributeLst = [
     "nameCn",

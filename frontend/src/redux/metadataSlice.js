@@ -1,10 +1,10 @@
+import fromEntries from "fromentries";
 import { createSlice } from "@reduxjs/toolkit";
 import { updateFilter } from "./visastatusFilterSlice";
 import { getVisaStatusMetadata } from "../services";
 import { embassyAttributeIdx } from "../utils/USEmbassy";
 import { getCookie } from "../utils/cookie";
 import i18n, { namespace, lngs, countries } from "../utils/i18n";
-import { fromEntries } from "../utils/misc";
 
 const metadataSlice = createSlice({
     name: "metadata",
