@@ -6,14 +6,26 @@ import { useWebSocketSubscribe } from "../hooks";
 export default function VisaStatusNotification() {
     const [notificationTitle, notificationOption] = useWebSocketSubscribe();
     const [swReg, setSwReg] = useState(null);
+    const [firstTry, setFirstTry] = useState(false);
     useEffect(() => {
-        navigator.serviceWorker.register("/sw.js").then(reg => {
-            if ("showNotification" in reg) {
-                setSwReg(reg);
-            }
-        });
-    });
-    return (
-        <Notification title={notificationTitle} options={notificationOption} timeout={10000} swRegistration={swReg} />
-    );
+        if (!firstTry) {
+            navigator.serviceWorker.register("/sw.js").then(reg => {
+                if ("showNotification" in reg) {
+                    setSwReg(reg);
+                }
+                setFirstTry(true);
+            });
+        }
+    }, [firstTry]);
+    if (firstTry) {
+        return (
+            <Notification
+                title={notificationTitle}
+                options={notificationOption}
+                timeout={10000}
+                swRegistration={swReg}
+            />
+        );
+    }
+    return <p style={{ display: "none" }} />;
 }
