@@ -36,6 +36,6 @@ export default function PostSubscriptionResult({ success, step, inEmailPage }) {
 }
 PostSubscriptionResult.propTypes = {
     success: PropTypes.bool.isRequired,
-    step: PropTypes.oneOf(["confirming", "subscribed"]).isRequired,
+    step: PropTypes.oneOf(["confirming", "subscribed", "deleted"]).isRequired,
     inEmailPage: PropTypes.bool.isRequired,
 };

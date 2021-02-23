@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { makeFilterSelectorByVisaType } from "../../redux/selectors";
 import { postEmailSubscription } from "../../services";
 import { isoStringToMoment, momentToISOString, zip } from "../../utils/misc";
-import { deleteCookie, getCookie, setCookie } from "../../utils/cookie";
+import { deleteCookie, getCookie } from "../../utils/cookie";
 
 /**
  * Construct request body from subcription form
@@ -124,7 +124,9 @@ export default function useSubscriptionFormControl(parentSubscriptionOp) {
                         ? "subscribed"
                         : "deleted"
                     : "confirming"
-                : "confirming",
+                : subscriptionOp === "subscription"
+                ? "confirming"
+                : "deleted",
         [inEmailPage, param, subscriptionOp],
     );
 
@@ -149,15 +151,15 @@ export default function useSubscriptionFormControl(parentSubscriptionOp) {
         }
 
         // clean up the cookie when unmount form from page.
-        return () => {
-            if (inEmailPage && subscriptionOp === "subscription") {
-                setCookie("subscription", {
-                    subscription: getCookie("subscription", { subscription: [] }).subscription.filter(
-                        subs => subs.embassyCode,
-                    ),
-                });
-            }
-        };
+        // return () => {
+        //     if (inEmailPage && subscriptionOp === "subscription") {
+        //         setCookie("subscription", {
+        //             subscription: getCookie("subscription", { subscription: [] }).subscription.filter(
+        //                 subs => subs.embassyCode,
+        //             ),
+        //         });
+        //     }
+        // };
     }, [form, param, visaType, visastatusFilter, inEmailPage, subscriptionOp]);
 
     const postSubscription = useCallback(
