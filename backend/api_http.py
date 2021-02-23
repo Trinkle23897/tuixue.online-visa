@@ -179,17 +179,20 @@ def get_email_subscription(email: str = Query(...)):
 def delete_email_subscription(step: EmailUnsubsStep, unsubscription: EmailUnsubscription = Body(..., embed=True)):
     """ Delete the subscription under the given email."""
     unsubscription = unsubscription.dict()
-    unsubs_lst = [
-        (unsubs['visa_type'], code) for unsubs in unsubscription['unsubscription'] for code in unsubs['code']
-    ]
+    # unsubs_lst = [
+    #     (unsubs['visa_type'], code) for unsubs in unsubscription['unsubscription'] for code in unsubs['code']
+    # ]
 
-    if step == EmailUnsubsStep.confirming:
-        Notifier.send_unsubscription_confirmation(unsubscription['email'])
-        return Response(status_code=status.HTTP_202_ACCEPTED)
+    # if step == EmailUnsubsStep.confirming:
+    #     Notifier.send_unsubscription_confirmation(unsubscription['email'])
+    #     return Response(status_code=status.HTTP_202_ACCEPTED)
 
-    elif step == EmailUnsubsStep.deleted:
+    # elif step == EmailUnsubsStep.deleted:
+    unsubs_lst = DB.Subscription.get_subscriptions_by_email(unsubscription['email'])
+    if len(unsubs_lst) > 0:
+        unsubs_lst = [(unsubs['visa_type'], unsubs['embassy_code']) for unsubs in unsubs_lst]
         DB.Subscription.remove_email_subscription(unsubscription['email'], unsubs_lst)
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get('/test')
