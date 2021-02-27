@@ -9,12 +9,16 @@ export default function VisaStatusNotification() {
     const [firstTry, setFirstTry] = useState(false);
     useEffect(() => {
         if (!firstTry) {
-            navigator.serviceWorker.register("/sw.js").then(reg => {
-                if ("showNotification" in reg) {
-                    setSwReg(reg);
-                }
+            if (navigator.serviceWorker !== undefined) {
+                navigator.serviceWorker.register("/sw.js").then(reg => {
+                    if ("showNotification" in reg) {
+                        setSwReg(reg);
+                    }
+                    setFirstTry(true);
+                });
+            } else {
                 setFirstTry(true);
-            });
+            }
         }
     }, [firstTry]);
     if (firstTry) {

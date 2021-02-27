@@ -82,6 +82,7 @@ const resources = {
                 domestic: "Disqus (Domestic version)",
                 global: "Disqus (Global version)",
                 loadFail: "Unable to load Disqus comments :(",
+                loading: "Loading Disqus ...",
             },
             emailForm: {
                 title: "Email Subscription",
@@ -192,6 +193,7 @@ const resources = {
                 domestic: "原国内版评论区",
                 global: "原国际版评论区",
                 loadFail: "Disqus评论区无法加载 :(",
+                loading: "正在加载Disqus评论区（需要翻墙）……",
             },
             emailForm: {
                 title: "个性化邮件订阅",
