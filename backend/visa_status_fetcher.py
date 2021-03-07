@@ -13,7 +13,6 @@ from queue import Queue
 from datetime import datetime
 
 import requests
-from pymongo import monitoring
 
 import util
 import global_var as G

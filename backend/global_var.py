@@ -55,7 +55,7 @@ COUTNRY_CODE_TO_UTC_OFFSET = {
     'ARE': 4, 'AUS': 10, 'BRB': -4, 'CAN': -5, 'CHE': 1,
     'CHN': 8, 'COL': -5, 'ECU': -5, 'FRA': 1, 'GBR': 0,
     'GRC': 2, 'JPN': 9, 'KHM': 7, 'KOR': 9, 'MEX': -6,
-    'NPL': 5.75, 'SGP': 8, 'SRB': 1, 'THA': 7, 'TUR': 3
+    'NPL': 5.75, 'SGP': 8, 'SRB': 1, 'THA': 7, 'TUR': 3, 'DEU': 1,
 }
 
 REGION_ATTR = [
@@ -97,6 +97,9 @@ EMBASSY_ATTR = [
     ('札幌', 'Sapporo', 'cts', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '札幌'),
     ('东京', 'Tokyo', 'hnd', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '东京'),
     ('加德满都', 'Kathmandu', 'ktm', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'NPL', 5.75, '加德满都'),
+    ('柏林', 'Berlin', 'sxf', 'cgi', 'WEST_EUROPE', 'EUROPE', 'DEU', 1, '柏林'),
+    ('法兰克福', 'Frankfurt', 'fra', 'cgi', 'WEST_EUROPE', 'EUROPE', 'DEU', 1, '法兰克福'),
+    ('慕尼黑', 'Munich', 'muc', 'cgi', 'WEST_EUROPE', 'EUROPE', 'DEU', 1, '慕尼黑'),
     ('曼谷', 'Bangkok', 'bkk', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7, '曼谷'),
     ('清迈', 'Chiang Mai', 'cnx', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'THA', 7, '清迈'),
     ('贝尔法斯特', 'Belfast', 'bfs', 'ais', 'WEST_EUROPE', 'EUROPE', 'GBR', 0, 'en-gb'),

@@ -4,9 +4,9 @@
 
 import os
 import util
-import typing
 import pymongo
 import logging
+from util import dt_to_utc, init_logger
 from collections import defaultdict, namedtuple
 from tuixue_typing import VisaType, EmbassyCode
 from datetime import datetime, timedelta, timezone
@@ -14,7 +14,6 @@ from typing import Union, List, Tuple, Optional, Dict
 from global_var import USEmbassy, VISA_TYPES, MONGO_CONFIG
 from global_var import AIS_FETCH_TIME_INTERVAL, CGI_FETCH_TIME_INTERVAL
 from pymongo import database, collection, monitoring, event_loggers
-from util import dt_to_utc, init_logger, snake_case_json_key
 
 EmailSubscription = NewVisaStatus = Tuple[VisaType, EmbassyCode, datetime]
 EmailSubscriptionNoDate = NewVisaStatusNoDate = Tuple[VisaType, EmbassyCode]  # seeking for a better name...

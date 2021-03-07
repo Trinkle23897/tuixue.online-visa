@@ -72,6 +72,7 @@ const resources = {
                 prjDesc: [
                     "Features: Auto-notification at webpage (no need to keep an eye on it, [test link](/notification)), customize the location filter that only you concerned about, update data in real-time, email notifications, qq group notifications and Telegram Channel (see the tab next to the chart), and various notes on going to the corresponding region (domestic, Ecuador, Singapore, UK)",
                     "Project Info: [GitHub Page](https://github.com/Trinkle23897/tuixue.online-visa); Author list: [Trinkle23897](https://github.com/Trinkle23897/), [z3dd1cu5](https://github.com/z3dd1cu5), [BenjiTheC](https://github.com/BenjiTheC)",
+                    "If you find any issue of this website, please send an email to [trinkle23897@gmail.com](mailto:trinkle23897@gmail.com).",
                     "If you think tuixue.online is helpful, please donate for our website, we appreciate your support!",
                 ].join("\n\n"),
                 part1: "This website has witnessed a total of ",
@@ -183,7 +184,7 @@ const resources = {
                 prjDesc: [
                     "功能概览：网页版能够穿透通知（不用一直盯着或者手动刷了，[测试链接](/notification)），可以只选自己关注的城市，数据实时更新，拥有邮件通知、qq群通知和Telegram Channel（看图表旁边的选项卡）和去往对应地区各种注意事项（国内、厄瓜多尔、新加坡、英国）",
                     "项目信息：[GitHub项目地址](https://github.com/Trinkle23897/tuixue.online-visa)、[作者GitHub](https://github.com/Trinkle23897/)、改进版爬虫作者 [z3dd1cu5](https://github.com/z3dd1cu5)、新版网站贡献者 [BenjiTheC](https://github.com/BenjiTheC)",
-                    "写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封），随喜打赏",
+                    "写这玩意还是花了一些时间的，维护也不容易（服务器要钱，验证码要钱，邮件系统是私搭的可能会被封，如果发现了网页出了什么问题，可以发邮件至 [trinkle23897@gmail.com](mailto:trinkle23897@gmail.com)），随喜打赏",
                 ].join("\n\n"),
                 part1: "本网站一共见证了",
                 part2: "人次的失学。",
