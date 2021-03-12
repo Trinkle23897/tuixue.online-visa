@@ -1,3 +1,4 @@
+import os
 import time
 import traceback
 from global_var import SECRET
@@ -18,6 +19,11 @@ if __name__ == '__main__':
                 Notifier.send_email(title="tuixue error",
                                     content=time.asctime(), receivers=admin)
             last_result = result
+            os.system("ps aux|grep websocket|grep -v grep|wc -l>log")
+            if int(open('log').read()) != 1:
+                print(f"{time.asctime()} send email to {admin}")
+                Notifier.send_email(title="tuixue error",
+                                    content=time.asctime() + '\nwebsocket killed', receivers=admin)
             time.sleep(60)
         except KeyboardInterrupt:
             break
