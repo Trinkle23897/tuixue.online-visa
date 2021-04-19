@@ -66,6 +66,8 @@ export const checkEmbassyCode = embssyCode => {
         "sxf",
         "fra",
         "muc",
+        "sjo",
+        "sdq",
     ];
     return typeof embssyCode === "string" && embassyCodeLst.includes(embssyCode);
 };
