@@ -92,7 +92,7 @@ def set_fetching_interval(
 
     emb = G.USEmbassy.get_embassy_by_loc(location)
     now_minute = datetime.now().minute
-    if sys == 'cgi' and visa_type == 'F' and 47 <= now_minute <= 49 and emb.region == 'DOMESTIC':
+    if sys == 'cgi' and visa_type == 'F' and 47 <= now_minute <= 49 and (emb.region == 'DOMESTIC' or emb.code == 'sg'):
         interval = 5
     else:
         interval = interval_sec
@@ -358,7 +358,11 @@ class VisaFetcher:
                 try:
                     result = res.json()
                 except ValueError:
-                    print(time.asctime(), res.content)
+                    content = res.content.decode()
+                    if 'Server Error (500)' in content:
+                        SESSION_CACHE.mark_unavailable(visa_type, location)
+                    else:
+                        print(time.asctime(), content)
                     continue
                 LOGGER.debug(
                     'consume_new_session_request - Endpoint: %s | Response json: %s',

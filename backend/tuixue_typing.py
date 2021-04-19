@@ -62,6 +62,8 @@ class EmbassyCode(str, Enum):
     sxf = 'sxf'
     fra = 'fra'
     muc = 'muc'
+    sjo = 'sjo'
+    sdq = 'sdq'
 
 
 class VisaType(str, Enum):
@@ -119,3 +121,5 @@ class Country(str, Enum):
     COL = 'COL'
     BRB = 'BRB'
     DEU = 'DEU'
+    CRI = 'CRI'
+    DOM = 'DOM'
