@@ -10,7 +10,6 @@ import EmbassySelector from "./EmbassySelector";
 import EmailSubscription from "./EmailSubscription";
 import "./VisaStatusTabs.less";
 import { OverviewChartByMinute } from "./VisaStatusOverviewList/OverviewChart";
-import { useScreenXS } from "../hooks";
 
 const { TabPane } = Tabs;
 
@@ -52,7 +51,6 @@ export default function VisaStatusTabs() {
     const visaType = useSelector(state => state.visastatusTab);
     const visaTypeDetails = useSelector(state => state.metadata.visaTypeDetails);
     const [func, setFunc] = useState("chart");
-    const screenXS = useScreenXS();
 
     return (
         <>
@@ -75,13 +73,14 @@ export default function VisaStatusTabs() {
                     <Tabs
                         activeKey={visaType !== "F" && func === "qqtg" ? "chart" : func}
                         onChange={activeKey => setFunc(activeKey)}
-                        tabPosition={screenXS ? "top" : "left"}
-                        centered={screenXS}
+                        tabPosition="top"
+                        centered
                     >
                         <TabPane
                             tab={
                                 <Tooltip title={t("overMinuteChartTitle")}>
                                     <LineChartOutlined />
+                                    {t("overMinuteChartTitle")}
                                 </Tooltip>
                             }
                             key={"chart"}
@@ -92,6 +91,7 @@ export default function VisaStatusTabs() {
                             tab={
                                 <Tooltip title={t("overview.emailIcon")}>
                                     <MailOutlined />
+                                    {t("overview.emailIcon")}
                                 </Tooltip>
                             }
                             key={"email"}
@@ -103,6 +103,7 @@ export default function VisaStatusTabs() {
                                 tab={
                                     <Tooltip title={t("overview.QQIcon")}>
                                         <QqOutlined />
+                                        {t("overview.QQIcon")}
                                     </Tooltip>
                                 }
                                 key={"qqtg"}
