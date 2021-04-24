@@ -193,7 +193,7 @@ const resources = {
             disqus: {
                 domestic: "原国内版评论区",
                 global: "原国际版评论区",
-                loadFail: "Disqus评论区无法加载 :(",
+                loadFail: "Disqus评论区无法加载（需要翻墙）",
                 loading: "正在加载Disqus评论区（需要翻墙）……",
             },
             emailForm: {
