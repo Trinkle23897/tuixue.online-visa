@@ -64,6 +64,7 @@ class EmbassyCode(str, Enum):
     muc = 'muc'
     sjo = 'sjo'
     sdq = 'sdq'
+    cmn = 'cmn'
 
 
 class VisaType(str, Enum):
@@ -89,6 +90,8 @@ class Region(str, Enum):
     EAST_EUROPE = 'EAST_EUROPE'
     NORTH_AMERICA = 'NORTH_AMERICA'
     SOUTH_AMERICA = 'SOUTH_AMERICA'
+    LATIN_AMERICA = 'LATIN_AMERICA'
+    NORTH_AFRICA = 'NORTH_AFRICA'
 
 
 class Continent(str, Enum):
@@ -97,6 +100,7 @@ class Continent(str, Enum):
     EUROPE = 'EUROPE'
     NORTH_AMERICA = 'NORTH_AMERICA'
     SOUTH_AMERICA = 'SOUTH_AMERICA'
+    AFRICA = 'AFRICA'
 
 
 class Country(str, Enum):
@@ -123,3 +127,4 @@ class Country(str, Enum):
     DEU = 'DEU'
     CRI = 'CRI'
     DOM = 'DOM'
+    MAR = 'MAR'

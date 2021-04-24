@@ -1,5 +1,7 @@
 ## 新加坡签证注意事项
 
+**根据观察，新加坡签证会在每周一中午到下午的时候放之后2~3周的位置；位置很多不用着急着约，可以到当地再约都来得及。**
+
 (转发)
 
 修改CGI信息至新加坡：如果你的CGI Profile在国内，打 (703)665-7346之后告知护照号姓名生日，选English、Non-Immigrant、Schedule、Have DS-160转接，说要求transfer record profile to Singapore就行，两分钟操作完成；可以参考 [https://www.ustraveldocs.com/cn_zh/cn-main-contactus.asp](https://www.ustraveldocs.com/cn_zh/cn-main-contactus.asp) 获取更多联系方式，大概需要两个工作日转移完毕

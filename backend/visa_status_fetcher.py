@@ -362,7 +362,7 @@ class VisaFetcher:
                     if 'Server Error (500)' in content:
                         SESSION_CACHE.mark_unavailable(visa_type, location)
                     else:
-                        print(time.asctime(), content)
+                        print(time.asctime(), visa_type, location, content)
                     continue
                 LOGGER.debug(
                     'consume_new_session_request - Endpoint: %s | Response json: %s',
