@@ -33,7 +33,7 @@ export const fetchMetadata = () => async dispatch => {
 
     const { defaultFilter, embassyLst, regionAttr, additionalInfo, cancelDate } = metadata;
     dispatch(updateMetadata({ metadata }));
-    Array.from("FBOHL").forEach(visaType =>
+    Array.from("FJBOHL").forEach(visaType =>
         dispatch(updateFilter({ visaType, newFilter: getCookie(`filter-${visaType}`, defaultFilter) })),
     ); // no need to set cookie here
 

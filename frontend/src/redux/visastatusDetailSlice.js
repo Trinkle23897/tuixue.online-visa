@@ -6,6 +6,7 @@ const visastatusDetailSlice = createSlice({
     name: "visastatusDetail",
     initialState: {
         F: { timeRange: [], detail: {} },
+        J: { timeRange: [], detail: {} },
         B: { timeRange: [], detail: {} },
         H: { timeRange: [], detail: {} },
         O: { timeRange: [], detail: {} },

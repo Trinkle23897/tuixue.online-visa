@@ -68,9 +68,9 @@ export default function useWebSocketSubscribe() {
                 websocketRef.current.readyState === WebSocket.OPEN &&
                 websocketRef.current.send(JSON.stringify([visaType, visastatusFilter[visaType]]));
 
-            Array.from("FBOHL").forEach(visaType => getNewestVisaStatus(visaType));
+            Array.from("FJBOHL").forEach(visaType => getNewestVisaStatus(visaType));
 
-            const intervalIds = Array.from("FBOHL").map(visaType =>
+            const intervalIds = Array.from("FJBOHL").map(visaType =>
                 setInterval(() => getNewestVisaStatus(visaType), ONE_MINUTE),
             );
             return () => intervalIds.forEach(intvId => clearInterval(intvId));

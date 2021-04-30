@@ -4,7 +4,10 @@ import { getDateFromISOString } from "../utils/misc";
 
 const visastatusOverviewSlice = createSlice({
     name: "visastatusOverview",
-    initialState: { today: { F: [], B: [], O: [], H: [], L: [] }, span: { F: [], B: [], H: [], O: [], L: [] } },
+    initialState: {
+        today: { F: [], J: [], B: [], O: [], H: [], L: [] },
+        span: { F: [], J: [], B: [], H: [], O: [], L: [] },
+    },
     reducers: {
         updateOverview: (state, action) => {
             const { visaType, overviewLstToday, overviewLstSpan } = action.payload;

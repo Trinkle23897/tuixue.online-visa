@@ -22,7 +22,7 @@ const DropdownContent = ({ visaType, embassyCode, countryCode }) => {
             <Col span={24}>
                 <OverviewChartByDate visaType={visaType} embassyCode={embassyCode} />
             </Col>
-            {visaType === "F" && (
+            {(visaType === "F" || visaType === "J") && (
                 <Col span={24}>
                     <h2>{t("overview.QQIcon")}</h2>
                     <p>
