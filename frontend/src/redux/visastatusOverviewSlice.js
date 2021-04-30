@@ -37,7 +37,13 @@ export const fetchVisaStatusOverview = visaType => async (dispatch, getState) =>
     }
 
     const now = new Date();
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    now.setMinutes(0);
     const past = new Date();
+    past.setSeconds(0);
+    past.setMilliseconds(0);
+    past.setMinutes(0);
     past.setDate(now.getDate() - 60);
 
     try {
