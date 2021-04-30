@@ -143,6 +143,7 @@ EMBASSY_ATTR = [
     ('诺加莱斯', 'Nogales', 'ols', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -7, 'en-mx'),
     ('新拉雷多', 'Nuevo Laredo', 'nld', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -5, 'en-mx'),
     ('蒂华纳', 'Tijuana', 'tij', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -7, 'en-mx'),
+    ('拿骚', 'Nassau', 'nas', 'ais', 'LATIN_AMERICA', 'SOUTH_AMERICA', 'BHS', -4, 'en-bs'),
 ]
 
 VISA_TYPES = 'FBHOL'
