@@ -712,7 +712,7 @@ class VisaStatus:
         overview_utc = [{
             **ov,
             'write_date': embtz_utc_map[ov['embassy_code']][ov['write_date']],
-        } for ov in overview_embtz]
+        } for ov in overview_embtz if ov['write_date'] in embtz_utc_map[ov['embassy_code']]]
 
         ov_groupby_date = defaultdict(list)
         for overview in overview_utc:

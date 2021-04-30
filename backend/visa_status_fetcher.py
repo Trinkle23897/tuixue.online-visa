@@ -92,7 +92,7 @@ def set_fetching_interval(
 
     emb = G.USEmbassy.get_embassy_by_loc(location)
     now_minute = datetime.now().minute
-    if sys == 'cgi' and visa_type == 'F' and 47 <= now_minute <= 49 and (emb.region == 'DOMESTIC' or emb.code == 'sg'):
+    if sys == 'cgi' and visa_type in ['J', 'F'] and 47 <= now_minute <= 49 and emb.region == 'DOMESTIC':
         interval = 5
     else:
         interval = interval_sec
@@ -124,6 +124,8 @@ def start_threads():
     thread_pool = []
     for visa_type, interval_sec in G.FETCH_TIME_INTERVAL[sys].items():
         for location in G.SYS_LOCATION[sys]:
+            if location[-1] == 'u' and sys == 'cgi' and visa_type != 'F':
+                continue
             thread_pool.append(set_fetching_interval(visa_type, location, sys, interval_sec))
     LOGGER.info('Fetching threads start, %s threads in total', len(thread_pool))
 

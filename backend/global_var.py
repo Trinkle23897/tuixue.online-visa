@@ -53,7 +53,7 @@ CD_LIST = [
     'F-成都',
 ]
 
-DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'sg', 'gye', 'lcy']
+DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'bju', 'shu', 'gzu', 'syu', 'sg', 'gye', 'lcy']
 
 SESSION_UPDATE_QUEUE = Queue()
 
@@ -83,10 +83,14 @@ REGION_ATTR = [
 # Tuple[name_cn, name_en, code, sys, region, continent, country, timezone, crawler_code]
 EMBASSY_ATTR = [
     ('北京', 'Beijing', 'bj', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '北京'),
+    ('北京（非硕博）', 'Beijing (Others)', 'bju', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '北京u'),
     ('上海', 'Shanghai', 'sh', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '上海'),
+    ('上海（非硕博）', 'Shanghai (Others)', 'shu', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '上海u'),
     ('成都', 'Chengdu', 'cd', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '成都'),
     ('广州', 'Guangzhou', 'gz', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '广州'),
+    ('广州（非硕博）', 'Guangzhou (Others)', 'gzu', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '广州u'),
     ('沈阳', 'Shenyang', 'sy', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '沈阳'),
+    ('沈阳（非硕博）', 'Shenyang (Others)', 'syu', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '沈阳u'),
     ('香港（非本地）', 'Hong Kong (non-resident)', 'hk', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '香港'),
     ('香港（本地）', 'Hong Kong (resident)', 'hkr', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '香港r'),
     ('台北', 'Taipei', 'tp', 'cgi', 'DOMESTIC', 'ASIA', 'CHN', 8, '台北'),
@@ -146,8 +150,8 @@ EMBASSY_ATTR = [
     ('拿骚', 'Nassau', 'nas', 'ais', 'LATIN_AMERICA', 'SOUTH_AMERICA', 'BHS', -4, 'en-bs'),
 ]
 
-VISA_TYPES = 'FBHOL'
-VISA_TYPE_DETAILS = {'F': 'F1/J1', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
+VISA_TYPES = 'FJBHOL'
+VISA_TYPE_DETAILS = {'F': 'F1/F2', 'J': 'J1/J2', 'H': 'H1B', 'B': 'B1/B2', 'O': 'O1/O2/O3', 'L': 'L1/L2'}
 
 # CGI/AIS_LOCATION are the parameters sent to crawler backend to retrieve session data
 CGI_LOCATION = [emb[8] for emb in EMBASSY_ATTR if emb[3] == 'cgi']
@@ -157,11 +161,11 @@ SYS_LOCATION = {'cgi': CGI_LOCATION, 'ais': AIS_LOCATION}
 # filter of AIS visa data retrieved from cralwer backend by city
 AIS_MONITORING_CITY = [emb[1] for emb in EMBASSY_ATTR if emb[3] == 'ais']
 
-CGI_SESS_POOL_SIZE = {'F': 10, 'B': 8, 'H': 5, 'O': 5, 'L': 5}
+CGI_SESS_POOL_SIZE = {'F': 10, 'J': 8, 'B': 8, 'H': 5, 'O': 5, 'L': 5}
 AIS_SESS_POOL_SIZE = {visa_type: 1 for visa_type in VISA_TYPES}
 SESS_POOL_SIZE = {'cgi': CGI_SESS_POOL_SIZE, 'ais': AIS_SESS_POOL_SIZE}
 
-CGI_FETCH_TIME_INTERVAL = {'F': 60, 'B': 120, 'H': 180, 'O': 180, 'L': 180}
+CGI_FETCH_TIME_INTERVAL = {'F': 60, 'J': 60, 'B': 120, 'H': 180, 'O': 180, 'L': 180}
 AIS_FETCH_TIME_INTERVAL = {visa_type: 60 for visa_type in VISA_TYPES}
 FETCH_TIME_INTERVAL = {'cgi': CGI_FETCH_TIME_INTERVAL, 'ais': AIS_FETCH_TIME_INTERVAL}
 

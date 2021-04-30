@@ -12,7 +12,7 @@ import global_var as G
 import tuixue_mongodb as DB
 from notifier import Notifier
 from tuixue_typing import VisaType, EmbassyCode
-from util import dt_to_utc
+from util import dt_to_utc, httpdate
 
 EMBASSY_LST = G.USEmbassy.get_embassy_lst()
 app = FastAPI()
@@ -57,8 +57,24 @@ def handshake():
     return {'status_code': 200, 'msg': 'OK'}
 
 
+metadata = {
+    'region': G.USEmbassy.get_region_mapping(),
+    'region_country_embassy_tree': G.USEmbassy.get_region_country_embassy_tree(),
+    'embassy_lst': G.EMBASSY_ATTR,
+    'visa_type_details': G.VISA_TYPE_DETAILS,
+    'default_filter': G.DEFAULT_FILTER,
+    'region_attr': G.REGION_ATTR,
+    'qq_tg_info': {
+        'qq': G.SECRET['qq']['info'],
+        'tg': G.SECRET['telegram']['info'],
+    },
+    'additional_info': G.ADDITIONAL_INFO,
+    'cancel_date': G.CANCEL_DATE,
+}
+
+
 @app.get('/visastatus/meta')
-def get_meta_data():
+def get_meta_data(response: Response):
     """ Return metadata such as region mapping and embassy detail. Where `region` is
         a list of `region-embassy_code` mapping in following shape:
 
@@ -77,24 +93,15 @@ def get_meta_data():
         ]
         ```
     """
-    return {
-        'region': G.USEmbassy.get_region_mapping(),
-        'region_country_embassy_tree': G.USEmbassy.get_region_country_embassy_tree(),
-        'embassy_lst': G.EMBASSY_ATTR,
-        'visa_type_details': G.VISA_TYPE_DETAILS,
-        'default_filter': G.DEFAULT_FILTER,
-        'region_attr': G.REGION_ATTR,
-        'qq_tg_info': {
-            'qq': G.SECRET['qq']['info'],
-            'tg': G.SECRET['telegram']['info'],
-        },
-        'additional_info': G.ADDITIONAL_INFO,
-        'cancel_date': G.CANCEL_DATE,
-    }
+    response.headers["Cache-Control"] = "public"
+    now = datetime.now(timezone.utc)
+    response.headers["Expires"] = httpdate(now + timedelta(days=1))
+    return metadata
 
 
 @app.get('/visastatus/overview')
 def get_visa_status_overview(
+    response: Response,
     visa_type: List[VisaType] = Query(...),
     embassy_code: List[EmbassyCode] = Query(...),
     since: Optional[datetime] = datetime.now(timezone.utc) - timedelta(days=15),
@@ -103,6 +110,9 @@ def get_visa_status_overview(
     """ Get the available visa appointment status with given query.
         The `since` and `to` query params, if provided, MUST be in the timezone of UTC.
     """
+    response.headers["Cache-Control"] = "public"
+    now = datetime.now(timezone.utc)
+    response.headers["Expires"] = httpdate(now + timedelta(minutes=1))
     tabular_data = DB.VisaStatus.find_visa_status_overview_embtz(visa_type, embassy_code, since, to)
 
     return {
@@ -116,6 +126,7 @@ def get_visa_status_overview(
 
 @app.get('/visastatus/detail')
 def get_visa_status_detail(
+    response: Response,
     visa_type: VisaType = Query(...),
     embassy_code: List[EmbassyCode] = Query(...),
     timestamp: Optional[datetime] = datetime.now(timezone.utc),
@@ -124,6 +135,9 @@ def get_visa_status_detail(
         If a given `since` or `or` date query is given, the historical data will be truncated to
         the specified dates.
     """
+    response.headers["Cache-Control"] = "public"
+    now = datetime.now(timezone.utc)
+    response.headers["Expires"] = httpdate(now + timedelta(seconds=5))
     if not isinstance(embassy_code, list):
         embassy_code = [embassy_code]
     embassy_code = list(set(embassy_code))

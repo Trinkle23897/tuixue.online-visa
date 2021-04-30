@@ -238,6 +238,7 @@ class Notifier:
         embassy: USEmbassy,
         prev: Optional[datetime],
         curr: Optional[datetime],
+        visa_type: str,
     ) -> bool:
         """ Send notification to QQ group and Telegram channel."""
         def converter(d: Optional[datetime]) -> str:
@@ -248,7 +249,7 @@ class Notifier:
             return f'{d.year}/{d.month}/{d.day}'
 
         prev, curr = converter(prev), converter(curr)
-        content = f"{embassy.name_cn}: {prev} -> {curr}"
+        content = f"{embassy.name_cn} {visa_type}: {prev} -> {curr}"
         # qq
         extra = SECRET["qq"]
         base_uri = extra["mirai_base_uri"]
@@ -343,8 +344,8 @@ class Notifier:
             asyncio.run(cls.send_via_websocket(ws_data))
 
             # QQ/TG, need async
-            if visa_type == "F":
-                cls.send_qq_tg(embassy, last_available_date, available_date)
+            if visa_type in ["F", "J"]:
+                cls.send_qq_tg(embassy, last_available_date, available_date, visa_type)
 
             return True
         return False

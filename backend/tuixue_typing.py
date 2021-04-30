@@ -66,10 +66,15 @@ class EmbassyCode(str, Enum):
     sdq = 'sdq'
     cmn = 'cmn'
     nas = 'nas'
+    bju = 'bju'
+    shu = 'shu'
+    gzu = 'gzu'
+    syu = 'syu'
 
 
 class VisaType(str, Enum):
     F = 'F'
+    J = 'J'
     B = 'B'
     H = 'H'
     O = 'O'  # noqa: E741
