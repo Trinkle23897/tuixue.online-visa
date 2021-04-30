@@ -5,7 +5,7 @@ import { setCookie } from "../utils/cookie";
 
 const visastatusFilterSlice = createSlice({
     name: "visastatusFilter",
-    initialState: { F: [], B: [], O: [], H: [], L: [] },
+    initialState: { F: [], J: [], B: [], O: [], H: [], L: [] },
     reducers: {
         updateFilter: (state, action) => {
             const { visaType, newFilter } = action.payload;

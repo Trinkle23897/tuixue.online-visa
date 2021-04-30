@@ -1,5 +1,5 @@
 export const checkVisaType = visaType => {
-    return typeof visaType === "string" && "FBOHL".includes(visaType);
+    return typeof visaType === "string" && "FJBOHL".includes(visaType);
 };
 
 export const checkVisaTypeLst = visaTypeLst => visaTypeLst.every(vt => checkVisaType(vt));
@@ -8,10 +8,14 @@ export const checkEmbassyCode = embssyCode => {
     // TODO: do not hardcode here, use fetched metadata
     const embassyCodeLst = [
         "bj",
+        "bju",
         "sh",
+        "shu",
         "cd",
         "gz",
+        "gzu",
         "sy",
+        "syu",
         "hk",
         "hkr",
         "tp",

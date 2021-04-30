@@ -3,7 +3,7 @@ import { getDateFromISOString } from "../utils/misc";
 
 const visastatusNewestSlice = createSlice({
     name: "latestWritten",
-    initialState: Array.from("FBOHL").reduce((obj, vt) => ({ ...obj, [vt]: {} }), {}),
+    initialState: Array.from("FJBOHL").reduce((obj, vt) => ({ ...obj, [vt]: {} }), {}),
     reducers: {
         updateNewest: (state, action) => {
             const { visaType, newest } = action.payload;

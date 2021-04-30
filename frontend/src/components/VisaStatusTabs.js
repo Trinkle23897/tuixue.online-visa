@@ -61,7 +61,7 @@ export default function VisaStatusTabs() {
                 size="large"
                 renderTabBar={(props, DefaultTabBar) => <DefaultTabBar {...props} className="autofill-tab-bar" />}
             >
-                {Array.from("FBHOL").map(vt => (
+                {Array.from("FJBHOL").map(vt => (
                     <TabPane key={vt} tab={visaTypeDetails[vt]} style={{ flexGrow: 1 }} />
                 ))}
             </Tabs>
@@ -71,7 +71,7 @@ export default function VisaStatusTabs() {
                 </Col>
                 <Col span={24}>
                     <Tabs
-                        activeKey={visaType !== "F" && func === "qqtg" ? "chart" : func}
+                        activeKey={visaType !== "F" && visaType !== "J" && func === "qqtg" ? "chart" : func}
                         onChange={activeKey => setFunc(activeKey)}
                         tabPosition="top"
                         centered
@@ -98,7 +98,7 @@ export default function VisaStatusTabs() {
                         >
                             <EmailSubscription />
                         </TabPane>
-                        {visaType === "F" && (
+                        {(visaType === "F" || visaType === "J") && (
                             <TabPane
                                 tab={
                                     <Tooltip title={t("overview.QQIcon")}>

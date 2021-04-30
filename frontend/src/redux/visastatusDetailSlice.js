@@ -6,6 +6,7 @@ const visastatusDetailSlice = createSlice({
     name: "visastatusDetail",
     initialState: {
         F: { timeRange: [], detail: {} },
+        J: { timeRange: [], detail: {} },
         B: { timeRange: [], detail: {} },
         H: { timeRange: [], detail: {} },
         O: { timeRange: [], detail: {} },
@@ -35,7 +36,11 @@ export const fetchVisaStatusDetail = visaType => async (dispatch, getState) => {
     }
 
     try {
-        const vsDetail = await getDetailVisaStatus(visaType, selectedEmb, new Date());
+        const now = new Date();
+        now.setMilliseconds(0);
+        const secs = now.getSeconds();
+        now.setSeconds(parseInt(secs / 5, 10) * 5);
+        const vsDetail = await getDetailVisaStatus(visaType, selectedEmb, now);
         if (vsDetail) {
             const { timeRange, detail: rawDetail } = vsDetail;
             const detail = rawDetail.map(({ embassyCode, availableDates }) => ({
