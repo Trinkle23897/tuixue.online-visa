@@ -16,7 +16,9 @@ const { TabPane } = Tabs;
 const QQTGSubs = () => {
     const [t] = useTranslation();
     const [qqGroups, tgLink] = useSelector(state => [state.metadata.qqTgInfo.qq, state.metadata.qqTgInfo.tg]);
-    const nonDomesticEmbassyInDefaultFilter = useSelector(state => nonDomesticEmbassyInDefaultFilterSelector(state));
+    const nonDomesticEmbassyInDefaultFilter = useSelector(
+        state => nonDomesticEmbassyInDefaultFilterSelector(state) || ["sg", "gye", "lcy"],
+    );
     return (
         <>
             <p>
@@ -80,7 +82,7 @@ export default function VisaStatusTabs() {
                             tab={
                                 <Tooltip title={t("overMinuteChartTitle")}>
                                     <LineChartOutlined />
-                                    {t("overMinuteChartTitle")}
+                                    {t("overMinuteChartTitleShort")}
                                 </Tooltip>
                             }
                             key={"chart"}
@@ -91,7 +93,7 @@ export default function VisaStatusTabs() {
                             tab={
                                 <Tooltip title={t("overview.emailIcon")}>
                                     <MailOutlined />
-                                    {t("overview.emailIcon")}
+                                    {t("overview.emailIconShort")}
                                 </Tooltip>
                             }
                             key={"email"}
@@ -103,7 +105,7 @@ export default function VisaStatusTabs() {
                                 tab={
                                     <Tooltip title={t("overview.QQIcon")}>
                                         <QqOutlined />
-                                        {t("overview.QQIcon")}
+                                        {t("overview.QQIconShort")}
                                     </Tooltip>
                                 }
                                 key={"qqtg"}

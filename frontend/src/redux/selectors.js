@@ -13,11 +13,8 @@ const detailSelector = state => state.visastatusDetail;
 const embassyLstSelector = createSelector(metadataSelector, metadata => metadata.embassyLst);
 const qqTgInfoSelector = createSelector(metadataSelector, metadata => metadata.qqTgInfo);
 export const nonDomesticEmbassyInDefaultFilterSelector = createSelector(
-    [embassyLstSelector, metadataSelector],
-    (embassyLst, { defaultFilter }) =>
-        defaultFilter.filter(
-            embassyCode => findEmbassyAttributeByCode("region", embassyCode, embassyLst) !== "DOMESTIC",
-        ),
+    metadataSelector,
+    metadata => metadata.nondomesticDefaultFilter,
 );
 
 export const makeCountryCodeSelector = embassyCode =>
@@ -59,7 +56,12 @@ export const makeEmbassyTreeSelector = (sys, t, forFilterSelect = true) =>
     );
 
 // generate `make{Some}SelectorByVisaType`
-const makeSelectorMakerByVisaType = selector => visaType => createSelector(selector, output => output[visaType]);
+const makeSelectorMakerByVisaType = selector => visaType =>
+    createSelector(selector, output => {
+        if (visaType !== "F" && Array.isArray(output[visaType]))
+            return output[visaType].filter(e => e !== "bju" && e !== "shu" && e !== "syu" && e !== "gzu");
+        return output[visaType];
+    });
 
 // Selectors by Visa type
 const makeOverviewSelectorByVisaType = makeSelectorMakerByVisaType(overviewTodaySelector);
@@ -103,9 +105,11 @@ export const makeMinuteChartData = visaType =>
             }
             const [tsStart, tsEnd] = timeRange;
             const writeTime = [];
-            for (let t = tsStart; t <= tsEnd; t += delta) {
+            for (let t = tsStart - delta; t <= tsEnd; t += delta) {
                 writeTime.push(t);
             }
+            console.log(rawData);
+            console.log(vsFilter);
             const availDateLst = vsFilter.map(embassyCode => {
                 const availableDates = detail[embassyCode] || [];
                 let dataIndex = 0;
