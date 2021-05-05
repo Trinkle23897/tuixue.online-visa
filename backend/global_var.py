@@ -53,7 +53,11 @@ CD_LIST = [
     'F-成都',
 ]
 
-DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'bju', 'shu', 'gzu', 'syu', 'sg', 'gye', 'lcy']
+DEFAULT_FILTER = ['bj', 'sh', 'gz', 'sy', 'bju', 'shu', 'gzu', 'syu']
+NONDOMESTIC_DEFAULT_FILTER = ["sg", "gye", "lcy"]
+
+OVERVIEW_CACHE = {}
+DETAIL_CACHE = {}
 
 SESSION_UPDATE_QUEUE = Queue()
 

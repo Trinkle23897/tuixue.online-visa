@@ -3,6 +3,7 @@
 from enum import Enum
 from typing import Optional, List
 from datetime import datetime, timedelta, timezone
+from threading import Lock
 
 from fastapi import FastAPI, Body, Query, Response, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -63,6 +64,7 @@ metadata = {
     'embassy_lst': G.EMBASSY_ATTR,
     'visa_type_details': G.VISA_TYPE_DETAILS,
     'default_filter': G.DEFAULT_FILTER,
+    'nondomestic_default_filter': G.NONDOMESTIC_DEFAULT_FILTER,
     'region_attr': G.REGION_ATTR,
     'qq_tg_info': {
         'qq': G.SECRET['qq']['info'],
@@ -113,7 +115,17 @@ def get_visa_status_overview(
     response.headers["Cache-Control"] = "public"
     now = datetime.now(timezone.utc)
     response.headers["Expires"] = httpdate(now + timedelta(minutes=1))
-    tabular_data = DB.VisaStatus.find_visa_status_overview_embtz(visa_type, embassy_code, since, to)
+    if to > now:
+        to = now
+    if since > now:
+        since = now
+    keys = "".join(visa_type) + "".join(list(sorted(embassy_code)))
+    cache_since, cache_to, cache_result = G.OVERVIEW_CACHE.get(keys, (None, None, None))
+    if cache_result is None or abs(to - cache_to) > timedelta(minutes=1) or abs(since - cache_since) > timedelta(minutes=1):
+        tabular_data = DB.VisaStatus.find_visa_status_overview_embtz(visa_type, embassy_code, since, to)
+        G.OVERVIEW_CACHE[keys] = (since, to, tabular_data)
+    else:
+        tabular_data = cache_result
 
     return {
         'visa_type': visa_type,
@@ -126,7 +138,6 @@ def get_visa_status_overview(
 
 @app.get('/visastatus/detail')
 def get_visa_status_detail(
-    response: Response,
     visa_type: VisaType = Query(...),
     embassy_code: List[EmbassyCode] = Query(...),
     timestamp: Optional[datetime] = datetime.now(timezone.utc),
@@ -135,24 +146,31 @@ def get_visa_status_detail(
         If a given `since` or `or` date query is given, the historical data will be truncated to
         the specified dates.
     """
-    response.headers["Cache-Control"] = "public"
-    now = datetime.now(timezone.utc)
-    response.headers["Expires"] = httpdate(now + timedelta(seconds=5))
     if not isinstance(embassy_code, list):
         embassy_code = [embassy_code]
     embassy_code = list(set(embassy_code))
+    now = datetime.now(timezone.utc)
+    #if timestamp > now:
+    #    timestamp = now
     time_range = [
         dt_to_utc((timestamp - timedelta(days=1)), remove_second=True),
         dt_to_utc(timestamp, remove_second=True),
     ]
-    detail = []
-    for e in embassy_code:
-        single_result = DB.VisaStatus.find_visa_status_past24h_turning_point(visa_type, e, timestamp)
-        if single_result:
-            single_result = single_result['available_dates']
-        else:
-            single_result = [{'write_time': time_range[0], 'available_date': None}]
-        detail.append({'embassy_code': e, 'available_dates': single_result})
+
+    keys = visa_type + "".join(list(sorted(embassy_code)))
+    cache_timestamp, cache_result = G.DETAIL_CACHE.get(keys, (None, None))
+    if cache_result is None or abs(timestamp - cache_timestamp) > timedelta(seconds=30):
+        detail = []
+        for e in embassy_code:
+            single_result = DB.VisaStatus.find_visa_status_past24h_turning_point(visa_type, e, timestamp)
+            if single_result:
+                single_result = single_result['available_dates']
+            else:
+                single_result = [{'write_time': time_range[0], 'available_date': None}]
+            detail.append({'embassy_code': e, 'available_dates': single_result})
+        G.DETAIL_CACHE[keys] = (timestamp, detail)
+    else:
+        detail = cache_result
     return {
         'visa_type': visa_type,
         'embassy_code': embassy_code,
