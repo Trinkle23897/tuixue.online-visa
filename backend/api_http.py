@@ -159,7 +159,7 @@ def get_visa_status_detail(
 
     keys = visa_type + "".join(list(sorted(embassy_code)))
     cache_timestamp, cache_result = G.DETAIL_CACHE.get(keys, (None, None))
-    if cache_result is None or abs(timestamp - cache_timestamp) > timedelta(seconds=30):
+    if cache_result is None or abs(timestamp - cache_timestamp) > timedelta(minutes=1):
         detail = []
         for e in embassy_code:
             single_result = DB.VisaStatus.find_visa_status_past24h_turning_point(visa_type, e, timestamp)

@@ -12,7 +12,7 @@ if __name__ == '__main__':
     admin = SECRET['admin_email_list']
     while True:
         try:
-            time.sleep(60)
+            time.sleep(30)
             result = VisaStatus.find_visa_status_past24h(
                 'F', 'gye', datetime.now(timezone.utc), minutes=10)['available_dates']
             if len(last_result) > 0 and len(result) == 0:

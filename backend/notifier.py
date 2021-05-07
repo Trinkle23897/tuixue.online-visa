@@ -343,7 +343,7 @@ class Notifier:
             }
             try:
                 asyncio.run(cls.send_via_websocket(ws_data))
-            except ConnectionResetError:
+            except:
                 pass
 
             # QQ/TG, need async
