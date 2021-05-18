@@ -9,7 +9,7 @@ idna==2.10
 importlib-metadata==2.0.0
 mccabe==0.6.1
 pycodestyle==2.6.0
-pydantic==1.6.1
+pydantic==1.6.2
 pyflakes==2.2.0
 pymongo==3.11.0
 PySocks==1.7.1

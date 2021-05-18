@@ -11,7 +11,7 @@ from multiprocessing import Pool
 from tuixue_typing import VisaType
 from typing import Any, Dict, List, Optional
 from fastapi.encoders import jsonable_encoder
-from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, FRONTEND_BASE_URI, DEFAULT_FILTER
+from global_var import USEmbassy, VISA_TYPE_DETAILS, SECRET, FRONTEND_BASE_URI, NONDOMESTIC_DEFAULT_FILTER, DEFAULT_FILTER
 from url import URL
 
 
@@ -255,9 +255,9 @@ class Notifier:
         base_uri = extra["mirai_base_uri"]
         auth_key = extra["mirai_auth_key"]
         qq_num = extra["qq_num"]
-        if embassy.region == "DOMESTIC":
+        if embassy.code in DEFAULT_FILTER:
             group_id = extra["qq_group_id"]["domestic"]
-        elif embassy.code in DEFAULT_FILTER:
+        elif embassy.code in NONDOMESTIC_DEFAULT_FILTER:
             group_id = extra["qq_group_id"]["non_domestic"]
         else:
             group_id = []
@@ -341,7 +341,10 @@ class Notifier:
                 'prev_avai_date': last_available_date,
                 'curr_avai_date': available_date
             }
-            asyncio.run(cls.send_via_websocket(ws_data))
+            try:
+                asyncio.run(cls.send_via_websocket(ws_data))
+            except:
+                pass
 
             # QQ/TG, need async
             if visa_type in ["F", "J"]:
