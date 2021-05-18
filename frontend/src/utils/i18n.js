@@ -62,7 +62,7 @@ const resources = {
             TGDomestic: "Telegram Channel link (domestic): ",
             TGNonDomestic: "Telegram Channel link (global): ",
             QQDescDomestic:
-                'QQ group entry password is the site URL, a total of 13 characters "tuixue.online". All groups\' content are the same.',
+                "**QQ group entry password is the site URL, a total of 13 characters \"tuixue.online\".** All groups' content are the same. Pattern: CGI system will release the quota released by others 6-8 hours ago at XX:48; if the notification received doesn't conform to this pattern, most likely a large quota has been released.",
             QQDescNonDomestic:
                 "The global version includes popular areas for getting visa in third country, including {{cities}}",
             QQGroupDomestic: "Domestic #{{index}}: ",
@@ -177,7 +177,8 @@ const resources = {
             },
             TGDomestic: "Telegram 频道（国内版）链接：",
             TGNonDomestic: "Telegram 频道（国际版）链接：",
-            QQDescDomestic: 'QQ群入群密码是本站网址，共13个字符"tuixue.online"，所有群内容一致',
+            QQDescDomestic:
+                '**QQ群入群密码是本站网址，共13个字符"tuixue.online"**，所有群内容一致。规律：CGI系统会在每小时48分的时候放出6-8小时前别人放出的名额，如果收到的通知不符合这个时间规律的话，多半是放出来了一大波名额。',
             QQDescNonDomestic: "国际版仅包含目前第三国签证热门地区，包括：{{cities}}",
             QQTGModalContentQQ: "QQ群{{index}}群：",
             QQGroupDomestic: "国内{{index}}群：",

@@ -108,8 +108,6 @@ export const makeMinuteChartData = visaType =>
             for (let t = tsStart - delta; t <= tsEnd; t += delta) {
                 writeTime.push(t);
             }
-            console.log(rawData);
-            console.log(vsFilter);
             const availDateLst = vsFilter.map(embassyCode => {
                 const availableDates = detail[embassyCode] || [];
                 let dataIndex = 0;

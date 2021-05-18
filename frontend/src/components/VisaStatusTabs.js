@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Tabs, Row, Col, Divider, Tooltip } from "antd";
+import ReactMarkdown from "react-markdown";
 import { useTranslation } from "react-i18next";
 import { MailOutlined, QqOutlined, LineChartOutlined } from "@ant-design/icons";
 import { changeTabAndSetCookie } from "../redux/visastatusTabSlice";
@@ -34,10 +35,11 @@ const QQTGSubs = () => {
                 </a>
             </p>
             <Divider />
-            <p>{t("QQDescDomestic")}</p>
+            <ReactMarkdown>{t("QQDescDomestic")}</ReactMarkdown>
             {qqGroups.domestic.map((content, index) => (
                 <p key={`qqDomestic-${content}`}>{`${t("QQGroupDomestic", { index: index + 1 })}${content}`}</p>
             ))}
+            <ReactMarkdown>{t("QQDescDomestic")}</ReactMarkdown>
             <Divider />
             <p>{t("QQDescNonDomestic", { cities: nonDomesticEmbassyInDefaultFilter.map(e => t(e)).join(" / ") })}</p>
             {qqGroups.nonDomestic.map((content, index) => (
