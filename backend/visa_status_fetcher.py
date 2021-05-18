@@ -92,7 +92,7 @@ def set_fetching_interval(
 
     emb = G.USEmbassy.get_embassy_by_loc(location)
     now_minute = datetime.now().minute
-    if sys == 'cgi' and visa_type in ['J', 'F'] and 47 <= now_minute <= 49 and emb.region == 'DOMESTIC':
+    if sys == 'cgi' and visa_type == "F" and 47 <= now_minute <= 49 and emb.region == 'DOMESTIC' and emb.code not in ['hk', 'hkr', 'tp']:
         interval = 5
     else:
         interval = interval_sec
@@ -279,7 +279,7 @@ class VisaFetcher:
                 return
             else:
                 if res.status_code != 200:
-                    LOGGER.warning('%s, %s, %s, FAILED - Endpoint Inaccessible.', now, visa_type, location)
+                    LOGGER.warning('%s, %s, %s, FAILED - %d', now, visa_type, location, res.status_code)
                     cls.check_crawler_server_connection()
                     return
 
@@ -352,6 +352,8 @@ class VisaFetcher:
 
                     LOGGER.debug('Fetching new session for AIS: %s, %s, %s', location, email, password)
                     endpoint = G.CRAWLER_API['register']['ais'].format(location, email, password)
+                    if email is None or password is None:
+                        continue
                 elif session.sys == 'cgi':
                     endpoint = G.CRAWLER_API['register']['cgi'].format(visa_type, location)
 

@@ -152,6 +152,13 @@ EMBASSY_ATTR = [
     ('新拉雷多', 'Nuevo Laredo', 'nld', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -5, 'en-mx'),
     ('蒂华纳', 'Tijuana', 'tij', 'ais', 'NORTH_AMERICA', 'NORTH_AMERICA', 'MEX', -7, 'en-mx'),
     ('拿骚', 'Nassau', 'nas', 'ais', 'LATIN_AMERICA', 'SOUTH_AMERICA', 'BHS', -4, 'en-bs'),
+    ('阿姆斯特丹', 'Amsterdam', 'ams', 'ais', 'WEST_EUROPE', 'EUROPE', 'NLD', 2, 'en-nl'),
+    ('布鲁塞尔', 'Brussels', 'bru', 'ais', 'WEST_EUROPE', 'EUROPE', 'BEL', 2, 'en-be'),
+    ('佛罗伦萨', 'Florence', 'flr', 'ais', 'WEST_EUROPE', 'EUROPE', 'ITA', 2, 'en-it'),
+    ('米兰', 'Milan', 'mxp', 'ais', 'WEST_EUROPE', 'EUROPE', 'ITA', 2, 'en-it'),
+    ('那不勒斯', 'Naples', 'nap', 'ais', 'WEST_EUROPE', 'EUROPE', 'ITA', 2, 'en-it'),
+    ('罗马', 'Rome', 'fco', 'ais', 'WEST_EUROPE', 'EUROPE', 'ITA', 2, 'en-it'),
+    ('马德里', 'Madrid', 'mad', 'ais', 'WEST_EUROPE', 'EUROPE', 'ESP', 2, 'en-es'),
 ]
 
 VISA_TYPES = 'FJBHOL'
@@ -165,7 +172,7 @@ SYS_LOCATION = {'cgi': CGI_LOCATION, 'ais': AIS_LOCATION}
 # filter of AIS visa data retrieved from cralwer backend by city
 AIS_MONITORING_CITY = [emb[1] for emb in EMBASSY_ATTR if emb[3] == 'ais']
 
-CGI_SESS_POOL_SIZE = {'F': 10, 'J': 8, 'B': 8, 'H': 5, 'O': 5, 'L': 5}
+CGI_SESS_POOL_SIZE = {'F': 10, 'J': 10, 'B': 8, 'H': 5, 'O': 5, 'L': 5}
 AIS_SESS_POOL_SIZE = {visa_type: 1 for visa_type in VISA_TYPES}
 SESS_POOL_SIZE = {'cgi': CGI_SESS_POOL_SIZE, 'ais': AIS_SESS_POOL_SIZE}
 
