@@ -14,4 +14,4 @@ soupsieve==2.0.1
 sqlparse==0.4.1
 torch==1.6.0
 torchvision==0.7.0
-urllib3==1.25.10
+urllib3==1.26.5
