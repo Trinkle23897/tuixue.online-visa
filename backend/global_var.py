@@ -65,7 +65,7 @@ SESSION_UPDATE_QUEUE = Queue()
 COUTNRY_CODE_TO_UTC_OFFSET = {
     'ARE': 4, 'AUS': 10, 'BRB': -4, 'CAN': -5, 'CHE': 1,
     'CHN': 8, 'COL': -5, 'ECU': -5, 'FRA': 1, 'GBR': 0,
-    'GRC': 2, 'JPN': 9, 'KHM': 7, 'KOR': 9, 'MEX': -6,
+    'GRC': 2, 'JPN': 9, 'KHM': 7, 'KOR': 9, 'MEX': -6, 'IND': 5.5,
     'NPL': 5.75, 'SGP': 8, 'SRB': 1, 'THA': 7, 'TUR': 3, 'DEU': 1,
 }
 
@@ -73,6 +73,7 @@ REGION_ATTR = [
     {"code": "DOMESTIC", "name_cn": "国内", "name_en": "Domestic"},
     {"code": "SOUTH_EAST_ASIA", "name_cn": "东南亚", "name_en": "South East Asia"},
     {"code": "EAST_ASIA", "name_cn": "东亚", "name_en": "East Asia"},
+    {"code": "SOUTH_ASIA", "name_cn": "南亚", "name_en": "South Asia"},
     {"code": "OCEANIA", "name_cn": "大洋洲", "name_en": "Oceania"},
     {"code": "WEST_EUROPE", "name_cn": "西欧", "name_en": "West Europe"},
     {"code": "NORTH_AMERICA", "name_cn": "北美", "name_en": "North America"},
@@ -103,6 +104,11 @@ EMBASSY_ATTR = [
     ('首尔', 'Seoul', 'sel', 'cgi', 'EAST_ASIA', 'ASIA', 'KOR', 9, '首尔'),
     ('河内', 'Hanoi', 'han', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'VNM', 7, '河内'),
     ('胡志明', 'Ho Chi Minh City', 'sgn', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'VNM', 7, '胡志明'),
+    ('孟买', 'Mumbai', 'bom', 'cgi', 'SOUTH_ASIA', 'ASIA', 'IND', 5.5, '孟买'),
+    ('加尔各答', 'Kolkata', 'ccu', 'cgi', 'SOUTH_ASIA', 'ASIA', 'IND', 5.5, '加尔各答'),
+    ('海得拉巴', 'Hyderabad', 'hyd', 'cgi', 'SOUTH_ASIA', 'ASIA', 'IND', 5.5, '海得拉巴'),
+    ('金奈', 'Chennai', 'maa', 'cgi', 'SOUTH_ASIA', 'ASIA', 'IND', 5.5, '金奈'),
+    ('新德里', 'New Delhi', 'deli', 'cgi', 'SOUTH_ASIA', 'ASIA', 'IND', 5.5, '新德里'),
     ('巴拿马', 'Panama City', 'pty', 'cgi', 'LATIN_AMERICA', 'SOUTH_AMERICA', 'PAN', -5, '巴拿马'),
     ('墨尔本', 'Melbourne', 'mel', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 10, '墨尔本'),
     ('珀斯', 'Perth', 'per', 'cgi', 'OCEANIA', 'OCEANIA', 'AUS', 8, '珀斯'),
@@ -113,7 +119,7 @@ EMBASSY_ATTR = [
     ('那霸', 'Naha', 'oka', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '那霸'),
     ('札幌', 'Sapporo', 'cts', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '札幌'),
     ('东京', 'Tokyo', 'hnd', 'cgi', 'EAST_ASIA', 'ASIA', 'JPN', 9, '东京'),
-    ('加德满都', 'Kathmandu', 'ktm', 'cgi', 'SOUTH_EAST_ASIA', 'ASIA', 'NPL', 5.75, '加德满都'),
+    ('加德满都', 'Kathmandu', 'ktm', 'cgi', 'SOUTH_ASIA', 'ASIA', 'NPL', 5.75, '加德满都'),
     ('柏林', 'Berlin', 'sxf', 'cgi', 'WEST_EUROPE', 'EUROPE', 'DEU', 2, '柏林'),
     ('法兰克福', 'Frankfurt', 'fra', 'cgi', 'WEST_EUROPE', 'EUROPE', 'DEU', 2, '法兰克福'),
     ('慕尼黑', 'Munich', 'muc', 'cgi', 'WEST_EUROPE', 'EUROPE', 'DEU', 2, '慕尼黑'),
@@ -177,7 +183,7 @@ AIS_SESS_POOL_SIZE = {visa_type: 1 for visa_type in VISA_TYPES}
 SESS_POOL_SIZE = {'cgi': CGI_SESS_POOL_SIZE, 'ais': AIS_SESS_POOL_SIZE}
 
 CGI_FETCH_TIME_INTERVAL = {'F': 60, 'J': 60, 'B': 120, 'H': 180, 'O': 180, 'L': 180}
-AIS_FETCH_TIME_INTERVAL = {visa_type: 60 for visa_type in VISA_TYPES}
+AIS_FETCH_TIME_INTERVAL = {visa_type: 300 for visa_type in VISA_TYPES}
 FETCH_TIME_INTERVAL = {'cgi': CGI_FETCH_TIME_INTERVAL, 'ais': AIS_FETCH_TIME_INTERVAL}
 
 ADDITIONAL_INFO = {}

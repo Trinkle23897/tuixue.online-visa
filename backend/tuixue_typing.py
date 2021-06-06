@@ -77,6 +77,11 @@ class EmbassyCode(str, Enum):
     nap = 'nap'
     fco = 'fco'
     mad = 'mad'
+    bom = 'bom'
+    ccu = 'ccu'
+    hyd = 'hyd'
+    maa = 'maa'
+    deli = 'deli'
 
 
 class VisaType(str, Enum):
@@ -146,3 +151,4 @@ class Country(str, Enum):
     BEL = 'BEL'
     ITA = 'ITA'
     ESP = 'ESP'
+    IND = 'IND'

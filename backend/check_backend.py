@@ -14,7 +14,7 @@ if __name__ == '__main__':
         try:
             time.sleep(30)
             result = VisaStatus.find_visa_status_past24h(
-                'F', 'gye', datetime.now(timezone.utc), minutes=10)['available_dates']
+                'F', 'bju', datetime.now(timezone.utc), minutes=10)['available_dates']
             if len(last_result) > 0 and len(result) == 0:
                 print(f"{time.asctime()} send email to {admin}")
                 Notifier.send_email(title="tuixue error",

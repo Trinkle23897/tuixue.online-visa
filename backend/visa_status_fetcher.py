@@ -92,7 +92,7 @@ def set_fetching_interval(
 
     emb = G.USEmbassy.get_embassy_by_loc(location)
     now_minute = datetime.now().minute
-    if sys == 'cgi' and visa_type == "F" and 47 <= now_minute <= 49 and emb.region == 'DOMESTIC' and emb.code not in ['hk', 'hkr', 'tp']:
+    if sys == 'cgi' and visa_type == "F" and 47 <= now_minute < 49 and emb.region == 'DOMESTIC' and emb.code not in ['hk', 'hkr', 'tp']:
         interval = 5
     else:
         interval = interval_sec
