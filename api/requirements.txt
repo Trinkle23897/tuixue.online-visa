@@ -11,7 +11,7 @@ pytz==2020.1
 requests==2.24.0
 selenium==3.141.0
 soupsieve==2.0.1
-sqlparse==0.4.1
+sqlparse==0.4.2
 torch==1.6.0
 torchvision==0.7.0
 urllib3==1.26.5
