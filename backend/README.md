@@ -63,13 +63,13 @@ optional arguments:
 **Run following command for fetching the CGI system:**
 
 ```sh
-python3 visa_status_fetch.py --target cgi --crawler path/to/crawler_file
+python3 visa_status_fetcher.py --target cgi --crawler path/to/crawler_file
 ```
 
 **Run following command for fetching the AIS system:**
 
 ```sh
-python3 visa_status_fetch.py --target ais --crawler path/to/crawler_file --ais path/to/ais.json
+python3 visa_status_fetcher.py --target ais --crawler path/to/crawler_file --ais path/to/ais.json
 ```
 
 #### MongoDB
