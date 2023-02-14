@@ -15,7 +15,7 @@ pymongo==3.11.0
 PySocks==1.7.1
 requests==2.24.0
 six==1.15.0
-starlette==0.13.6
+starlette==0.25.0
 typing-extensions==3.7.4.3
 urllib3==1.26.5
 uvicorn==0.12.1
