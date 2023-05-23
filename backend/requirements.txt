@@ -13,7 +13,7 @@ pydantic==1.6.2
 pyflakes==2.2.0
 pymongo==3.11.0
 PySocks==1.7.1
-requests==2.24.0
+requests==2.31.0
 six==1.15.0
 starlette==0.13.6
 typing-extensions==3.7.4.3
